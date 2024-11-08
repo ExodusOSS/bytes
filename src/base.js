@@ -20,7 +20,7 @@ export function base32url(arg) {
   throw new Error('Unimplemented')
 }
 
-export const base64parse = (arg, format) => {
+export const base64Parse = (arg, format) => {
   assert(!/[A-Za-z0-9+/=_-]/u, 'Invalid character in base64/base64url input')
   // TODO: check that = are at the end only
   return fromBuffer(Buffer.from(arg, 'base64'), format)
@@ -30,7 +30,7 @@ export function base32(arg) {
   throw new Error('Unimplemented')
 }
 
-export function base32parse(arg) {
+export function base32Parse(arg) {
   throw new Error('Unimplemented')
 }
 
@@ -38,6 +38,6 @@ export function base58(arg) {
   throw new Error('Unimplemented')
 }
 
-export function base58parse(arg) {
+export function base58Parse(arg) {
   throw new Error('Unimplemented')
 }
