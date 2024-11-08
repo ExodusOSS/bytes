@@ -1,4 +1,4 @@
-import { assert } from './assert.js'
+import { assert, assertUint8 } from './assert.js'
 
 const _0n = BigInt(0)
 
@@ -38,7 +38,7 @@ export function toUint8(x, length) {
 }
 
 export function fromUint8(a) {
-  assert(a instanceof Uint8Array, 'Should be an instance of Uint8Array / Buffer')
+  assertUint8(a)
   const buf = Buffer.isBuffer(a) ? a : Buffer.from(a.buffer, a.byteOffset, a.byteLength) // zero-copy
   return BigInt('0x' + buf.toString('hex'))
 }
