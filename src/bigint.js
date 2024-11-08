@@ -44,26 +44,26 @@ export function fromUint8(a) {
 }
 
 export function parse(s, {
-  allowNegative = false,
-  allowStrings = false,
-  allowBuffers = false,
-  allowArrays = false,
+  negative = false,
+  strings = false,
+  buffers = false,
+  arrays = false,
 } = Object.create(null)) {
   let x
   switch (typeof s) {
     case 'string':
-      assert(allowStrings, 'String input is disallowed by allowStrings option')
-      switch (allowStrings) {
+      assert(strings, 'String input is disallowed by \'strings\' option')
+      switch (strings) {
         case 10:
           assert(/^-?[0-9]+$/u.test(s), 'Invalid character in decimal string input')
           x = BigInt(s)
           break
         case 16:
-          // this allows negative hex strings on allowNegative=true and allowStrings=16 combination!
-          x = allowNegative && s[0] === '-' ? 0n - fromHex(s.slice(1)) : fromHex(s)
+          // this allows negative hex strings on negative=true and strings=16 combination!
+          x = negative && s[0] === '-' ? 0n - fromHex(s.slice(1)) : fromHex(s)
           break
         default:
-          throw new Error('Invalid allowStrings value, should be 10 (decimal) or 16 (hex)')
+          throw new Error('Invalid \'strings\' value, should be 10 (decimal) or 16 (hex)')
       }
       break
     case 'bigint':
@@ -75,12 +75,12 @@ export function parse(s, {
       break
     case 'object':
       if (Array.isArray(s)) {
-        assert(allowArrays, 'Uint8Array / Buffer input disallowed by allowArrays option')
+        assert(arrays, 'Uint8Array / Buffer input disallowed by \'arrays\' option')
         const buf = Buffer.from(s)
         assert(buf.every((c, i) => s[i] === c), 'Array should contain only bytes (0-255)')
         x = fromUint8(buf)
       } else if (s instanceof Uint8Array) {    
-        assert(allowBuffers, 'Uint8Array / Buffer input disallowed by allowBuffers option')
+        assert(buffers, 'Uint8Array / Buffer input disallowed by \'buffers\' option')
         x = fromUint8(s)
       } else {
         throw new Error('Unsupported object')
@@ -89,7 +89,7 @@ export function parse(s, {
     default:
       throw new Error('Unsupported type')
   }
-  if (!allowNegative) assert(x >= 0)
+  if (!negative) assert(x >= 0, 'Negative input disallowed by \'negative\' option')
   return x
 }
 
