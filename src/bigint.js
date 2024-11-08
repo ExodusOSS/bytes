@@ -40,14 +40,14 @@ export function toUint8(x, length) {
 export function fromUint8(a) {
   assert(a instanceof Uint8Array, 'Should be an instance of Uint8Array / Buffer')
   const buf = Buffer.isBuffer(a) ? a : Buffer.from(a.buffer, a.byteOffset, a.byteLength) // zero-copy
-  return BigInt('0x' + buf.toString('hex')
+  return BigInt('0x' + buf.toString('hex'))
 }
 
 export function parse(s, {
-  allowNegative: false,
-  allowStrings: false,
-  allowBuffers: false,
-  allowArrays: false,
+  allowNegative = false,
+  allowStrings = false,
+  allowBuffers = false,
+  allowArrays = false,
 } = Object.create(null)) {
   let x
   switch (typeof s) {
@@ -75,19 +75,20 @@ export function parse(s, {
       break
     case 'object':
       if (Array.isArray(s)) {
-        assert(allowArrays, 'Uint8Array / Buffer input disallowed by allowBuffer option')
+        assert(allowArrays, 'Uint8Array / Buffer input disallowed by allowArrays option')
         const buf = Buffer.from(s)
         assert(buf.every((c, i) => s[i] === c), 'Array should contain only bytes (0-255)')
-        x = fromBuffer(buf)
+        x = fromUint8(buf)
       } else if (s instanceof Uint8Array) {    
-        assert(allowBuffers, 'Uint8Array / Buffer input disallowed by allowBuffer option')
-        x = fromBuffer(s)
+        assert(allowBuffers, 'Uint8Array / Buffer input disallowed by allowBuffers option')
+        x = fromUint8(s)
       } else {
         throw new Error('Unsupported object')
       }
       break
     default:
       throw new Error('Unsupported type')
+  }
   if (!allowNegative) assert(x >= 0)
   return x
 }
@@ -100,11 +101,11 @@ function toFormat(x, format, length) {
     case 'uint8': return toUint8(x, length)
     case 'buffer': return toBuffer(x, length)
     case 'hex': return toHex(x, length)
-    default: throw new Error('Unexpected format'
+    default: throw new Error('Unexpected format')
   }
 }
 
-export function sum(arr, { format: 'bigint', length, ...parseOpts } = Object.create(null)) {
+export function sum(arr, { format = 'bigint', length, ...parseOpts } = Object.create(null)) {
   const res = [...arr].reduce((a, c) => a + parse(c, parseOpts), _0n)
   return toFormat(res, format, length)
 }
