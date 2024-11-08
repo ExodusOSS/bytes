@@ -9,21 +9,31 @@ export function fromHex(s) {
   return BigInt('0x' + (s || '0'))
 }
 
-// TODO: should we return an empty string for 0n?
+// TODO: should we return an empty string for 0n if no hexLength specified?
 // Returns an even-sized hex, returns '00' for 0n
-export function toHex(x) {
+export function toHex(x, byteLength) {
   assert(typeof x === 'bigint' || Number.isSafeInteger(x), 'Should be a bigint or a safe integer')
   assert(x >= 0, 'Should be non-negative') // >= is fine between bigint and numbers
   const hex = x.toString(16)
+  if (byteLength !== undefined) {
+    assert(byteLength * 2 >= hex.length, `Can not fit supplied number to ${hexLength} hex symbols`)
+    return hex.padStart(byteLength * 2, '0')
+  }
   return hex.length % 2 !== 0 ? '0' + hex : hex
 }
 
 // TODO: should we return an empty buffer for 0n?
 // Returns [0] for 0n
-export const toBuffer = (x) => Buffer.from(toHex(x), 'hex') // typechecks
+export const toBuffer = (x, length) => Buffer.from(toHex(x, length), 'hex') // typechecks
 
-export function toUint8(x) {
-  const buf = toBuffer(x) // typechecks
+export function toNumber(x) {
+  const n = Number(x)
+  assert(Number.isSafeInteger(n) && BigInt(n) === x, 'Can not safely convert large bigint to number')
+  return n
+}
+
+export function toUint8(x, length) {
+  const buf = toBuffer(x, length) // typechecks
   return new Uint8Array(buf.buffer, buf.byteOffset, buf.byteLength) // zero-copy
 }
 
@@ -38,7 +48,7 @@ export function parse(s, {
   allowStrings: false,
   allowBuffers: false,
   allowArrays: false,
-} = {}) {
+} = Object.create(null)) {
   let x
   switch (typeof s) {
     case 'string':
@@ -82,4 +92,19 @@ export function parse(s, {
   return x
 }
 
-export const sum(arr, parseOpts) => [...arr].reduce((a, c) => a + parse(c, parseOpts), _0n)
+function toFormat(x, format, length) {
+  assert(typeof x === 'bigint') // internal use only
+  switch (format) {
+    case 'bigint': return x
+    case 'number': return toNumber(x) // checks for safe conversion
+    case 'uint8': return toUint8(x, length)
+    case 'buffer': return toBuffer(x, length)
+    case 'hex': return toHex(x, length)
+    default: throw new Error('Unexpected format'
+  }
+}
+
+export function sum(arr, { format: 'bigint', length, ...parseOpts } = Object.create(null)) {
+  const res = [...arr].reduce((a, c) => a + parse(c, parseOpts), _0n)
+  return toFormat(res, format, length)
+}
