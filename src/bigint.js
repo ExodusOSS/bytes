@@ -53,7 +53,7 @@ export function parse(s, {
           x = allowNegative && s[0] === '-' ? 0n - fromHex(s.slice(1)) : fromHex(s)
           break
         default:
-          assert(false, 'Invalid allowStrings value, should be 10 (decimal) or 16 (hex)')
+          throw new Error('Invalid allowStrings value, should be 10 (decimal) or 16 (hex)')
       }
       break
     case 'bigint':
