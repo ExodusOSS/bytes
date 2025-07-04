@@ -1,4 +1,4 @@
-import { assert, assertUint8 } from './assert.js'
+import { assert, assertUint8 } from '../assert.js'
 
 const _0n = BigInt(0)
 

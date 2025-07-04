@@ -1,4 +1,4 @@
-import { assertUint8 } from './assert.js'
+import { assertUint8 } from '../assert.js'
 
 function toBuffer(arg) {
   assertUint8(arg)
