@@ -52,6 +52,7 @@ export function fromHex(arg, format = 'uint8') {
 // Unlike Buffer.from(), throws on invalid input (non-base64 symbols and incomplete chunks)
 // Unlike Buffer.from() and Uint8Array.fromBase64(), does not allow spaces
 // Unlike Uint8Array.fromBase64(), accepts both base64 and base64url
+// NOTE: base64url does not allow padding!
 // TODO: add a strict mode? (we allow overflow by default, like VR==)
 // TODO: add 'alphabet' option to enforce input format?
 export function fromBase64(arg, format = 'uint8') {
@@ -61,7 +62,7 @@ export function fromBase64(arg, format = 'uint8') {
   assert(arg.length % 4 !== 1, 'Invalid base64 length') // JSC misses this in fromBase64
   if (arg.endsWith('=')) {
     assert(arg.length % 4 === 0, 'Invalid padded base64 length') // JSC misses this too
-    assert(arg[arg.length - 3] !== '=', 'Excessive padding')
+    assert(arg[arg.length - 3] !== '=', 'Excessive padding') // no more than two = at the end
   }
 
   if (Uint8Array.fromBase64) {
