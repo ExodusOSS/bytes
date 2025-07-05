@@ -38,10 +38,12 @@
   "type": "module",
   "files": [
     "/assert.js",
+    "/base.js",
     "/convert.js"
   ],
   "exports": {
     "./assert": "./assert.js",
+    "./base": "./base.js",
     "./convert": "./convert.js"
   },
   "dependencies": {},
