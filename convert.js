@@ -56,6 +56,14 @@ export function fromHex(arg, format = 'uint8') {
 // TODO: add 'alphabet' option to enforce input format?
 export function fromBase64(arg, format = 'uint8') {
   if (typeof arg !== 'string') throw new TypeError('Input is not a string')
+
+  // These checks should be needed only for Buffer path, not Uint8Array.fromBase64 path, but JSC lacks proper checks
+  assert(arg.length % 4 !== 1, 'Invalid base64 length') // JSC misses this in fromBase64
+  if (arg.endsWith('=')) {
+    assert(arg.length % 4 === 0, 'Invalid padded base64 length') // JSC misses this too
+    assert(arg[arg.length - 3] !== '=', 'Excessive padding')
+  }
+
   if (Uint8Array.fromBase64) {
     if (!/[^0-9a-z=+/]/ui.test(arg)) return fromUint8Super(Uint8Array.fromBase64(arg), format)
     if (/[^0-9a-z_-]/ui.test(arg)) throw new Error('Invalid character in base64/base64url input')
@@ -63,11 +71,6 @@ export function fromBase64(arg, format = 'uint8') {
   }
 
   assert(!/=[^=]/ui.test(arg), 'Invalid input after base64 padding')
-  assert(arg.length % 4 !== 1, 'Invalid base64 length')
-  if (arg.endsWith('=')) {
-    assert(arg.length % 4 === 0, 'Invalid padded base64 length')
-    assert(arg[arg.length - 3] !== '=', 'Excessive padding')
-  }
 
   if (!/[^0-9a-z=+/]/ui.test(arg)) return fromUint8Super(Buffer.from(arg, 'base64'), format) // base64
   if (!/[^0-9a-z_-]/ui.test(arg)) return fromUint8Super(Buffer.from(arg, 'base64'), format) // base64url
