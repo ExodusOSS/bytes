@@ -2,3 +2,6 @@ lockfileIncludeTarballUrl: true
 linkWorkspacePackages: true
 preferWorkspacePackages: true
 enableGlobalVirtualStore: false
+onlyBuiltDependencies:
+  - electron
+  - esbuild
