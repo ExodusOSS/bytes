@@ -9,8 +9,8 @@ importers:
   .:
     devDependencies:
       '@exodus/test':
-        specifier: ^1.0.0-rc.99
-        version: 1.0.0-rc.99(electron@36.5.0)
+        specifier: ^1.0.0-rc.100
+        version: 1.0.0-rc.100(electron@36.5.0)
       electron:
         specifier: 36.5.0
         version: 36.5.0
@@ -330,8 +330,8 @@ packages:
       crypto-browserify:
         optional: true
 
-  '@exodus/test@1.0.0-rc.99':
-    resolution: {integrity: sha512-nt7k9PLQE92XT0zF+3DkJQUBrrt6SWZF6aHdXaXVEwRAx0V2XKvBTogajLbqW7KvEwwWbsfRDFagyYgTBqvARw==, tarball: https://registry.npmjs.org/@exodus/test/-/test-1.0.0-rc.99.tgz}
+  '@exodus/test@1.0.0-rc.100':
+    resolution: {integrity: sha512-VuWH9wTMEW+aGpTgSEc44VLcKsGYNJUuufCOYYL9/xVkR3FbB0khtuXiXggBjs6bHj7OaMxHvnG9t/bhY4JqsQ==, tarball: https://registry.npmjs.org/@exodus/test/-/test-1.0.0-rc.100.tgz}
     engines: {node: ^18.19.0 || ^20.8.0 || >=22.0.0}
     hasBin: true
     peerDependencies:
@@ -2341,7 +2341,7 @@ snapshots:
       - supports-color
     optional: true
 
-  '@exodus/test@1.0.0-rc.99(electron@36.5.0)':
+  '@exodus/test@1.0.0-rc.100(electron@36.5.0)':
     optionalDependencies:
       '@chalker/queue': 1.0.1
       '@exodus/replay': 1.0.0-rc.9

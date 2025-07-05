@@ -1,5 +1,5 @@
 import { toBase64, toBase64url, fromBase64 } from '@exodus/bytes/base'
-import { describe, test } from '@exodus/test/node'
+import { describe, test } from 'node:test'
 
 const raw = [new Uint8Array(), new Uint8Array([0]), new Uint8Array([1]), new Uint8Array([255])]
 for (let i = 0; i < 50; i++) {

@@ -1,5 +1,5 @@
 import { fromUint8Super, fromHex } from '@exodus/bytes/convert'
-import { describe, test } from '@exodus/test/node'
+import { describe, test } from 'node:test'
 
 const raw = [new Uint8Array(), new Uint8Array([0]), new Uint8Array([1]), new Uint8Array([255])]
 for (let i = 0; i < 50; i++) {
