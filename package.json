@@ -20,10 +20,12 @@
   },
   "type": "module",
   "files": [
-    "/assert.js"
+    "/assert.js",
+    "/convert.js"
   ],
   "exports": {
-    "./assert": "./assert.js"
+    "./assert": "./assert.js",
+    "./convert": "./convert.js"
   },
   "dependencies": {},
   "devDependencies": {
