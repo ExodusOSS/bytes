@@ -18,6 +18,8 @@
     "test:firefox:puppeteer": "exodus-test --engine=firefox:puppeteer",
     "test:firefox:playwright": "exodus-test --engine=firefox:playwright",
     "test": "exodus-test",
+    "jsvu": "jsvu",
+    "playwright": "exodus-test --playwright",
     "coverage": "exodus-test --coverage"
   },
   "repository": {
@@ -45,7 +47,8 @@
   "dependencies": {},
   "devDependencies": {
     "@exodus/test": "^1.0.0-rc.99",
-    "electron": "36.5.0"
+    "electron": "36.5.0",
+    "jsvu": "^3.0.0"
   },
   "packageManager": "pnpm@10.12.1+sha256.889bac470ec93ccc3764488a19d6ba8f9c648ad5e50a9a6e4be3768a5de387a3"
 }
