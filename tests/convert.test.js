@@ -105,7 +105,7 @@ describe('fromBase64', () => {
       ...['####', '@@@@', 'aaa#', 'a%aa'], // wrong chars
       ...['a-+a', 'aa+_', 'aa_/', '-a/a'], // mixed base64/base64url
     ]) {
-      if (Uint8Array.fromBase64 && process.env.EXODUS_TEST_PLATFORM !== 'jsc') {
+      if (Uint8Array.fromBase64 && !['jsc', 'webkit'].includes(process.env.EXODUS_TEST_PLATFORM)) {
         t.assert.throws(() => Uint8Array.fromBase64(input))
         t.assert.throws(() => Uint8Array.fromBase64(input, { alphabet: 'base64' }))
         t.assert.throws(() => Uint8Array.fromBase64(input, { alphabet: 'base64url' }))
