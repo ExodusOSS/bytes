@@ -100,15 +100,15 @@ export function toBase32(arr) {
   let carry = 0, shift = 3 // First byte needs to be shifted by 3 to get 5 bits
   for (; i < arr.length; i++) {
     let x = arr[i]
-    o += BASE32[(carry | (x >> shift)) & 0x1f]
-    if (shift > 5) {
+    o += BASE32[carry | (x >> shift)] // shift >= 3, so this fits
+    if (shift >= 5) {
       shift -= 5
       o += BASE32[(x >> shift) & 0x1f]
     }
-    carry = x << (5 - shift)
+    carry = (x << (5 - shift)) & 0x1f
     shift += 3 // Each byte prints 5 bits and leaves 3 bits
   }
-  if (shift !== 3) o += BASE32[carry & 0x1f] // shift 3 means we have no carry left
+  if (shift !== 3) o += BASE32[carry] // shift 3 means we have no carry left
   o += ['', '======', '====', '===', '='][arr.length - fullChunksBytes]
 
   return o
@@ -142,15 +142,15 @@ function toBase64js(arr, alphabet, padding) {
   let carry = 0, shift = 2 // First byte needs to be shifted by 2 to get 6 bits
   for (; i < arr.length; i++) {
     let x = arr[i]
-    o += alphabet[(carry | (x >> shift)) & 0x3f]
-    if (shift > 6) {
-      shift -= 6
-      o += alphabet[(x >> shift) & 0x3f]
+    o += alphabet[carry | (x >> shift)] // shift >= 2, so this fits
+    if (shift === 6) {
+      shift = 0
+      o += alphabet[x & 0x3f]
     }
-    carry = x << (6 - shift)
+    carry = (x << (6 - shift)) & 0x3f
     shift += 2 // Each byte prints 6 bits and leaves 2 bits
   }
-  if (shift !== 2) o += alphabet[carry & 0x3f] // shift 2 means we have no carry left
+  if (shift !== 2) o += alphabet[carry] // shift 2 means we have no carry left
   if (padding) o += ['', '==', '='][arr.length - fullChunksBytes]
 
   return o
