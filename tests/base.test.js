@@ -1,4 +1,4 @@
-import { toBase64, toBase64url, fromBase64 } from '@exodus/bytes/base'
+import { toBase64, toBase64url, fromBase64, fromBase64url } from '@exodus/bytes/base'
 import { describe, test } from 'node:test'
 
 const raw = [new Uint8Array(), new Uint8Array([0]), new Uint8Array([1]), new Uint8Array([255])]
@@ -61,8 +61,10 @@ describe('fromBase64', () => {
         t.assert.throws(() => Uint8Array.fromBase64(input, { alphabet: 'base64url' }))
       }
       t.assert.throws(() => fromBase64(input))
+      t.assert.throws(() => fromBase64url(input))
       for (const form of ['uint8', 'buffer', 'hex']) {
         t.assert.throws(() => fromBase64(input, form))
+        t.assert.throws(() => fromBase64url(input, form))
       }
     }
   })
@@ -73,8 +75,10 @@ describe('fromBase64', () => {
       ...['_aY=', '_aa=', '-a==', '-Q=='], // padded base64url
     ]) {
       t.assert.throws(() => fromBase64(input))
+      t.assert.throws(() => fromBase64url(input))
       for (const form of ['uint8', 'buffer', 'hex']) {
         t.assert.throws(() => fromBase64(input, form))
+        t.assert.throws(() => fromBase64url(input, form))
       }
     }
   })
@@ -83,22 +87,22 @@ describe('fromBase64', () => {
     for (const { base64, base64url, uint8 } of pool) {
       t.assert.deepStrictEqual(fromBase64(base64), uint8)
       t.assert.deepStrictEqual(fromBase64(base64, 'uint8'), uint8)
-      t.assert.deepStrictEqual(fromBase64(base64url), uint8)
-      t.assert.deepStrictEqual(fromBase64(base64url, 'uint8'), uint8)
+      t.assert.deepStrictEqual(fromBase64url(base64url), uint8)
+      t.assert.deepStrictEqual(fromBase64url(base64url, 'uint8'), uint8)
     }
   })
 
   test('buffer', (t) => {
     for (const { base64, base64url, buffer } of pool) {
       t.assert.deepStrictEqual(fromBase64(base64, 'buffer'), buffer)
-      t.assert.deepStrictEqual(fromBase64(base64url, 'buffer'), buffer)
+      t.assert.deepStrictEqual(fromBase64url(base64url, 'buffer'), buffer)
     }
   })
 
   test('hex', (t) => {
     for (const { hex, base64, base64url } of pool) {
       t.assert.strictEqual(fromBase64(base64, 'hex'), hex)
-      t.assert.strictEqual(fromBase64(base64url, 'hex'), hex)
+      t.assert.strictEqual(fromBase64url(base64url, 'hex'), hex)
     }
   })
 })

@@ -43,7 +43,6 @@ export function toBase64url(arr) {
 // Unlike Buffer.from(), throws on invalid input (non-base64 symbols and incomplete chunks)
 // Unlike Buffer.from() and Uint8Array.fromBase64(), does not allow spaces
 // Unlike Uint8Array.fromBase64(), accepts both base64 and base64url
-// NOTE: base64url does not allow padding!
 // TODO: add a strict mode? (we allow overflow by default, like VR==)
 // TODO: add 'alphabet' option to enforce input format?
 export function fromBase64(arg, format = 'uint8') {
@@ -56,17 +55,29 @@ export function fromBase64(arg, format = 'uint8') {
     assert(arg[arg.length - 3] !== '=', 'Excessive padding') // no more than two = at the end
   }
 
+  assert(!/[^0-9a-z=+/]/ui.test(arg), 'Invalid character in base64 input')
+
   if (Uint8Array.fromBase64) {
-    if (!/[^0-9a-z=+/]/ui.test(arg)) return fromUint8Super(Uint8Array.fromBase64(arg), format)
-    if (/[^0-9a-z_-]/ui.test(arg)) throw new Error('Invalid character in base64/base64url input')
-    return fromUint8Super(Uint8Array.fromBase64(arg, { alphabet: 'base64url' }), format)
+    return fromUint8Super(Uint8Array.fromBase64(arg), format)
   }
 
   assert(!/=[^=]/ui.test(arg), 'Invalid input after padding')
+  return fromUint8Super(Buffer.from(arg, 'base64'), format)
+}
 
-  if (!/[^0-9a-z=+/]/ui.test(arg)) return fromUint8Super(Buffer.from(arg, 'base64'), format) // base64
-  if (!/[^0-9a-z_-]/ui.test(arg)) return fromUint8Super(Buffer.from(arg, 'base64'), format) // base64url
-  throw new Error('Invalid character in base64/base64url input')
+// NOTE: base64url does not allow padding!
+export function fromBase64url(arg, format = 'uint8') {
+  if (typeof arg !== 'string') throw new TypeError('Input is not a string')
+
+  // These checks should be needed only for Buffer path, not Uint8Array.fromBase64 path, but JSC lacks proper checks
+  assert(arg.length % 4 !== 1, 'Invalid base64 length') // JSC misses this in fromBase64
+  assert(!/[^0-9a-z_-]/ui.test(arg), 'Invalid character in base64url input')
+
+  if (Uint8Array.fromBase64) {
+    return fromUint8Super(Uint8Array.fromBase64(arg, { alphabet: 'base64url' }), format)
+  }
+
+  return fromUint8Super(Buffer.from(arg, 'base64'), format)
 }
 
 const BASE32 = [...'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567']
