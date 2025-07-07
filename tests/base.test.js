@@ -19,7 +19,7 @@ const pool = raw.map((uint8) => {
   return { uint8, buffer, hex: buffer.toString('hex'), base64, base64url }
 })
 
-describe('to*', () => {
+describe('toBase64', () => {
   describe('invalid input', () => {
     for (const method of [toBase64, toBase64url]) {
       test(method.name, (t) => {
