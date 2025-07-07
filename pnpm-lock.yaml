@@ -11,6 +11,9 @@ importers:
       '@exodus/test':
         specifier: ^1.0.0-rc.100
         version: 1.0.0-rc.100(electron@36.5.0)
+      '@types/node':
+        specifier: ^24.0.10
+        version: 24.0.10
       electron:
         specifier: 36.5.0
         version: 36.5.0

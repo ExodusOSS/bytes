@@ -49,6 +49,7 @@
   "dependencies": {},
   "devDependencies": {
     "@exodus/test": "^1.0.0-rc.100",
+    "@types/node": "^24.0.10",
     "electron": "36.5.0",
     "jsvu": "^3.0.0"
   },
