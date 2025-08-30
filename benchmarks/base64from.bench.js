@@ -5,27 +5,29 @@ import buffer from 'buffer/index.js'
 
 import { bufs } from './random.js'
 
-const val = exodus.toBase64(bufs[0])
-if (scureBase64.encode(bufs[0]) !== val) throw new Error('scure.base64')
+const strings = bufs.map(x => exodus.toBase64(x))
+
+if (Buffer.compare(exodus.fromBase64(strings[0]), bufs[0]) !== 0) throw new Error('exodus')
+if (Buffer.compare(scureBase64.decode(strings[0]), bufs[0]) !== 0) throw new Error('scure.base64')
 
 for (let i = 0; i < 5; i++) {
   console.time('base64-js')
-  for (const buf of bufs) base64js.fromByteArray(buf)
+  for (const str of strings) base64js.toByteArray(str)
   console.timeEnd('base64-js')
 
   console.time('@exodus/bytes/base')
-  for (const buf of bufs) exodus.toBase64(buf)
+  for (const str of strings) exodus.fromBase64(str)
   console.timeEnd('@exodus/bytes/base')
 
   console.time('@scure/base')
-  for (const buf of bufs) scureBase64.encode(buf)
+  for (const str of strings) scureBase64.decode(str)
   console.timeEnd('@scure/base')
 
   console.time('Buffer.from')
-  for (const buf of bufs) Buffer.from(buf).toString('base64')
+  for (const str of strings) Buffer.from(str, 'base64')
   console.timeEnd('Buffer.from')
 
   console.time('buffer/Buffer.from')
-  for (const buf of bufs) buffer.Buffer.from(buf).toString('base64')
+  for (const str of strings) buffer.Buffer.from(str, 'base64')
   console.timeEnd('buffer/Buffer.from')
 }
