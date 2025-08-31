@@ -40,29 +40,21 @@ export function fromHex(arg, format = 'uint8') {
     assert(!/[^0-9a-f]/ui.test(arg), 'Input is not a hex string')
     return fromUint8Super(Buffer.from(arg, 'hex'), format)
   }
-  // TODO: measure perf/optimize?
+
+  if (!dehexArray) {
+    dehexArray = new Array(103) // f is 102
+    for (let i = 0; i < 16; i++) {
+      const s = i.toString(16)
+      dehexArray[s.charCodeAt(0)] = dehexArray[s.toUpperCase().charCodeAt(0)] = i
+    }
+  }
+
   const arr = new Uint8Array(arg.length / 2)
   let j = 0
-  if (globalThis.HermesInternal) {
-    // This is faster in Hermes
-    assert(!/[^0-9a-f]/ui.test(arg), 'Input is not a hex string')
-    for (let i = 0; i < arr.length; i++) {
-      arr[i] = parseInt(arg[j++] + arg[j++], 16)
-    }
-  } else {
-    // This is faster on other engines
-    if (!dehexArray) {
-      dehexArray = new Array(103) // f is 102
-      for (let i = 0; i < 16; i++) {
-        const s = i.toString(16)
-        dehexArray[s.charCodeAt(0)] = dehexArray[s.toUpperCase().charCodeAt(0)] = i
-      }
-    }
-    for (let i = 0; i < arr.length; i++) {
-      const a = dehexArray[arg.charCodeAt(j++)] * 16 + dehexArray[arg.charCodeAt(j++)]
-      if (Number.isNaN(a)) throw new Error('Input is not a hex string')
-      arr[i] = a
-    }
+  for (let i = 0; i < arr.length; i++) {
+    const a = dehexArray[arg.charCodeAt(j++)] * 16 + dehexArray[arg.charCodeAt(j++)]
+    if (!a && Number.isNaN(a)) throw new Error('Input is not a hex string')
+    arr[i] = a
   }
 
   return fromUint8Super(arr, format)
