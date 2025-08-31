@@ -5,6 +5,7 @@ import buffer from 'buffer/index.js'
 
 import { bufs } from './random.js'
 
+if (!globalThis.Buffer) globalThis.Buffer = buffer.Buffer
 Buffer.TYPED_ARRAY_SUPPORT = true
 const exodusAtob = await import('../base64.js?atob')
 const { atob } = globalThis

@@ -4,6 +4,8 @@ import base32js from 'base32.js'
 
 import { bufs } from './random.js'
 
+if (!globalThis.Buffer) globalThis.Buffer = buffer.Buffer
+
 const val = exodus.toBase32(bufs[0])
 if (scureBase32.encode(bufs[0]) !== val) throw new Error('scure.base32')
 

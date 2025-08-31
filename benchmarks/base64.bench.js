@@ -5,13 +5,14 @@ import buffer from 'buffer/index.js'
 
 import { bufs } from './random.js'
 
+if (!globalThis.Buffer) globalThis.Buffer = buffer.Buffer
 Buffer.TYPED_ARRAY_SUPPORT = true
 const exodusPure = await import('../base64.js?pure')
 delete Buffer.TYPED_ARRAY_SUPPORT
 
 const val = exodus.toBase64(bufs[0])
-if (exodusPure.toBase64(bufs[0]) !== val) throw new Error('exodus pure')
 if (scureBase64.encode(bufs[0]) !== val) throw new Error('scure.base64')
+if (exodusPure.toBase64(bufs[0]) !== val) throw new Error('exodus pure')
 
 for (let i = 0; i < 5; i++) {
   console.time('base64-js')
