@@ -57,9 +57,9 @@ describe('fromBase64', () => {
       ...['aa=='], // non-strict
     ]) {
       if (Uint8Array.fromBase64 && !['jsc', 'webkit'].includes(process.env.EXODUS_TEST_PLATFORM)) {
-        t.assert.throws(() => Uint8Array.fromBase64(input, { lastChunkEncoding: 'strict' }))
-        t.assert.throws(() => Uint8Array.fromBase64(input, { lastChunkEncoding: 'strict', alphabet: 'base64' }))
-        t.assert.throws(() => Uint8Array.fromBase64(input, { lastChunkEncoding: 'strict', alphabet: 'base64url' }))
+        t.assert.throws(() => Uint8Array.fromBase64(input, { lastChunkHandling: 'strict' }))
+        t.assert.throws(() => Uint8Array.fromBase64(input, { lastChunkHandling: 'strict', alphabet: 'base64' }))
+        t.assert.throws(() => Uint8Array.fromBase64(input, { lastChunkHandling: 'strict', alphabet: 'base64url' }))
       }
       t.assert.throws(() => fromBase64(input))
       t.assert.throws(() => fromBase64url(input))
