@@ -38,7 +38,7 @@
   "type": "module",
   "files": [
     "/assert.js",
-    "/base.js",
+    "/base64.js",
     "/convert.js"
   ],
   "exports": {
