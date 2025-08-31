@@ -1,4 +1,4 @@
-import { toBase64, toBase64url, fromBase64, fromBase64url } from '@exodus/bytes/base'
+import { toBase64, toBase64url, fromBase64, fromBase64url } from '@exodus/bytes/base64.js'
 import { describe, test } from 'node:test'
 
 const raw = [new Uint8Array(), new Uint8Array([0]), new Uint8Array([1]), new Uint8Array([255])]
@@ -54,11 +54,12 @@ describe('fromBase64', () => {
       ...['a==', '====', 'a=aa', 'aa=a', '=aaa'], // wrong padding
       ...['####', '@@@@', 'aaa#', 'a%aa'], // wrong chars
       ...['a-+a', 'aa+_', 'aa_/', '-a/a'], // mixed base64/base64url
+      ...['aa=='], // non-strict
     ]) {
       if (Uint8Array.fromBase64 && !['jsc', 'webkit'].includes(process.env.EXODUS_TEST_PLATFORM)) {
-        t.assert.throws(() => Uint8Array.fromBase64(input))
-        t.assert.throws(() => Uint8Array.fromBase64(input, { alphabet: 'base64' }))
-        t.assert.throws(() => Uint8Array.fromBase64(input, { alphabet: 'base64url' }))
+        t.assert.throws(() => Uint8Array.fromBase64(input, { lastChunkEncoding: 'strict' }))
+        t.assert.throws(() => Uint8Array.fromBase64(input, { lastChunkEncoding: 'strict', alphabet: 'base64' }))
+        t.assert.throws(() => Uint8Array.fromBase64(input, { lastChunkEncoding: 'strict', alphabet: 'base64url' }))
       }
       t.assert.throws(() => fromBase64(input))
       t.assert.throws(() => fromBase64url(input))

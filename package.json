@@ -42,9 +42,9 @@
     "/convert.js"
   ],
   "exports": {
-    "./assert": "./assert.js",
-    "./base": "./base.js",
-    "./convert": "./convert.js"
+    "./assert.js": "./assert.js",
+    "./base64.js": "./base64.js",
+    "./convert.js": "./convert.js"
   },
   "dependencies": {},
   "devDependencies": {

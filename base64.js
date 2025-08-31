@@ -1,14 +1,12 @@
 import { assert, assertUint8 } from './assert.js'
 import { fromUint8Super } from './convert.js'
 
-// TODO: make Buffer optional
-
 // See https://datatracker.ietf.org/doc/html/rfc4648
 
 // base64:    A-Za-z0-9+/ and =
 // base64url: A-Za-z0-9_-
 
-const { Buffer } = globalThis
+const { Buffer } = globalThis // Buffer is optional, only used when native
 const haveNativeBuffer = Buffer && !Buffer.TYPED_ARRAY_SUPPORT
 
 export function toBase64(arr) {
@@ -43,8 +41,8 @@ export function toBase64url(arr) {
 // Unlike Buffer.from(), throws on invalid input (non-base64 symbols and incomplete chunks)
 // Unlike Buffer.from() and Uint8Array.fromBase64(), does not allow spaces
 // Unlike Uint8Array.fromBase64(), accepts both base64 and base64url
-// TODO: add a strict mode? (we allow overflow by default, like VR==)
-// TODO: add 'alphabet' option to enforce input format?
+// NOTE: Always operates in strict mode for last chunk
+
 export function fromBase64(arg, format = 'uint8') {
   if (typeof arg !== 'string') throw new TypeError('Input is not a string')
 
@@ -56,73 +54,51 @@ export function fromBase64(arg, format = 'uint8') {
   }
 
   assert(!/[^0-9a-z=+/]/ui.test(arg), 'Invalid character in base64 input')
-
-  if (Uint8Array.fromBase64) {
-    return fromUint8Super(Uint8Array.fromBase64(arg), format)
-  }
-
-  assert(!/=[^=]/ui.test(arg), 'Invalid input after padding')
-  return fromUint8Super(Buffer.from(arg, 'base64'), format)
+  return fromUint8Super(fromBase64common(arg, false), format)
 }
 
-// NOTE: base64url does not allow padding!
 export function fromBase64url(arg, format = 'uint8') {
   if (typeof arg !== 'string') throw new TypeError('Input is not a string')
 
   // These checks should be needed only for Buffer path, not Uint8Array.fromBase64 path, but JSC lacks proper checks
   assert(arg.length % 4 !== 1, 'Invalid base64 length') // JSC misses this in fromBase64
+  assert(!arg.includes('='), 'Did not expect padding in base64url input')
+
   assert(!/[^0-9a-z_-]/ui.test(arg), 'Invalid character in base64url input')
-
-  if (Uint8Array.fromBase64) {
-    return fromUint8Super(Uint8Array.fromBase64(arg, { alphabet: 'base64url' }), format)
-  }
-
-  return fromUint8Super(Buffer.from(arg, 'base64'), format)
+  return fromUint8Super(fromBase64common(arg, true), format)
 }
 
-const BASE32 = [...'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567']
+function checkLastBase64Chunk(s, arr, isBase64url = false) {
+  if (arr.length % 3 === 0) return // last chunk is complete
+  // Check last chunk to be strict
+  const expected = toBase64(arr.subarray(-(arr.length % 3)))
+  const last = (s.length % 4 === 0) ? s.slice(-4) : s.slice(-(s.length % 4)).padEnd(4, '=')
+  const actual = isBase64url ? last.replaceAll('-', '+').replaceAll('_', '/') : last
+  if (expected !== actual) throw new Error('Invalid last chunk')
+}
 
-// We construct output by concatenating chars, this seems to be fine enough on modern JS engines
-export function toBase32(arr) {
-  assertUint8(arr)
-  const fullChunks = Math.floor(arr.length / 5)
-  const fullChunksBytes = fullChunks * 5
-  let o = '', i = 0
+const { atob } = globalThis
 
-  // Fast path for complete blocks
-  // This whole loop can be commented out, the algorithm won't change, it's just an optimization of the next loop
-  for (; i < fullChunksBytes; i += 5) {
-    let a = arr[i], b = arr[i + 1], c = arr[i + 2], d = arr[i + 3], e = arr[i + 4]
-    if (a === 0 && b === 0 && c === 0 && d === 0 && e === 0) {
-      o += 'AAAAAAAA'
-    } else {
-      o += BASE32[a >> 3] // 8 - 5 = 3 left
-      o += BASE32[((a & 0x7) << 2) | (b >> 6)] // 3 + 8 - 5 = 6 left
-      o += BASE32[(b >> 1) & 0x1f] // 6 - 5 = 1 left
-      o += BASE32[((b & 0x1) << 4) | (c >> 4)] // 1 + 8 - 5 = 4 left
-      o += BASE32[((c & 0xf) << 1) | (d >> 7)] // 4 + 8 - 5 = 7 left
-      o += BASE32[(d >> 2) & 0x1f] // 7 - 5 = 2 left
-      o += BASE32[((d & 0x3) << 3) | (e >> 5)] // 2 + 8 - 5 = 5 left
-      o += BASE32[e & 0x1f] // 5 - 5 = 0 left
-    }
+function fromBase64common(arg, isBase64url) {
+  if (Uint8Array.fromBase64) {
+    const options = { alphabet: isBase64url ? 'base64url' : 'base64', lastChunkHandling: 'strict' }
+    return Uint8Array.fromBase64(arg, options)
   }
 
-  // If we have something left, process it with a full algo
-  let carry = 0, shift = 3 // First byte needs to be shifted by 3 to get 5 bits
-  for (; i < arr.length; i++) {
-    let x = arr[i]
-    o += BASE32[carry | (x >> shift)] // shift >= 3, so this fits
-    if (shift >= 5) {
-      shift -= 5
-      o += BASE32[(x >> shift) & 0x1f]
-    }
-    carry = (x << (5 - shift)) & 0x1f
-    shift += 3 // Each byte prints 5 bits and leaves 3 bits
+  if (!haveNativeBuffer && atob) {
+    // atob is faster than manual parsing on Hermes
+    const str = atob(isBase64url ? arg.replaceAll('-', '+').replaceAll('_', '/') : arg)
+    const arr = new Uint8Array(str.length)
+    for (let i = 0; i < str.length; i++) arr[i] = str.charCodeAt(i)
+    checkLastBase64Chunk(arg, arr, isBase64url)
+    return arr
   }
-  if (shift !== 3) o += BASE32[carry] // shift 3 means we have no carry left
-  o += ['', '======', '====', '===', '='][arr.length - fullChunksBytes]
 
-  return o
+  // FIXME: use a better impl when Buffer.from is not native?
+  assert(!arg.includes('=') || !/=[^=]/ui.test(arg), 'Invalid input after padding')
+  const arr = haveNativeBuffer ? Buffer.from(arg, 'base64') : fromBase64js(arg)
+  checkLastBase64Chunk(arg, arr, isBase64url)
+  return arr
 }
 
 const BASE64 = [...'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/']
@@ -165,4 +141,55 @@ function toBase64js(arr, alphabet, padding) {
   if (padding) o += ['', '==', '='][arr.length - fullChunksBytes]
 
   return o
+}
+
+// Assumes no chars after =, checked
+let fromBase64jsMap
+function fromBase64js(str) {
+  const map = fromBase64jsMap || Array(256)
+  if (!fromBase64jsMap) {
+    fromBase64jsMap = map
+    BASE64.forEach((c, i) => (map[c.charCodeAt(0)] = i))
+    map['-'.charCodeAt(0)] = 62 // two last chars of BASE64
+    map['_'.charCodeAt(0)] = 63 // two last chars of BASE64
+  }
+
+  let inputLength = str.length
+  while (str[inputLength - 1] === '=') inputLength--
+
+  const arr = new Uint8Array(Math.floor(inputLength * 3 / 4))
+  const tailLength = inputLength % 4
+  const mainLength = inputLength - tailLength // multiples of 4
+
+  let at = 0
+  let i = 0
+  let tmp
+
+  while (i < mainLength) {
+    tmp =
+      (map[str.charCodeAt(i)] << 18) |
+      (map[str.charCodeAt(i + 1)] << 12) |
+      (map[str.charCodeAt(i + 2)] << 6) |
+      map[str.charCodeAt(i + 3)]
+    arr[at++] = (tmp >> 16)
+    arr[at++] = (tmp >> 8) & 0xFF
+    arr[at++] = tmp & 0xFF
+    i += 4
+  }
+
+  if (tailLength === 3) {
+    tmp =
+      (map[str.charCodeAt(i)] << 10) |
+      (map[str.charCodeAt(i + 1)] << 4) |
+      (map[str.charCodeAt(i + 2)] >> 2)
+    arr[at++] = (tmp >> 8) & 0xFF
+    arr[at++] = tmp & 0xFF
+  } else if (tailLength === 2) {
+    tmp =
+      (map[str.charCodeAt(i)] << 2) |
+      (map[str.charCodeAt(i + 1)] >> 4)
+    arr[at++] = tmp & 0xFF
+  }
+
+  return arr
 }

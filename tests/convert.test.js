@@ -1,4 +1,4 @@
-import { fromUint8Super, fromHex } from '@exodus/bytes/convert'
+import { fromUint8Super, fromHex } from '@exodus/bytes/convert.js'
 import { describe, test } from 'node:test'
 
 const raw = [new Uint8Array(), new Uint8Array([0]), new Uint8Array([1]), new Uint8Array([255])]
