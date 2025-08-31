@@ -82,7 +82,8 @@ const { atob } = globalThis
 function fromBase64common(arg, isBase64url) {
   if (Uint8Array.fromBase64) {
     const options = { alphabet: isBase64url ? 'base64url' : 'base64', lastChunkHandling: 'strict' }
-    return Uint8Array.fromBase64(arg, options)
+    const padded = arg.length % 4 !== 0 ? `${arg}${'='.repeat(4 - arg.length % 4)}` : arg
+    return Uint8Array.fromBase64(padded, options)
   }
 
   if (!haveNativeBuffer && atob) {
