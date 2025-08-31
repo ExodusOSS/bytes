@@ -99,11 +99,4 @@ describe('fromBase64', () => {
       t.assert.deepStrictEqual(fromBase64url(base64url, 'buffer'), buffer)
     }
   })
-
-  test('hex', (t) => {
-    for (const { hex, base64, base64url } of pool) {
-      t.assert.strictEqual(fromBase64(base64, 'hex'), hex)
-      t.assert.strictEqual(fromBase64url(base64url, 'hex'), hex)
-    }
-  })
 })

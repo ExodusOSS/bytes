@@ -8,6 +8,12 @@ export function assertEmptyRest(rest) {
 
 const makeMessage = (name, extra) => `Expected${name ? ` ${name} to be` : ''} an Uint8Array${extra}`
 
+const TypedArray = Object.getPrototypeOf(Uint8Array)
+
+export function assertTypedArray(arr) {
+  assert(arr instanceof TypedArray, 'Expected a TypedArray instance')
+}
+
 export function assertUint8(arr, { name, length, ...rest } = {}) {
   assertEmptyRest(rest)
   if (arr instanceof Uint8Array && (length === undefined || arr.length === length)) return

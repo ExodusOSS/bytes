@@ -1,5 +1,5 @@
 import { assert, assertUint8 } from './assert.js'
-import { fromTypedArray } from './convert.js'
+import { fromTypedArray } from './array.js'
 
 // See https://datatracker.ietf.org/doc/html/rfc4648
 

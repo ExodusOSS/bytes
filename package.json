@@ -39,12 +39,14 @@
   "files": [
     "/assert.js",
     "/base64.js",
-    "/convert.js"
+    "/array.js",
+    "/hex.js"
   ],
   "exports": {
     "./assert.js": "./assert.js",
     "./base64.js": "./base64.js",
-    "./convert.js": "./convert.js"
+    "./array.js": "./array.js",
+    "./hex.js": "./hex.js"
   },
   "dependencies": {},
   "devDependencies": {
