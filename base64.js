@@ -1,5 +1,5 @@
 import { assert, assertUint8 } from './assert.js'
-import { fromUint8Super } from './convert.js'
+import { fromTypedArray } from './convert.js'
 
 // See https://datatracker.ietf.org/doc/html/rfc4648
 
@@ -54,7 +54,7 @@ export function fromBase64(arg, format = 'uint8') {
   }
 
   assert(!/[^0-9a-z=+/]/ui.test(arg), 'Invalid character in base64 input')
-  return fromUint8Super(fromBase64common(arg, false), format)
+  return fromTypedArray(fromBase64common(arg, false), format)
 }
 
 export function fromBase64url(arg, format = 'uint8') {
@@ -65,7 +65,7 @@ export function fromBase64url(arg, format = 'uint8') {
   assert(!arg.includes('='), 'Did not expect padding in base64url input')
 
   assert(!/[^0-9a-z_-]/ui.test(arg), 'Invalid character in base64url input')
-  return fromUint8Super(fromBase64common(arg, true), format)
+  return fromTypedArray(fromBase64common(arg, true), format)
 }
 
 function checkLastBase64Chunk(s, arr, isBase64url = false) {

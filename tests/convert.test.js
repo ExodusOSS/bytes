@@ -1,4 +1,4 @@
-import { fromUint8Super, fromHex } from '@exodus/bytes/convert.js'
+import { fromTypedArray, fromHex } from '@exodus/bytes/convert.js'
 import { describe, test } from 'node:test'
 
 const raw = [new Uint8Array(), new Uint8Array([0]), new Uint8Array([1]), new Uint8Array([255])]
@@ -12,22 +12,22 @@ const pool = raw.map((uint8) => {
   return { uint8, buffer, hex: buffer.toString('hex') }
 })
 
-describe('fromUint8Super', () => {
+describe('fromTypedArray', () => {
   test('invalid input', (t) => {
-    for (const input of [null, undefined, [], [1,2], new Uint16Array(1), 'string']) {
-      t.assert.throws(() => fromUint8Super(input))
+    for (const input of [null, undefined, [], [1,2], 'string']) {
+      t.assert.throws(() => fromTypedArray(input))
       for (const form of ['uint8', 'buffer', 'hex']) {
-        t.assert.throws(() => fromUint8Super(input, form))
+        t.assert.throws(() => fromTypedArray(input, form))
       }
     }
   })
 
   test('uint8', (t) => {
     for (const { buffer, uint8 } of pool) {
-      t.assert.strictEqual(fromUint8Super(uint8), uint8)
-      t.assert.strictEqual(fromUint8Super(uint8, 'uint8'), uint8)
-      const a = fromUint8Super(buffer)
-      const b = fromUint8Super(buffer, 'uint8')
+      t.assert.strictEqual(fromTypedArray(uint8), uint8)
+      t.assert.strictEqual(fromTypedArray(uint8, 'uint8'), uint8)
+      const a = fromTypedArray(buffer)
+      const b = fromTypedArray(buffer, 'uint8')
       t.assert.deepStrictEqual(a, uint8)
       t.assert.strictEqual(a.buffer, buffer.buffer)
       t.assert.deepStrictEqual(b, uint8)
@@ -37,8 +37,8 @@ describe('fromUint8Super', () => {
 
   test('buffer', (t) => {
     for (const { uint8, buffer } of pool) {
-      t.assert.strictEqual(fromUint8Super(buffer, 'buffer'), buffer)
-      const a = fromUint8Super(uint8, 'buffer')
+      t.assert.strictEqual(fromTypedArray(buffer, 'buffer'), buffer)
+      const a = fromTypedArray(uint8, 'buffer')
       t.assert.deepStrictEqual(a, buffer)
       t.assert.strictEqual(a.buffer, uint8.buffer)
     }
@@ -46,8 +46,8 @@ describe('fromUint8Super', () => {
 
   test('hex', (t) => {
     for (const { uint8, buffer, hex} of pool) {
-      t.assert.strictEqual(fromUint8Super(uint8, 'hex'), hex)
-      t.assert.strictEqual(fromUint8Super(buffer, 'hex'), hex)
+      t.assert.strictEqual(fromTypedArray(uint8, 'hex'), hex)
+      t.assert.strictEqual(fromTypedArray(buffer, 'hex'), hex)
     }
   })
 })

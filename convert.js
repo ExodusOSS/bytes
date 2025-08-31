@@ -1,4 +1,4 @@
-import { assert, assertUint8 } from './assert.js'
+import { assert } from './assert.js'
 
 const { Buffer } = globalThis // Buffer is optional, only used when native
 const haveNativeBuffer = Buffer && !Buffer.TYPED_ARRAY_SUPPORT
@@ -6,9 +6,10 @@ const haveNativeBuffer = Buffer && !Buffer.TYPED_ARRAY_SUPPORT
 let hexArray
 let dehexArray
 
-// From Uint8Array or a Buffer, defaults to uint8
-export function fromUint8Super(arr, format = 'uint8') {
-  assertUint8(arr)
+const TypedArray = Object.getPrototypeOf(Uint8Array)
+
+export function fromTypedArray(arr, format = 'uint8') {
+  assert(arr instanceof TypedArray, 'Expected a TypedArray instance')
   switch (format) {
     case 'uint8':
       if (arr.constructor === Uint8Array) return arr // fast path
@@ -17,14 +18,15 @@ export function fromUint8Super(arr, format = 'uint8') {
       if (arr.constructor === Buffer && Buffer.isBuffer(arr)) return arr
       return Buffer.from(arr.buffer, arr.byteOffset, arr.byteLength)
     case 'hex':
-      if (Uint8Array.prototype.toHex && arr.toHex === Uint8Array.prototype.toHex) return arr.toHex()
+      const u8 = arr instanceof Uint8Array ? arr : new Uint8Array(arr.buffer, arr.byteOffset, arr.byteLength)
+      if (Uint8Array.prototype.toHex && u8.toHex === Uint8Array.prototype.toHex) return u8.toHex()
       if (haveNativeBuffer) {
         if (arr.constructor === Buffer && Buffer.isBuffer(arr)) return arr.toString('hex')
         return Buffer.from(arr.buffer, arr.byteOffset, arr.byteLength).toString('hex')
       }
       if (!hexArray) hexArray = Array.from({ length: 256 }, (_, i) => i.toString(16).padStart(2, '0'))
       let out = ''
-      for (let i = 0; i < arr.length; i++) out += hexArray[arr[i]]
+      for (let i = 0; i < arr.length; i++) out += hexArray[u8[i]]
       return out
   }
 
@@ -33,12 +35,12 @@ export function fromUint8Super(arr, format = 'uint8') {
 
 // Unlike Buffer.from(), throws on invalid input
 export function fromHex(arg, format = 'uint8') {
-  if (Uint8Array.fromHex) return fromUint8Super(Uint8Array.fromHex(arg), format)
+  if (Uint8Array.fromHex) return fromTypedArray(Uint8Array.fromHex(arg), format)
   if (typeof arg !== 'string') throw new TypeError('Input is not a string')
   assert(arg.length % 2 === 0, 'Input is not a hex string')
   if (haveNativeBuffer) {
     assert(!/[^0-9a-f]/ui.test(arg), 'Input is not a hex string')
-    return fromUint8Super(Buffer.from(arg, 'hex'), format)
+    return fromTypedArray(Buffer.from(arg, 'hex'), format)
   }
 
   if (!dehexArray) {
@@ -57,5 +59,5 @@ export function fromHex(arg, format = 'uint8') {
     arr[i] = a
   }
 
-  return fromUint8Super(arr, format)
+  return fromTypedArray(arr, format)
 }
