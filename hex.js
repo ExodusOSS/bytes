@@ -16,6 +16,7 @@ export function toHex(arr) {
     if (arr.constructor === Buffer && Buffer.isBuffer(arr)) return arr.toString('hex')
     return Buffer.from(arr.buffer, arr.byteOffset, arr.byteLength).toString('hex')
   }
+
   if (!hexArray) hexArray = Array.from({ length: 256 }, (_, i) => i.toString(16).padStart(2, '0'))
   let out = ''
   for (let i = 0; i < arr.length; i++) out += hexArray[u8[i]]

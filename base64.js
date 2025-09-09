@@ -82,7 +82,7 @@ const { atob } = globalThis
 function fromBase64common(arg, isBase64url) {
   if (Uint8Array.fromBase64) {
     const options = { alphabet: isBase64url ? 'base64url' : 'base64', lastChunkHandling: 'strict' }
-    const padded = arg.length % 4 !== 0 ? `${arg}${'='.repeat(4 - (arg.length % 4))}` : arg
+    const padded = arg.length % 4 > 0 ? `${arg}${'='.repeat(4 - (arg.length % 4))}` : arg
     return Uint8Array.fromBase64(padded, options)
   }
 
@@ -139,9 +139,11 @@ function toBase64js(arr, alphabet, padding) {
       shift = 0
       o += alphabet[x & 0x3f]
     }
+
     carry = (x << (6 - shift)) & 0x3f
     shift += 2 // Each byte prints 6 bits and leaves 2 bits
   }
+
   if (shift !== 2) o += alphabet[carry] // shift 2 means we have no carry left
   if (padding) o += ['', '==', '='][arr.length - fullChunksBytes]
 
@@ -150,8 +152,9 @@ function toBase64js(arr, alphabet, padding) {
 
 // Assumes no chars after =, checked
 let fromBase64jsMap
+
 function fromBase64js(str) {
-  const map = fromBase64jsMap || Array(256)
+  const map = fromBase64jsMap || new Array(256)
   if (!fromBase64jsMap) {
     fromBase64jsMap = map
     BASE64.forEach((c, i) => (map[c.charCodeAt(0)] = i))

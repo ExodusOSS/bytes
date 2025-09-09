@@ -7,7 +7,7 @@ import { bufs } from './random.js'
 
 if (!globalThis.Buffer) globalThis.Buffer = buffer.Buffer
 Buffer.TYPED_ARRAY_SUPPORT = true
-const exodusPure = await import('../base64.js?pure')
+const exodusPure = await import('../base64.js?pure') // eslint-disable-line @exodus/import/no-unresolved
 delete Buffer.TYPED_ARRAY_SUPPORT
 
 const val = exodus.toBase64(bufs[0])

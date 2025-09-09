@@ -15,6 +15,7 @@ const pool = raw.map((uint8) => {
   try {
     base64url = buffer.toString('base64url') // unsupported by https://npmjs.com/package/buffer
   } catch {}
+
   if (base64url !== base64urlFallback) throw new Error('Unexpected base64url mismatch with Buffer')
   return { uint8, buffer, hex: buffer.toString('hex'), base64, base64url }
 })
@@ -64,6 +65,7 @@ describe('fromBase64', () => {
           Uint8Array.fromBase64(input, { lastChunkHandling: 'strict', alphabet: 'base64url' })
         )
       }
+
       t.assert.throws(() => fromBase64(input))
       t.assert.throws(() => fromBase64url(input))
       for (const form of ['uint8', 'buffer', 'hex']) {

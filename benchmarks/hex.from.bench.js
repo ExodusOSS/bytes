@@ -6,7 +6,7 @@ import { bufs } from './random.js'
 
 if (!globalThis.Buffer) globalThis.Buffer = buffer.Buffer
 Buffer.TYPED_ARRAY_SUPPORT = true
-const exodusPure = await import('../hex.js?pure')
+const exodusPure = await import('../hex.js?pure') // eslint-disable-line @exodus/import/no-unresolved
 delete Buffer.TYPED_ARRAY_SUPPORT
 
 const strings = bufs.map((x) => exodus.fromTypedArray(x, 'hex'))
