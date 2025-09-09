@@ -53,7 +53,7 @@ export function fromBase64(arg, format = 'uint8') {
     assert(arg[arg.length - 3] !== '=', 'Excessive padding') // no more than two = at the end
   }
 
-  assert(!/[^0-9a-z=+/]/ui.test(arg), 'Invalid character in base64 input')
+  assert(!/[^0-9a-z=+/]/iu.test(arg), 'Invalid character in base64 input')
   return fromTypedArray(fromBase64common(arg, false), format)
 }
 
@@ -64,7 +64,7 @@ export function fromBase64url(arg, format = 'uint8') {
   assert(arg.length % 4 !== 1, 'Invalid base64 length') // JSC misses this in fromBase64
   assert(!arg.includes('='), 'Did not expect padding in base64url input')
 
-  assert(!/[^0-9a-z_-]/ui.test(arg), 'Invalid character in base64url input')
+  assert(!/[^0-9a-z_-]/iu.test(arg), 'Invalid character in base64url input')
   return fromTypedArray(fromBase64common(arg, true), format)
 }
 
@@ -72,7 +72,7 @@ function checkLastBase64Chunk(s, arr, isBase64url = false) {
   if (arr.length % 3 === 0) return // last chunk is complete
   // Check last chunk to be strict
   const expected = toBase64(arr.subarray(-(arr.length % 3)))
-  const last = (s.length % 4 === 0) ? s.slice(-4) : s.slice(-(s.length % 4)).padEnd(4, '=')
+  const last = s.length % 4 === 0 ? s.slice(-4) : s.slice(-(s.length % 4)).padEnd(4, '=')
   const actual = isBase64url ? last.replaceAll('-', '+').replaceAll('_', '/') : last
   if (expected !== actual) throw new Error('Invalid last chunk')
 }
@@ -82,7 +82,7 @@ const { atob } = globalThis
 function fromBase64common(arg, isBase64url) {
   if (Uint8Array.fromBase64) {
     const options = { alphabet: isBase64url ? 'base64url' : 'base64', lastChunkHandling: 'strict' }
-    const padded = arg.length % 4 !== 0 ? `${arg}${'='.repeat(4 - arg.length % 4)}` : arg
+    const padded = arg.length % 4 !== 0 ? `${arg}${'='.repeat(4 - (arg.length % 4))}` : arg
     return Uint8Array.fromBase64(padded, options)
   }
 
@@ -96,7 +96,7 @@ function fromBase64common(arg, isBase64url) {
   }
 
   // FIXME: use a better impl when Buffer.from is not native?
-  assert(!arg.includes('=') || !/=[^=]/ui.test(arg), 'Invalid input after padding')
+  assert(!arg.includes('=') || !/=[^=]/iu.test(arg), 'Invalid input after padding')
   const arr = haveNativeBuffer ? Buffer.from(arg, 'base64') : fromBase64js(arg)
   checkLastBase64Chunk(arg, arr, isBase64url)
   return arr
@@ -110,12 +110,15 @@ function toBase64js(arr, alphabet, padding) {
   assertUint8(arr)
   const fullChunks = Math.floor(arr.length / 3)
   const fullChunksBytes = fullChunks * 3
-  let o = '', i = 0
+  let o = ''
+  let i = 0
 
   // Fast path for complete blocks
   // This whole loop can be commented out, the algorithm won't change, it's just an optimization of the next loop
   for (; i < fullChunksBytes; i += 3) {
-    let a = arr[i], b = arr[i + 1], c = arr[i + 2]
+    const a = arr[i]
+    const b = arr[i + 1]
+    const c = arr[i + 2]
     if (a === 0 && b === 0 && c === 0) {
       o += 'AAAA'
     } else {
@@ -127,9 +130,10 @@ function toBase64js(arr, alphabet, padding) {
   }
 
   // If we have something left, process it with a full algo
-  let carry = 0, shift = 2 // First byte needs to be shifted by 2 to get 6 bits
+  let carry = 0
+  let shift = 2 // First byte needs to be shifted by 2 to get 6 bits
   for (; i < arr.length; i++) {
-    let x = arr[i]
+    const x = arr[i]
     o += alphabet[carry | (x >> shift)] // shift >= 2, so this fits
     if (shift === 6) {
       shift = 0
@@ -158,7 +162,7 @@ function fromBase64js(str) {
   let inputLength = str.length
   while (str[inputLength - 1] === '=') inputLength--
 
-  const arr = new Uint8Array(Math.floor(inputLength * 3 / 4))
+  const arr = new Uint8Array(Math.floor((inputLength * 3) / 4))
   const tailLength = inputLength % 4
   const mainLength = inputLength - tailLength // multiples of 4
 
@@ -172,9 +176,9 @@ function fromBase64js(str) {
       (map[str.charCodeAt(i + 1)] << 12) |
       (map[str.charCodeAt(i + 2)] << 6) |
       map[str.charCodeAt(i + 3)]
-    arr[at++] = (tmp >> 16)
-    arr[at++] = (tmp >> 8) & 0xFF
-    arr[at++] = tmp & 0xFF
+    arr[at++] = tmp >> 16
+    arr[at++] = (tmp >> 8) & 0xff
+    arr[at++] = tmp & 0xff
     i += 4
   }
 
@@ -183,13 +187,11 @@ function fromBase64js(str) {
       (map[str.charCodeAt(i)] << 10) |
       (map[str.charCodeAt(i + 1)] << 4) |
       (map[str.charCodeAt(i + 2)] >> 2)
-    arr[at++] = (tmp >> 8) & 0xFF
-    arr[at++] = tmp & 0xFF
+    arr[at++] = (tmp >> 8) & 0xff
+    arr[at++] = tmp & 0xff
   } else if (tailLength === 2) {
-    tmp =
-      (map[str.charCodeAt(i)] << 2) |
-      (map[str.charCodeAt(i + 1)] >> 4)
-    arr[at++] = tmp & 0xFF
+    tmp = (map[str.charCodeAt(i)] << 2) | (map[str.charCodeAt(i + 1)] >> 4)
+    arr[at++] = tmp & 0xff
   }
 
   return arr

@@ -1,6 +1,7 @@
 import * as exodus from '@exodus/bytes/base32.js'
 import { base32 as scureBase32 } from '@scure/base'
 import base32js from 'base32.js'
+import buffer from 'buffer/index.js'
 
 import { bufs } from './random.js'
 

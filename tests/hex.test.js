@@ -14,13 +14,13 @@ const pool = raw.map((uint8) => {
 
 describe('toHex', () => {
   test('invalid input', (t) => {
-    for (const input of [null, undefined, [], [1,2], 'string']) {
+    for (const input of [null, undefined, [], [1, 2], 'string']) {
       t.assert.throws(() => toHex(input))
     }
   })
 
   test('hex', (t) => {
-    for (const { uint8, buffer, hex} of pool) {
+    for (const { uint8, buffer, hex } of pool) {
       t.assert.strictEqual(toHex(uint8), hex)
       t.assert.strictEqual(toHex(buffer), hex)
     }
@@ -29,7 +29,17 @@ describe('toHex', () => {
 
 describe('fromHex', () => {
   test('invalid input', (t) => {
-    for (const input of [null, undefined, [], [1,2], ['00'], new Uint8Array(), 'a', '0x00', 'ag']) {
+    for (const input of [
+      null,
+      undefined,
+      [],
+      [1, 2],
+      ['00'],
+      new Uint8Array(),
+      'a',
+      '0x00',
+      'ag',
+    ]) {
       if (Uint8Array.fromHex) t.assert.throws(() => Uint8Array.fromHex(input))
       t.assert.throws(() => fromHex(input))
       for (const form of ['uint8', 'buffer', 'hex']) {

@@ -9,7 +9,8 @@ let dehexArray
 
 export function toHex(arr) {
   assertTypedArray(arr)
-  const u8 = arr instanceof Uint8Array ? arr : new Uint8Array(arr.buffer, arr.byteOffset, arr.byteLength)
+  const u8 =
+    arr instanceof Uint8Array ? arr : new Uint8Array(arr.buffer, arr.byteOffset, arr.byteLength)
   if (Uint8Array.prototype.toHex && u8.toHex === Uint8Array.prototype.toHex) return u8.toHex()
   if (haveNativeBuffer) {
     if (arr.constructor === Buffer && Buffer.isBuffer(arr)) return arr.toString('hex')
@@ -27,7 +28,7 @@ export function fromHex(arg, format = 'uint8') {
   if (typeof arg !== 'string') throw new TypeError('Input is not a string')
   assert(arg.length % 2 === 0, 'Input is not a hex string')
   if (haveNativeBuffer) {
-    assert(!/[^0-9a-f]/ui.test(arg), 'Input is not a hex string')
+    assert(!/[^0-9a-f]/iu.test(arg), 'Input is not a hex string')
     return fromTypedArray(Buffer.from(arg, 'hex'), format)
   }
 

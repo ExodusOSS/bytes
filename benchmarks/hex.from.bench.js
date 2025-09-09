@@ -9,7 +9,7 @@ Buffer.TYPED_ARRAY_SUPPORT = true
 const exodusPure = await import('../hex.js?pure')
 delete Buffer.TYPED_ARRAY_SUPPORT
 
-const strings = bufs.map(x => exodus.fromTypedArray(x, 'hex'))
+const strings = bufs.map((x) => exodus.fromTypedArray(x, 'hex'))
 
 if (Buffer.compare(exodus.fromHex(strings[0]), bufs[0]) !== 0) throw new Error('exodus')
 if (Buffer.compare(exodusPure.fromHex(strings[0]), bufs[0]) !== 0) throw new Error('exodus pure')

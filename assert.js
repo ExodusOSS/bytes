@@ -3,7 +3,7 @@ export function assert(x, msg) {
 }
 
 export function assertEmptyRest(rest) {
-  if (Object.keys(rest).length !== 0) throw new TypeError('Unexpected extra options')
+  if (Object.keys(rest).length > 0) throw new TypeError('Unexpected extra options')
 }
 
 const makeMessage = (name, extra) => `Expected${name ? ` ${name} to be` : ''} an Uint8Array${extra}`

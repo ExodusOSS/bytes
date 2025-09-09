@@ -14,7 +14,7 @@ const exodusPure = await import('../base64.js?pure')
 globalThis.atob = atob
 delete Buffer.TYPED_ARRAY_SUPPORT
 
-const strings = bufs.map(x => exodus.toBase64(x))
+const strings = bufs.map((x) => exodus.toBase64(x))
 
 if (Buffer.compare(exodus.fromBase64(strings[0]), bufs[0]) !== 0) throw new Error('exodus')
 if (Buffer.compare(exodusAtob.fromBase64(strings[0]), bufs[0]) !== 0) throw new Error('exodus atob')
@@ -29,11 +29,11 @@ for (let i = 0; i < 5; i++) {
   console.time('@exodus/bytes/base64.js')
   for (const str of strings) exodus.fromBase64(str)
   console.timeEnd('@exodus/bytes/base64.js')
-  
+
   console.time('@exodus/bytes/base64.js, atob')
   for (const str of strings) exodusAtob.fromBase64(str)
   console.timeEnd('@exodus/bytes/base64.js, atob')
-  
+
   console.time('@exodus/bytes/base64.js, pure')
   for (const str of strings) exodusPure.fromBase64(str)
   console.timeEnd('@exodus/bytes/base64.js, pure')

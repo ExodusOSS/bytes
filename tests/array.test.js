@@ -14,7 +14,7 @@ const pool = raw.map((uint8) => {
 
 describe('fromTypedArray', () => {
   test('invalid input', (t) => {
-    for (const input of [null, undefined, [], [1,2], 'string']) {
+    for (const input of [null, undefined, [], [1, 2], 'string']) {
       t.assert.throws(() => fromTypedArray(input))
       for (const form of ['uint8', 'buffer']) {
         t.assert.throws(() => fromTypedArray(input, form))

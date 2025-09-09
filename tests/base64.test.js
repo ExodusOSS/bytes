@@ -25,7 +25,7 @@ describe('toBase64', () => {
       test(method.name, (t) => {
         for (const input of [null, undefined, [], [1, 2], new Uint16Array(1), 'string']) {
           t.assert.throws(() => method(input))
-        }    
+        }
       })
     }
   })
@@ -36,7 +36,6 @@ describe('toBase64', () => {
       t.assert.strictEqual(toBase64(buffer), base64)
     }
   })
-
 
   test('base64url', (t) => {
     for (const { uint8, buffer, base64url } of pool) {
@@ -49,7 +48,7 @@ describe('toBase64', () => {
 describe('fromBase64', () => {
   test('invalid input', (t) => {
     for (const input of [
-      ...[null, undefined, [], [1,2], ['00'], new Uint8Array()],
+      ...[null, undefined, [], [1, 2], ['00'], new Uint8Array()],
       ...['a', 'aaaaa'], // wrong length
       ...['a==', '====', 'a=aa', 'aa=a', '=aaa'], // wrong padding
       ...['####', '@@@@', 'aaa#', 'a%aa'], // wrong chars
@@ -58,8 +57,12 @@ describe('fromBase64', () => {
     ]) {
       if (Uint8Array.fromBase64 && !['jsc', 'webkit'].includes(process.env.EXODUS_TEST_PLATFORM)) {
         t.assert.throws(() => Uint8Array.fromBase64(input, { lastChunkHandling: 'strict' }))
-        t.assert.throws(() => Uint8Array.fromBase64(input, { lastChunkHandling: 'strict', alphabet: 'base64' }))
-        t.assert.throws(() => Uint8Array.fromBase64(input, { lastChunkHandling: 'strict', alphabet: 'base64url' }))
+        t.assert.throws(() =>
+          Uint8Array.fromBase64(input, { lastChunkHandling: 'strict', alphabet: 'base64' })
+        )
+        t.assert.throws(() =>
+          Uint8Array.fromBase64(input, { lastChunkHandling: 'strict', alphabet: 'base64url' })
+        )
       }
       t.assert.throws(() => fromBase64(input))
       t.assert.throws(() => fromBase64url(input))

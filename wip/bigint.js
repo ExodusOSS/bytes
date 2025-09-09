@@ -28,7 +28,10 @@ export const toBuffer = (x, length) => Buffer.from(toHex(x, length), 'hex') // t
 
 export function toNumber(x) {
   const n = Number(x)
-  assert(Number.isSafeInteger(n) && BigInt(n) === x, 'Can not safely convert large bigint to number')
+  assert(
+    Number.isSafeInteger(n) && BigInt(n) === x,
+    'Can not safely convert large bigint to number'
+  )
   return n
 }
 
@@ -43,16 +46,14 @@ export function fromUint8(a) {
   return BigInt('0x' + buf.toString('hex'))
 }
 
-export function parse(s, {
-  negative = false,
-  strings = false,
-  buffers = false,
-  arrays = false,
-} = Object.create(null)) {
+export function parse(
+  s,
+  { negative = false, strings = false, buffers = false, arrays = false } = Object.create(null)
+) {
   let x
   switch (typeof s) {
     case 'string':
-      assert(strings, 'String input is disallowed by \'strings\' option')
+      assert(strings, "String input is disallowed by 'strings' option")
       switch (strings) {
         case 10:
           assert(/^-?[0-9]+$/u.test(s), 'Invalid character in decimal string input')
@@ -63,7 +64,7 @@ export function parse(s, {
           x = negative && s[0] === '-' ? 0n - fromHex(s.slice(1)) : fromHex(s)
           break
         default:
-          throw new Error('Invalid \'strings\' value, should be 10 (decimal) or 16 (hex)')
+          throw new Error("Invalid 'strings' value, should be 10 (decimal) or 16 (hex)")
       }
       break
     case 'bigint':
@@ -75,12 +76,15 @@ export function parse(s, {
       break
     case 'object':
       if (Array.isArray(s)) {
-        assert(arrays, 'Uint8Array / Buffer input disallowed by \'arrays\' option')
+        assert(arrays, "Uint8Array / Buffer input disallowed by 'arrays' option")
         const buf = Buffer.from(s)
-        assert(buf.every((c, i) => s[i] === c), 'Array should contain only bytes (0-255)')
+        assert(
+          buf.every((c, i) => s[i] === c),
+          'Array should contain only bytes (0-255)'
+        )
         x = fromUint8(buf)
-      } else if (s instanceof Uint8Array) {    
-        assert(buffers, 'Uint8Array / Buffer input disallowed by \'buffers\' option')
+      } else if (s instanceof Uint8Array) {
+        assert(buffers, "Uint8Array / Buffer input disallowed by 'buffers' option")
         x = fromUint8(s)
       } else {
         throw new Error('Unsupported object')
@@ -89,19 +93,25 @@ export function parse(s, {
     default:
       throw new Error('Unsupported type')
   }
-  if (!negative) assert(x >= 0, 'Negative input disallowed by \'negative\' option')
+  if (!negative) assert(x >= 0, "Negative input disallowed by 'negative' option")
   return x
 }
 
 function toFormat(x, format, length) {
   assert(typeof x === 'bigint') // internal use only
   switch (format) {
-    case 'bigint': return x
-    case 'number': return toNumber(x) // checks for safe conversion
-    case 'uint8': return toUint8(x, length)
-    case 'buffer': return toBuffer(x, length)
-    case 'hex': return toHex(x, length)
-    default: throw new Error('Unexpected format')
+    case 'bigint':
+      return x
+    case 'number':
+      return toNumber(x) // checks for safe conversion
+    case 'uint8':
+      return toUint8(x, length)
+    case 'buffer':
+      return toBuffer(x, length)
+    case 'hex':
+      return toHex(x, length)
+    default:
+      throw new Error('Unexpected format')
   }
 }
 
