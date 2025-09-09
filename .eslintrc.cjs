@@ -5,6 +5,12 @@ module.exports = {
       files: ['**/*.?([cm])js'],
       parser: 'espree',
       rules: {
+        '@exodus/import/no-extraneous-dependencies': [
+          'error',
+          {
+            devDependencies: ['**/{tests,benchmarks}/**/*', '**/*.{test,bench}.*', '**/*.d.ts'],
+          },
+        ],
         'unicorn/no-new-array': 'off',
         'unicorn/prefer-code-point': 'off',
       },

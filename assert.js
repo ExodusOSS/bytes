@@ -6,6 +6,7 @@ export function assertEmptyRest(rest) {
   if (Object.keys(rest).length > 0) throw new TypeError('Unexpected extra options')
 }
 
+// eslint-disable-next-line sonarjs/no-nested-template-literals
 const makeMessage = (name, extra) => `Expected${name ? ` ${name} to be` : ''} an Uint8Array${extra}`
 
 const TypedArray = Object.getPrototypeOf(Uint8Array)
