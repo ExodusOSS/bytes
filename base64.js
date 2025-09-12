@@ -40,9 +40,9 @@ export function toBase64url(arr) {
 
 // Unlike Buffer.from(), throws on invalid input (non-base64 symbols and incomplete chunks)
 // Unlike Buffer.from() and Uint8Array.fromBase64(), does not allow spaces
-// Unlike Uint8Array.fromBase64(), accepts both base64 and base64url
 // NOTE: Always operates in strict mode for last chunk
 
+// Accepts both padded and non-padded variants, only strict base64
 export function fromBase64(str, format = 'uint8') {
   if (typeof str !== 'string') throw new TypeError('Input is not a string')
 
@@ -57,6 +57,7 @@ export function fromBase64(str, format = 'uint8') {
   return fromTypedArray(fromBase64common(str, false), format)
 }
 
+// Accepts both only non-padded strict base64url
 export function fromBase64url(str, format = 'uint8') {
   if (typeof str !== 'string') throw new TypeError('Input is not a string')
 
