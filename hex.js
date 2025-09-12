@@ -24,13 +24,13 @@ export function toHex(arr) {
 }
 
 // Unlike Buffer.from(), throws on invalid input
-export function fromHex(arg, format = 'uint8') {
-  if (Uint8Array.fromHex) return fromTypedArray(Uint8Array.fromHex(arg), format)
-  if (typeof arg !== 'string') throw new TypeError('Input is not a string')
-  assert(arg.length % 2 === 0, 'Input is not a hex string')
+export function fromHex(str, format = 'uint8') {
+  if (Uint8Array.fromHex) return fromTypedArray(Uint8Array.fromHex(str), format)
+  if (typeof str !== 'string') throw new TypeError('Input is not a string')
+  assert(str.length % 2 === 0, 'Input is not a hex string')
   if (haveNativeBuffer) {
-    assert(!/[^0-9a-f]/iu.test(arg), 'Input is not a hex string')
-    return fromTypedArray(Buffer.from(arg, 'hex'), format)
+    assert(!/[^0-9a-f]/iu.test(str), 'Input is not a hex string')
+    return fromTypedArray(Buffer.from(str, 'hex'), format)
   }
 
   if (!dehexArray) {
@@ -41,10 +41,10 @@ export function fromHex(arg, format = 'uint8') {
     }
   }
 
-  const arr = new Uint8Array(arg.length / 2)
+  const arr = new Uint8Array(str.length / 2)
   let j = 0
   for (let i = 0; i < arr.length; i++) {
-    const a = dehexArray[arg.charCodeAt(j++)] * 16 + dehexArray[arg.charCodeAt(j++)]
+    const a = dehexArray[str.charCodeAt(j++)] * 16 + dehexArray[str.charCodeAt(j++)]
     if (!a && Number.isNaN(a)) throw new Error('Input is not a hex string')
     arr[i] = a
   }

@@ -43,55 +43,55 @@ export function toBase64url(arr) {
 // Unlike Uint8Array.fromBase64(), accepts both base64 and base64url
 // NOTE: Always operates in strict mode for last chunk
 
-export function fromBase64(arg, format = 'uint8') {
-  if (typeof arg !== 'string') throw new TypeError('Input is not a string')
+export function fromBase64(str, format = 'uint8') {
+  if (typeof str !== 'string') throw new TypeError('Input is not a string')
 
   // These checks should be needed only for Buffer path, not Uint8Array.fromBase64 path, but JSC lacks proper checks
-  assert(arg.length % 4 !== 1, 'Invalid base64 length') // JSC misses this in fromBase64
-  if (arg.endsWith('=')) {
-    assert(arg.length % 4 === 0, 'Invalid padded length') // JSC misses this too
-    assert(arg[arg.length - 3] !== '=', 'Excessive padding') // no more than two = at the end
+  assert(str.length % 4 !== 1, 'Invalid base64 length') // JSC misses this in fromBase64
+  if (str.endsWith('=')) {
+    assert(str.length % 4 === 0, 'Invalid padded length') // JSC misses this too
+    assert(str[str.length - 3] !== '=', 'Excessive padding') // no more than two = at the end
   }
 
-  assert(!/[^0-9a-z=+/]/iu.test(arg), 'Invalid character in base64 input')
-  return fromTypedArray(fromBase64common(arg, false), format)
+  assert(!/[^0-9a-z=+/]/iu.test(str), 'Invalid character in base64 input')
+  return fromTypedArray(fromBase64common(str, false), format)
 }
 
-export function fromBase64url(arg, format = 'uint8') {
-  if (typeof arg !== 'string') throw new TypeError('Input is not a string')
+export function fromBase64url(str, format = 'uint8') {
+  if (typeof str !== 'string') throw new TypeError('Input is not a string')
 
   // These checks should be needed only for Buffer path, not Uint8Array.fromBase64 path, but JSC lacks proper checks
-  assert(arg.length % 4 !== 1, 'Invalid base64 length') // JSC misses this in fromBase64
-  assert(!arg.includes('='), 'Did not expect padding in base64url input')
+  assert(str.length % 4 !== 1, 'Invalid base64 length') // JSC misses this in fromBase64
+  assert(!str.includes('='), 'Did not expect padding in base64url input')
 
-  assert(!/[^0-9a-z_-]/iu.test(arg), 'Invalid character in base64url input')
-  return fromTypedArray(fromBase64common(arg, true), format)
+  assert(!/[^0-9a-z_-]/iu.test(str), 'Invalid character in base64url input')
+  return fromTypedArray(fromBase64common(str, true), format)
 }
 
 const { atob } = globalThis
 
-function fromBase64common(arg, isBase64url) {
+function fromBase64common(str, isBase64url) {
   if (Uint8Array.fromBase64) {
     const options = { alphabet: isBase64url ? 'base64url' : 'base64', lastChunkHandling: 'strict' }
-    const padded = arg.length % 4 > 0 ? `${arg}${'='.repeat(4 - (arg.length % 4))}` : arg
+    const padded = str.length % 4 > 0 ? `${str}${'='.repeat(4 - (str.length % 4))}` : str
     return Uint8Array.fromBase64(padded, options)
   }
 
   let arr
   if (!haveNativeBuffer && atob) {
     // atob is faster than manual parsing on Hermes
-    const str = atob(isBase64url ? arg.replaceAll('-', '+').replaceAll('_', '/') : arg)
-    arr = new Uint8Array(str.length)
-    for (let i = 0; i < str.length; i++) arr[i] = str.charCodeAt(i)
+    const raw = atob(isBase64url ? str.replaceAll('-', '+').replaceAll('_', '/') : str)
+    arr = new Uint8Array(raw.length)
+    for (let i = 0; i < raw.length; i++) arr[i] = raw.charCodeAt(i)
   } else {
-    assert(!arg.includes('=') || !/=[^=]/iu.test(arg), 'Invalid input after padding')
-    arr = haveNativeBuffer ? Buffer.from(arg, 'base64') : fromBase64js(arg)
+    assert(!str.includes('=') || !/=[^=]/iu.test(str), 'Invalid input after padding')
+    arr = haveNativeBuffer ? Buffer.from(str, 'base64') : fromBase64js(str)
   }
 
   if (arr.length % 3 !== 0) {
     // Check last chunk to be strict if it was incomplete
     const expected = toBase64(arr.subarray(-(arr.length % 3)))
-    const last = arg.length % 4 === 0 ? arg.slice(-4) : arg.slice(-(arg.length % 4)).padEnd(4, '=')
+    const last = str.length % 4 === 0 ? str.slice(-4) : str.slice(-(str.length % 4)).padEnd(4, '=')
     const actual = isBase64url ? last.replaceAll('-', '+').replaceAll('_', '/') : last
     if (expected !== actual) throw new Error('Invalid last chunk')
   }
