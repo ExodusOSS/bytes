@@ -68,15 +68,6 @@ export function fromBase64url(arg, format = 'uint8') {
   return fromTypedArray(fromBase64common(arg, true), format)
 }
 
-function checkLastBase64Chunk(s, arr, isBase64url = false) {
-  if (arr.length % 3 === 0) return // last chunk is complete
-  // Check last chunk to be strict
-  const expected = toBase64(arr.subarray(-(arr.length % 3)))
-  const last = s.length % 4 === 0 ? s.slice(-4) : s.slice(-(s.length % 4)).padEnd(4, '=')
-  const actual = isBase64url ? last.replaceAll('-', '+').replaceAll('_', '/') : last
-  if (expected !== actual) throw new Error('Invalid last chunk')
-}
-
 const { atob } = globalThis
 
 function fromBase64common(arg, isBase64url) {
@@ -86,19 +77,25 @@ function fromBase64common(arg, isBase64url) {
     return Uint8Array.fromBase64(padded, options)
   }
 
+  let arr
   if (!haveNativeBuffer && atob) {
     // atob is faster than manual parsing on Hermes
     const str = atob(isBase64url ? arg.replaceAll('-', '+').replaceAll('_', '/') : arg)
-    const arr = new Uint8Array(str.length)
+    arr = new Uint8Array(str.length)
     for (let i = 0; i < str.length; i++) arr[i] = str.charCodeAt(i)
-    checkLastBase64Chunk(arg, arr, isBase64url)
-    return arr
+  } else {
+    assert(!arg.includes('=') || !/=[^=]/iu.test(arg), 'Invalid input after padding')
+    arr = haveNativeBuffer ? Buffer.from(arg, 'base64') : fromBase64js(arg)
   }
 
-  // FIXME: use a better impl when Buffer.from is not native?
-  assert(!arg.includes('=') || !/=[^=]/iu.test(arg), 'Invalid input after padding')
-  const arr = haveNativeBuffer ? Buffer.from(arg, 'base64') : fromBase64js(arg)
-  checkLastBase64Chunk(arg, arr, isBase64url)
+  if (arr.length % 3 !== 0) {
+    // Check last chunk to be strict if it was incomplete
+    const expected = toBase64(arr.subarray(-(arr.length % 3)))
+    const last = arg.length % 4 === 0 ? arg.slice(-4) : arg.slice(-(arg.length % 4)).padEnd(4, '=')
+    const actual = isBase64url ? last.replaceAll('-', '+').replaceAll('_', '/') : last
+    if (expected !== actual) throw new Error('Invalid last chunk')
+  }
+
   return arr
 }
 
