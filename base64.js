@@ -51,7 +51,7 @@ export function fromBase64url(str, format = 'uint8') {
 
   // These checks should be needed only for Buffer path, not Uint8Array.fromBase64 path, but JSC lacks proper checks
   assert(str.length % 4 !== 1, 'Invalid base64 length') // JSC misses this in fromBase64
-  assert(!str.includes('='), 'Did not expect padding in base64url input')
+  assert(!str.endsWith('='), 'Did not expect padding in base64url input') // inclusion is checked separately
 
   return fromTypedArray(fromBase64common(str, true), format)
 }
@@ -80,7 +80,7 @@ if (Uint8Array.fromBase64) {
       arr = new Uint8Array(raw.length)
       for (let i = 0; i < raw.length; i++) arr[i] = raw.charCodeAt(i)
     } else {
-      // base64url is already checked to have no padding
+      // base64url is already checked to have no padding via a regex above
       if (!isBase64url) assert(!str.includes('=') || !/=[^=]/iu.test(str), 'Invalid padding')
       arr = haveNativeBuffer ? Buffer.from(str, 'base64') : fromBase64js(str)
     }
