@@ -6,36 +6,25 @@ import { fromTypedArray } from './array.js'
 // base64:    A-Za-z0-9+/ and =
 // base64url: A-Za-z0-9_-
 
-const { Buffer } = globalThis // Buffer is optional, only used when native
+const { Buffer, atob } = globalThis // Buffer is optional, only used when native
 const haveNativeBuffer = Buffer && !Buffer.TYPED_ARRAY_SUPPORT
+const { toBase64: web64 } = Uint8Array.prototype // Modern engines have this
 
-export function toBase64(arr) {
-  assertUint8(arr)
-  if (Uint8Array.prototype.toBase64 && arr.toBase64 === Uint8Array.prototype.toBase64) {
-    return arr.toBase64()
-  }
-
-  if (haveNativeBuffer) {
-    if (arr.constructor === Buffer && Buffer.isBuffer(arr)) return arr.toString('base64')
-    return Buffer.from(arr.buffer, arr.byteOffset, arr.byteLength).toString('base64')
-  }
-
-  return toBase64js(arr, BASE64, true)
+export function toBase64(x) {
+  assertUint8(x)
+  if (web64 && x.toBase64 === web64) return x.toBase64() // Modern
+  if (!haveNativeBuffer) return toBase64js(x, BASE64, true) // Fallback
+  if (x.constructor === Buffer && Buffer.isBuffer(x)) return x.toString('base64') // Older Node.js
+  return Buffer.from(x.buffer, x.byteOffset, x.byteLength).toString('base64') // Older Node.js
 }
 
 // NOTE: base64url omits padding
-export function toBase64url(arr) {
-  assertUint8(arr)
-  if (Uint8Array.prototype.toBase64 && arr.toBase64 === Uint8Array.prototype.toBase64) {
-    return arr.toBase64({ alphabet: 'base64url', omitPadding: true })
-  }
-
-  if (haveNativeBuffer) {
-    if (arr.constructor === Buffer && Buffer.isBuffer(arr)) return arr.toString('base64url')
-    return Buffer.from(arr.buffer, arr.byteOffset, arr.byteLength).toString('base64url')
-  }
-
-  return toBase64js(arr, BASE64URL, false)
+export function toBase64url(x) {
+  assertUint8(x)
+  if (web64 && x.toBase64 === web64) return x.toBase64({ alphabet: 'base64url', omitPadding: true }) // Modern
+  if (!haveNativeBuffer) return toBase64js(x, BASE64URL, false) // Fallback
+  if (x.constructor === Buffer && Buffer.isBuffer(x)) return x.toString('base64url') // Older Node.js
+  return Buffer.from(x.buffer, x.byteOffset, x.byteLength).toString('base64url') // Older Node.js
 }
 
 // Unlike Buffer.from(), throws on invalid input (non-base64 symbols and incomplete chunks)
@@ -68,8 +57,6 @@ export function fromBase64url(str, format = 'uint8') {
   assert(!/[^0-9a-z_-]/iu.test(str), 'Invalid character in base64url input')
   return fromTypedArray(fromBase64common(str, true), format)
 }
-
-const { atob } = globalThis
 
 function fromBase64common(str, isBase64url) {
   if (Uint8Array.fromBase64) {
