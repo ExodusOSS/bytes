@@ -42,7 +42,6 @@ export function fromBase64(str, format = 'uint8') {
     assert(str[str.length - 3] !== '=', 'Excessive padding') // no more than two = at the end
   }
 
-  assert(!/[^0-9a-z=+/]/iu.test(str), 'Invalid character in base64 input')
   return fromTypedArray(fromBase64common(str, false), format)
 }
 
@@ -54,20 +53,26 @@ export function fromBase64url(str, format = 'uint8') {
   assert(str.length % 4 !== 1, 'Invalid base64 length') // JSC misses this in fromBase64
   assert(!str.includes('='), 'Did not expect padding in base64url input')
 
-  assert(!/[^0-9a-z_-]/iu.test(str), 'Invalid character in base64url input')
   return fromTypedArray(fromBase64common(str, true), format)
 }
 
 let fromBase64common
 if (Uint8Array.fromBase64) {
-  // NOTICE: this is actually slower than our JS impl in JavaScriptCore and SpiderMonkey (but faster on V8)
+  // NOTICE: this is actually slower than our JS impl in JavaScriptCore and (slightly) in SpiderMonkey, but faster on V8
   fromBase64common = (str, isBase64url) => {
+    assert(!/\s/u.test(str), 'Invalid character in base64url input') // all other chars are checked natively
     const alphabet = isBase64url ? 'base64url' : 'base64'
     const padded = str.length % 4 > 0 ? `${str}${'='.repeat(4 - (str.length % 4))}` : str
     return Uint8Array.fromBase64(padded, { alphabet, lastChunkHandling: 'strict' })
   }
 } else {
   fromBase64common = (str, isBase64url) => {
+    if (isBase64url) {
+      assert(!/[^0-9a-z_-]/iu.test(str), 'Invalid character in base64url input')
+    } else {
+      assert(!/[^0-9a-z=+/]/iu.test(str), 'Invalid character in base64 input')
+    }
+
     let arr
     if (!haveNativeBuffer && atob) {
       // atob is faster than manual parsing on Hermes
