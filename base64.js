@@ -58,7 +58,7 @@ export function fromBase64url(str, format = 'uint8') {
 
 let fromBase64common
 if (Uint8Array.fromBase64) {
-  // NOTICE: this is actually slower than our JS impl in JavaScriptCore and (slightly) in SpiderMonkey, but faster on V8
+  // NOTICE: this is actually slower than our JS impl in older JavaScriptCore and (slightly) in SpiderMonkey, but faster on V8 and new JavaScriptCore
   fromBase64common = (str, isBase64url) => {
     assert(!/\s/u.test(str), 'Invalid character in base64url input') // all other chars are checked natively
     const alphabet = isBase64url ? 'base64url' : 'base64'
