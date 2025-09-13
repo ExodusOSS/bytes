@@ -58,33 +58,38 @@ export function fromBase64url(str, format = 'uint8') {
   return fromTypedArray(fromBase64common(str, true), format)
 }
 
-function fromBase64common(str, isBase64url) {
-  if (Uint8Array.fromBase64) {
-    const options = { alphabet: isBase64url ? 'base64url' : 'base64', lastChunkHandling: 'strict' }
+let fromBase64common
+if (Uint8Array.fromBase64) {
+  // NOTICE: this is actually slower than our JS impl in JavaScriptCore and SpiderMonkey (but faster on V8)
+  fromBase64common = (str, isBase64url) => {
+    const alphabet = isBase64url ? 'base64url' : 'base64'
     const padded = str.length % 4 > 0 ? `${str}${'='.repeat(4 - (str.length % 4))}` : str
-    return Uint8Array.fromBase64(padded, options)
+    return Uint8Array.fromBase64(padded, { alphabet, lastChunkHandling: 'strict' })
   }
+} else {
+  fromBase64common = (str, isBase64url) => {
+    let arr
+    if (!haveNativeBuffer && atob) {
+      // atob is faster than manual parsing on Hermes
+      const raw = atob(isBase64url ? str.replaceAll('-', '+').replaceAll('_', '/') : str)
+      arr = new Uint8Array(raw.length)
+      for (let i = 0; i < raw.length; i++) arr[i] = raw.charCodeAt(i)
+    } else {
+      // base64url is already checked to have no padding
+      if (!isBase64url) assert(!str.includes('=') || !/=[^=]/iu.test(str), 'Invalid padding')
+      arr = haveNativeBuffer ? Buffer.from(str, 'base64') : fromBase64js(str)
+    }
 
-  let arr
-  if (!haveNativeBuffer && atob) {
-    // atob is faster than manual parsing on Hermes
-    const raw = atob(isBase64url ? str.replaceAll('-', '+').replaceAll('_', '/') : str)
-    arr = new Uint8Array(raw.length)
-    for (let i = 0; i < raw.length; i++) arr[i] = raw.charCodeAt(i)
-  } else {
-    assert(!str.includes('=') || !/=[^=]/iu.test(str), 'Invalid input after padding')
-    arr = haveNativeBuffer ? Buffer.from(str, 'base64') : fromBase64js(str)
+    if (arr.length % 3 !== 0) {
+      // Check last chunk to be strict if it was incomplete
+      const expected = toBase64(arr.subarray(-(arr.length % 3)))
+      const end = str.length % 4 === 0 ? str.slice(-4) : str.slice(-(str.length % 4)).padEnd(4, '=')
+      const actual = isBase64url ? end.replaceAll('-', '+').replaceAll('_', '/') : end
+      if (expected !== actual) throw new Error('Invalid last chunk')
+    }
+
+    return arr
   }
-
-  if (arr.length % 3 !== 0) {
-    // Check last chunk to be strict if it was incomplete
-    const expected = toBase64(arr.subarray(-(arr.length % 3)))
-    const last = str.length % 4 === 0 ? str.slice(-4) : str.slice(-(str.length % 4)).padEnd(4, '=')
-    const actual = isBase64url ? last.replaceAll('-', '+').replaceAll('_', '/') : last
-    if (expected !== actual) throw new Error('Invalid last chunk')
-  }
-
-  return arr
 }
 
 const BASE64 = [...'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/']
@@ -143,8 +148,8 @@ function fromBase64js(str) {
   if (!fromBase64jsMap) {
     fromBase64jsMap = map
     BASE64.forEach((c, i) => (map[c.charCodeAt(0)] = i))
-    map['-'.charCodeAt(0)] = 62 // two last chars of BASE64
-    map['_'.charCodeAt(0)] = 63 // two last chars of BASE64
+    map['-'.charCodeAt(0)] = 62 // two last chars of BASE64URL
+    map['_'.charCodeAt(0)] = 63 // two last chars of BASE64URL
   }
 
   let inputLength = str.length
