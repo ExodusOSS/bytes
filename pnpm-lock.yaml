@@ -15,8 +15,8 @@ importers:
         specifier: ^1.0.0
         version: 1.0.0(prettier@3.6.2)
       '@exodus/test':
-        specifier: ^1.0.0-rc.100
-        version: 1.0.0-rc.100(electron@36.5.0)
+        specifier: ^1.0.0-rc.105
+        version: 1.0.0-rc.105(electron@36.5.0)
       '@scure/base':
         specifier: ^1.2.6
         version: 1.2.6
@@ -395,16 +395,16 @@ packages:
   '@exodus/replay@1.0.0-rc.9':
     resolution: {integrity: sha512-16nwUaYRg00/50MF+RDlEqymBQIq6xUEfskCbOmXqqbzylZDErfMHN1ApNWB3yxeFVZaHRSpA49e9mOQ10y0dg==, tarball: https://registry.npmjs.org/@exodus/replay/-/replay-1.0.0-rc.9.tgz}
 
-  '@exodus/test-bundler@1.0.0-rc.5':
-    resolution: {integrity: sha512-u3XOEvZICXkn3Q5IYVZSeg5CHsALTxGD23zMdoWXZqkHRqYqVK8uvQjSTktvK80dVIC4wNwgv11mv0+nNFzYBA==, tarball: https://registry.npmjs.org/@exodus/test-bundler/-/test-bundler-1.0.0-rc.5.tgz}
+  '@exodus/test-bundler@1.0.0-rc.6':
+    resolution: {integrity: sha512-omaDhVdssL34juhk4tdtAzxi6AQThb2PQvq/52QpEc+c+vcx07ClDRa71CTcE/3ZG46cHa1e7yfbi0M2zzsCPA==, tarball: https://registry.npmjs.org/@exodus/test-bundler/-/test-bundler-1.0.0-rc.6.tgz}
     peerDependencies:
       crypto-browserify: ^3.12.0
     peerDependenciesMeta:
       crypto-browserify:
         optional: true
 
-  '@exodus/test@1.0.0-rc.100':
-    resolution: {integrity: sha512-VuWH9wTMEW+aGpTgSEc44VLcKsGYNJUuufCOYYL9/xVkR3FbB0khtuXiXggBjs6bHj7OaMxHvnG9t/bhY4JqsQ==, tarball: https://registry.npmjs.org/@exodus/test/-/test-1.0.0-rc.100.tgz}
+  '@exodus/test@1.0.0-rc.105':
+    resolution: {integrity: sha512-VAN5twE/6Rg14HPJTbUxufa4UrcbWDY3gjhLocp17cKr0m7Z66UvbfH3blVl2RCS2Q8duJNLIne/gyZplMzYBg==, tarball: https://registry.npmjs.org/@exodus/test/-/test-1.0.0-rc.105.tgz}
     engines: {node: ^18.19.0 || ^20.8.0 || >=22.0.0}
     hasBin: true
     peerDependencies:
@@ -3311,7 +3311,7 @@ snapshots:
   '@exodus/replay@1.0.0-rc.9':
     optional: true
 
-  '@exodus/test-bundler@1.0.0-rc.5':
+  '@exodus/test-bundler@1.0.0-rc.6':
     dependencies:
       '@ungap/url-search-params': 0.2.2
       assert: 2.1.0
@@ -3340,11 +3340,11 @@ snapshots:
       - supports-color
     optional: true
 
-  '@exodus/test@1.0.0-rc.100(electron@36.5.0)':
+  '@exodus/test@1.0.0-rc.105(electron@36.5.0)':
     optionalDependencies:
       '@chalker/queue': 1.0.1
       '@exodus/replay': 1.0.0-rc.9
-      '@exodus/test-bundler': 1.0.0-rc.5
+      '@exodus/test-bundler': 1.0.0-rc.6
       c8: 9.1.0
       electron: 36.5.0
       expect: 29.7.0
