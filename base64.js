@@ -60,8 +60,8 @@ let fromBase64common
 if (Uint8Array.fromBase64) {
   // NOTICE: this is actually slower than our JS impl in older JavaScriptCore and (slightly) in SpiderMonkey, but faster on V8 and new JavaScriptCore
   fromBase64common = (str, isBase64url) => {
-    assert(!/\s/u.test(str), 'Invalid character in base64url input') // all other chars are checked natively
     const alphabet = isBase64url ? 'base64url' : 'base64'
+    assert(!/\s/u.test(str), `Invalid character in ${alphabet} input`) // all other chars are checked natively
     const padded = str.length % 4 > 0 ? `${str}${'='.repeat(4 - (str.length % 4))}` : str
     return Uint8Array.fromBase64(padded, { alphabet, lastChunkHandling: 'strict' })
   }
@@ -158,8 +158,8 @@ function fromBase64js(str) {
   if (!fromBase64jsMap) {
     fromBase64jsMap = map
     BASE64.forEach((c, i) => (map[c.charCodeAt(0)] = i))
-    map['-'.charCodeAt(0)] = 62 // two last chars of BASE64URL
-    map['_'.charCodeAt(0)] = 63 // two last chars of BASE64URL
+    map['-'.charCodeAt(0)] = map['+'.charCodeAt(0)] // for base64url
+    map['_'.charCodeAt(0)] = map['/'.charCodeAt(0)] // for base64url
   }
 
   let inputLength = str.length
