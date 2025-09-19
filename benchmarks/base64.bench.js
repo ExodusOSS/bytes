@@ -5,7 +5,7 @@ import base64js from 'base64-js'
 import buffer from 'buffer/index.js'
 import { describe, test } from 'node:test'
 
-import { bufs } from './random.js'
+import { bufs } from './utils/random.js'
 
 if (!globalThis.Buffer) globalThis.Buffer = buffer.Buffer
 
