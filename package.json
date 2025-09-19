@@ -21,6 +21,7 @@
     "test": "exodus-test",
     "jsvu": "jsvu",
     "playwright": "exodus-test --playwright",
+    "benchmark": "exodus-test --concurrency=1 benchmarks/*.bench.js",
     "coverage": "exodus-test --coverage"
   },
   "repository": {
