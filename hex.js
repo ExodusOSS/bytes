@@ -19,7 +19,8 @@ export function toHex(arr) {
 
   if (!hexArray) hexArray = Array.from({ length: 256 }, (_, i) => i.toString(16).padStart(2, '0'))
   let out = ''
-  for (let i = 0; i < arr.length; i++) out += hexArray[arr[i]]
+  const length = arr.length // this helps Hermes
+  for (let i = 0; i < length; i++) out += hexArray[arr[i]]
   return out
 }
 
@@ -45,7 +46,8 @@ if (Uint8Array.fromHex) {
 
     const arr = new Uint8Array(str.length / 2)
     let j = 0
-    for (let i = 0; i < arr.length; i++) {
+    const length = arr.length // this helps Hermes
+    for (let i = 0; i < length; i++) {
       const a = dehexArray[str.charCodeAt(j++)] * 16 + dehexArray[str.charCodeAt(j++)]
       if (!a && Number.isNaN(a)) throw new Error('Input is not a hex string')
       arr[i] = a

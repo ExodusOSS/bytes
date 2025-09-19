@@ -131,7 +131,8 @@ function toBase64js(arr, alphabet, padding) {
   // If we have something left, process it with a full algo
   let carry = 0
   let shift = 2 // First byte needs to be shifted by 2 to get 6 bits
-  for (; i < arr.length; i++) {
+  const length = arr.length
+  for (; i < length; i++) {
     const x = arr[i]
     o += alphabet[carry | (x >> shift)] // shift >= 2, so this fits
     if (shift === 6) {
@@ -144,7 +145,7 @@ function toBase64js(arr, alphabet, padding) {
   }
 
   if (shift !== 2) o += alphabet[carry] // shift 2 means we have no carry left
-  if (padding) o += ['', '==', '='][arr.length - fullChunksBytes]
+  if (padding) o += ['', '==', '='][length - fullChunksBytes]
 
   return o
 }
