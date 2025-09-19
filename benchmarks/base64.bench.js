@@ -1,5 +1,5 @@
 import * as exodus from '@exodus/bytes/base64.js'
-import { benchmark } from '@exodus/test/benchmark'
+import { benchmark } from '@exodus/test/benchmark' // eslint-disable-line @exodus/import/no-unresolved
 import { base64 as scure } from '@scure/base'
 import base64js from 'base64-js'
 import buffer from 'buffer/index.js'
@@ -8,6 +8,8 @@ import { describe, test } from 'node:test'
 import { bufs } from './utils/random.js'
 
 if (!globalThis.Buffer) globalThis.Buffer = buffer.Buffer
+const bufferIsNative = Buffer === buffer.Buffer
+const toBuffer = (x, B) => B.from(x.buffer, x.byteOffet, x.byteLength)
 
 describe('benchmarks: base64', async () => {
   let scureJS // Fallback without Uint8Array.fromBase64, Uint8Array#toBase64
@@ -21,10 +23,10 @@ describe('benchmarks: base64', async () => {
     delete Uint8Array.fromBase64
     reset.push(() => (Uint8Array.fromBase64 = fromBase64))
     const { toBase64 } = Uint8Array.prototype
-    Uint8Array.prototype.toBase64 = undefined
-    reset.push(() => (Uint8Array.prototype.toBase64 = toBase64))
+    Uint8Array.prototype.toBase64 = undefined // eslint-disable-line no-extend-native
+    reset.push(() => (Uint8Array.prototype.toBase64 = toBase64)) // eslint-disable-line no-extend-native
     exodusA = await import('../base64.js?a') // eslint-disable-line @exodus/import/no-unresolved
-    scureJS = (await import('@scure/base?a')).base64 // eslint-disable-line @exodus/import/no-unresolved
+    scureJS = (await import('@scure/base?a')).base64 // eslint-disable-line @exodus/import/no-unresolved, unicorn/no-await-expression-member
   }
 
   if (!Buffer.TYPED_ARRAY_SUPPORT) {
@@ -45,15 +47,14 @@ describe('benchmarks: base64', async () => {
   const strings = bufs.map((x) => exodus.toBase64(x))
 
   // [name, impl, skip]
-  const toBuf = (x, B) => B.from(x.buffer, x.byteOffet, x.byteLength)
   const toBase64 = [
     ['@exodus/bytes/base64', (x) => exodus.toBase64(x)],
     ['@exodus/bytes/base64, no native', (x) => exodusA.toBase64(x), !exodusA],
     ['@exodus/bytes/base64, no Buffer', (x) => exodusB.toBase64(x), !exodusB],
-    ['Buffer', (x) => toBuf(x, Buffer).toString('base64')],
+    ['Buffer', (x) => toBuffer(x, Buffer).toString('base64')],
     ['Buffer.from', (x) => Buffer.from(x).toString('base64')],
-    ['buffer/Buffer', (x) => toBuf(x, buffer.Buffer).toString('base64'), Buffer === buffer.Buffer],
-    ['buffer/Buffer.from', (x) => buffer.Buffer.from(x).toString('base64'), Buffer === buffer.Buffer],
+    ['buffer/Buffer', (x) => toBuffer(x, buffer.Buffer).toString('base64'), bufferIsNative],
+    ['buffer/Buffer.from', (x) => buffer.Buffer.from(x).toString('base64'), bufferIsNative],
     ['base64-js', (x) => base64js.fromByteArray(x)],
     ['scure.base64', (x) => scure.encode(x)],
     ['scure.base64, no native', (x) => scureJS.encode(x), !scureJS],
@@ -66,7 +67,7 @@ describe('benchmarks: base64', async () => {
     ['@exodus/bytes/base64, no Buffer', (x) => exodusB.fromBase64(x), !exodusB],
     ['@exodus/bytes/base64, no atob', (x) => exodusC.fromBase64(x), !exodusC],
     ['Buffer.from', (x) => Buffer.from(x, 'base64')],
-    ['buffer/Buffer.from', (x) => buffer.Buffer.from(x, 'base64'), Buffer === buffer.Buffer],
+    ['buffer/Buffer.from', (x) => buffer.Buffer.from(x, 'base64'), bufferIsNative],
     ['base64-js', (x) => base64js.toByteArray(x)],
     ['scure.base64', (x) => scure.decode(x)],
     ['scure.base64, no native', (x) => scureJS.decode(x), !scureJS],
@@ -85,7 +86,7 @@ describe('benchmarks: base64', async () => {
       await benchmark(`toBase64: ${name}`, { skip, args: bufs }, f)
     }
   })
-  
+
   test('fromBase64 coherence', (t) => {
     for (let i = 0; i < 100; i++) {
       for (const [name, f, skip] of fromBase64) {

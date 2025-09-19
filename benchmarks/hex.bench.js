@@ -1,5 +1,5 @@
 import * as exodus from '@exodus/bytes/hex.js'
-import { benchmark } from '@exodus/test/benchmark'
+import { benchmark } from '@exodus/test/benchmark' // eslint-disable-line @exodus/import/no-unresolved
 import { hex as scure } from '@scure/base'
 import buffer from 'buffer/index.js'
 import { describe, test } from 'node:test'
@@ -7,6 +7,8 @@ import { describe, test } from 'node:test'
 import { bufs } from './utils/random.js'
 
 if (!globalThis.Buffer) globalThis.Buffer = buffer.Buffer
+const bufferIsNative = Buffer === buffer.Buffer
+const toBuffer = (x, B) => B.from(x.buffer, x.byteOffet, x.byteLength)
 
 describe('benchmarks: hex', async () => {
   let scureJS // Fallback without Uint8Array.fromHex, Uint8Array#toHex
@@ -19,10 +21,10 @@ describe('benchmarks: hex', async () => {
     delete Uint8Array.fromHex
     reset.push(() => (Uint8Array.fromHex = fromHex))
     const { toHex } = Uint8Array.prototype
-    Uint8Array.prototype.toHex = undefined
-    reset.push(() => (Uint8Array.prototype.toHex = toHex))
+    Uint8Array.prototype.toHex = undefined // eslint-disable-line no-extend-native
+    reset.push(() => (Uint8Array.prototype.toHex = toHex)) // eslint-disable-line no-extend-native
     exodusA = await import('../hex.js?a') // eslint-disable-line @exodus/import/no-unresolved
-    scureJS = (await import('@scure/base?a')).hex // eslint-disable-line @exodus/import/no-unresolved
+    scureJS = (await import('@scure/base?a')).hex // eslint-disable-line @exodus/import/no-unresolved, unicorn/no-await-expression-member
   }
 
   if (!Buffer.TYPED_ARRAY_SUPPORT) {
@@ -36,15 +38,14 @@ describe('benchmarks: hex', async () => {
   const strings = bufs.map((x) => exodus.toHex(x))
 
   // [name, impl, skip]
-  const toBuf = (x, B) => B.from(x.buffer, x.byteOffet, x.byteLength)
   const toHex = [
     ['@exodus/bytes/hex', (x) => exodus.toHex(x)],
     ['@exodus/bytes/hex, no native', (x) => exodusA.toHex(x), !exodusA],
     ['@exodus/bytes/hex, no Buffer', (x) => exodusB.toHex(x), !exodusB],
-    ['Buffer', (x) => toBuf(x, Buffer).toString('hex')],
+    ['Buffer', (x) => toBuffer(x, Buffer).toString('hex')],
     ['Buffer.from', (x) => Buffer.from(x).toString('hex')],
-    ['buffer/Buffer', (x) => toBuf(x, buffer.Buffer).toString('hex'), Buffer === buffer.Buffer],
-    ['buffer/Buffer.from', (x) => buffer.Buffer.from(x).toString('hex'), Buffer === buffer.Buffer],
+    ['buffer/Buffer', (x) => toBuffer(x, buffer.Buffer).toString('hex'), bufferIsNative],
+    ['buffer/Buffer.from', (x) => buffer.Buffer.from(x).toString('hex'), bufferIsNative],
     ['scure.hex', (x) => scure.encode(x)],
     ['scure.hex, no native', (x) => scureJS.encode(x), !scureJS],
   ]
@@ -54,7 +55,7 @@ describe('benchmarks: hex', async () => {
     ['@exodus/bytes/hex', (x) => exodus.fromHex(x)],
     ['@exodus/bytes/hex, no native', (x) => exodusA.fromHex(x), !exodusA],
     ['Buffer.from', (x) => Buffer.from(x, 'hex')],
-    ['buffer/Buffer.from', (x) => buffer.Buffer.from(x, 'hex'), Buffer === buffer.Buffer],
+    ['buffer/Buffer.from', (x) => buffer.Buffer.from(x, 'hex'), bufferIsNative],
     ['scure.hex', (x) => scure.decode(x)],
     ['scure.hex, no native', (x) => scureJS.decode(x), !scureJS],
   ]

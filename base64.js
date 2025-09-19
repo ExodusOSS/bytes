@@ -85,6 +85,7 @@ if (Uint8Array.fromBase64) {
         const at = str.indexOf('=')
         if (at >= 0) assert(!/[^=]/iu.test(str.slice(at)), 'Invalid padding')
       }
+
       arr = haveNativeBuffer ? Buffer.from(str, 'base64') : fromBase64js(str)
     }
 
