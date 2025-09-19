@@ -178,14 +178,11 @@ function fromBase64js(str) {
   let tmp
 
   while (i < mainLength) {
-    tmp =
-      (map[str.charCodeAt(i)] << 18) |
-      (map[str.charCodeAt(i + 1)] << 12) |
-      (map[str.charCodeAt(i + 2)] << 6) |
-      map[str.charCodeAt(i + 3)]
-    arr[at++] = tmp >> 16
-    arr[at++] = (tmp >> 8) & 0xff
-    arr[at++] = tmp & 0xff
+    // a [ b c ] d, each 6 bits
+    const bc = (map[str.charCodeAt(i + 1)] << 6) | map[str.charCodeAt(i + 2)]
+    arr[at++] = (map[str.charCodeAt(i)] << 2) | (bc >> 10)
+    arr[at++] = (bc >> 2) & 0xff
+    arr[at++] = ((bc << 6) & 0xff) | map[str.charCodeAt(i + 3)]
     i += 4
   }
 
