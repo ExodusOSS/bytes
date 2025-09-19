@@ -18,8 +18,26 @@ export function toHex(arr) {
   }
 
   if (!hexArray) hexArray = Array.from({ length: 256 }, (_, i) => i.toString(16).padStart(2, '0'))
-  let out = ''
   const length = arr.length // this helps Hermes
+
+  if (length > 3000) {
+    // Limit concatenation to avoid excessive GC
+    // Thresholds checked on Hermes
+    const concat = []
+    for (let i = 0; i < length; ) {
+      const step = i + 500
+      const end = step > length ? length : step
+      let chunk = ''
+      for (; i < end; i++) chunk += hexArray[arr[i]]
+      concat.push(chunk)
+    }
+
+    const res = concat.join('')
+    concat.length = 0
+    return res
+  }
+
+  let out = ''
   for (let i = 0; i < length; i++) out += hexArray[arr[i]]
   return out
 }
