@@ -3,9 +3,9 @@ import { benchmark } from '@exodus/test/benchmark'
 import { base64 as scure } from '@scure/base'
 import base64js from 'base64-js'
 import buffer from 'buffer/index.js'
+import { describe, test } from 'node:test'
 
 import { bufs } from './random.js'
-import { describe, test } from 'node:test'
 
 if (!globalThis.Buffer) globalThis.Buffer = buffer.Buffer
 
