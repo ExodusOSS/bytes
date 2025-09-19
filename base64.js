@@ -77,8 +77,9 @@ if (Uint8Array.fromBase64) {
     if (!haveNativeBuffer && atob) {
       // atob is faster than manual parsing on Hermes
       const raw = atob(isBase64url ? str.replaceAll('-', '+').replaceAll('_', '/') : str)
-      arr = new Uint8Array(raw.length)
-      for (let i = 0; i < raw.length; i++) arr[i] = raw.charCodeAt(i)
+      const length = raw.length
+      arr = new Uint8Array(length)
+      for (let i = 0; i < length; i++) arr[i] = raw.charCodeAt(i)
     } else {
       // base64url is already checked to have no padding via a regex above
       if (!isBase64url) {
