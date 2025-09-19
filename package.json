@@ -44,7 +44,6 @@
     "/hex.js"
   ],
   "exports": {
-    "./assert.js": "./assert.js",
     "./base64.js": "./base64.js",
     "./array.js": "./array.js",
     "./hex.js": "./hex.js"
