@@ -24,14 +24,10 @@ describe('fromTypedArray', () => {
 
   test('uint8', (t) => {
     for (const { buffer, uint8 } of pool) {
-      t.assert.strictEqual(fromTypedArray(uint8), uint8)
       t.assert.strictEqual(fromTypedArray(uint8, 'uint8'), uint8)
-      const a = fromTypedArray(buffer)
-      const b = fromTypedArray(buffer, 'uint8')
+      const a = fromTypedArray(buffer, 'uint8')
       t.assert.deepStrictEqual(a, uint8)
       t.assert.strictEqual(a.buffer, buffer.buffer)
-      t.assert.deepStrictEqual(b, uint8)
-      t.assert.strictEqual(b.buffer, buffer.buffer)
     }
   })
 
