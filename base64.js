@@ -104,6 +104,9 @@ if (Uint8Array.fromBase64) {
 const BASE64 = [...'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/']
 const BASE64URL = [...'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_']
 
+const BASE64_PAIRS = []
+const BASE64URL_PAIRS = []
+
 // We construct output by concatenating chars, this seems to be fine enough on modern JS engines
 function toBase64js(arr, alphabet, padding) {
   assertUint8(arr)
@@ -112,20 +115,20 @@ function toBase64js(arr, alphabet, padding) {
   let o = ''
   let i = 0
 
+  const pairs = alphabet === BASE64URL ? BASE64URL_PAIRS : BASE64_PAIRS
+  if (pairs.length === 0) {
+    for (let i = 0; i < 64; i++) {
+      for (let j = 0; j < 64; j++) pairs.push(`${alphabet[i]}${alphabet[j]}`)
+    }
+  }
+
   // Fast path for complete blocks
   // This whole loop can be commented out, the algorithm won't change, it's just an optimization of the next loop
   for (; i < fullChunksBytes; i += 3) {
     const a = arr[i]
     const b = arr[i + 1]
     const c = arr[i + 2]
-    if (a === 0 && b === 0 && c === 0) {
-      o += 'AAAA'
-    } else {
-      o += alphabet[a >> 2] // 8 - 6 = 2 left
-      o += alphabet[((a & 0x3) << 4) | (b >> 4)] // 2 + 8 - 6 = 4 left
-      o += alphabet[((b & 0xf) << 2) | (c >> 6)] // 4 + 8 - 6 = 6 left
-      o += alphabet[c & 0x3f] // 6 - 6 = 0 left
-    }
+    o += pairs[(a << 4) | (b >> 4)] + pairs[((b & 0x0f) << 8) | c]
   }
 
   // If we have something left, process it with a full algo
