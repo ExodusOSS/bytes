@@ -31,10 +31,9 @@ if (Uint8Array.fromHex) {
   fromHex = (str, format = 'uint8') => {
     if (typeof str !== 'string') throw new TypeError('Input is not a string')
     assert(str.length % 2 === 0, 'Input is not a hex string')
-    if (haveNativeBuffer) {
-      assert(!/[^0-9a-f]/iu.test(str), 'Input is not a hex string')
-      return fromTypedArray(Buffer.from(str, 'hex'), format)
-    }
+
+    // We don't use native Buffer impl, as rechecking input make it slower than pure js
+    // This path is used only on older engines though
 
     if (!dehexArray) {
       dehexArray = new Array(103) // f is 102

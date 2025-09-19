@@ -53,7 +53,6 @@ describe('benchmarks: hex', async () => {
   const fromHex = [
     ['@exodus/bytes/hex', (x) => exodus.fromHex(x)],
     ['@exodus/bytes/hex, no native', (x) => exodusA.fromHex(x), !exodusA],
-    ['@exodus/bytes/hex, no Buffer', (x) => exodusB.fromHex(x), !exodusB],
     ['Buffer.from', (x) => Buffer.from(x, 'hex')],
     ['buffer/Buffer.from', (x) => buffer.Buffer.from(x, 'hex'), Buffer === buffer.Buffer],
     ['scure.hex', (x) => scure.decode(x)],
