@@ -81,7 +81,10 @@ if (Uint8Array.fromBase64) {
       for (let i = 0; i < raw.length; i++) arr[i] = raw.charCodeAt(i)
     } else {
       // base64url is already checked to have no padding via a regex above
-      if (!isBase64url) assert(!str.includes('=') || !/=[^=]/iu.test(str), 'Invalid padding')
+      if (!isBase64url) {
+        const at = str.indexOf('=')
+        if (at >= 0) assert(!/[^=]/iu.test(str.slice(at)), 'Invalid padding')
+      }
       arr = haveNativeBuffer ? Buffer.from(str, 'base64') : fromBase64js(str)
     }
 
