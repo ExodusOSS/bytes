@@ -11,6 +11,7 @@ let dehexArray
 export function toHex(arr) {
   assertTypedArray(arr)
   if (!(arr instanceof Uint8Array)) arr = new Uint8Array(arr.buffer, arr.byteOffset, arr.byteLength)
+  if (arr.length === 0) return ''
   if (webHex && arr.toHex === webHex) return arr.toHex()
   if (haveNativeBuffer) {
     if (arr.constructor === Buffer && Buffer.isBuffer(arr)) return arr.toString('hex')
@@ -38,7 +39,17 @@ export function toHex(arr) {
   }
 
   let out = ''
-  for (let i = 0; i < length; i++) out += hexArray[arr[i]]
+  const last3 = length - 3
+  let i = 0
+  // Unrolled loop is faster
+  while (i < last3) {
+    out += hexArray[arr[i++]]
+    out += hexArray[arr[i++]]
+    out += hexArray[arr[i++]]
+    out += hexArray[arr[i++]]
+  }
+
+  while (i < length) out += hexArray[arr[i++]]
   return out
 }
 
