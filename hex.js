@@ -20,7 +20,7 @@ export function toHex(arr) {
   if (!hexArray) hexArray = Array.from({ length: 256 }, (_, i) => i.toString(16).padStart(2, '0'))
   const length = arr.length // this helps Hermes
 
-  if (length > 30000) {
+  if (length > 30_000) {
     // Limit concatenation to avoid excessive GC
     // Thresholds checked on Hermes
     const concat = []
