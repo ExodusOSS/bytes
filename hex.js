@@ -9,6 +9,26 @@ const nativeEncoder = TextEncoder?.toString().includes('[native code]') ? new Te
 let hexArray
 let dehexArray
 
+function toHexPart(arr, start, end) {
+  let o = ''
+  let i = start
+  const last3 = end - 3
+  // Unrolled loop is faster
+  while (i < last3) {
+    const a = arr[i++]
+    const b = arr[i++]
+    const c = arr[i++]
+    const d = arr[i++]
+    o += hexArray[a]
+    o += hexArray[b]
+    o += hexArray[c]
+    o += hexArray[d]
+  }
+
+  while (i < end) o += hexArray[arr[i++]]
+  return o
+}
+
 export function toHex(arr) {
   assertTypedArray(arr)
   if (!(arr instanceof Uint8Array)) arr = new Uint8Array(arr.buffer, arr.byteOffset, arr.byteLength)
@@ -29,9 +49,8 @@ export function toHex(arr) {
     for (let i = 0; i < length; ) {
       const step = i + 500
       const end = step > length ? length : step
-      let chunk = ''
-      for (; i < end; i++) chunk += hexArray[arr[i]]
-      concat.push(chunk)
+      concat.push(toHexPart(arr, i, end))
+      i = end
     }
 
     const res = concat.join('')
@@ -39,23 +58,7 @@ export function toHex(arr) {
     return res
   }
 
-  let out = ''
-  const last3 = length - 3
-  let i = 0
-  // Unrolled loop is faster
-  while (i < last3) {
-    const a = arr[i++]
-    const b = arr[i++]
-    const c = arr[i++]
-    const d = arr[i++]
-    out += hexArray[a]
-    out += hexArray[b]
-    out += hexArray[c]
-    out += hexArray[d]
-  }
-
-  while (i < length) out += hexArray[arr[i++]]
-  return out
+  return toHexPart(arr, 0, length)
 }
 
 // Unlike Buffer.from(), throws on invalid input
