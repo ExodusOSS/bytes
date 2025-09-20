@@ -1,9 +1,10 @@
 import { assertTypedArray, assert } from './assert.js'
 import { fromTypedArray } from './array.js'
 
-const { Buffer } = globalThis // Buffer is optional, only used when native
+const { Buffer, TextEncoder } = globalThis // Buffer is optional, only used when native
 const haveNativeBuffer = Buffer && !Buffer.TYPED_ARRAY_SUPPORT
 const { toHex: webHex } = Uint8Array.prototype // Modern engines have this
+const nativeEncoder = TextEncoder?.toString().includes('[native code]') ? new TextEncoder() : null
 
 let hexArray
 let dehexArray
@@ -76,10 +77,19 @@ if (Uint8Array.fromHex) {
     const arr = new Uint8Array(str.length / 2)
     let j = 0
     const length = arr.length // this helps Hermes
-    for (let i = 0; i < length; i++) {
-      const a = dehexArray[str.charCodeAt(j++)] * 16 + dehexArray[str.charCodeAt(j++)]
-      if (!a && Number.isNaN(a)) throw new Error('Input is not a hex string')
-      arr[i] = a
+    if (nativeEncoder) {
+      const codes = nativeEncoder.encode(str)
+      for (let i = 0; i < length; i++) {
+        const a = dehexArray[codes[j++]] * 16 + dehexArray[codes[j++]]
+        if (!a && a !== 0) throw new Error('Input is not a hex string')
+        arr[i] = a
+      }
+    } else {
+      for (let i = 0; i < length; i++) {
+        const a = dehexArray[str.charCodeAt(j++)] * 16 + dehexArray[str.charCodeAt(j++)]
+        if (!a && a !== 0) throw new Error('Input is not a hex string')
+        arr[i] = a
+      }
     }
 
     return fromTypedArray(arr, format)
