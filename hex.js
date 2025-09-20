@@ -44,10 +44,14 @@ export function toHex(arr) {
   let i = 0
   // Unrolled loop is faster
   while (i < last3) {
-    out += hexArray[arr[i++]]
-    out += hexArray[arr[i++]]
-    out += hexArray[arr[i++]]
-    out += hexArray[arr[i++]]
+    const a = arr[i++]
+    const b = arr[i++]
+    const c = arr[i++]
+    const d = arr[i++]
+    out += hexArray[a]
+    out += hexArray[b]
+    out += hexArray[c]
+    out += hexArray[d]
   }
 
   while (i < length) out += hexArray[arr[i++]]
