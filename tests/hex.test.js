@@ -12,22 +12,7 @@ const pool = raw.map((uint8) => {
   return { uint8, buffer, hex: buffer.toString('hex') }
 })
 
-describe('toHex', () => {
-  test('invalid input', (t) => {
-    for (const input of [null, undefined, [], [1, 2], 'string']) {
-      t.assert.throws(() => toHex(input))
-    }
-  })
-
-  test('hex', (t) => {
-    for (const { uint8, buffer, hex } of pool) {
-      t.assert.strictEqual(toHex(uint8), hex)
-      t.assert.strictEqual(toHex(buffer), hex)
-    }
-  })
-})
-
-const FROM_INVALID = [
+const INVALID = [
   // Wrong type
   null,
   undefined,
@@ -54,7 +39,7 @@ const FROM_INVALID = [
   ' 00\n00',
 ]
 
-const FROM_VALID = [
+const VALID = [
   ['', Uint8Array.of()],
   ['00', Uint8Array.of(0)],
   ['0000000000', Uint8Array.of(0, 0, 0, 0, 0)],
@@ -67,9 +52,30 @@ const FROM_VALID = [
   ['0123456789abcdef', Uint8Array.of(0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef)],
 ]
 
+describe('toHex', () => {
+  test('invalid input', (t) => {
+    for (const input of [null, undefined, [], [1, 2], 'string']) {
+      t.assert.throws(() => toHex(input))
+    }
+  })
+
+  test('fixtures', (t) => {
+    for (const [hex, uint8] of VALID) {
+      t.assert.strictEqual(toHex(uint8), hex.toLowerCase())
+    }
+  })
+
+  test('random', (t) => {
+    for (const { uint8, buffer, hex } of pool) {
+      t.assert.strictEqual(toHex(uint8), hex)
+      t.assert.strictEqual(toHex(buffer), hex)
+    }
+  })
+})
+
 describe('fromHex', () => {
   test('invalid input', (t) => {
-    for (const input of FROM_INVALID) {
+    for (const input of INVALID) {
       if (Uint8Array.fromHex) t.assert.throws(() => Uint8Array.fromHex(input), 'coherence')
       t.assert.throws(() => fromHex(input))
       for (const form of ['uint8', 'buffer', 'hex']) {
@@ -79,7 +85,7 @@ describe('fromHex', () => {
   })
 
   test('uint8, fixtures', (t) => {
-    for (const [hex, uint8] of FROM_VALID) {
+    for (const [hex, uint8] of VALID) {
       if (Uint8Array.fromHex) t.assert.deepEqual(uint8, Uint8Array.fromHex(hex), 'coherence')
       t.assert.deepStrictEqual(fromHex(hex), uint8)
       t.assert.deepStrictEqual(fromHex(hex, 'uint8'), uint8)
@@ -94,7 +100,7 @@ describe('fromHex', () => {
   })
 
   test('buffer, fixtures', (t) => {
-    for (const [hex, uint8] of FROM_VALID) {
+    for (const [hex, uint8] of VALID) {
       t.assert.deepStrictEqual(Buffer.from(hex, 'hex'), Buffer.from(uint8), 'coherence')
       t.assert.deepStrictEqual(fromHex(hex, 'buffer'), Buffer.from(uint8))
     }
