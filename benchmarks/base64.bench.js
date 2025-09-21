@@ -8,7 +8,7 @@ import { describe, test } from 'node:test'
 import { bufs } from './utils/random.js'
 
 if (!globalThis.Buffer) globalThis.Buffer = buffer.Buffer
-const bufferIsNative = Buffer === buffer.Buffer
+const bufferIsPolyfilled = Buffer === buffer.Buffer
 const toBuffer = (x, B) => B.from(x.buffer, x.byteOffet, x.byteLength)
 
 describe('benchmarks: base64', async () => {
@@ -53,8 +53,8 @@ describe('benchmarks: base64', async () => {
     ['@exodus/bytes/base64, no Buffer', (x) => exodusB.toBase64(x), !exodusB],
     ['Buffer', (x) => toBuffer(x, Buffer).toString('base64')],
     ['Buffer.from', (x) => Buffer.from(x).toString('base64')],
-    ['buffer/Buffer', (x) => toBuffer(x, buffer.Buffer).toString('base64'), bufferIsNative],
-    ['buffer/Buffer.from', (x) => buffer.Buffer.from(x).toString('base64'), bufferIsNative],
+    ['buffer/Buffer', (x) => toBuffer(x, buffer.Buffer).toString('base64'), bufferIsPolyfilled],
+    ['buffer/Buffer.from', (x) => buffer.Buffer.from(x).toString('base64'), bufferIsPolyfilled],
     ['base64-js', (x) => base64js.fromByteArray(x)],
     ['scure.base64', (x) => scure.encode(x)],
     ['scure.base64, no native', (x) => scureJS.encode(x), !scureJS],
@@ -67,7 +67,7 @@ describe('benchmarks: base64', async () => {
     ['@exodus/bytes/base64, no Buffer', (x) => exodusB.fromBase64(x), !exodusB],
     ['@exodus/bytes/base64, no atob', (x) => exodusC.fromBase64(x), !exodusC],
     ['Buffer', (x) => Buffer.from(x, 'base64')],
-    ['buffer/Buffer', (x) => buffer.Buffer.from(x, 'base64'), bufferIsNative],
+    ['buffer/Buffer', (x) => buffer.Buffer.from(x, 'base64'), bufferIsPolyfilled],
     ['base64-js', (x) => base64js.toByteArray(x)],
     ['scure.base64', (x) => scure.decode(x)],
     ['scure.base64, no native', (x) => scureJS.decode(x), !scureJS],

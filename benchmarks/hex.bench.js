@@ -7,7 +7,7 @@ import { describe, test } from 'node:test'
 import { bufs } from './utils/random.js'
 
 if (!globalThis.Buffer) globalThis.Buffer = buffer.Buffer
-const bufferIsNative = Buffer === buffer.Buffer
+const bufferIsPolyfilled = Buffer === buffer.Buffer
 const toBuffer = (x, B) => B.from(x.buffer, x.byteOffet, x.byteLength)
 
 describe('benchmarks: hex', async () => {
@@ -44,8 +44,8 @@ describe('benchmarks: hex', async () => {
     ['@exodus/bytes/hex, no Buffer', (x) => exodusB.toHex(x), !exodusB],
     ['Buffer', (x) => toBuffer(x, Buffer).toString('hex')],
     ['Buffer.from', (x) => Buffer.from(x).toString('hex')],
-    ['buffer/Buffer', (x) => toBuffer(x, buffer.Buffer).toString('hex'), bufferIsNative],
-    ['buffer/Buffer.from', (x) => buffer.Buffer.from(x).toString('hex'), bufferIsNative],
+    ['buffer/Buffer', (x) => toBuffer(x, buffer.Buffer).toString('hex'), bufferIsPolyfilled],
+    ['buffer/Buffer.from', (x) => buffer.Buffer.from(x).toString('hex'), bufferIsPolyfilled],
     ['scure.hex', (x) => scure.encode(x)],
     ['scure.hex, no native', (x) => scureJS.encode(x), !scureJS],
   ]
@@ -55,7 +55,7 @@ describe('benchmarks: hex', async () => {
     ['@exodus/bytes/hex', (x) => exodus.fromHex(x)],
     ['@exodus/bytes/hex, no native', (x) => exodusA.fromHex(x), !exodusA],
     ['Buffer', (x) => Buffer.from(x, 'hex')],
-    ['buffer/Buffer', (x) => buffer.Buffer.from(x, 'hex'), bufferIsNative],
+    ['buffer/Buffer', (x) => buffer.Buffer.from(x, 'hex'), bufferIsPolyfilled],
     ['scure.hex', (x) => scure.decode(x)],
     ['scure.hex, no native', (x) => scureJS.decode(x), !scureJS],
   ]
