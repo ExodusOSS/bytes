@@ -43,14 +43,31 @@ const VALID = [
   ['', Uint8Array.of()],
   ['00', Uint8Array.of(0)],
   ['0000000000', Uint8Array.of(0, 0, 0, 0, 0)],
+  ['0000000000000000', Uint8Array.of(0, 0, 0, 0, 0, 0, 0, 0)], // 64
   ['aa', Uint8Array.of(0xaa)],
   ['AA', Uint8Array.of(0xaa)],
   ['aAAa', Uint8Array.of(0xaa, 0xaa)],
   ['a1B2', Uint8Array.of(0xa1, 0xb2)],
   ['AbcDef', Uint8Array.of(0xab, 0xcd, 0xef)],
   ['aAbBcCdDeEfF', Uint8Array.of(0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0xff)],
-  ['0123456789abcdef', Uint8Array.of(0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef)],
+  ['0123456789abcdef', Uint8Array.of(0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef)], // 64
+  ['0123456789aBCdeF', Uint8Array.of(0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef)], // 64
 ]
+
+const types = [
+  Buffer,
+  Uint8Array,
+  Int8Array,
+  Uint16Array,
+  Uint32Array,
+  Int16Array,
+  Int32Array,
+  Float32Array,
+  Float64Array,
+]
+
+const { Float16Array, BigInt64Array, BigUint64Array } = globalThis
+types.push(...[Float16Array, BigInt64Array, BigUint64Array].filter(Boolean))
 
 describe('toHex', () => {
   test('invalid input', (t) => {
@@ -61,7 +78,13 @@ describe('toHex', () => {
 
   test('fixtures', (t) => {
     for (const [hex, uint8] of VALID) {
-      t.assert.strictEqual(toHex(uint8), hex.toLowerCase())
+      t.assert.strictEqual(toHex(uint8), hex.toLowerCase(), 'uint8')
+      for (const A of types) {
+        t.assert.ok(Number.isSafeInteger(A.BYTES_PER_ELEMENT) && A.BYTES_PER_ELEMENT >= 1)
+        if (uint8.byteLength % A.BYTES_PER_ELEMENT !== 0) continue
+        const x = new A(uint8.buffer, uint8.byteOffset, uint8.byteLength / A.BYTES_PER_ELEMENT)
+        t.assert.strictEqual(toHex(x), hex.toLowerCase(), A.name)
+      }
     }
   })
 
