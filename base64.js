@@ -110,6 +110,9 @@ const BASE64URL_PAIRS = []
 const BASE64_CODES = nativeDecoder ? new Uint8Array(64) : null
 const BASE64URL_CODES = nativeDecoder ? new Uint8Array(64) : null
 
+// Alternatively, we could have mapped 0-255 bytes to charcodes and just used btoa(ascii),
+// but that approach is _slower_ than our toBase64js function, even on Hermes
+
 // We construct output by concatenating chars, this seems to be fine enough on modern JS engines
 function toBase64js(arr, isURL, padding) {
   assertUint8(arr)
