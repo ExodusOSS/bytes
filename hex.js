@@ -1,5 +1,5 @@
 import { assertTypedArray, assert } from './assert.js'
-import { fromTypedArray } from './array.js'
+import { typedView } from './array.js'
 
 const { Buffer, TextEncoder } = globalThis // Buffer is optional, only used when native
 const haveNativeBuffer = Buffer && !Buffer.TYPED_ARRAY_SUPPORT
@@ -64,7 +64,7 @@ export function toHex(arr) {
 // Unlike Buffer.from(), throws on invalid input
 let fromHex
 if (Uint8Array.fromHex) {
-  fromHex = (str, format = 'uint8') => fromTypedArray(Uint8Array.fromHex(str), format)
+  fromHex = (str, format = 'uint8') => typedView(Uint8Array.fromHex(str), format)
 } else {
   fromHex = (str, format = 'uint8') => {
     if (typeof str !== 'string') throw new TypeError('Input is not a string')
@@ -99,7 +99,7 @@ if (Uint8Array.fromHex) {
       }
     }
 
-    return fromTypedArray(arr, format)
+    return typedView(arr, format)
   }
 }
 

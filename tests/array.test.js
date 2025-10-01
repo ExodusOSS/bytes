@@ -1,4 +1,4 @@
-import { fromTypedArray } from '@exodus/bytes/array.js'
+import { typedView } from '@exodus/bytes/array.js'
 import { describe, test } from 'node:test'
 
 const raw = [new Uint8Array(), new Uint8Array([0]), new Uint8Array([1]), new Uint8Array([255])]
@@ -12,20 +12,20 @@ const pool = raw.map((uint8) => {
   return { uint8, buffer, hex: buffer.toString('hex') }
 })
 
-describe('fromTypedArray', () => {
+describe('typedView', () => {
   test('invalid input', (t) => {
     for (const input of [null, undefined, [], [1, 2], 'string']) {
-      t.assert.throws(() => fromTypedArray(input))
+      t.assert.throws(() => typedView(input))
       for (const form of ['uint8', 'buffer']) {
-        t.assert.throws(() => fromTypedArray(input, form))
+        t.assert.throws(() => typedView(input, form))
       }
     }
   })
 
   test('uint8', (t) => {
     for (const { buffer, uint8 } of pool) {
-      t.assert.strictEqual(fromTypedArray(uint8, 'uint8'), uint8)
-      const a = fromTypedArray(buffer, 'uint8')
+      t.assert.strictEqual(typedView(uint8, 'uint8'), uint8)
+      const a = typedView(buffer, 'uint8')
       t.assert.deepStrictEqual(a, uint8)
       t.assert.strictEqual(a.buffer, buffer.buffer)
     }
@@ -33,8 +33,8 @@ describe('fromTypedArray', () => {
 
   test('buffer', (t) => {
     for (const { uint8, buffer } of pool) {
-      t.assert.strictEqual(fromTypedArray(buffer, 'buffer'), buffer)
-      const a = fromTypedArray(uint8, 'buffer')
+      t.assert.strictEqual(typedView(buffer, 'buffer'), buffer)
+      const a = typedView(uint8, 'buffer')
       t.assert.deepStrictEqual(a, buffer)
       t.assert.strictEqual(a.buffer, uint8.buffer)
     }

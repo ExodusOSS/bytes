@@ -1,5 +1,5 @@
 import { assert, assertUint8 } from './assert.js'
-import { fromTypedArray } from './array.js'
+import { typedView } from './array.js'
 
 // See https://datatracker.ietf.org/doc/html/rfc4648
 
@@ -42,7 +42,7 @@ export function fromBase64(str, format = 'uint8') {
     assert(str[str.length - 3] !== '=', 'Excessive padding') // no more than two = at the end
   }
 
-  return fromTypedArray(fromBase64common(str, false), format)
+  return typedView(fromBase64common(str, false), format)
 }
 
 // Accepts both only non-padded strict base64url
@@ -53,7 +53,7 @@ export function fromBase64url(str, format = 'uint8') {
   assert(str.length % 4 !== 1, 'Invalid base64 length') // JSC misses this in fromBase64
   assert(!str.endsWith('='), 'Did not expect padding in base64url input') // inclusion is checked separately
 
-  return fromTypedArray(fromBase64common(str, true), format)
+  return typedView(fromBase64common(str, true), format)
 }
 
 let fromBase64common

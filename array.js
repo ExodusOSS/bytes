@@ -2,7 +2,7 @@ import { assertTypedArray } from './assert.js'
 
 const { Buffer } = globalThis // Buffer is optional
 
-export function fromTypedArray(arr, format) {
+export function typedView(arr, format) {
   assertTypedArray(arr)
   switch (format) {
     case 'uint8':
