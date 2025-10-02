@@ -1,4 +1,5 @@
 import * as exodus from '@exodus/bytes/hex.js'
+import * as fallback from '../fallback/hex.js'
 import { benchmark } from '@exodus/test/benchmark' // eslint-disable-line @exodus/import/no-unresolved
 import { hex as scure } from '@scure/base'
 import buffer from 'buffer/index.js'
@@ -42,6 +43,7 @@ describe('benchmarks: hex', async () => {
     ['@exodus/bytes/hex', (x) => exodus.toHex(x)],
     ['@exodus/bytes/hex, no native', (x) => exodusA.toHex(x), !exodusA],
     ['@exodus/bytes/hex, no Buffer', (x) => exodusB.toHex(x), !exodusB],
+    ['fallback', (x) => fallback.toHex(x)],
     ['Buffer', (x) => toBuffer(x, Buffer).toString('hex')],
     ['Buffer.from', (x) => Buffer.from(x).toString('hex')],
     ['buffer/Buffer', (x) => toBuffer(x, buffer.Buffer).toString('hex'), bufferIsPolyfilled],
@@ -54,6 +56,7 @@ describe('benchmarks: hex', async () => {
   const fromHex = [
     ['@exodus/bytes/hex', (x) => exodus.fromHex(x)],
     ['@exodus/bytes/hex, no native', (x) => exodusA.fromHex(x), !exodusA],
+    ['fallback', (x) => fallback.fromHex(x)],
     ['Buffer', (x) => Buffer.from(x, 'hex')],
     ['buffer/Buffer', (x) => buffer.Buffer.from(x, 'hex'), bufferIsPolyfilled],
     ['scure.hex', (x) => scure.decode(x)],

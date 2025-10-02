@@ -1,4 +1,5 @@
 import * as exodus from '@exodus/bytes/base64.js'
+import * as fallback from '../fallback/base64.js'
 import { benchmark } from '@exodus/test/benchmark' // eslint-disable-line @exodus/import/no-unresolved
 import { base64 as scure } from '@scure/base'
 import base64js from 'base64-js'
@@ -51,6 +52,7 @@ describe('benchmarks: base64', async () => {
     ['@exodus/bytes/base64', (x) => exodus.toBase64(x)],
     ['@exodus/bytes/base64, no native', (x) => exodusA.toBase64(x), !exodusA],
     ['@exodus/bytes/base64, no Buffer', (x) => exodusB.toBase64(x), !exodusB],
+    ['fallback', (x) => fallback.toBase64(x, false, true)],
     ['Buffer', (x) => toBuffer(x, Buffer).toString('base64')],
     ['Buffer.from', (x) => Buffer.from(x).toString('base64')],
     ['buffer/Buffer', (x) => toBuffer(x, buffer.Buffer).toString('base64'), bufferIsPolyfilled],
@@ -66,6 +68,7 @@ describe('benchmarks: base64', async () => {
     ['@exodus/bytes/base64, no native', (x) => exodusA.fromBase64(x), !exodusA],
     ['@exodus/bytes/base64, no Buffer', (x) => exodusB.fromBase64(x), !exodusB],
     ['@exodus/bytes/base64, no atob', (x) => exodusC.fromBase64(x), !exodusC],
+    ['fallback', (x) => fallback.fromBase64(x)],
     ['Buffer', (x) => Buffer.from(x, 'base64')],
     ['buffer/Buffer', (x) => buffer.Buffer.from(x, 'base64'), bufferIsPolyfilled],
     ['base64-js', (x) => base64js.toByteArray(x)],

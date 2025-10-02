@@ -67,10 +67,11 @@ export function fromHex(str) {
     }
   }
 
-  const arr = new Uint8Array(str.length / 2)
+  const length = str.length / 2 // this helps Hermes in loops
+  const arr = new Uint8Array(length)
   let j = 0
-  const length = arr.length // this helps Hermes
   if (nativeEncoder) {
+    // Native encoder path is beneficial even for small arrays in Hermes
     const codes = nativeEncoder.encode(str)
     for (let i = 0; i < length; i++) {
       const a = dehexArray[codes[j++]] * 16 + dehexArray[codes[j++]]
