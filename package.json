@@ -39,6 +39,8 @@
   },
   "type": "module",
   "files": [
+    "/fallback/base64.js",
+    "/fallback/hex.js",
     "/assert.js",
     "/base64.js",
     "/array.js",
