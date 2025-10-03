@@ -3,6 +3,7 @@ import * as fallback from '../fallback/base64.js'
 import { benchmark } from '@exodus/test/benchmark' // eslint-disable-line @exodus/import/no-unresolved
 import { base64 as scure } from '@scure/base'
 import base64js from 'base64-js'
+import fastBase64Decode from 'fast-base64-decode'
 import buffer from 'buffer/index.js'
 import { describe, test } from 'node:test'
 
@@ -74,6 +75,10 @@ describe('benchmarks: base64', async () => {
     ['base64-js', (x) => base64js.toByteArray(x)],
     ['scure.base64', (x) => scure.decode(x)],
     ['scure.base64, no native', (x) => scureJS.decode(x), !scureJS],
+    [
+      'fast-base64-decode',
+      (x) => fastBase64Decode(x, new Uint8Array(Math.ceil((x.length * 3) / 4))),
+    ],
   ]
 
   test('toBase64 coherence', (t) => {
@@ -93,6 +98,7 @@ describe('benchmarks: base64', async () => {
   test('fromBase64 coherence', (t) => {
     for (let i = 0; i < 100; i++) {
       for (const [name, f, skip] of fromBase64) {
+        if (name === 'fast-base64-decode') continue // length can be wrong
         if (!skip) t.assert.deepEqual(f(strings[i]), bufs[i], name)
       }
     }

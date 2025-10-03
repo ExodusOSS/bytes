@@ -66,6 +66,7 @@
     "buffer": "^6.0.3",
     "electron": "36.5.0",
     "eslint": "^8.44.0",
+    "fast-base64-decode": "^2.0.0",
     "jsvu": "^3.0.0",
     "text-encoding": "^0.7.0"
   },
