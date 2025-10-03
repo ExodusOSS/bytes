@@ -11,21 +11,31 @@ const { Buffer, atob } = globalThis // Buffer is optional, only used when native
 const haveNativeBuffer = Buffer && !Buffer.TYPED_ARRAY_SUPPORT
 const { toBase64: web64 } = Uint8Array.prototype // Modern engines have this
 
-export function toBase64(x) {
+// For native Buffer codepaths only
+const isBuffer = (x) => x.constructor === Buffer && Buffer.isBuffer(x)
+const toBuffer = (x) => (isBuffer(x) ? x : Buffer.from(x.buffer, x.byteOffset, x.byteLength))
+
+export function toBase64(x, { padding = true } = {}) {
   assertUint8(x)
-  if (web64 && x.toBase64 === web64) return x.toBase64() // Modern
-  if (!haveNativeBuffer) return js.toBase64(x, false, true) // Fallback
-  if (x.constructor === Buffer && Buffer.isBuffer(x)) return x.toString('base64') // Older Node.js
-  return Buffer.from(x.buffer, x.byteOffset, x.byteLength).toString('base64') // Older Node.js
+  if (web64 && x.toBase64 === web64) return x.toBase64({ omitPadding: !padding }) // Modern
+  if (!haveNativeBuffer) return js.toBase64(x, false, padding) // Fallback
+  const res = toBuffer(x).toString('base64') // Older Node.js
+  if (padding) return res
+  const at = res.indexOf('=', res.length - 3)
+  return at === -1 ? res : res.slice(0, at)
 }
 
-// NOTE: base64url omits padding
-export function toBase64url(x) {
+// NOTE: base64url omits padding by default
+export function toBase64url(x, { padding = false } = {}) {
   assertUint8(x)
-  if (web64 && x.toBase64 === web64) return x.toBase64({ alphabet: 'base64url', omitPadding: true }) // Modern
-  if (!haveNativeBuffer) return js.toBase64(x, true, false) // Fallback
+  if (web64 && x.toBase64 === web64) {
+    return x.toBase64({ alphabet: 'base64url', omitPadding: !padding }) // Modern
+  }
+
+  if (!haveNativeBuffer) return js.toBase64(x, true, padding) // Fallback
   if (x.constructor === Buffer && Buffer.isBuffer(x)) return x.toString('base64url') // Older Node.js
-  return Buffer.from(x.buffer, x.byteOffset, x.byteLength).toString('base64url') // Older Node.js
+  const res = toBuffer(x).toString('base64url') // Older Node.js
+  return padding && res.length % 4 !== 0 ? res + '='.repeat(4 - (res.length % 4)) : res
 }
 
 // Unlike Buffer.from(), throws on invalid input (non-base64 symbols and incomplete chunks)
