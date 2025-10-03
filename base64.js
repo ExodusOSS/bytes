@@ -4,8 +4,8 @@ import * as js from './fallback/base64.js'
 
 // See https://datatracker.ietf.org/doc/html/rfc4648
 
-// base64:    A-Za-z0-9+/ and =
-// base64url: A-Za-z0-9_-
+// base64:    A-Za-z0-9+/ and = if padding not disabled
+// base64url: A-Za-z0-9_- and = if padding enabled
 
 const { Buffer, atob } = globalThis // Buffer is optional, only used when native
 const haveNativeBuffer = Buffer && !Buffer.TYPED_ARRAY_SUPPORT
