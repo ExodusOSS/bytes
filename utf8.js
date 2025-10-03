@@ -68,16 +68,7 @@ function toEscapesPart(arr, start, end) {
 function decode(arr, loose = false) {
   assertUint8(arr)
   if (haveNativeDecoder) return loose ? decoderLoose.decode(arr) : decoderFatal.decode(arr) // Node.js and browsers
-  if (haveNativeBuffer) {
-    // should be ureachable unless TextEncoder is unset
-    const res = typedView(arr, 'buffer').toString()
-    // If we have a replacement symbol, recheck if output matches input
-    if (!loose && res.includes('\uFFFD')) {
-      assert(Buffer.compare(arr, utf8fromString(res)) === 0, E_STRICT)
-    }
-
-    return res
-  }
+  // No reason to use native Buffer: it's not faster than TextDecoder, needs rechecks in non-loose mode, and Node.js has TextDecoder
 
   // This codepath gives a ~2x perf boost on Hermes
   if (shouldUseEscapePath && escape && decodeURIComponent) {
