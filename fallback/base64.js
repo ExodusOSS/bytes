@@ -24,7 +24,7 @@ export function toBase64(arr, isURL, padding) {
 
   const alphabet = isURL ? BASE64URL : BASE64
   const pairs = isURL ? BASE64URL_PAIRS : BASE64_PAIRS
-  const map = isURL ? BASE64_CODES : BASE64URL_CODES
+  const map = isURL ? BASE64URL_CODES : BASE64_CODES
   if (pairs.length === 0) {
     for (let i = 0; i < 64; i++) {
       for (let j = 0; j < 64; j++) pairs.push(`${alphabet[i]}${alphabet[j]}`)
