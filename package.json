@@ -41,14 +41,14 @@
   "files": [
     "/fallback/base64.js",
     "/fallback/hex.js",
+    "/array.js",
     "/assert.js",
     "/base64.js",
-    "/array.js",
     "/hex.js"
   ],
   "exports": {
-    "./base64.js": "./base64.js",
     "./array.js": "./array.js",
+    "./base64.js": "./base64.js",
     "./hex.js": "./hex.js"
   },
   "dependencies": {},
