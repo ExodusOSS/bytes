@@ -3,7 +3,7 @@ import { typedView } from './array.js'
 import * as js from './fallback/utf8.js'
 
 const { Buffer, TextEncoder, TextDecoder } = globalThis // Buffer is optional
-const { decodeURIComponent, encodeURIComponent, escape, unescape } = globalThis
+const { decodeURIComponent, escape } = globalThis
 const haveNativeBuffer = Buffer && !Buffer.TYPED_ARRAY_SUPPORT
 const isNative = (x) => x && (haveNativeBuffer || `${x}`.includes('[native code]')) // we consider Node.js TextDecoder/TextEncoder native
 const haveNativeDecoder = isNative(TextDecoder)
@@ -14,7 +14,6 @@ const decoderLoose = haveNativeDecoder ? new TextDecoder('utf8') : null
 const { E_STRICT, E_STRICT_UNICODE } = js
 
 const shouldUseEscapePath = Boolean(globalThis.HermesInternal) // faster only on Hermes, js path beats it on normal engines
-const shouldUseUnescapePath = Boolean(globalThis.HermesInternal) // ditto, except that we don't really need it with TextEncoder
 
 function deLoose(str, loose, res) {
   if (loose) return res
@@ -41,21 +40,7 @@ function encode(str, loose = false) {
   // Node.js, browsers, and Hermes have native TextEncoder
   if (haveNativeBuffer) return deLoose(str, loose, Buffer.from(str)) // faster on ascii on Node.js
   if (nativeEncoder) return deLoose(str, loose, nativeEncoder.encode(str))
-  if (shouldUseUnescapePath && unescape && encodeURIComponent) {
-    // This path is not really critical, it's enabled only for Hermes, but modern Hermes already has TextEncoder
-    // TODO: do we need this at all? Remove in a separate commit for history
-    try {
-      const bin = unescape(encodeURIComponent(str)) // utf8 to asci
-      const length = bin.length
-      const arr = new Uint8Array(length)
-      for (let i = 0; i < length; i++) arr[i] = bin.charCodeAt(i)
-      return arr
-    } catch {
-      if (!loose) throw new Error(E_STRICT_UNICODE)
-      // Ok, we have to use manual implementation for loose encoder
-    }
-  }
-
+  // No reason to use unescape + encodeURIComponent: it's slower than JS on normal engines, and modern Hermes already has TextEncoder
   return js.encode(str, loose)
 }
 
