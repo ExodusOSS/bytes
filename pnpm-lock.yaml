@@ -44,6 +44,9 @@ importers:
       jsvu:
         specifier: ^3.0.0
         version: 3.0.0
+      text-encoding:
+        specifier: ^0.7.0
+        version: 0.7.0
 
 packages:
 
@@ -2643,6 +2646,10 @@ packages:
 
   text-decoder@1.2.3:
     resolution: {integrity: sha512-3/o9z3X0X0fTupwsYvR03pJ/DjWuqqrfwBgTQzdWDiQSm9KitAyz/9WqsT2JQW7KV2m+bC2ol/zqpW37NHxLaA==, tarball: https://registry.npmjs.org/text-decoder/-/text-decoder-1.2.3.tgz}
+
+  text-encoding@0.7.0:
+    resolution: {integrity: sha512-oJQ3f1hrOnbRLOcwKz0Liq2IcrvDeZRHXhd9RgLrsT+DjWY/nty1Hi7v3dtkaEYbPYe0mUoOfzRrMwfXXwgPUA==, tarball: https://registry.npmjs.org/text-encoding/-/text-encoding-0.7.0.tgz}
+    deprecated: no longer maintained
 
   text-table@0.2.0:
     resolution: {integrity: sha512-N+8UisAXDGk8PFXP4HAzVR9nbfmVJ3zYLAWiTIoqC5v5isinhr+r5uaO8+7r3BMfuNIufIsA7RdpVgacC2cSpw==, tarball: https://registry.npmjs.org/text-table/-/text-table-0.2.0.tgz}
@@ -5969,6 +5976,8 @@ snapshots:
     dependencies:
       b4a: 1.6.7
     optional: true
+
+  text-encoding@0.7.0: {}
 
   text-table@0.2.0: {}
 
