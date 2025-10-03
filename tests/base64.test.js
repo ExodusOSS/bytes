@@ -68,9 +68,9 @@ describe('fromBase64', () => {
 
       t.assert.throws(() => fromBase64(input))
       t.assert.throws(() => fromBase64url(input))
-      for (const form of ['uint8', 'buffer', 'hex']) {
-        t.assert.throws(() => fromBase64(input, form))
-        t.assert.throws(() => fromBase64url(input, form))
+      for (const format of ['uint8', 'buffer', 'hex']) {
+        t.assert.throws(() => fromBase64(input, { format }))
+        t.assert.throws(() => fromBase64url(input, { format }))
       }
     }
   })
@@ -82,9 +82,9 @@ describe('fromBase64', () => {
     ]) {
       t.assert.throws(() => fromBase64(input))
       t.assert.throws(() => fromBase64url(input))
-      for (const form of ['uint8', 'buffer', 'hex']) {
-        t.assert.throws(() => fromBase64(input, form))
-        t.assert.throws(() => fromBase64url(input, form))
+      for (const format of ['uint8', 'buffer', 'hex']) {
+        t.assert.throws(() => fromBase64(input, { format }))
+        t.assert.throws(() => fromBase64url(input, { format }))
       }
     }
   })
@@ -92,16 +92,16 @@ describe('fromBase64', () => {
   test('uint8', (t) => {
     for (const { base64, base64url, uint8 } of pool) {
       t.assert.deepStrictEqual(fromBase64(base64), uint8)
-      t.assert.deepStrictEqual(fromBase64(base64, 'uint8'), uint8)
+      t.assert.deepStrictEqual(fromBase64(base64, { format: 'uint8' }), uint8)
       t.assert.deepStrictEqual(fromBase64url(base64url), uint8)
-      t.assert.deepStrictEqual(fromBase64url(base64url, 'uint8'), uint8)
+      t.assert.deepStrictEqual(fromBase64url(base64url, { format: 'uint8' }), uint8)
     }
   })
 
   test('buffer', (t) => {
     for (const { base64, base64url, buffer } of pool) {
-      t.assert.deepStrictEqual(fromBase64(base64, 'buffer'), buffer)
-      t.assert.deepStrictEqual(fromBase64url(base64url, 'buffer'), buffer)
+      t.assert.deepStrictEqual(fromBase64(base64, { format: 'buffer' }), buffer)
+      t.assert.deepStrictEqual(fromBase64url(base64url, { format: 'buffer' }), buffer)
     }
   })
 })

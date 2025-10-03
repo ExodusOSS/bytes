@@ -1,4 +1,4 @@
-import { assert, assertUint8 } from './assert.js'
+import { assert, assertUint8, assertEmptyRest } from './assert.js'
 import { typedView } from './array.js'
 import * as js from './fallback/base64.js'
 
@@ -44,28 +44,25 @@ export function toBase64url(x, { padding = false } = {}) {
 
 // By default accepts both padded and non-padded variants, only strict base64
 export function fromBase64(str, options = {}) {
-  if (typeof options === 'string') options = { format: options }
-  const { format = 'uint8', padding = 'both' } = options
-  return fromBase64impl(str, false, padding, format)
+  if (typeof options === 'string') options = { format: options } // Compat due to usage, TODO: remove
+  const { format = 'uint8', padding = 'both', ...rest } = options
+  return fromBase64impl(str, false, padding, format, rest)
 }
 
 // By default accepts only non-padded strict base64url
-export function fromBase64url(str, options = {}) {
-  if (typeof options === 'string') options = { format: options }
-  const { format = 'uint8', padding = false } = options
-  return fromBase64impl(str, true, padding, format)
+export function fromBase64url(str, { format = 'uint8', padding = false, ...rest } = {}) {
+  return fromBase64impl(str, true, padding, format, rest)
 }
 
 // By default accepts both padded and non-padded variants, base64 or base64url
-export function fromBase64any(str, options = {}) {
-  if (typeof options === 'string') options = { format: options }
-  const { format = 'uint8', padding = 'both' } = options
+export function fromBase64any(str, { format = 'uint8', padding = 'both', ...rest } = {}) {
   const isBase64url = !str.includes('+') && !str.includes('/') // likely to fail fast, as most input is non-url, also double scan is faster than regex
-  return fromBase64impl(str, isBase64url, padding, format)
+  return fromBase64impl(str, isBase64url, padding, format, rest)
 }
 
-function fromBase64impl(str, isBase64url, padding, format) {
+function fromBase64impl(str, isBase64url, padding, format, rest) {
   if (typeof str !== 'string') throw new TypeError('Input is not a string')
+  assertEmptyRest(rest)
   if (padding === true) {
     assert(str.length % 4 === 0, `Expected padded base64`)
   } else {
