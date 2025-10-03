@@ -37,9 +37,8 @@ function deLoose(str, loose, res) {
 
 function encode(str, loose = false) {
   assert(typeof str === 'string')
-  // Node.js, browsers, and Hermes have native TextEncoder
   if (haveNativeBuffer) return deLoose(str, loose, Buffer.from(str)) // faster on ascii on Node.js
-  if (nativeEncoder) return deLoose(str, loose, nativeEncoder.encode(str))
+  if (nativeEncoder) return deLoose(str, loose, nativeEncoder.encode(str)) // Node.js, browsers, and Hermes
   // No reason to use unescape + encodeURIComponent: it's slower than JS on normal engines, and modern Hermes already has TextEncoder
   return js.encode(str, loose)
 }
@@ -68,10 +67,9 @@ function toEscapesPart(arr, start, end) {
 
 function decode(arr, loose = false) {
   assertUint8(arr)
-  // Node.js and browsers have native TextDecoder, in Node.js it's not slower than Buffer and is cleaner
-  if (haveNativeDecoder) return loose ? decoderLoose.decode(arr) : decoderFatal.decode(arr)
+  if (haveNativeDecoder) return loose ? decoderLoose.decode(arr) : decoderFatal.decode(arr) // Node.js and browsers
   if (haveNativeBuffer) {
-    // should be urechable unless TextEncoder is unset
+    // should be ureachable unless TextEncoder is unset
     const res = typedView(arr, 'buffer').toString()
     // If we have a replacement symbol, recheck if output matches input
     if (!loose && res.includes('\uFFFD')) {
@@ -81,6 +79,7 @@ function decode(arr, loose = false) {
     return res
   }
 
+  // This codepath gives a ~2x perf boost on Hermes
   if (shouldUseEscapePath && escape && decodeURIComponent) {
     if (!escapes) escapes = Array.from({ length: 256 }, (_, i) => escape(String.fromCharCode(i)))
     const length = arr.length
