@@ -29,6 +29,7 @@ describe('benchmarks: utf8', async () => {
   // [name, impl, skip]
   const utf8toString = [
     ['@exodus/bytes/utf8', (x) => exodus.utf8toString(x)],
+    ['@exodus/bytes/utf8, loose', (x) => exodus.utf8toStringLoose(x)],
     ['fallback', (x) => fallback.decode(x, true)],
     ['TextDecoder', (x) => textDecoder.decode(x), !textDecoder],
     ['text-encoding', (x) => textDecoderJS.decode(x)],
@@ -41,6 +42,7 @@ describe('benchmarks: utf8', async () => {
   // [name, impl, skip]
   const utf8fromString = [
     ['@exodus/bytes/utf8', (x) => exodus.utf8fromString(x)],
+    ['@exodus/bytes/utf8, loose', (x) => exodus.utf8fromStringLoose(x)],
     ['fallback', (x) => fallback.encode(x, true)],
     ['TextEncoder', (x) => textEncoder.encode(x), !textEncoder],
     ['text-encoding', (x) => textEncoderJS.encode(x)],
