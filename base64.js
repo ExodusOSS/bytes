@@ -42,44 +42,64 @@ export function toBase64url(x, { padding = false } = {}) {
 // Unlike Buffer.from() and Uint8Array.fromBase64(), does not allow spaces
 // NOTE: Always operates in strict mode for last chunk
 
-// Accepts both padded and non-padded variants, only strict base64
-export function fromBase64(str, format = 'uint8') {
-  if (typeof str !== 'string') throw new TypeError('Input is not a string')
-
-  // These checks should be needed only for Buffer path, not Uint8Array.fromBase64 path, but JSC lacks proper checks
-  assert(str.length % 4 !== 1, 'Invalid base64 length') // JSC misses this in fromBase64
-  if (str.endsWith('=')) {
-    assert(str.length % 4 === 0, 'Invalid padded length') // JSC misses this too
-    assert(str[str.length - 3] !== '=', 'Excessive padding') // no more than two = at the end
-  }
-
-  return typedView(fromBase64common(str, false), format)
+// By default accepts both padded and non-padded variants, only strict base64
+export function fromBase64(str, options = {}) {
+  if (typeof options === 'string') options = { format: options }
+  const { format = 'uint8', padding = 'both' } = options
+  return fromBase64impl(str, false, padding, format)
 }
 
-// Accepts both only non-padded strict base64url
-export function fromBase64url(str, format = 'uint8') {
+// By default accepts only non-padded strict base64url
+export function fromBase64url(str, options = {}) {
+  if (typeof options === 'string') options = { format: options }
+  const { format = 'uint8', padding = false } = options
+  return fromBase64impl(str, true, padding, format)
+}
+
+// By default accepts both padded and non-padded variants, base64 or base64url
+export function fromBase64any(str, options = {}) {
+  if (typeof options === 'string') options = { format: options }
+  const { format = 'uint8', padding = 'both' } = options
+  const isBase64url = !str.includes('+') && !str.includes('/') // likely to fail fast, as most input is non-url, also double scan is faster than regex
+  return fromBase64impl(str, isBase64url, padding, format)
+}
+
+function fromBase64impl(str, isBase64url, padding, format) {
   if (typeof str !== 'string') throw new TypeError('Input is not a string')
+  if (padding === true) {
+    assert(str.length % 4 === 0, `Expected padded base64`)
+  } else {
+    // These checks should be needed only for Buffer path, not Uint8Array.fromBase64 path, but JSC lacks proper checks
+    assert(str.length % 4 !== 1, 'Invalid base64 length') // JSC misses this in fromBase64
+    if (padding === false) {
+      assert(!str.endsWith('='), 'Did not expect padding in base64 input') // inclusion is checked separately
+    } else if (padding === 'both') {
+      if (str.endsWith('=')) {
+        assert(str.length % 4 === 0, 'Invalid padded length') // JSC misses this too
+        assert(str[str.length - 3] !== '=', 'Excessive padding') // no more than two = at the end
+      }
+    } else {
+      throw new Error('Invalid padding option')
+    }
+  }
 
-  // These checks should be needed only for Buffer path, not Uint8Array.fromBase64 path, but JSC lacks proper checks
-  assert(str.length % 4 !== 1, 'Invalid base64 length') // JSC misses this in fromBase64
-  assert(!str.endsWith('='), 'Did not expect padding in base64url input') // inclusion is checked separately
-
-  return typedView(fromBase64common(str, true), format)
+  return typedView(fromBase64common(str, padding, isBase64url), format)
 }
 
 let fromBase64common
 if (Uint8Array.fromBase64) {
   // NOTICE: this is actually slower than our JS impl in older JavaScriptCore and (slightly) in SpiderMonkey, but faster on V8 and new JavaScriptCore
-  fromBase64common = (str, isBase64url) => {
+  fromBase64common = (str, padding, isBase64url) => {
     const alphabet = isBase64url ? 'base64url' : 'base64'
     assert(!/\s/u.test(str), `Invalid character in ${alphabet} input`) // all other chars are checked natively
-    const padded = str.length % 4 > 0 ? `${str}${'='.repeat(4 - (str.length % 4))}` : str
+    const shouldPad = padding !== true && str.length % 4 > 0
+    const padded = shouldPad ? `${str}${'='.repeat(4 - (str.length % 4))}` : str
     return Uint8Array.fromBase64(padded, { alphabet, lastChunkHandling: 'strict' })
   }
 } else {
-  fromBase64common = (str, isBase64url) => {
+  fromBase64common = (str, padding, isBase64url) => {
     if (isBase64url) {
-      assert(!/[^0-9a-z_-]/iu.test(str), 'Invalid character in base64url input')
+      assert(!/[^0-9a-z=_-]/iu.test(str), 'Invalid character in base64url input')
     } else {
       assert(!/[^0-9a-z=+/]/iu.test(str), 'Invalid character in base64 input')
     }
@@ -92,8 +112,8 @@ if (Uint8Array.fromBase64) {
       arr = new Uint8Array(length)
       for (let i = 0; i < length; i++) arr[i] = raw.charCodeAt(i)
     } else {
-      // base64url is already checked to have no padding via a regex above
-      if (!isBase64url) {
+      // padding === flase is already checked to have no padding
+      if (padding !== false) {
         const at = str.indexOf('=')
         if (at >= 0) assert(!/[^=]/iu.test(str.slice(at)), 'Invalid padding')
       }

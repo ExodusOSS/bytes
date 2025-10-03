@@ -69,6 +69,7 @@ describe('benchmarks: base64', async () => {
     ['@exodus/bytes/base64, no native', (x) => exodusA.fromBase64(x), !exodusA],
     ['@exodus/bytes/base64, no Buffer', (x) => exodusB.fromBase64(x), !exodusB],
     ['@exodus/bytes/base64, no atob', (x) => exodusC.fromBase64(x), !exodusC],
+    ['@exodus/bytes/base64, any mode', (x) => exodus.fromBase64any(x), !exodusC],
     ['fallback', (x) => fallback.fromBase64(x)],
     ['Buffer', (x) => Buffer.from(x, 'base64')],
     ['buffer/Buffer', (x) => buffer.Buffer.from(x, 'base64'), bufferIsPolyfilled],
