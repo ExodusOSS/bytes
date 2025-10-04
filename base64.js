@@ -66,7 +66,7 @@ function fromBase64common(str, isBase64url, padding, format, rest) {
   if (padding === true) {
     assert(str.length % 4 === 0, `Expected padded base64`)
   } else {
-    // These checks should be needed only for Buffer path, not Uint8Array.fromBase64 path, but JSC lacks proper checks
+    // Older JSC supporting Uint8Array.fromBase64 lacks proper checks
     assert(str.length % 4 !== 1, 'Invalid base64 length') // JSC misses this in fromBase64
     if (padding === false) {
       assert(!str.endsWith('='), 'Did not expect padding in base64 input') // inclusion is checked separately
