@@ -2,8 +2,7 @@ import { assert, assertUint8 } from './assert.js'
 import { typedView } from './array.js'
 import * as js from './fallback/utf8.js'
 
-const { Buffer, TextEncoder, TextDecoder } = globalThis // Buffer is optional
-const { decodeURIComponent, escape } = globalThis
+const { Buffer, TextEncoder, TextDecoder, decodeURIComponent, escape } = globalThis // Buffer is optional
 const haveNativeBuffer = Buffer && !Buffer.TYPED_ARRAY_SUPPORT
 const isNative = (x) => x && (haveNativeBuffer || `${x}`.includes('[native code]')) // we consider Node.js TextDecoder/TextEncoder native
 const haveNativeDecoder = isNative(TextDecoder)
