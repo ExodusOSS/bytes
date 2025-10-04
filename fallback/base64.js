@@ -108,7 +108,6 @@ export function fromBase64(str) {
 
   let at = 0
   let i = 0
-  let tmp
 
   while (i < mainLength) {
     // a [ b c ] d, each 6 bits
@@ -119,16 +118,15 @@ export function fromBase64(str) {
     i += 4
   }
 
-  if (tailLength === 3) {
-    tmp =
-      (map[str.charCodeAt(i)] << 10) |
-      (map[str.charCodeAt(i + 1)] << 4) |
-      (map[str.charCodeAt(i + 2)] >> 2)
-    arr[at++] = (tmp >> 8) & 0xff
-    arr[at++] = tmp & 0xff
-  } else if (tailLength === 2) {
-    tmp = (map[str.charCodeAt(i)] << 2) | (map[str.charCodeAt(i + 1)] >> 4)
-    arr[at++] = tmp & 0xff
+  // Can be 2 or 3, verified by padding checks already
+  if (tailLength >= 2) {
+    const a = map[str.charCodeAt(i++)]
+    const b = map[str.charCodeAt(i++)]
+    arr[at++] = (a << 2) | (b >> 4)
+    if (tailLength >= 3) {
+      const c = map[str.charCodeAt(i++)]
+      arr[at++] = ((b << 4) & 0xff) | (c >> 2)
+    }
   }
 
   return arr
