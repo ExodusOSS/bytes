@@ -221,6 +221,8 @@ export function encode(string, loose) {
     }
 
     // surrogate, charcodes = [d800 + a & 3ff, dc00 + b & 3ff]; codePoint = 0x1_00_00 | (a << 10) | b
+    // lead: d800 - dbff
+    // trail: dc00 - dfff
     if (code >= 0xd8_00 && code < 0xe0_00) {
       if (lead && code < 0xdc_00) {
         // a second lead, meaning the previous one was unpaired
