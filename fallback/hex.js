@@ -1,8 +1,5 @@
 import { assert, assertUint8 } from '../assert.js'
-
-// We use TextEncoder here to parse strings to charcodes, this is faster than individual charCodeAt calls
-const { TextEncoder } = globalThis // Buffer is optional, only used when native
-const nativeEncoder = TextEncoder?.toString().includes('[native code]') ? new TextEncoder() : null
+import { nativeEncoder } from './_utils.js'
 
 let hexArray
 let dehexArray

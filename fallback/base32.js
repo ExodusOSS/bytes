@@ -1,12 +1,8 @@
 import { assert, assertUint8 } from '../assert.js'
+import { nativeEncoder, nativeDecoder } from './_utils.js'
 
 // See https://datatracker.ietf.org/doc/html/rfc4648
 
-const { Buffer, TextEncoder, TextDecoder } = globalThis
-const haveNativeBuffer = Buffer && !Buffer.TYPED_ARRAY_SUPPORT
-const isNative = (x) => x && (haveNativeBuffer || `${x}`.includes('[native code]')) // we consider Node.js TextDecoder/TextEncoder native
-const nativeEncoder = isNative(TextEncoder) ? new TextEncoder() : null
-const nativeDecoder = isNative(TextDecoder) ? new TextDecoder() : null
 const BASE32 = [...'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567'] // RFC 4648, #6
 const BASE32HEX = [...'0123456789ABCDEFGHIJKLMNOPQRSTUV'] // RFC 4648, #7
 const BASE32_HELPERS = {}

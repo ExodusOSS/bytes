@@ -39,6 +39,7 @@
   },
   "type": "module",
   "files": [
+    "/fallback/_utils.js",
     "/fallback/base64.js",
     "/fallback/hex.js",
     "/fallback/utf8.js",

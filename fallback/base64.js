@@ -1,11 +1,8 @@
 import { assertUint8 } from '../assert.js'
+import { nativeDecoder } from './_utils.js'
 
 // See https://datatracker.ietf.org/doc/html/rfc4648
 
-const { Buffer, TextDecoder } = globalThis
-const haveNativeBuffer = Buffer && !Buffer.TYPED_ARRAY_SUPPORT
-const isNative = (x) => x && (haveNativeBuffer || `${x}`.includes('[native code]')) // we consider Node.js TextDecoder/TextEncoder native
-const nativeDecoder = isNative(TextDecoder) ? new TextDecoder() : null
 const BASE64 = [...'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/']
 const BASE64URL = [...'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_']
 const BASE64_HELPERS = {}
