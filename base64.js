@@ -80,13 +80,13 @@ function fromBase64common(str, isBase64url, padding, format, rest) {
     }
   }
 
-  return typedView(fromBase64impl(str, padding, isBase64url), format)
+  return typedView(fromBase64impl(str, isBase64url, padding), format)
 }
 
 let fromBase64impl
 if (Uint8Array.fromBase64) {
   // NOTICE: this is actually slower than our JS impl in older JavaScriptCore and (slightly) in SpiderMonkey, but faster on V8 and new JavaScriptCore
-  fromBase64impl = (str, padding, isBase64url) => {
+  fromBase64impl = (str, isBase64url, padding) => {
     const alphabet = isBase64url ? 'base64url' : 'base64'
     assert(!/\s/u.test(str), `Invalid character in ${alphabet} input`) // all other chars are checked natively
     const shouldPad = padding !== true && str.length % 4 > 0
@@ -94,7 +94,7 @@ if (Uint8Array.fromBase64) {
     return Uint8Array.fromBase64(padded, { alphabet, lastChunkHandling: 'strict' })
   }
 } else {
-  fromBase64impl = (str, padding, isBase64url) => {
+  fromBase64impl = (str, isBase64url, padding) => {
     if (isBase64url) {
       assert(!/[^0-9a-z=_-]/iu.test(str), 'Invalid character in base64url input')
     } else {
