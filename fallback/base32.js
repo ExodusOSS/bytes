@@ -2,9 +2,10 @@ import { assert, assertUint8 } from '../assert.js'
 
 // See https://datatracker.ietf.org/doc/html/rfc4648
 
-const { Buffer, TextDecoder } = globalThis
+const { Buffer, TextEncoder, TextDecoder } = globalThis
 const haveNativeBuffer = Buffer && !Buffer.TYPED_ARRAY_SUPPORT
 const isNative = (x) => x && (haveNativeBuffer || `${x}`.includes('[native code]')) // we consider Node.js TextDecoder/TextEncoder native
+const nativeEncoder = isNative(TextEncoder) ? new TextEncoder() : null
 const nativeDecoder = isNative(TextDecoder) ? new TextDecoder() : null
 const BASE32 = [...'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567'] // RFC 4648, #6
 const BASE32HEX = [...'0123456789ABCDEFGHIJKLMNOPQRSTUV'] // RFC 4648, #7
@@ -117,21 +118,41 @@ export function fromBase32(str, isBase32Hex) {
   let at = 0
   let i = 0
 
-  while (i < mainLength) {
-    // each 5 bits
-    const a = map[str.charCodeAt(i++)]
-    const b = map[str.charCodeAt(i++)]
-    const c = map[str.charCodeAt(i++)]
-    const d = map[str.charCodeAt(i++)]
-    const e = map[str.charCodeAt(i++)]
-    const f = map[str.charCodeAt(i++)]
-    const g = map[str.charCodeAt(i++)]
-    const h = map[str.charCodeAt(i++)]
-    arr[at++] = (a << 3) | (b >> 2) // 5 + 3
-    arr[at++] = ((b << 6) & 0xff) | (c << 1) | (d >> 4) // 2 + 5 + 1
-    arr[at++] = ((d << 4) & 0xff) | (e >> 1) // 4 + 4
-    arr[at++] = ((e << 7) & 0xff) | (f << 2) | (g >> 3) // 1 + 5 + 2
-    arr[at++] = ((g << 5) & 0xff) | h
+  if (nativeEncoder) {
+    const codes = nativeEncoder.encode(str)
+    while (i < mainLength) {
+      // each 5 bits
+      const a = map[codes[i++]]
+      const b = map[codes[i++]]
+      const c = map[codes[i++]]
+      const d = map[codes[i++]]
+      const e = map[codes[i++]]
+      const f = map[codes[i++]]
+      const g = map[codes[i++]]
+      const h = map[codes[i++]]
+      arr[at++] = (a << 3) | (b >> 2) // 5 + 3
+      arr[at++] = ((b << 6) & 0xff) | (c << 1) | (d >> 4) // 2 + 5 + 1
+      arr[at++] = ((d << 4) & 0xff) | (e >> 1) // 4 + 4
+      arr[at++] = ((e << 7) & 0xff) | (f << 2) | (g >> 3) // 1 + 5 + 2
+      arr[at++] = ((g << 5) & 0xff) | h
+    }
+  } else {
+    while (i < mainLength) {
+      // each 5 bits
+      const a = map[str.charCodeAt(i++)]
+      const b = map[str.charCodeAt(i++)]
+      const c = map[str.charCodeAt(i++)]
+      const d = map[str.charCodeAt(i++)]
+      const e = map[str.charCodeAt(i++)]
+      const f = map[str.charCodeAt(i++)]
+      const g = map[str.charCodeAt(i++)]
+      const h = map[str.charCodeAt(i++)]
+      arr[at++] = (a << 3) | (b >> 2) // 5 + 3
+      arr[at++] = ((b << 6) & 0xff) | (c << 1) | (d >> 4) // 2 + 5 + 1
+      arr[at++] = ((d << 4) & 0xff) | (e >> 1) // 4 + 4
+      arr[at++] = ((e << 7) & 0xff) | (f << 2) | (g >> 3) // 1 + 5 + 2
+      arr[at++] = ((g << 5) & 0xff) | h
+    }
   }
 
   // Last block, valid tailLength: 0 2 4 5 7, checked already
