@@ -10,6 +10,7 @@ for (let i = 0; i < 50; i++) {
 const pool = raw.map((uint8) => {
   const buffer = Buffer.from(uint8)
   const base64 = buffer.toString('base64')
+  const base64nopad = base64.replaceAll('=', '')
   const base64urlPadded = base64.replaceAll('+', '-').replaceAll('/', '_')
   const base64urlFallback = base64urlPadded.replaceAll('=', '')
   let base64url = base64urlFallback
@@ -18,7 +19,8 @@ const pool = raw.map((uint8) => {
   } catch {}
 
   if (base64url !== base64urlFallback) throw new Error('Unexpected base64url mismatch with Buffer')
-  return { uint8, buffer, hex: buffer.toString('hex'), base64, base64url, base64urlPadded }
+  const hex = buffer.toString('hex')
+  return { uint8, buffer, hex, base64, base64nopad, base64url, base64urlPadded }
 })
 
 describe('toBase64', () => {
@@ -33,11 +35,11 @@ describe('toBase64', () => {
   })
 
   test('base64', (t) => {
-    for (const { uint8, buffer, base64 } of pool) {
+    for (const { uint8, buffer, base64, base64nopad } of pool) {
       t.assert.strictEqual(toBase64(uint8), base64)
       t.assert.strictEqual(toBase64(buffer), base64)
       t.assert.strictEqual(toBase64(uint8, { padding: true }), base64)
-      t.assert.strictEqual(toBase64(uint8, { padding: false }), base64.replaceAll('=', ''))
+      t.assert.strictEqual(toBase64(uint8, { padding: false }), base64nopad)
     }
   })
 
@@ -95,11 +97,29 @@ describe('fromBase64', () => {
   })
 
   test('uint8', (t) => {
-    for (const { base64, base64url, uint8 } of pool) {
+    for (const { base64, base64nopad, base64url, base64urlPadded, uint8 } of pool) {
       t.assert.deepStrictEqual(fromBase64(base64), uint8)
       t.assert.deepStrictEqual(fromBase64(base64, { format: 'uint8' }), uint8)
+      t.assert.deepStrictEqual(fromBase64(base64nopad, { format: 'uint8' }), uint8)
+      t.assert.deepStrictEqual(fromBase64(base64, { padding: true }), uint8)
+      t.assert.deepStrictEqual(fromBase64(base64nopad, { padding: false }), uint8)
+      t.assert.deepStrictEqual(fromBase64(base64, { padding: 'both' }), uint8)
+      t.assert.deepStrictEqual(fromBase64(base64nopad, { padding: 'both' }), uint8)
+      if (base64 !== base64nopad) {
+        t.assert.throws(() => fromBase64(base64, { padding: false }))
+        t.assert.throws(() => fromBase64(base64nopad, { padding: true }))
+      }
+
       t.assert.deepStrictEqual(fromBase64url(base64url), uint8)
       t.assert.deepStrictEqual(fromBase64url(base64url, { format: 'uint8' }), uint8)
+      t.assert.deepStrictEqual(fromBase64url(base64url, { padding: false }), uint8)
+      t.assert.deepStrictEqual(fromBase64url(base64urlPadded, { padding: true }), uint8)
+      t.assert.deepStrictEqual(fromBase64url(base64url, { padding: 'both' }), uint8)
+      t.assert.deepStrictEqual(fromBase64url(base64urlPadded, { padding: 'both' }), uint8)
+      if (base64url !== base64urlPadded) {
+        t.assert.throws(() => fromBase64url(base64urlPadded, { padding: false }))
+        t.assert.throws(() => fromBase64url(base64url, { padding: true }))
+      }
     }
   })
 
