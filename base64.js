@@ -46,21 +46,21 @@ export function toBase64url(x, { padding = false } = {}) {
 export function fromBase64(str, options = {}) {
   if (typeof options === 'string') options = { format: options } // Compat due to usage, TODO: remove
   const { format = 'uint8', padding = 'both', ...rest } = options
-  return fromBase64impl(str, false, padding, format, rest)
+  return fromBase64common(str, false, padding, format, rest)
 }
 
 // By default accepts only non-padded strict base64url
 export function fromBase64url(str, { format = 'uint8', padding = false, ...rest } = {}) {
-  return fromBase64impl(str, true, padding, format, rest)
+  return fromBase64common(str, true, padding, format, rest)
 }
 
 // By default accepts both padded and non-padded variants, base64 or base64url
 export function fromBase64any(str, { format = 'uint8', padding = 'both', ...rest } = {}) {
   const isBase64url = !str.includes('+') && !str.includes('/') // likely to fail fast, as most input is non-url, also double scan is faster than regex
-  return fromBase64impl(str, isBase64url, padding, format, rest)
+  return fromBase64common(str, isBase64url, padding, format, rest)
 }
 
-function fromBase64impl(str, isBase64url, padding, format, rest) {
+function fromBase64common(str, isBase64url, padding, format, rest) {
   if (typeof str !== 'string') throw new TypeError('Input is not a string')
   assertEmptyRest(rest)
   if (padding === true) {
@@ -80,13 +80,13 @@ function fromBase64impl(str, isBase64url, padding, format, rest) {
     }
   }
 
-  return typedView(fromBase64common(str, padding, isBase64url), format)
+  return typedView(fromBase64impl(str, padding, isBase64url), format)
 }
 
-let fromBase64common
+let fromBase64impl
 if (Uint8Array.fromBase64) {
   // NOTICE: this is actually slower than our JS impl in older JavaScriptCore and (slightly) in SpiderMonkey, but faster on V8 and new JavaScriptCore
-  fromBase64common = (str, padding, isBase64url) => {
+  fromBase64impl = (str, padding, isBase64url) => {
     const alphabet = isBase64url ? 'base64url' : 'base64'
     assert(!/\s/u.test(str), `Invalid character in ${alphabet} input`) // all other chars are checked natively
     const shouldPad = padding !== true && str.length % 4 > 0
@@ -94,7 +94,7 @@ if (Uint8Array.fromBase64) {
     return Uint8Array.fromBase64(padded, { alphabet, lastChunkHandling: 'strict' })
   }
 } else {
-  fromBase64common = (str, padding, isBase64url) => {
+  fromBase64impl = (str, padding, isBase64url) => {
     if (isBase64url) {
       assert(!/[^0-9a-z=_-]/iu.test(str), 'Invalid character in base64url input')
     } else {
