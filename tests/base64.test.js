@@ -85,6 +85,7 @@ describe('fromBase64', () => {
   test('invalid input, additional checks', (t) => {
     for (const input of [
       ...[' ', 'aaaa aaaa', 'aaaa aaa', 'aa== ', 'aa =='], // spaces
+      ...['aa==a', 'aaa=a', 'aa==aaaa', 'aaa=aaaa'], // symbols after =
       ...['_aY=', '_aa=', '-a==', '-Q=='], // padded base64url
     ]) {
       t.assert.throws(() => fromBase64(input))
