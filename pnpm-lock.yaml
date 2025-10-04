@@ -44,6 +44,9 @@ importers:
       fast-base64-decode:
         specifier: ^2.0.0
         version: 2.0.0
+      hi-base32:
+        specifier: ^0.5.1
+        version: 0.5.1
       jsvu:
         specifier: ^3.0.0
         version: 3.0.0
@@ -1537,6 +1540,9 @@ packages:
 
   hermes-parser@0.29.1:
     resolution: {integrity: sha512-xBHWmUtRC5e/UL0tI7Ivt2riA/YBq9+SiYFU7C1oBa/j2jYGlIF9043oak1F47ihuDIxQ5nbsKueYJDRY02UgA==, tarball: https://registry.npmjs.org/hermes-parser/-/hermes-parser-0.29.1.tgz}
+
+  hi-base32@0.5.1:
+    resolution: {integrity: sha512-EmBBpvdYh/4XxsnUybsPag6VikPYnN30td+vQk+GI3qpahVEG9+gTkG0aXVxTjBqQ5T6ijbWIu77O+C5WFWsnA==, tarball: https://registry.npmjs.org/hi-base32/-/hi-base32-0.5.1.tgz}
 
   hosted-git-info@2.8.9:
     resolution: {integrity: sha512-mxIDAb9Lsm6DoOJ7xH+5+X4y1LU/4Hi50L9C5sIswK3JzULS4bwk1FvjdBgvYR4bzT4tuUQiC15FE2f5HbLvYw==, tarball: https://registry.npmjs.org/hosted-git-info/-/hosted-git-info-2.8.9.tgz}
@@ -4749,6 +4755,8 @@ snapshots:
     dependencies:
       hermes-estree: 0.29.1
     optional: true
+
+  hi-base32@0.5.1: {}
 
   hosted-git-info@2.8.9: {}
 

@@ -1,4 +1,4 @@
-import { assertUint8 } from '../assert.js'
+import { assert, assertUint8 } from '../assert.js'
 
 // See https://datatracker.ietf.org/doc/html/rfc4648
 
@@ -97,5 +97,59 @@ export function toBase32(arr, isBase32Hex, padding) {
 // Assumes valid input and no chars after =, checked at API
 // Last chunk is rechecked at API too
 export function fromBase32(str, isBase32Hex) {
-  throw new Error('Unimplemented')
+  let inputLength = str.length
+  while (str[inputLength - 1] === '=') inputLength-- // already checked that no = are in the middle
+  const tailLength = inputLength % 8
+  const mainLength = inputLength - tailLength // multiples of 8
+  assert([0, 2, 4, 5, 7].includes(tailLength), 'Invalid base32 length') // fast verification
+
+  const alphabet = isBase32Hex ? BASE32HEX : BASE32
+  const helpers = isBase32Hex ? BASE32HEX_HELPERS : BASE32_HELPERS
+
+  if (!helpers.fromMap) {
+    helpers.fromMap = new Array(256)
+    alphabet.forEach((c, i) => (helpers.fromMap[c.charCodeAt(0)] = i))
+  }
+
+  const map = helpers.fromMap
+
+  const arr = new Uint8Array(Math.floor((inputLength * 5) / 8))
+  let at = 0
+  let i = 0
+
+  while (i < mainLength) {
+    // each 5 bits
+    const a = map[str.charCodeAt(i++)]
+    const b = map[str.charCodeAt(i++)]
+    const c = map[str.charCodeAt(i++)]
+    const d = map[str.charCodeAt(i++)]
+    const e = map[str.charCodeAt(i++)]
+    const f = map[str.charCodeAt(i++)]
+    const g = map[str.charCodeAt(i++)]
+    const h = map[str.charCodeAt(i++)]
+    arr[at++] = (a << 3) | (b >> 2) // 5 + 3
+    arr[at++] = ((b << 6) & 0xff) | (c << 1) | (d >> 4) // 2 + 5 + 1
+    arr[at++] = ((d << 4) & 0xff) | (e >> 1) // 4 + 4
+    arr[at++] = ((e << 7) & 0xff) | (f << 2) | (g >> 3) // 1 + 5 + 2
+    arr[at++] = ((g << 5) & 0xff) | h
+  }
+
+  // Last block, valid tailLength: 0 2 4 5 7, checked already
+  if (tailLength < 2) return arr
+  const a = map[str.charCodeAt(i++)]
+  const b = map[str.charCodeAt(i++)]
+  arr[at++] = (a << 3) | (b >> 2) // 5 + 3
+  if (tailLength < 4) return arr
+  const c = map[str.charCodeAt(i++)]
+  const d = map[str.charCodeAt(i++)]
+  arr[at++] = ((b << 6) & 0xff) | (c << 1) | (d >> 4) // 2 + 5 + 1
+  if (tailLength < 5) return arr
+  const e = map[str.charCodeAt(i++)]
+  arr[at++] = ((d << 4) & 0xff) | (e >> 1) // 4 + 4
+  if (tailLength < 7) return arr
+  const f = map[str.charCodeAt(i++)]
+  const g = map[str.charCodeAt(i++)]
+  arr[at++] = ((e << 7) & 0xff) | (f << 2) | (g >> 3) // 1 + 5 + 2
+  // Can't be 8, so no h
+  return arr
 }

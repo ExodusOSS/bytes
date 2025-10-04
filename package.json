@@ -67,6 +67,7 @@
     "electron": "36.5.0",
     "eslint": "^8.44.0",
     "fast-base64-decode": "^2.0.0",
+    "hi-base32": "^0.5.1",
     "jsvu": "^3.0.0",
     "text-encoding": "^0.7.0"
   },

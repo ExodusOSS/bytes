@@ -26,7 +26,6 @@ function fromBase32common(str, isBase32Hex, padding, format, rest) {
     const at = str.indexOf('=')
     if (at >= 0) assert(!/[^=]/iu.test(str.slice(at)), 'Invalid padding')
   } else if (padding === false || auto === false) {
-    assert([0, 2, 4, 5, 7].includes(str.length % 8), 'Invalid base32 length')
     assert(!str.includes('='), 'Did not expect padding in base32 input')
   } else {
     throw new Error('Invalid padding option')
@@ -34,10 +33,10 @@ function fromBase32common(str, isBase32Hex, padding, format, rest) {
 
   if (isBase32Hex) {
     // https://datatracker.ietf.org/doc/html/rfc4648#section-7
-    if (/[^A-Z2-7=]/u.test(str)) throw new Error('Invalid character in base32hex input')
+    if (/[^0-9A-V=]/iu.test(str)) throw new Error('Invalid character in base32hex input')
   } else {
     // https://datatracker.ietf.org/doc/html/rfc4648#section-6
-    if (/[^0-9A-V=]/u.test(str)) throw new Error('Invalid character in base32 input')
+    if (/[^A-Z2-7=]/iu.test(str)) throw new Error('Invalid character in base32 input')
   }
 
   const arr = js.fromBase32(str, isBase32Hex)
