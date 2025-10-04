@@ -10,14 +10,15 @@ for (let i = 0; i < 50; i++) {
 const pool = raw.map((uint8) => {
   const buffer = Buffer.from(uint8)
   const base64 = buffer.toString('base64')
-  const base64urlFallback = base64.replaceAll('+', '-').replaceAll('/', '_').replaceAll('=', '')
+  const base64urlPadded = base64.replaceAll('+', '-').replaceAll('/', '_')
+  const base64urlFallback = base64urlPadded.replaceAll('=', '')
   let base64url = base64urlFallback
   try {
     base64url = buffer.toString('base64url') // unsupported by https://npmjs.com/package/buffer
   } catch {}
 
   if (base64url !== base64urlFallback) throw new Error('Unexpected base64url mismatch with Buffer')
-  return { uint8, buffer, hex: buffer.toString('hex'), base64, base64url }
+  return { uint8, buffer, hex: buffer.toString('hex'), base64, base64url, base64urlPadded }
 })
 
 describe('toBase64', () => {
@@ -35,13 +36,17 @@ describe('toBase64', () => {
     for (const { uint8, buffer, base64 } of pool) {
       t.assert.strictEqual(toBase64(uint8), base64)
       t.assert.strictEqual(toBase64(buffer), base64)
+      t.assert.strictEqual(toBase64(uint8, { padding: true }), base64)
+      t.assert.strictEqual(toBase64(uint8, { padding: false }), base64.replaceAll('=', ''))
     }
   })
 
   test('base64url', (t) => {
-    for (const { uint8, buffer, base64url } of pool) {
+    for (const { uint8, buffer, base64url, base64urlPadded } of pool) {
       t.assert.strictEqual(toBase64url(uint8), base64url)
       t.assert.strictEqual(toBase64url(buffer), base64url)
+      t.assert.strictEqual(toBase64url(uint8, { padding: false }), base64url)
+      t.assert.strictEqual(toBase64url(uint8, { padding: true }), base64urlPadded)
     }
   })
 })
