@@ -8,10 +8,8 @@ const isNative = (x) => x && (haveNativeBuffer || `${x}`.includes('[native code]
 const nativeDecoder = isNative(TextDecoder) ? new TextDecoder() : null
 const BASE64 = [...'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/']
 const BASE64URL = [...'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_']
-const BASE64_PAIRS = []
-const BASE64URL_PAIRS = []
-const BASE64_CODES = nativeDecoder ? new Uint8Array(64) : null
-const BASE64URL_CODES = nativeDecoder ? new Uint8Array(64) : null
+const BASE64_HELPERS = {}
+const BASE64URL_HELPERS = {}
 
 // Alternatively, we could have mapped 0-255 bytes to charcodes and just used btoa(ascii),
 // but that approach is _slower_ than our toBase64js function, even on Hermes
@@ -25,27 +23,38 @@ export function toBase64(arr, isURL, padding) {
   let i = 0
 
   const alphabet = isURL ? BASE64URL : BASE64
-  const pairs = isURL ? BASE64URL_PAIRS : BASE64_PAIRS
-  const map = isURL ? BASE64URL_CODES : BASE64_CODES
-  if (pairs.length === 0) {
-    for (let i = 0; i < 64; i++) {
-      for (let j = 0; j < 64; j++) pairs.push(`${alphabet[i]}${alphabet[j]}`)
-      if (map) map[i] = alphabet[i].charCodeAt(0)
+  const helpers = isURL ? BASE64URL_HELPERS : BASE64_HELPERS
+  if (!helpers.pairs) {
+    helpers.pairs = []
+    if (nativeDecoder) {
+      // Lazy to save memory in case if this is not needed
+      helpers.codepairs = new Uint16Array(64 * 64)
+      const u16 = helpers.codepairs
+      const u8 = new Uint8Array(u16.buffer, u16.byteOffset, u16.byteLength) // write as 1-byte to ignore BE/LE difference
+      for (let i = 0; i < 64; i++) {
+        const ic = alphabet[i].charCodeAt(0)
+        for (let j = 0; j < 64; j++) u8[(i << 7) | (j << 1)] = u8[(j << 7) | ((i << 1) + 1)] = ic
+      }
+    } else {
+      const p = helpers.pairs
+      for (let i = 0; i < 64; i++) {
+        for (let j = 0; j < 64; j++) p.push(`${alphabet[i]}${alphabet[j]}`)
+      }
     }
   }
+
+  const { pairs, codepairs } = helpers
 
   // Fast path for complete blocks
   // This whole loop can be commented out, the algorithm won't change, it's just an optimization of the next loop
   if (nativeDecoder) {
-    const oa = new Uint8Array(fullChunks * 4)
+    const oa = new Uint16Array(fullChunks * 2)
     for (let j = 0; i < fullChunksBytes; i += 3) {
       const a = arr[i]
       const b = arr[i + 1]
       const c = arr[i + 2]
-      oa[j++] = map[a >> 2]
-      oa[j++] = map[((a & 0x3) << 4) | (b >> 4)]
-      oa[j++] = map[((b & 0xf) << 2) | (c >> 6)]
-      oa[j++] = map[c & 0x3f]
+      oa[j++] = codepairs[(a << 4) | (b >> 4)]
+      oa[j++] = codepairs[((b & 0x0f) << 8) | c]
     }
 
     o = nativeDecoder.decode(oa)
