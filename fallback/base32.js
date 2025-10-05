@@ -11,6 +11,7 @@ const BASE32HEX_HELPERS = {}
 export const E_CHAR = 'Invalid character in base32 input'
 export const E_PADDING = 'Invalid base32 padding'
 export const E_LENGTH = 'Invalid base32 length'
+export const E_LAST = 'Invalid last chunk'
 
 // We construct output by concatenating chars, this seems to be fine enough on modern JS engines
 export function toBase32(arr, isBase32Hex, padding) {
@@ -95,7 +96,6 @@ export function toBase32(arr, isBase32Hex, padding) {
   return o
 }
 
-// Last chunk is rechecked at API
 export function fromBase32(str, isBase32Hex) {
   let inputLength = str.length
   while (str[inputLength - 1] === '=') inputLength--
@@ -115,7 +115,7 @@ export function fromBase32(str, isBase32Hex) {
     })
   }
 
-  const map = helpers.fromMap
+  const m = helpers.fromMap
 
   const arr = new Uint8Array(Math.floor((inputLength * 5) / 8))
   let at = 0
@@ -124,68 +124,69 @@ export function fromBase32(str, isBase32Hex) {
   if (nativeEncoder) {
     const codes = nativeEncoder.encode(str)
     while (i < mainLength) {
-      // each 5 bits
-      const a = map[codes[i++]]
-      const b = map[codes[i++]]
-      const c = map[codes[i++]]
-      const d = map[codes[i++]]
-      const e = map[codes[i++]]
-      const f = map[codes[i++]]
-      const g = map[codes[i++]]
-      const h = map[codes[i++]]
-      if (a < 0 || b < 0 || c < 0 || d < 0 || e < 0 || f < 0 || g < 0 || h < 0) {
-        throw new Error(E_CHAR)
-      }
-
-      arr[at++] = (a << 3) | (b >> 2) // 5 + 3
-      arr[at++] = ((b << 6) & 0xff) | (c << 1) | (d >> 4) // 2 + 5 + 1
-      arr[at++] = ((d << 4) & 0xff) | (e >> 1) // 4 + 4
-      arr[at++] = ((e << 7) & 0xff) | (f << 2) | (g >> 3) // 1 + 5 + 2
-      arr[at++] = ((g << 5) & 0xff) | h
+      // each 5 bits, grouped 5 * 4 = 20
+      const a = (m[codes[i++]] << 15) | (m[codes[i++]] << 10) | (m[codes[i++]] << 5) | m[codes[i++]]
+      const b = (m[codes[i++]] << 15) | (m[codes[i++]] << 10) | (m[codes[i++]] << 5) | m[codes[i++]]
+      if (a < 0 || b < 0) throw new Error(E_CHAR)
+      arr[at++] = a >> 12
+      arr[at++] = (a >> 4) & 0xff
+      arr[at++] = ((a << 4) & 0xff) | (b >> 16)
+      arr[at++] = (b >> 8) & 0xff
+      arr[at++] = b & 0xff
     }
   } else {
     while (i < mainLength) {
-      // each 5 bits
-      const a = map[str.charCodeAt(i++)]
-      const b = map[str.charCodeAt(i++)]
-      const c = map[str.charCodeAt(i++)]
-      const d = map[str.charCodeAt(i++)]
-      const e = map[str.charCodeAt(i++)]
-      const f = map[str.charCodeAt(i++)]
-      const g = map[str.charCodeAt(i++)]
-      const h = map[str.charCodeAt(i++)]
-      if (a < 0 || b < 0 || c < 0 || d < 0 || e < 0 || f < 0 || g < 0 || h < 0) {
-        throw new Error(E_CHAR)
-      }
-
-      arr[at++] = (a << 3) | (b >> 2) // 5 + 3
-      arr[at++] = ((b << 6) & 0xff) | (c << 1) | (d >> 4) // 2 + 5 + 1
-      arr[at++] = ((d << 4) & 0xff) | (e >> 1) // 4 + 4
-      arr[at++] = ((e << 7) & 0xff) | (f << 2) | (g >> 3) // 1 + 5 + 2
-      arr[at++] = ((g << 5) & 0xff) | h
+      // each 5 bits, grouped 5 * 4 = 20
+      const a =
+        (m[str.charCodeAt(i++)] << 15) |
+        (m[str.charCodeAt(i++)] << 10) |
+        (m[str.charCodeAt(i++)] << 5) |
+        m[str.charCodeAt(i++)]
+      const b =
+        (m[str.charCodeAt(i++)] << 15) |
+        (m[str.charCodeAt(i++)] << 10) |
+        (m[str.charCodeAt(i++)] << 5) |
+        m[str.charCodeAt(i++)]
+      if (a < 0 || b < 0) throw new Error(E_CHAR)
+      arr[at++] = a >> 12
+      arr[at++] = (a >> 4) & 0xff
+      arr[at++] = ((a << 4) & 0xff) | (b >> 16)
+      arr[at++] = (b >> 8) & 0xff
+      arr[at++] = b & 0xff
     }
   }
 
   // Last block, valid tailLength: 0 2 4 5 7, checked already
+  // We check last chunk to be strict
   if (tailLength < 2) return arr
-  const a = map[str.charCodeAt(i++)]
-  const b = map[str.charCodeAt(i++)]
-  if (a < 0 || b < 0) throw new Error(E_CHAR)
-  arr[at++] = (a << 3) | (b >> 2) // 5 + 3
-  if (tailLength < 4) return arr
-  const c = map[str.charCodeAt(i++)]
-  const d = map[str.charCodeAt(i++)]
-  if (c < 0 || d < 0) throw new Error(E_CHAR)
-  arr[at++] = ((b << 6) & 0xff) | (c << 1) | (d >> 4) // 2 + 5 + 1
-  if (tailLength < 5) return arr
-  const e = map[str.charCodeAt(i++)]
+  const ab = (m[str.charCodeAt(i++)] << 5) | m[str.charCodeAt(i++)]
+  if (ab < 0) throw new Error(E_CHAR)
+  arr[at++] = ab >> 2
+  if (tailLength < 4) {
+    if (ab & 0x3) throw new Error(E_LAST)
+    return arr
+  }
+
+  const cd = (m[str.charCodeAt(i++)] << 5) | m[str.charCodeAt(i++)]
+  if (cd < 0) throw new Error(E_CHAR)
+  arr[at++] = ((ab << 6) & 0xff) | (cd >> 4)
+  if (tailLength < 5) {
+    if (cd & 0xf) throw new Error(E_LAST)
+    return arr
+  }
+
+  const e = m[str.charCodeAt(i++)]
   if (e < 0) throw new Error(E_CHAR)
-  arr[at++] = ((d << 4) & 0xff) | (e >> 1) // 4 + 4
-  if (tailLength < 7) return arr
-  const f = map[str.charCodeAt(i++)]
-  const g = map[str.charCodeAt(i++)]
-  if (f < 0 || g < 0) throw new Error(E_CHAR)
-  arr[at++] = ((e << 7) & 0xff) | (f << 2) | (g >> 3) // 1 + 5 + 2
+  arr[at++] = ((cd << 4) & 0xff) | (e >> 1) // 4 + 4
+  if (tailLength < 7) {
+    if (e & 0x1) throw new Error(E_LAST)
+    return arr
+  }
+
+  const fg = (m[str.charCodeAt(i++)] << 5) | m[str.charCodeAt(i++)]
+  if (fg < 0) throw new Error(E_CHAR)
+  arr[at++] = ((e << 7) & 0xff) | (fg >> 3) // 1 + 5 + 2
   // Can't be 8, so no h
+  if (fg & 0x7) throw new Error(E_LAST)
   return arr
 }

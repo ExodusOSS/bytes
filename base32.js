@@ -27,15 +27,5 @@ function fromBase32common(str, isBase32Hex, padding, format, rest) {
     throw new Error('Invalid padding option')
   }
 
-  const arr = js.fromBase32(str, isBase32Hex)
-
-  if (arr.length % 5 !== 0) {
-    // Check last chunk to be strict if it was incomplete
-    const expected = js.toBase32(arr.subarray(-(arr.length % 5)), isBase32Hex, true)
-    const actual =
-      str.length % 8 === 0 ? str.slice(-8) : str.slice(-(str.length % 8)).padEnd(8, '=')
-    if (expected !== actual) throw new Error('Invalid last chunk')
-  }
-
-  return typedView(arr, format)
+  return typedView(js.fromBase32(str, isBase32Hex), format)
 }
