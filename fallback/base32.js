@@ -105,7 +105,10 @@ export function fromBase32(str, isBase32Hex) {
 
   if (!helpers.fromMap) {
     helpers.fromMap = new Array(256)
-    alphabet.forEach((c, i) => (helpers.fromMap[c.charCodeAt(0)] = i))
+    alphabet.forEach((c, i) => {
+      helpers.fromMap[c.charCodeAt(0)] = i
+      helpers.fromMap[c.toLowerCase().charCodeAt(0)] = i
+    })
   }
 
   const map = helpers.fromMap
