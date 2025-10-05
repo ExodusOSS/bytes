@@ -1,4 +1,4 @@
-import { assertTypedArray } from './assert.js'
+import { assertUint8 } from './assert.js'
 import { typedView } from './array.js'
 import * as js from './fallback/hex.js'
 
@@ -7,8 +7,7 @@ const haveNativeBuffer = Buffer && !Buffer.TYPED_ARRAY_SUPPORT
 const { toHex: webHex } = Uint8Array.prototype // Modern engines have this
 
 export function toHex(arr) {
-  assertTypedArray(arr)
-  if (!(arr instanceof Uint8Array)) arr = new Uint8Array(arr.buffer, arr.byteOffset, arr.byteLength)
+  assertUint8(arr)
   if (arr.length === 0) return ''
   if (webHex && arr.toHex === webHex) return arr.toHex()
   if (!haveNativeBuffer) return js.toHex(arr)

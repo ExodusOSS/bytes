@@ -54,20 +54,7 @@ const VALID = [
   ['0123456789aBCdeF', Uint8Array.of(0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef)], // 64
 ]
 
-const types = [
-  Buffer,
-  Uint8Array,
-  Int8Array,
-  Uint16Array,
-  Uint32Array,
-  Int16Array,
-  Int32Array,
-  Float32Array,
-  Float64Array,
-]
-
-const { Float16Array, BigInt64Array, BigUint64Array } = globalThis
-types.push(...[Float16Array, BigInt64Array, BigUint64Array].filter(Boolean))
+const types = [Buffer, Uint8Array]
 
 describe('toHex', () => {
   test('invalid input', (t) => {
