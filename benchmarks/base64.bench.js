@@ -73,9 +73,6 @@ describe('benchmarks: base64', async () => {
     ['fallback', (x) => fallback.fromBase64(x)],
     ['Buffer', (x) => Buffer.from(x, 'base64')],
     ['buffer/Buffer', (x) => buffer.Buffer.from(x, 'base64'), bufferIsPolyfilled],
-    ['base64-js', (x) => base64js.toByteArray(x)],
-    ['scure.base64', (x) => scure.decode(x)],
-    ['scure.base64, no native', (x) => scureJS.decode(x), !scureJS],
     [
       'fast-base64-decode',
       (x) => {
@@ -86,6 +83,9 @@ describe('benchmarks: base64', async () => {
         return arr
       },
     ],
+    ['base64-js', (x) => base64js.toByteArray(x)],
+    ['scure.base64', (x) => scure.decode(x)],
+    ['scure.base64, no native', (x) => scureJS.decode(x), !scureJS],
   ]
 
   test('toBase64 coherence', (t) => {
