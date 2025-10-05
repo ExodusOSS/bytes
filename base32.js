@@ -22,21 +22,10 @@ function fromBase32common(str, isBase32Hex, padding, format, rest) {
   const auto = padding === 'both' ? str.endsWith('=') : undefined
   if (padding === true || auto === true) {
     assert(str.length % 8 === 0, 'Invalid padded length')
-    assert(str[str.length - 7] !== '=', 'Excessive padding') // no more than 6 = at the end
-    const at = str.indexOf('=')
-    if (at >= 0) assert(!/[^=]/iu.test(str.slice(at)), 'Invalid padding')
-  } else if (padding === false || auto === false) {
-    assert(!str.includes('='), 'Did not expect padding in base32 input')
-  } else {
+  } else if (padding === false) {
+    assert(!str.endsWith('='), 'Did not expect padding in base32 input')
+  } else if (auto !== false) {
     throw new Error('Invalid padding option')
-  }
-
-  if (isBase32Hex) {
-    // https://datatracker.ietf.org/doc/html/rfc4648#section-7
-    if (/[^0-9A-V=]/iu.test(str)) throw new Error('Invalid character in base32hex input')
-  } else {
-    // https://datatracker.ietf.org/doc/html/rfc4648#section-6
-    if (/[^A-Z2-7=]/iu.test(str)) throw new Error('Invalid character in base32 input')
   }
 
   const arr = js.fromBase32(str, isBase32Hex)

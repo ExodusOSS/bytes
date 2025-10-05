@@ -8,6 +8,8 @@ const BASE32HEX = [...'0123456789ABCDEFGHIJKLMNOPQRSTUV'] // RFC 4648, #7
 const BASE32_HELPERS = {}
 const BASE32HEX_HELPERS = {}
 
+const E_CHAR = 'Invalid character in base32 input'
+
 // We construct output by concatenating chars, this seems to be fine enough on modern JS engines
 export function toBase32(arr, isBase32Hex, padding) {
   assertUint8(arr)
@@ -91,20 +93,22 @@ export function toBase32(arr, isBase32Hex, padding) {
   return o
 }
 
-// Assumes valid input and no chars after =, checked at API
-// Last chunk is rechecked at API too
+// Last chunk is rechecked at API
 export function fromBase32(str, isBase32Hex) {
   let inputLength = str.length
-  while (str[inputLength - 1] === '=') inputLength-- // already checked that no = are in the middle
+  while (str[inputLength - 1] === '=') inputLength--
+  const paddingLength = str.length - inputLength
   const tailLength = inputLength % 8
   const mainLength = inputLength - tailLength // multiples of 8
   assert([0, 2, 4, 5, 7].includes(tailLength), 'Invalid base32 length') // fast verification
+  if (paddingLength > 7) throw new Error('Excessive padding')
+  if (paddingLength !== 0 && str.length % 8 !== 0) throw new Error('Expected padded base32')
 
   const alphabet = isBase32Hex ? BASE32HEX : BASE32
   const helpers = isBase32Hex ? BASE32HEX_HELPERS : BASE32_HELPERS
 
   if (!helpers.fromMap) {
-    helpers.fromMap = new Uint8Array(123) // z is [122], highest possible char
+    helpers.fromMap = new Int8Array(256).fill(-1) // no regex input validation here, so we map all other bytes to -1 and recheck sign
     alphabet.forEach((c, i) => {
       helpers.fromMap[c.charCodeAt(0)] = helpers.fromMap[c.toLowerCase().charCodeAt(0)] = i
     })
@@ -128,6 +132,10 @@ export function fromBase32(str, isBase32Hex) {
       const f = map[codes[i++]]
       const g = map[codes[i++]]
       const h = map[codes[i++]]
+      if (a < 0 || b < 0 || c < 0 || d < 0 || e < 0 || f < 0 || g < 0 || h < 0) {
+        throw new Error(E_CHAR)
+      }
+
       arr[at++] = (a << 3) | (b >> 2) // 5 + 3
       arr[at++] = ((b << 6) & 0xff) | (c << 1) | (d >> 4) // 2 + 5 + 1
       arr[at++] = ((d << 4) & 0xff) | (e >> 1) // 4 + 4
@@ -145,6 +153,10 @@ export function fromBase32(str, isBase32Hex) {
       const f = map[str.charCodeAt(i++)]
       const g = map[str.charCodeAt(i++)]
       const h = map[str.charCodeAt(i++)]
+      if (a < 0 || b < 0 || c < 0 || d < 0 || e < 0 || f < 0 || g < 0 || h < 0) {
+        throw new Error(E_CHAR)
+      }
+
       arr[at++] = (a << 3) | (b >> 2) // 5 + 3
       arr[at++] = ((b << 6) & 0xff) | (c << 1) | (d >> 4) // 2 + 5 + 1
       arr[at++] = ((d << 4) & 0xff) | (e >> 1) // 4 + 4
@@ -157,17 +169,21 @@ export function fromBase32(str, isBase32Hex) {
   if (tailLength < 2) return arr
   const a = map[str.charCodeAt(i++)]
   const b = map[str.charCodeAt(i++)]
+  if (a < 0 || b < 0) throw new Error(E_CHAR)
   arr[at++] = (a << 3) | (b >> 2) // 5 + 3
   if (tailLength < 4) return arr
   const c = map[str.charCodeAt(i++)]
   const d = map[str.charCodeAt(i++)]
+  if (c < 0 || d < 0) throw new Error(E_CHAR)
   arr[at++] = ((b << 6) & 0xff) | (c << 1) | (d >> 4) // 2 + 5 + 1
   if (tailLength < 5) return arr
   const e = map[str.charCodeAt(i++)]
+  if (e < 0) throw new Error(E_CHAR)
   arr[at++] = ((d << 4) & 0xff) | (e >> 1) // 4 + 4
   if (tailLength < 7) return arr
   const f = map[str.charCodeAt(i++)]
   const g = map[str.charCodeAt(i++)]
+  if (f < 0 || g < 0) throw new Error(E_CHAR)
   arr[at++] = ((e << 7) & 0xff) | (f << 2) | (g >> 3) // 1 + 5 + 2
   // Can't be 8, so no h
   return arr
