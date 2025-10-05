@@ -66,10 +66,10 @@ function fromBase64common(str, isBase64url, padding, format, rest) {
   const auto = padding === 'both' ? str.endsWith('=') : undefined
   // Older JSC supporting Uint8Array.fromBase64 lacks proper checks
   if (padding === true || auto === true) {
-    assert(str.length % 4 === 0, 'Expected padded base64') // JSC misses this
-    assert(str[str.length - 3] !== '=', 'Excessive padding') // no more than two = at the end
+    assert(str.length % 4 === 0, js.E_PADDING) // JSC misses this
+    assert(str[str.length - 3] !== '=', js.E_PADDING) // no more than two = at the end
   } else if (padding === false || auto === false) {
-    assert(str.length % 4 !== 1, 'Invalid base64 length') // JSC misses this in fromBase64
+    assert(str.length % 4 !== 1, js.E_LENGTH) // JSC misses this in fromBase64
     if (padding === false) assert(!str.endsWith('='), 'Did not expect padding in base64 input') // inclusion is checked separately
   } else {
     throw new Error('Invalid padding option')
@@ -92,9 +92,9 @@ if (Uint8Array.fromBase64) {
     let arr
     if (haveNativeBuffer) {
       const invalidRegex = isBase64url ? /[^0-9a-z=_-]/iu : /[^0-9a-z=+/]/iu
-      assert(!invalidRegex.test(str), 'Invalid character in base64 input')
+      assert(!invalidRegex.test(str), js.E_CHAR)
       const at = str.indexOf('=')
-      if (at >= 0) assert(!/[^=]/iu.test(str.slice(at)), 'Invalid padding')
+      if (at >= 0) assert(!/[^=]/iu.test(str.slice(at)), js.E_PADDING)
       arr = Buffer.from(str, 'base64')
     } else if (atob) {
       // atob is faster than manual parsing on Hermes

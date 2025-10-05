@@ -8,6 +8,10 @@ const BASE64URL = [...'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz01234
 const BASE64_HELPERS = {}
 const BASE64URL_HELPERS = {}
 
+export const E_CHAR = 'Invalid character in base64 input'
+export const E_PADDING = 'Invalid base64 padding'
+export const E_LENGTH = 'Invalid base64 length'
+
 // Alternatively, we could have mapped 0-255 bytes to charcodes and just used btoa(ascii),
 // but that approach is _slower_ than our toBase64js function, even on Hermes
 
@@ -93,9 +97,8 @@ export function fromBase64(str, isURL) {
   const paddingLength = str.length - inputLength
   const tailLength = inputLength % 4
   const mainLength = inputLength - tailLength // multiples of 4
-  if (tailLength === 1) throw new Error('Invalid base64 length')
-  if (paddingLength > 3) throw new Error('Excessive padding')
-  if (paddingLength !== 0 && str.length % 4 !== 0) throw new Error('Expected padded base64')
+  if (tailLength === 1) throw new Error(E_LENGTH)
+  if (paddingLength > 3 || (paddingLength !== 0 && str.length % 4 !== 0)) throw new Error(E_PADDING)
 
   const alphabet = isURL ? BASE64URL : BASE64
   const helpers = isURL ? BASE64URL_HELPERS : BASE64_HELPERS
@@ -118,7 +121,7 @@ export function fromBase64(str, isURL) {
       const a = map[codes[i++]]
       const bc = (map[codes[i++]] << 6) | map[codes[i++]]
       const d = map[codes[i++]]
-      if (a < 0 || bc < 0 || d < 0) throw new Error('Invalid character in base64 input')
+      if (a < 0 || bc < 0 || d < 0) throw new Error(E_CHAR)
       arr[at++] = (a << 2) | (bc >> 10)
       arr[at++] = (bc >> 2) & 0xff
       arr[at++] = ((bc << 6) & 0xff) | d
@@ -129,7 +132,7 @@ export function fromBase64(str, isURL) {
       const a = map[str.charCodeAt(i++)]
       const bc = (map[str.charCodeAt(i++)] << 6) | map[str.charCodeAt(i++)]
       const d = map[str.charCodeAt(i++)]
-      if (a < 0 || bc < 0 || d < 0) throw new Error('Invalid character in base64 input')
+      if (a < 0 || bc < 0 || d < 0) throw new Error(E_CHAR)
       arr[at++] = (a << 2) | (bc >> 10)
       arr[at++] = (bc >> 2) & 0xff
       arr[at++] = ((bc << 6) & 0xff) | d
@@ -140,11 +143,11 @@ export function fromBase64(str, isURL) {
   if (tailLength >= 2) {
     const a = map[str.charCodeAt(i++)]
     const b = map[str.charCodeAt(i++)]
-    if (a < 0 || b < 0) throw new Error('Invalid character in base64 input')
+    if (a < 0 || b < 0) throw new Error(E_CHAR)
     arr[at++] = (a << 2) | (b >> 4)
     if (tailLength >= 3) {
       const c = map[str.charCodeAt(i++)]
-      if (c < 0) throw new Error('Invalid character in base64 input')
+      if (c < 0) throw new Error(E_CHAR)
       arr[at++] = ((b << 4) & 0xff) | (c >> 2)
     }
   }
