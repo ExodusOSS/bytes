@@ -31,7 +31,8 @@ Notes:
 
 Notes:
 
-1.  `Buffer.from` is separate because it is common to see `Buffer.from(uint8).toString(...`, despite that being a copy
+1. `Buffer.from` is separate because it is common to see `Buffer.from(uint8).toString(...`, despite that being a copy
+2. Firefox seems to be slow in native `toBase64`, hopefully should be fixed upstream. Not catastrophic though
 
 | Engine                | `@exodus/bytes` | `Buffer`  | `Buffer.from` | `base64-js` | `@scure/base` |
 | --------------------- | --------------- | --------- | ------------- | ----------- | ------------- |
@@ -43,8 +44,8 @@ Notes:
 | JSC / Safari          | 1,782,531       | 14,863    | 14,758        | 14,975      | 1,919,386     |
 | JSC (old)             | 111,321         | 14,863    | 14,758        | 14,975      | 7,641         |
 | Safari (old)          | 221,828         | 17,797    | 17,834        | 18,024      | 7,150         |
-| SM / Firefox          | 97,116          | 27,258    | 26,613        | 28,839      | 95,584        |
-| SM (old)              | 77,574          | 27,258    | 26,613        | 28,839      | 8,774         |
+| SM / Firefox          | 97,116 (note 2) | 27,258    | 26,613        | 28,839      | 95,584        |
+| SM (old)              | 77,574 (note 2) | 27,258    | 26,613        | 28,839      | 8,774         |
 | Firefox (old)         | 184,672         | 26,310    | 25,332        | 27,974      | 7,974         |
 | Hermes / React Native | 5032            | 2004      | 2011          | 2040        | 359           |
 
@@ -52,8 +53,8 @@ Notes:
 
 Notes:
 
-1.  `Buffer` does not perform proper validation
-2.  Firefox seems to be slow in native `fromHex`, hopefully should be fixed upstream. Not catastrophic though
+1. `Buffer` does not perform proper validation
+2. Firefox seems to be slow in native `fromHex`, hopefully should be fixed upstream. Not catastrophic though
 
 | Engine                | `@exodus/bytes` | `Buffer`  | `@scure/base` |
 | --------------------- | --------------- | --------- | ------------- |
@@ -74,8 +75,8 @@ Notes:
 
 Notes:
 
-1.  `Buffer.from` is separate because it is common to see `Buffer.from(uint8).toString(...`, despite that being a copy
-2.  Firefox seems to be slow in native `toHex`, hopefully should be fixed upstream. Not catastrophic though
+1. `Buffer.from` is separate because it is common to see `Buffer.from(uint8).toString(...`, despite that being a copy
+2. Firefox seems to be slow in native `toHex`, hopefully should be fixed upstream. Not catastrophic though
 
 | Engine                | `@exodus/bytes` | `Buffer`  | `Buffer.from` | `@scure/base` |
 | --------------------- | --------------- | --------- | ------------- | ------------- |
