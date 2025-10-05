@@ -1,4 +1,5 @@
 import { toBase64, toBase64url, fromBase64, fromBase64url } from '@exodus/bytes/base64.js'
+import * as js from '../fallback/base64.js'
 import { describe, test } from 'node:test'
 
 const raw = [new Uint8Array(), new Uint8Array([0]), new Uint8Array([1]), new Uint8Array([255])]
@@ -25,7 +26,7 @@ const pool = raw.map((uint8) => {
 
 describe('toBase64', () => {
   describe('invalid input', () => {
-    for (const method of [toBase64, toBase64url]) {
+    for (const method of [toBase64, toBase64url, js.toBase64]) {
       test(method.name, (t) => {
         for (const input of [null, undefined, [], [1, 2], new Uint16Array(1), 'string']) {
           t.assert.throws(() => method(input))
@@ -40,6 +41,8 @@ describe('toBase64', () => {
       t.assert.strictEqual(toBase64(buffer), base64)
       t.assert.strictEqual(toBase64(uint8, { padding: true }), base64)
       t.assert.strictEqual(toBase64(uint8, { padding: false }), base64nopad)
+      t.assert.strictEqual(js.toBase64(uint8, false, false), base64nopad)
+      t.assert.strictEqual(js.toBase64(uint8, false, true), base64)
     }
   })
 
@@ -49,6 +52,8 @@ describe('toBase64', () => {
       t.assert.strictEqual(toBase64url(buffer), base64url)
       t.assert.strictEqual(toBase64url(uint8, { padding: false }), base64url)
       t.assert.strictEqual(toBase64url(uint8, { padding: true }), base64urlPadded)
+      t.assert.strictEqual(js.toBase64(uint8, true, false), base64url)
+      t.assert.strictEqual(js.toBase64(uint8, true, true), base64urlPadded)
     }
   })
 })
@@ -59,10 +64,11 @@ const INVALID_FROM_SPACES = [' ', 'aaaa aaaa', 'aaaa aaa', 'aa== ', 'aa =='] // 
 const INVALID_FROM_PADDED = ['_aY=', '_aa=', '-a==', '-Q=='] // padded base64url
 const INVALID_FROM_CONTENT = [
   ...['a', 'aaaaa'], // wrong length
-  ...['a==', '====', 'a=aa', 'aa=a', '=aaa'], // wrong padding
+  ...['=', '==', '===', '====', 'a=', 'a==', 'a===', 'a====', 'aa=', 'aa===', 'aa==='], // wrong padding
+  ...['aaa==', 'aaa===', 'aaa====', 'aaaa=', 'aaaa==', 'aaaa==='], // wrong padding
   ...['####', '@@@@', 'aaa#', 'a%aa'], // wrong chars
   ...['a-+a', 'aa+_', 'aa_/', '-a/a'], // mixed base64/base64url
-  ...['aa==a', 'aaa=a', 'aa==aaaa', 'aaa=aaaa'], // symbols after =
+  ...['a=aa', 'aa=a', '=aaa', 'aa==a', 'aaa=a', 'aa==aaaa', 'aaa=aaaa'], // symbols after =
 ]
 
 describe('fromBase64', () => {
@@ -100,6 +106,13 @@ describe('fromBase64', () => {
         t.assert.throws(() => fromBase64(input, { format }))
         t.assert.throws(() => fromBase64url(input, { format }))
       }
+    }
+  })
+
+  test('invalid input, fallback', (t) => {
+    for (const input of [...INVALID_FROM_SPACES, ...INVALID_FROM_CONTENT]) {
+      t.assert.throws(() => js.fromBase64(input, false), input)
+      t.assert.throws(() => js.fromBase64(input, true), input)
     }
   })
 

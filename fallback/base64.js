@@ -86,26 +86,27 @@ export function toBase64(arr, isURL, padding) {
   return o
 }
 
-let fromBase64jsMap
-
-// Assumes valid input and no chars after =, checked at API
-// Last chunk is rechecked at API too
-export function fromBase64(str) {
-  const map = fromBase64jsMap || new Uint8Array(128)
-  if (!fromBase64jsMap) {
-    fromBase64jsMap = map
-    BASE64.forEach((c, i) => (map[c.charCodeAt(0)] = i))
-    map['-'.charCodeAt(0)] = map['+'.charCodeAt(0)] // for base64url
-    map['_'.charCodeAt(0)] = map['/'.charCodeAt(0)] // for base64url
-  }
-
+// Last chunk is rechecked at API
+export function fromBase64(str, isURL) {
   let inputLength = str.length
   while (str[inputLength - 1] === '=') inputLength--
-
-  const arr = new Uint8Array(Math.floor((inputLength * 3) / 4))
   const tailLength = inputLength % 4
   const mainLength = inputLength - tailLength // multiples of 4
+  if (tailLength === 1) throw new Error('Invalid base64 length')
+  if (str.length - inputLength > 3) throw new Error('Excessive padding')
+  if (str.length !== inputLength && str.length % 4 !== 0) throw new Error('Expected padded base64')
 
+  const alphabet = isURL ? BASE64URL : BASE64
+  const helpers = isURL ? BASE64URL_HELPERS : BASE64_HELPERS
+
+  if (!helpers.fromMap) {
+    helpers.fromMap = new Int8Array(256).fill(-1) // no regex input validation here, so we map all other bytes to -1 and recheck sign
+    alphabet.forEach((c, i) => (helpers.fromMap[c.charCodeAt(0)] = i))
+  }
+
+  const map = helpers.fromMap
+
+  const arr = new Uint8Array(Math.floor((inputLength * 3) / 4))
   let at = 0
   let i = 0
 
@@ -113,20 +114,24 @@ export function fromBase64(str) {
     const codes = nativeEncoder.encode(str)
     while (i < mainLength) {
       // a [ b c ] d, each 6 bits
-      const bc = (map[codes[i + 1]] << 6) | map[codes[i + 2]]
-      arr[at++] = (map[codes[i]] << 2) | (bc >> 10)
+      const a = map[codes[i++]]
+      const bc = (map[codes[i++]] << 6) | map[codes[i++]]
+      const d = map[codes[i++]]
+      if (a < 0 || bc < 0 || d < 0) throw new Error('Invalid character in base64 input')
+      arr[at++] = (a << 2) | (bc >> 10)
       arr[at++] = (bc >> 2) & 0xff
-      arr[at++] = ((bc << 6) & 0xff) | map[codes[i + 3]]
-      i += 4
+      arr[at++] = ((bc << 6) & 0xff) | d
     }
   } else {
     while (i < mainLength) {
       // a [ b c ] d, each 6 bits
-      const bc = (map[str.charCodeAt(i + 1)] << 6) | map[str.charCodeAt(i + 2)]
-      arr[at++] = (map[str.charCodeAt(i)] << 2) | (bc >> 10)
+      const a = map[str.charCodeAt(i++)]
+      const bc = (map[str.charCodeAt(i++)] << 6) | map[str.charCodeAt(i++)]
+      const d = map[str.charCodeAt(i++)]
+      if (a < 0 || bc < 0 || d < 0) throw new Error('Invalid character in base64 input')
+      arr[at++] = (a << 2) | (bc >> 10)
       arr[at++] = (bc >> 2) & 0xff
-      arr[at++] = ((bc << 6) & 0xff) | map[str.charCodeAt(i + 3)]
-      i += 4
+      arr[at++] = ((bc << 6) & 0xff) | d
     }
   }
 
@@ -134,9 +139,11 @@ export function fromBase64(str) {
   if (tailLength >= 2) {
     const a = map[str.charCodeAt(i++)]
     const b = map[str.charCodeAt(i++)]
+    if (a < 0 || b < 0) throw new Error('Invalid character in base64 input')
     arr[at++] = (a << 2) | (b >> 4)
     if (tailLength >= 3) {
       const c = map[str.charCodeAt(i++)]
+      if (c < 0) throw new Error('Invalid character in base64 input')
       arr[at++] = ((b << 4) & 0xff) | (c >> 2)
     }
   }
