@@ -94,7 +94,7 @@ function decode(arr, loose = false) {
     try {
       return decodeURIComponent(o) // asci to utf8, escape() is precalucated
     } catch {
-      if (!loose) throw new Error(E_STRICT)
+      if (!loose) throw new TypeError(E_STRICT)
       // Ok, we have to use manual implementation for loose decoder
     }
   }

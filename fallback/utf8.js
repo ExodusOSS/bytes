@@ -47,19 +47,19 @@ export function decode(arr, loose) {
         i++
       }
     } else if (byte < 0xc2) {
-      if (!loose) throw new Error(E_STRICT)
+      if (!loose) throw new TypeError(E_STRICT)
       tmp.push(replacementPoint)
     } else if (byte < 0xe0) {
       // need 1 more
       if (i + 1 >= end) {
-        if (!loose) throw new Error(E_STRICT)
+        if (!loose) throw new TypeError(E_STRICT)
         tmp.push(replacementPoint)
         break
       }
 
       const byte1 = arr[i + 1]
       if (byte1 < 0x80 || byte1 > 0xbf) {
-        if (!loose) throw new Error(E_STRICT)
+        if (!loose) throw new TypeError(E_STRICT)
         tmp.push(replacementPoint)
         continue
       }
@@ -69,7 +69,7 @@ export function decode(arr, loose) {
     } else if (byte < 0xf0) {
       // need 2 more
       if (i + 1 >= end) {
-        if (!loose) throw new Error(E_STRICT)
+        if (!loose) throw new TypeError(E_STRICT)
         tmp.push(replacementPoint)
         break
       }
@@ -78,21 +78,21 @@ export function decode(arr, loose) {
       const upper = byte === 0xed ? 0x9f : 0xbf
       const byte1 = arr[i + 1]
       if (byte1 < lower || byte1 > upper) {
-        if (!loose) throw new Error(E_STRICT)
+        if (!loose) throw new TypeError(E_STRICT)
         tmp.push(replacementPoint)
         continue
       }
 
       i++
       if (i + 1 >= end) {
-        if (!loose) throw new Error(E_STRICT)
+        if (!loose) throw new TypeError(E_STRICT)
         tmp.push(replacementPoint)
         break
       }
 
       const byte2 = arr[i + 1]
       if (byte2 < 0x80 || byte2 > 0xbf) {
-        if (!loose) throw new Error(E_STRICT)
+        if (!loose) throw new TypeError(E_STRICT)
         tmp.push(replacementPoint)
         continue
       }
@@ -102,7 +102,7 @@ export function decode(arr, loose) {
     } else if (byte <= 0xf4) {
       // need 3 more
       if (i + 1 >= end) {
-        if (!loose) throw new Error(E_STRICT)
+        if (!loose) throw new TypeError(E_STRICT)
         tmp.push(replacementPoint)
         break
       }
@@ -111,35 +111,35 @@ export function decode(arr, loose) {
       const upper = byte === 0xf4 ? 0x8f : 0xbf
       const byte1 = arr[i + 1]
       if (byte1 < lower || byte1 > upper) {
-        if (!loose) throw new Error(E_STRICT)
+        if (!loose) throw new TypeError(E_STRICT)
         tmp.push(replacementPoint)
         continue
       }
 
       i++
       if (i + 1 >= end) {
-        if (!loose) throw new Error(E_STRICT)
+        if (!loose) throw new TypeError(E_STRICT)
         tmp.push(replacementPoint)
         break
       }
 
       const byte2 = arr[i + 1]
       if (byte2 < 0x80 || byte2 > 0xbf) {
-        if (!loose) throw new Error(E_STRICT)
+        if (!loose) throw new TypeError(E_STRICT)
         tmp.push(replacementPoint)
         continue
       }
 
       i++
       if (i + 1 >= end) {
-        if (!loose) throw new Error(E_STRICT)
+        if (!loose) throw new TypeError(E_STRICT)
         tmp.push(replacementPoint)
         break
       }
 
       const byte3 = arr[i + 1]
       if (byte3 < 0x80 || byte3 > 0xbf) {
-        if (!loose) throw new Error(E_STRICT)
+        if (!loose) throw new TypeError(E_STRICT)
         tmp.push(replacementPoint)
         continue
       }
@@ -156,7 +156,7 @@ export function decode(arr, loose) {
       }
       // eslint-disable-next-line sonarjs/no-duplicated-branches
     } else {
-      if (!loose) throw new Error(E_STRICT)
+      if (!loose) throw new TypeError(E_STRICT)
       tmp.push(replacementPoint)
     }
   }
@@ -177,7 +177,7 @@ export function encode(string, loose) {
     if (code < 0x80) {
       // Fast path for ascii
       if (lead) {
-        if (!loose) throw new Error(E_STRICT_UNICODE)
+        if (!loose) throw new TypeError(E_STRICT_UNICODE)
         bytes[p++] = 0xef
         bytes[p++] = 0xbf
         bytes[p++] = 0xbd
@@ -226,7 +226,7 @@ export function encode(string, loose) {
     if (code >= 0xd8_00 && code < 0xe0_00) {
       if (lead && code < 0xdc_00) {
         // a second lead, meaning the previous one was unpaired
-        if (!loose) throw new Error(E_STRICT_UNICODE)
+        if (!loose) throw new TypeError(E_STRICT_UNICODE)
         bytes[p++] = 0xef
         bytes[p++] = 0xbf
         bytes[p++] = 0xbd
@@ -237,7 +237,7 @@ export function encode(string, loose) {
       if (!lead) {
         if (code > 0xdb_ff || i + 1 >= length) {
           // lead out of range || unpaired
-          if (!loose) throw new Error(E_STRICT_UNICODE)
+          if (!loose) throw new TypeError(E_STRICT_UNICODE)
           bytes[p++] = 0xef
           bytes[p++] = 0xbf
           bytes[p++] = 0xbd
@@ -257,7 +257,7 @@ export function encode(string, loose) {
       lead = null
       continue
     } else if (lead) {
-      if (!loose) throw new Error(E_STRICT_UNICODE)
+      if (!loose) throw new TypeError(E_STRICT_UNICODE)
       bytes[p++] = 0xef
       bytes[p++] = 0xbf
       bytes[p++] = 0xbd
