@@ -78,7 +78,13 @@ describe('benchmarks: base64', async () => {
     ['scure.base64, no native', (x) => scureJS.decode(x), !scureJS],
     [
       'fast-base64-decode',
-      (x) => fastBase64Decode(x, new Uint8Array(Math.ceil((x.length * 3) / 4))),
+      (x) => {
+        let len = x.length
+        while (x[len - 1] === '=') len-- // not significant for perf anyway
+        const arr = new Uint8Array(Math.floor((len * 3) / 4))
+        fastBase64Decode(x, arr)
+        return arr
+      },
     ],
   ]
 
@@ -99,7 +105,6 @@ describe('benchmarks: base64', async () => {
   test('fromBase64 coherence', (t) => {
     for (let i = 0; i < 100; i++) {
       for (const [name, f, skip] of fromBase64) {
-        if (name === 'fast-base64-decode') continue // length can be wrong
         if (!skip) t.assert.deepEqual(f(strings[i]), bufs[i], name)
       }
     }
