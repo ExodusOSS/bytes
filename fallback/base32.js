@@ -8,7 +8,9 @@ const BASE32HEX = [...'0123456789ABCDEFGHIJKLMNOPQRSTUV'] // RFC 4648, #7
 const BASE32_HELPERS = {}
 const BASE32HEX_HELPERS = {}
 
-const E_CHAR = 'Invalid character in base32 input'
+export const E_CHAR = 'Invalid character in base32 input'
+export const E_PADDING = 'Invalid base32 padding'
+export const E_LENGTH = 'Invalid base32 length'
 
 // We construct output by concatenating chars, this seems to be fine enough on modern JS engines
 export function toBase32(arr, isBase32Hex, padding) {
@@ -100,9 +102,8 @@ export function fromBase32(str, isBase32Hex) {
   const paddingLength = str.length - inputLength
   const tailLength = inputLength % 8
   const mainLength = inputLength - tailLength // multiples of 8
-  assert([0, 2, 4, 5, 7].includes(tailLength), 'Invalid base32 length') // fast verification
-  if (paddingLength > 7) throw new Error('Excessive padding')
-  if (paddingLength !== 0 && str.length % 8 !== 0) throw new Error('Expected padded base32')
+  assert([0, 2, 4, 5, 7].includes(tailLength), E_LENGTH) // fast verification
+  if (paddingLength > 7 || (paddingLength !== 0 && str.length % 8 !== 0)) throw new Error(E_PADDING)
 
   const alphabet = isBase32Hex ? BASE32HEX : BASE32
   const helpers = isBase32Hex ? BASE32HEX_HELPERS : BASE32_HELPERS

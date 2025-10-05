@@ -19,12 +19,11 @@ function fromBase32common(str, isBase32Hex, padding, format, rest) {
   if (typeof str !== 'string') throw new TypeError('Input is not a string')
   assertEmptyRest(rest)
 
-  const auto = padding === 'both' ? str.endsWith('=') : undefined
-  if (padding === true || auto === true) {
-    assert(str.length % 8 === 0, 'Invalid padded length')
+  if (padding === true) {
+    assert(str.length % 8 === 0, js.E_PADDING)
   } else if (padding === false) {
     assert(!str.endsWith('='), 'Did not expect padding in base32 input')
-  } else if (auto !== false) {
+  } else if (padding !== 'both') {
     throw new Error('Invalid padding option')
   }
 
