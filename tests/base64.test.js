@@ -53,17 +53,28 @@ describe('toBase64', () => {
   })
 })
 
+const INVALID_FROM_TYPES = [null, undefined, [], [1, 2], ['00'], new Uint8Array()]
+const INVALID_FROM_LAX = ['aa=='] // non-strict
+const INVALID_FROM_SPACES = [' ', 'aaaa aaaa', 'aaaa aaa', 'aa== ', 'aa =='] // spaces
+const INVALID_FROM_PADDED = ['_aY=', '_aa=', '-a==', '-Q=='] // padded base64url
+const INVALID_FROM_CONTENT = [
+  ...['a', 'aaaaa'], // wrong length
+  ...['a==', '====', 'a=aa', 'aa=a', '=aaa'], // wrong padding
+  ...['####', '@@@@', 'aaa#', 'a%aa'], // wrong chars
+  ...['a-+a', 'aa+_', 'aa_/', '-a/a'], // mixed base64/base64url
+  ...['aa==a', 'aaa=a', 'aa==aaaa', 'aaa=aaaa'], // symbols after =
+]
+
 describe('fromBase64', () => {
-  test('invalid input', (t) => {
-    for (const input of [
-      ...[null, undefined, [], [1, 2], ['00'], new Uint8Array()],
-      ...['a', 'aaaaa'], // wrong length
-      ...['a==', '====', 'a=aa', 'aa=a', '=aaa'], // wrong padding
-      ...['####', '@@@@', 'aaa#', 'a%aa'], // wrong chars
-      ...['a-+a', 'aa+_', 'aa_/', '-a/a'], // mixed base64/base64url
-      ...['aa=='], // non-strict
-    ]) {
-      if (Uint8Array.fromBase64 && !['jsc', 'webkit'].includes(process.env.EXODUS_TEST_PLATFORM)) {
+  if (Uint8Array.fromBase64 && !['jsc', 'webkit'].includes(process.env.EXODUS_TEST_PLATFORM)) {
+    test('invalid input, coherence check', (t) => {
+      for (const input of [
+        ...INVALID_FROM_TYPES,
+        ...INVALID_FROM_LAX,
+        // but not INVALID_FROM_SPACES,
+        // but not INVALID_FROM_PADDED
+        ...INVALID_FROM_CONTENT,
+      ]) {
         t.assert.throws(() => Uint8Array.fromBase64(input, { lastChunkHandling: 'strict' }))
         t.assert.throws(() =>
           Uint8Array.fromBase64(input, { lastChunkHandling: 'strict', alphabet: 'base64' })
@@ -72,21 +83,16 @@ describe('fromBase64', () => {
           Uint8Array.fromBase64(input, { lastChunkHandling: 'strict', alphabet: 'base64url' })
         )
       }
+    })
+  }
 
-      t.assert.throws(() => fromBase64(input))
-      t.assert.throws(() => fromBase64url(input))
-      for (const format of ['uint8', 'buffer', 'hex']) {
-        t.assert.throws(() => fromBase64(input, { format }))
-        t.assert.throws(() => fromBase64url(input, { format }))
-      }
-    }
-  })
-
-  test('invalid input, additional checks', (t) => {
+  test('invalid input', (t) => {
     for (const input of [
-      ...[' ', 'aaaa aaaa', 'aaaa aaa', 'aa== ', 'aa =='], // spaces
-      ...['aa==a', 'aaa=a', 'aa==aaaa', 'aaa=aaaa'], // symbols after =
-      ...['_aY=', '_aa=', '-a==', '-Q=='], // padded base64url
+      ...INVALID_FROM_TYPES,
+      ...INVALID_FROM_LAX,
+      ...INVALID_FROM_SPACES,
+      ...INVALID_FROM_PADDED,
+      ...INVALID_FROM_CONTENT,
     ]) {
       t.assert.throws(() => fromBase64(input))
       t.assert.throws(() => fromBase64url(input))
