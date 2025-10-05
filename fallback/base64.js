@@ -117,25 +117,24 @@ export function fromBase64(str, isURL) {
   if (nativeEncoder) {
     const codes = nativeEncoder.encode(str)
     while (i < mainLength) {
-      // a [ b c ] d, each 6 bits
-      const a = map[codes[i++]]
-      const bc = (map[codes[i++]] << 6) | map[codes[i++]]
-      const d = map[codes[i++]]
-      if (a < 0 || bc < 0 || d < 0) throw new Error(E_CHAR)
-      arr[at++] = (a << 2) | (bc >> 10)
-      arr[at++] = (bc >> 2) & 0xff
-      arr[at++] = ((bc << 6) & 0xff) | d
+      const a =
+        (map[codes[i++]] << 18) | (map[codes[i++]] << 12) | (map[codes[i++]] << 6) | map[codes[i++]]
+      if (a < 0) throw new Error(E_CHAR)
+      arr[at++] = a >> 16
+      arr[at++] = (a >> 8) & 0xff
+      arr[at++] = a & 0xff
     }
   } else {
     while (i < mainLength) {
-      // a [ b c ] d, each 6 bits
-      const a = map[str.charCodeAt(i++)]
-      const bc = (map[str.charCodeAt(i++)] << 6) | map[str.charCodeAt(i++)]
-      const d = map[str.charCodeAt(i++)]
-      if (a < 0 || bc < 0 || d < 0) throw new Error(E_CHAR)
-      arr[at++] = (a << 2) | (bc >> 10)
-      arr[at++] = (bc >> 2) & 0xff
-      arr[at++] = ((bc << 6) & 0xff) | d
+      const a =
+        (map[str.charCodeAt(i++)] << 18) |
+        (map[str.charCodeAt(i++)] << 12) |
+        (map[str.charCodeAt(i++)] << 6) |
+        map[str.charCodeAt(i++)]
+      if (a < 0) throw new Error(E_CHAR)
+      arr[at++] = a >> 16
+      arr[at++] = (a >> 8) & 0xff
+      arr[at++] = a & 0xff
     }
   }
 
