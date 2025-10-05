@@ -11,6 +11,8 @@ const { Buffer, atob } = globalThis // Buffer is optional, only used when native
 const haveNativeBuffer = Buffer && !Buffer.TYPED_ARRAY_SUPPORT
 const { toBase64: web64 } = Uint8Array.prototype // Modern engines have this
 
+const { E_CHAR, E_PADDING, E_LENGTH, E_LAST } = js
+
 const shouldUseAtob = atob && Boolean(globalThis.HermesInternal) // faster only on Hermes (and a little in old Chrome), js path beats it on normal engines
 
 // For native Buffer codepaths only
@@ -68,10 +70,10 @@ function fromBase64common(str, isBase64url, padding, format, rest) {
   const auto = padding === 'both' ? str.endsWith('=') : undefined
   // Older JSC supporting Uint8Array.fromBase64 lacks proper checks
   if (padding === true || auto === true) {
-    assert(str.length % 4 === 0, js.E_PADDING) // JSC misses this
-    assert(str[str.length - 3] !== '=', js.E_PADDING) // no more than two = at the end
+    assert(str.length % 4 === 0, E_PADDING) // JSC misses this
+    assert(str[str.length - 3] !== '=', E_PADDING) // no more than two = at the end
   } else if (padding === false || auto === false) {
-    assert(str.length % 4 !== 1, js.E_LENGTH) // JSC misses this in fromBase64
+    assert(str.length % 4 !== 1, E_LENGTH) // JSC misses this in fromBase64
     if (padding === false) assert(!str.endsWith('='), 'Did not expect padding in base64 input') // inclusion is checked separately
   } else {
     throw new Error('Invalid padding option')
@@ -94,9 +96,9 @@ if (Uint8Array.fromBase64) {
     let arr
     if (haveNativeBuffer) {
       const invalidRegex = isBase64url ? /[^0-9a-z=_-]/iu : /[^0-9a-z=+/]/iu
-      assert(!invalidRegex.test(str), js.E_CHAR)
+      assert(!invalidRegex.test(str), E_CHAR)
       const at = str.indexOf('=')
-      if (at >= 0) assert(!/[^=]/iu.test(str.slice(at)), js.E_PADDING)
+      if (at >= 0) assert(!/[^=]/iu.test(str.slice(at)), E_PADDING)
       arr = Buffer.from(str, 'base64')
     } else if (shouldUseAtob) {
       // atob is faster than manual parsing on Hermes
@@ -110,7 +112,7 @@ if (Uint8Array.fromBase64) {
       arr = new Uint8Array(length)
       for (let i = 0; i < length; i++) arr[i] = raw.charCodeAt(i)
     } else {
-      arr = js.fromBase64(str, isBase64url)
+      return js.fromBase64(str, isBase64url) // early return to skip last chunk verification, it's already validated in js
     }
 
     if (arr.length % 3 !== 0) {
@@ -118,7 +120,7 @@ if (Uint8Array.fromBase64) {
       const expected = toBase64(arr.subarray(-(arr.length % 3)))
       const end = str.length % 4 === 0 ? str.slice(-4) : str.slice(-(str.length % 4)).padEnd(4, '=')
       const actual = isBase64url ? end.replaceAll('-', '+').replaceAll('_', '/') : end
-      if (expected !== actual) throw new Error('Invalid last chunk')
+      if (expected !== actual) throw new Error(E_LAST)
     }
 
     return arr

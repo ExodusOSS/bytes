@@ -11,6 +11,7 @@ const BASE64URL_HELPERS = {}
 export const E_CHAR = 'Invalid character in base64 input'
 export const E_PADDING = 'Invalid base64 padding'
 export const E_LENGTH = 'Invalid base64 length'
+export const E_LAST = 'Invalid last chunk'
 
 // Alternatively, we could have mapped 0-255 bytes to charcodes and just used btoa(ascii),
 // but that approach is _slower_ than our toBase64js function, even on Hermes
@@ -137,18 +138,19 @@ export function fromBase64(str, isURL) {
     }
   }
 
-  // Can be 2 or 3, verified by padding checks already
-  if (tailLength >= 2) {
-    const a = m[str.charCodeAt(i++)]
-    const b = m[str.charCodeAt(i++)]
-    if (a < 0 || b < 0) throw new Error(E_CHAR)
-    arr[at++] = (a << 2) | (b >> 4)
-    if (tailLength >= 3) {
-      const c = m[str.charCodeAt(i++)]
-      if (c < 0) throw new Error(E_CHAR)
-      arr[at++] = ((b << 4) & 0xff) | (c >> 2)
-    }
+  // Can be 0, 2 or 3, verified by padding checks already
+  if (tailLength < 2) return arr // 0
+  const ab = (m[str.charCodeAt(i++)] << 6) | m[str.charCodeAt(i++)]
+  if (ab < 0) throw new Error(E_CHAR)
+  arr[at++] = ab >> 4
+  if (tailLength < 3) {
+    if (ab & 0xf) throw new Error(E_LAST)
+    return arr // 2
   }
 
-  return arr
+  const c = m[str.charCodeAt(i++)]
+  if (c < 0) throw new Error(E_CHAR)
+  arr[at++] = ((ab << 4) & 0xff) | (c >> 2)
+  if (c & 0x3) throw new Error(E_LAST)
+  return arr // 3
 }

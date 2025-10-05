@@ -110,7 +110,7 @@ describe('fromBase64', () => {
   })
 
   test('invalid input, fallback', (t) => {
-    for (const input of [...INVALID_FROM_SPACES, ...INVALID_FROM_CONTENT]) {
+    for (const input of [...INVALID_FROM_SPACES, ...INVALID_FROM_LAX, ...INVALID_FROM_CONTENT]) {
       t.assert.throws(() => js.fromBase64(input, false), input)
       t.assert.throws(() => js.fromBase64(input, true), input)
     }
