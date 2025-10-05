@@ -1,5 +1,5 @@
 import { assertUint8 } from '../assert.js'
-import { nativeDecoder } from './_utils.js'
+import { nativeEncoder, nativeDecoder } from './_utils.js'
 
 // See https://datatracker.ietf.org/doc/html/rfc4648
 
@@ -109,13 +109,25 @@ export function fromBase64(str) {
   let at = 0
   let i = 0
 
-  while (i < mainLength) {
-    // a [ b c ] d, each 6 bits
-    const bc = (map[str.charCodeAt(i + 1)] << 6) | map[str.charCodeAt(i + 2)]
-    arr[at++] = (map[str.charCodeAt(i)] << 2) | (bc >> 10)
-    arr[at++] = (bc >> 2) & 0xff
-    arr[at++] = ((bc << 6) & 0xff) | map[str.charCodeAt(i + 3)]
-    i += 4
+  if (nativeEncoder) {
+    const codes = nativeEncoder.encode(str)
+    while (i < mainLength) {
+      // a [ b c ] d, each 6 bits
+      const bc = (map[codes[i + 1]] << 6) | map[codes[i + 2]]
+      arr[at++] = (map[codes[i]] << 2) | (bc >> 10)
+      arr[at++] = (bc >> 2) & 0xff
+      arr[at++] = ((bc << 6) & 0xff) | map[codes[i + 3]]
+      i += 4
+    }
+  } else {
+    while (i < mainLength) {
+      // a [ b c ] d, each 6 bits
+      const bc = (map[str.charCodeAt(i + 1)] << 6) | map[str.charCodeAt(i + 2)]
+      arr[at++] = (map[str.charCodeAt(i)] << 2) | (bc >> 10)
+      arr[at++] = (bc >> 2) & 0xff
+      arr[at++] = ((bc << 6) & 0xff) | map[str.charCodeAt(i + 3)]
+      i += 4
+    }
   }
 
   // Can be 2 or 3, verified by padding checks already
