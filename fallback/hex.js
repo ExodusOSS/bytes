@@ -70,10 +70,24 @@ export function fromHex(str) {
   if (nativeEncoder) {
     // Native encoder path is beneficial even for small arrays in Hermes
     const codes = nativeEncoder.encode(str)
-    for (let i = 0; i < length; i++) {
+    const last3 = length - 3 // Unroll nativeEncoder path as this is what modern Hermes takes and a small perf improvement is nice there
+    let i = 0
+    while (i < last3) {
+      const a = (dehexArray[codes[j++]] << 4) | dehexArray[codes[j++]]
+      const b = (dehexArray[codes[j++]] << 4) | dehexArray[codes[j++]]
+      const c = (dehexArray[codes[j++]] << 4) | dehexArray[codes[j++]]
+      const d = (dehexArray[codes[j++]] << 4) | dehexArray[codes[j++]]
+      if (a < 0 || b < 0 || c < 0 || d < 0) throw new Error('Input is not a hex string')
+      arr[i++] = a
+      arr[i++] = b
+      arr[i++] = c
+      arr[i++] = d
+    }
+
+    while (i < length) {
       const res = (dehexArray[codes[j++]] << 4) | dehexArray[codes[j++]]
       if (res < 0) throw new Error('Input is not a hex string')
-      arr[i] = res
+      arr[i++] = res
     }
   } else {
     for (let i = 0; i < length; i++) {
