@@ -1,4 +1,4 @@
-import * as exodus from '../base32.js'
+import * as exodus from '@exodus/bytes/base32.js'
 import { benchmark } from '@exodus/test/benchmark' // eslint-disable-line @exodus/import/no-unresolved
 import { base32nopad as scure } from '@scure/base'
 import base32js from 'base32.js'
