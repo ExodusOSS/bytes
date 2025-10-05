@@ -108,7 +108,7 @@ export function fromBase64(str, isURL) {
     alphabet.forEach((c, i) => (helpers.fromMap[c.charCodeAt(0)] = i))
   }
 
-  const map = helpers.fromMap
+  const m = helpers.fromMap
 
   const arr = new Uint8Array(Math.floor((inputLength * 3) / 4))
   let at = 0
@@ -117,8 +117,7 @@ export function fromBase64(str, isURL) {
   if (nativeEncoder) {
     const codes = nativeEncoder.encode(str)
     while (i < mainLength) {
-      const a =
-        (map[codes[i++]] << 18) | (map[codes[i++]] << 12) | (map[codes[i++]] << 6) | map[codes[i++]]
+      const a = (m[codes[i++]] << 18) | (m[codes[i++]] << 12) | (m[codes[i++]] << 6) | m[codes[i++]]
       if (a < 0) throw new Error(E_CHAR)
       arr[at++] = a >> 16
       arr[at++] = (a >> 8) & 0xff
@@ -127,10 +126,10 @@ export function fromBase64(str, isURL) {
   } else {
     while (i < mainLength) {
       const a =
-        (map[str.charCodeAt(i++)] << 18) |
-        (map[str.charCodeAt(i++)] << 12) |
-        (map[str.charCodeAt(i++)] << 6) |
-        map[str.charCodeAt(i++)]
+        (m[str.charCodeAt(i++)] << 18) |
+        (m[str.charCodeAt(i++)] << 12) |
+        (m[str.charCodeAt(i++)] << 6) |
+        m[str.charCodeAt(i++)]
       if (a < 0) throw new Error(E_CHAR)
       arr[at++] = a >> 16
       arr[at++] = (a >> 8) & 0xff
@@ -140,12 +139,12 @@ export function fromBase64(str, isURL) {
 
   // Can be 2 or 3, verified by padding checks already
   if (tailLength >= 2) {
-    const a = map[str.charCodeAt(i++)]
-    const b = map[str.charCodeAt(i++)]
+    const a = m[str.charCodeAt(i++)]
+    const b = m[str.charCodeAt(i++)]
     if (a < 0 || b < 0) throw new Error(E_CHAR)
     arr[at++] = (a << 2) | (b >> 4)
     if (tailLength >= 3) {
-      const c = map[str.charCodeAt(i++)]
+      const c = m[str.charCodeAt(i++)]
       if (c < 0) throw new Error(E_CHAR)
       arr[at++] = ((b << 4) & 0xff) | (c >> 2)
     }
