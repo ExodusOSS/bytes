@@ -8,19 +8,24 @@ Notes:
 
 1. `Buffer` and `base64-js` do not perform proper validation
 2. Firefox seems to be slow in native `fromBase64`, hopefully should be fixed upstream. Not catastrophic though
-3. Old Safari can be improved ~1.4x by detecting and using pure js impl. Not very significant though
 
-| Engine                | `@exodus/bytes` | `Buffer`  | `base64-js` | `@scure/base` |
-| --------------------- | --------------- | --------- | ----------- | ------------- |
-| Node.js 25            | 829,187         | 1,221,001 | 121,153     | 222,519       |
-| Node.js 22            | 200,562         | 896,057   | 105,955     | 5,678         |
-| v8 / Chrome           | 641,026         | 31,458    | 140,944     | 207,426       |
-| v8 / Chrome (old)     | 95,202          | 31,458    | 140,944     | 4,500         |
-| JSC / Safari          | 237,248         | 28,646    | 195,198     | 90,992        |
-| JSC / Safari (old)    | 45,185 (note 3) | 28,646    | 195,198     | 10,419        |
-| SM / Firefox          | 49,682 (note 2) | 28,583    | 103,008     | 46,281        |
-| SM / Firefox (old)    | 73,314          | 28,583    | 103,008     | 4,680         |
-| Hermes / React Native | 4014            | 731       | 2484        | 353           |
+| Engine                | `@exodus/bytes` | `Buffer`  | `base64-js` | `@scure/base` | `fast-base64-decode` |
+| --------------------- | --------------- | --------- | ----------- | ------------- | -------------------- |
+| Node.js 25            | 831,947         | 1,218,027 | 120,409     | 220,799       | 139,704              |
+| Node.js 22            | 200,723         | 1,062,699 | 109,818     | 5,649         | 117,689              |
+| Chrome                | 582,751         | 28,529    | 97,399      | 193,874       | 91,861               |
+| Chrome (old)          | 90,277          | 28,529    | 97,399      | 4,487         | 91,861               |
+| Safari                | 221,779         | 27,020    | 199,322     | 85,426        | 210,128              |
+| Safari (old)          | 167,392         | 27,020    | 199,322     | 10,332        | 210,128              |
+| Firefox               | 52,119 (note 2) | 26,070    | 97,238      | 46,281        | 112,701              |
+| Firefox (old)         | 114,247         | 26,070    | 97,238      | 4,545         | 112,701              |
+| v8                    | 600,240         | 29,950    | 138,966     | 200,321       | 119,531              |
+| v8 (old)              | 123,503         | 29,950    | 138,966     | 4,653         | 119,531              |
+| JavaScriptCore        | 221,337         | 26,782    | 185,082     | 85,492        | 207,555              |
+| JavaScriptCore (old)  | 173,100         | 26,782    | 185,082     | 9,318         | 207,555              |
+| SpiderMonkey          | 46,531 (note 2) | 27,917    | 102,417     | 43,033        | 115,154              |
+| SpiderMonkey (old)    | 102,208         | 27,917    | 102,417     | 4,680         | 115,154              |
+| Hermes / React Native | 5461            | 715       | 2512        | 354           | 2661                 |
 
 ## toBase64
 
