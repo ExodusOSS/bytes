@@ -89,20 +89,21 @@ if (Uint8Array.fromBase64) {
   }
 } else {
   fromBase64impl = (str, isBase64url) => {
-    if (isBase64url) {
-      assert(!/[^0-9a-z=_-]/iu.test(str), 'Invalid character in base64url input')
-    } else {
-      assert(!/[^0-9a-z=+/]/iu.test(str), 'Invalid character in base64 input')
-    }
-
     let arr
     if (!haveNativeBuffer && atob) {
       // atob is faster than manual parsing on Hermes
-      const raw = atob(isBase64url ? str.replaceAll('-', '+').replaceAll('_', '/') : str)
+      if (isBase64url) {
+        assert(!/[+/]/iu.test(str), `Invalid character in base64url input`) // atob verifies other invalid input
+        str = str.replaceAll('-', '+').replaceAll('_', '/')
+      }
+
+      const raw = atob(str)
       const length = raw.length
       arr = new Uint8Array(length)
       for (let i = 0; i < length; i++) arr[i] = raw.charCodeAt(i)
     } else {
+      const invalidRegex = isBase64url ? /[^0-9a-z=_-]/iu : /[^0-9a-z=+/]/iu
+      assert(!invalidRegex.test(str), 'Invalid character in base64 input')
       const at = str.indexOf('=')
       if (at >= 0) assert(!/[^=]/iu.test(str.slice(at)), 'Invalid padding')
       arr = haveNativeBuffer ? Buffer.from(str, 'base64') : js.fromBase64(str)
