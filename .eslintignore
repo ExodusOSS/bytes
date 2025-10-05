@@ -1,5 +1,6 @@
 coverage/
 playground
 wip/
+tests/wpt/fixtures/
 __snapshots__
 __recordings__
