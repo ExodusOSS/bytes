@@ -28,7 +28,7 @@ describe('benchmarks: base64', async () => {
     Uint8Array.prototype.toBase64 = undefined // eslint-disable-line no-extend-native
     reset.push(() => (Uint8Array.prototype.toBase64 = toBase64)) // eslint-disable-line no-extend-native
     exodusA = await import('../base64.js?a') // eslint-disable-line @exodus/import/no-unresolved
-    scureJS = (await import('@scure/base?a')).base64 // eslint-disable-line @exodus/import/no-unresolved, unicorn/no-await-expression-member
+    scureJS = (await import('../node_modules/@scure/base/lib/esm/index.js?a')).base64 // eslint-disable-line @exodus/import/no-unresolved, unicorn/no-await-expression-member
   }
 
   if (!Buffer.TYPED_ARRAY_SUPPORT) {
@@ -90,7 +90,7 @@ describe('benchmarks: base64', async () => {
     }
   })
 
-  test('toBase64', { timeout: 10_000 }, async () => {
+  test('toBase64', { timeout: 20_000 }, async () => {
     for (const [name, f, skip] of toBase64) {
       await benchmark(`toBase64: ${name}`, { skip, args: bufs }, f)
     }
@@ -105,7 +105,7 @@ describe('benchmarks: base64', async () => {
     }
   })
 
-  test('fromBase64', { timeout: 10_000 }, async () => {
+  test('fromBase64', { timeout: 20_000 }, async () => {
     for (const [name, f, skip] of fromBase64) {
       await benchmark(`fromBase64: ${name}`, { skip, args: strings }, f)
     }

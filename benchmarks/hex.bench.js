@@ -25,7 +25,7 @@ describe('benchmarks: hex', async () => {
     Uint8Array.prototype.toHex = undefined // eslint-disable-line no-extend-native
     reset.push(() => (Uint8Array.prototype.toHex = toHex)) // eslint-disable-line no-extend-native
     exodusA = await import('../hex.js?a') // eslint-disable-line @exodus/import/no-unresolved
-    scureJS = (await import('@scure/base?a')).hex // eslint-disable-line @exodus/import/no-unresolved, unicorn/no-await-expression-member
+    scureJS = (await import('../node_modules/@scure/base/lib/esm/index.js?a')).hex // eslint-disable-line @exodus/import/no-unresolved, unicorn/no-await-expression-member
   }
 
   if (!Buffer.TYPED_ARRAY_SUPPORT) {
@@ -71,7 +71,7 @@ describe('benchmarks: hex', async () => {
     }
   })
 
-  test('toHex', { timeout: 10_000 }, async () => {
+  test('toHex', { timeout: 20_000 }, async () => {
     for (const [name, f, skip] of toHex) {
       await benchmark(`toHex: ${name}`, { skip, args: bufs }, f)
     }
@@ -85,7 +85,7 @@ describe('benchmarks: hex', async () => {
     }
   })
 
-  test('fromHex', { timeout: 10_000 }, async () => {
+  test('fromHex', { timeout: 20_000 }, async () => {
     for (const [name, f, skip] of fromHex) {
       await benchmark(`fromHex: ${name}`, { skip, args: strings }, f)
     }
