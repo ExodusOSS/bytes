@@ -149,4 +149,13 @@ describe('fromBase64', () => {
       t.assert.deepStrictEqual(fromBase64url(base64url, { format: 'buffer' }), buffer)
     }
   })
+
+  test('fallback', (t) => {
+    for (const { base64, base64nopad, base64url, base64urlPadded, uint8 } of pool) {
+      t.assert.deepStrictEqual(js.fromBase64(base64, false), uint8)
+      t.assert.deepStrictEqual(js.fromBase64(base64url, true), uint8)
+      t.assert.deepStrictEqual(js.fromBase64(base64nopad, false), uint8)
+      t.assert.deepStrictEqual(js.fromBase64(base64urlPadded, true), uint8)
+    }
+  })
 })
