@@ -37,7 +37,7 @@ describe('benchmarks: base64', async () => {
     exodusB = await import('../base64.js?b') // eslint-disable-line @exodus/import/no-unresolved
   }
 
-  if (globalThis.atob) {
+  if (globalThis.atob && globalThis.HermesInternal) {
     const { atob } = globalThis
     delete globalThis.atob
     exodusC = await import('../base64.js?c') // eslint-disable-line @exodus/import/no-unresolved

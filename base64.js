@@ -11,6 +11,8 @@ const { Buffer, atob } = globalThis // Buffer is optional, only used when native
 const haveNativeBuffer = Buffer && !Buffer.TYPED_ARRAY_SUPPORT
 const { toBase64: web64 } = Uint8Array.prototype // Modern engines have this
 
+const shouldUseAtob = atob && Boolean(globalThis.HermesInternal) // faster only on Hermes (and a little in old Chrome), js path beats it on normal engines
+
 // For native Buffer codepaths only
 const isBuffer = (x) => x.constructor === Buffer && Buffer.isBuffer(x)
 const toBuffer = (x) => (isBuffer(x) ? x : Buffer.from(x.buffer, x.byteOffset, x.byteLength))
@@ -96,7 +98,7 @@ if (Uint8Array.fromBase64) {
       const at = str.indexOf('=')
       if (at >= 0) assert(!/[^=]/iu.test(str.slice(at)), js.E_PADDING)
       arr = Buffer.from(str, 'base64')
-    } else if (atob) {
+    } else if (shouldUseAtob) {
       // atob is faster than manual parsing on Hermes
       if (isBase64url) {
         assert(!/[+/]/iu.test(str), 'Invalid character in base64url input') // atob verifies other invalid input
