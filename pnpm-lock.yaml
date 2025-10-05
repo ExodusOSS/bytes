@@ -2201,8 +2201,8 @@ packages:
     resolution: {integrity: sha512-c5CgUJq6H2k6MJz72Ak1F5sN9n9wlSlJyEnwvpm9/y3WB4E3pHBDT2c6PEiS1vyJvq2bUxUAIu0EGf8Cx4Ic7Q==, tarball: https://registry.npmjs.org/pirates/-/pirates-3.0.2.tgz}
     engines: {node: '>= 4'}
 
-  playwright-core@1.53.2:
-    resolution: {integrity: sha512-ox/OytMy+2w1jcYEYlOo1Hhp8hZkLCximMTUTMBXjGUA1KoFfiSZ+DU+3a739jsPY0yoKH2TFy9S2fsJas8yAw==, tarball: https://registry.npmjs.org/playwright-core/-/playwright-core-1.53.2.tgz}
+  playwright-core@1.55.1:
+    resolution: {integrity: sha512-Z6Mh9mkwX+zxSlHqdr5AOcJnfp+xUWLCt9uKV18fhzA8eyxUd8NUWzAjxUh55RZKSYwDGX0cfaySdhZJGMoJ+w==, tarball: https://registry.npmjs.org/playwright-core/-/playwright-core-1.55.1.tgz}
     engines: {node: '>=18'}
     hasBin: true
 
@@ -3370,7 +3370,7 @@ snapshots:
       expect: 29.7.0
       fast-glob: 3.3.3
       jest-extended: 4.0.2
-      playwright-core: 1.53.2
+      playwright-core: 1.55.1
       pretty-format: 29.7.0
       puppeteer-core: 24.11.2
       tsx: 4.20.3
@@ -5438,7 +5438,7 @@ snapshots:
       node-modules-regexp: 1.0.0
     optional: true
 
-  playwright-core@1.53.2:
+  playwright-core@1.55.1:
     optional: true
 
   pluralize@8.0.0: {}
