@@ -5,12 +5,12 @@ import * as js from './fallback/utf8.js'
 const { Buffer, TextEncoder, TextDecoder, decodeURIComponent, escape } = globalThis // Buffer is optional
 const haveNativeBuffer = Buffer && !Buffer.TYPED_ARRAY_SUPPORT
 const isNative = (x) => x && (haveNativeBuffer || `${x}`.includes('[native code]')) // we consider Node.js TextDecoder/TextEncoder native
-const haveNativeDecoder = isNative(TextDecoder)
+const haveDecoder = isNative(TextDecoder)
 const nativeEncoder = isNative(TextEncoder) ? new TextEncoder() : null
 // ignoreBOM: true means that BOM will be left as-is, i.e. will be present in the output
 // We don't want to strip anything unexpectedly
-const decoderFatal = haveNativeDecoder ? new TextDecoder('utf8', { ignoreBOM: true, fatal: true }) : null
-const decoderLoose = haveNativeDecoder ? new TextDecoder('utf8', { ignoreBOM: true }) : null
+const decoderFatal = haveDecoder ? new TextDecoder('utf8', { ignoreBOM: true, fatal: true }) : null
+const decoderLoose = haveDecoder ? new TextDecoder('utf8', { ignoreBOM: true }) : null
 
 const { E_STRICT, E_STRICT_UNICODE } = js
 
@@ -68,7 +68,7 @@ function toEscapesPart(arr, start, end) {
 
 function decode(arr, loose = false) {
   assertUint8(arr)
-  if (haveNativeDecoder) return loose ? decoderLoose.decode(arr) : decoderFatal.decode(arr) // Node.js and browsers
+  if (haveDecoder) return loose ? decoderLoose.decode(arr) : decoderFatal.decode(arr) // Node.js and browsers
   // No reason to use native Buffer: it's not faster than TextDecoder, needs rechecks in non-loose mode, and Node.js has TextDecoder
 
   // This codepath gives a ~2x perf boost on Hermes
