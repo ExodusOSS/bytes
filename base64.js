@@ -21,7 +21,10 @@ const toBuffer = (x) => (isBuffer(x) ? x : Buffer.from(x.buffer, x.byteOffset, x
 
 export function toBase64(x, { padding = true } = {}) {
   assertUint8(x)
-  if (web64 && x.toBase64 === web64) return x.toBase64({ omitPadding: !padding }) // Modern
+  if (web64 && x.toBase64 === web64) {
+    return padding ? x.toBase64() : x.toBase64({ omitPadding: !padding }) // Modern, optionless is slightly faster
+  }
+
   if (!haveNativeBuffer) return js.toBase64(x, false, padding) // Fallback
   const res = toBuffer(x).toString('base64') // Older Node.js
   if (padding) return res

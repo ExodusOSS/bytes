@@ -16,7 +16,14 @@ export function assertTypedArray(arr) {
   throw new TypeError('Expected a TypedArray instance')
 }
 
-export function assertUint8(arr, { name, length, ...rest } = {}) {
+export function assertUint8(arr, options) {
+  if (!options) {
+    // fast path
+    if (arr instanceof Uint8Array) return
+    throw new TypeError('Expected an Uint8Array')
+  }
+
+  const { name, length, ...rest } = options
   assertEmptyRest(rest)
   if (arr instanceof Uint8Array && (length === undefined || arr.length === length)) return
   throw new TypeError(makeMessage(name, length === undefined ? '' : ` of size ${Number(length)}`))
