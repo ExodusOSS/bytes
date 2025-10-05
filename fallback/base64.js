@@ -90,11 +90,12 @@ export function toBase64(arr, isURL, padding) {
 export function fromBase64(str, isURL) {
   let inputLength = str.length
   while (str[inputLength - 1] === '=') inputLength--
+  const paddingLength = str.length - inputLength
   const tailLength = inputLength % 4
   const mainLength = inputLength - tailLength // multiples of 4
   if (tailLength === 1) throw new Error('Invalid base64 length')
-  if (str.length - inputLength > 3) throw new Error('Excessive padding')
-  if (str.length !== inputLength && str.length % 4 !== 0) throw new Error('Expected padded base64')
+  if (paddingLength > 3) throw new Error('Excessive padding')
+  if (paddingLength !== 0 && str.length % 4 !== 0) throw new Error('Expected padded base64')
 
   const alphabet = isURL ? BASE64URL : BASE64
   const helpers = isURL ? BASE64URL_HELPERS : BASE64_HELPERS
