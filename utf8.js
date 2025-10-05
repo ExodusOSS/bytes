@@ -7,8 +7,10 @@ const haveNativeBuffer = Buffer && !Buffer.TYPED_ARRAY_SUPPORT
 const isNative = (x) => x && (haveNativeBuffer || `${x}`.includes('[native code]')) // we consider Node.js TextDecoder/TextEncoder native
 const haveNativeDecoder = isNative(TextDecoder)
 const nativeEncoder = isNative(TextEncoder) ? new TextEncoder() : null
-const decoderFatal = haveNativeDecoder ? new TextDecoder('utf8', { fatal: true }) : null
-const decoderLoose = haveNativeDecoder ? new TextDecoder('utf8') : null
+// ignoreBOM: true means that BOM will be left as-is, i.e. will be present in the output
+// We don't want to strip anything unexpectedly
+const decoderFatal = haveNativeDecoder ? new TextDecoder('utf8', { ignoreBOM: true, fatal: true }) : null
+const decoderLoose = haveNativeDecoder ? new TextDecoder('utf8', { ignoreBOM: true }) : null
 
 const { E_STRICT, E_STRICT_UNICODE } = js
 
