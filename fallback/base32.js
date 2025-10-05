@@ -104,10 +104,9 @@ export function fromBase32(str, isBase32Hex) {
   const helpers = isBase32Hex ? BASE32HEX_HELPERS : BASE32_HELPERS
 
   if (!helpers.fromMap) {
-    helpers.fromMap = new Array(256)
+    helpers.fromMap = new Uint8Array(123) // z is [122], highest possible char
     alphabet.forEach((c, i) => {
-      helpers.fromMap[c.charCodeAt(0)] = i
-      helpers.fromMap[c.toLowerCase().charCodeAt(0)] = i
+      helpers.fromMap[c.charCodeAt(0)] = helpers.fromMap[c.toLowerCase().charCodeAt(0)] = i
     })
   }
 

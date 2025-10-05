@@ -91,7 +91,7 @@ let fromBase64jsMap
 // Assumes valid input and no chars after =, checked at API
 // Last chunk is rechecked at API too
 export function fromBase64(str) {
-  const map = fromBase64jsMap || new Array(256)
+  const map = fromBase64jsMap || new Uint8Array(128)
   if (!fromBase64jsMap) {
     fromBase64jsMap = map
     BASE64.forEach((c, i) => (map[c.charCodeAt(0)] = i))

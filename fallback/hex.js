@@ -57,7 +57,7 @@ export function fromHex(str) {
   // This path is used only on older engines though
 
   if (!dehexArray) {
-    dehexArray = new Array(103) // f is 102
+    dehexArray = new Uint8Array(256).fill(255) // no regex input validation here, so we map all other bytes to 255 and recheck
     for (let i = 0; i < 16; i++) {
       const s = i.toString(16)
       dehexArray[s.charCodeAt(0)] = dehexArray[s.toUpperCase().charCodeAt(0)] = i
@@ -71,15 +71,17 @@ export function fromHex(str) {
     // Native encoder path is beneficial even for small arrays in Hermes
     const codes = nativeEncoder.encode(str)
     for (let i = 0; i < length; i++) {
-      const a = dehexArray[codes[j++]] * 16 + dehexArray[codes[j++]]
-      if (!a && a !== 0) throw new Error('Input is not a hex string')
-      arr[i] = a
+      const a = dehexArray[codes[j++]]
+      const b = dehexArray[codes[j++]]
+      if (a === 255 || b === 255) throw new Error('Input is not a hex string')
+      arr[i] = (a << 4) | b
     }
   } else {
     for (let i = 0; i < length; i++) {
-      const a = dehexArray[str.charCodeAt(j++)] * 16 + dehexArray[str.charCodeAt(j++)]
-      if (!a && a !== 0) throw new Error('Input is not a hex string')
-      arr[i] = a
+      const a = dehexArray[str.charCodeAt(j++)]
+      const b = dehexArray[str.charCodeAt(j++)]
+      if (a === 255 || b === 255) throw new Error('Input is not a hex string')
+      arr[i] = (a << 4) | b
     }
   }
 
