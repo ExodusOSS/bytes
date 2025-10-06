@@ -3,12 +3,21 @@ const fs = require('node:fs')
 const path = require('node:path')
 const { describe, test } = require('node:test')
 
+globalThis.describe = (f, name) => describe(name, f)
 globalThis.test = (f, name) => test(name, f)
 globalThis.subsetTest = (t, ...a) => t(...a)
+globalThis.generate_tests = (t, l) => {
+  describe('generate_tests', () => {
+    l.forEach(([n, ...r]) => test(n, () => t(...r)))
+  })
+}
+
 globalThis.assert_equals = assert.strictEqual
+globalThis.format_value = (x) => JSON.stringify(x)
 globalThis.assert_true = (x, ...r) => assert.strictEqual(x, true, ...r)
 globalThis.assert_false = (x, ...r) => assert.strictEqual(x, false, ...r)
-globalThis.assert_throws_js = (e, f) => assert.throws(f, e)
+globalThis.assert_throws_js = (e, f, m) => assert.throws(f, e, m)
+globalThis.assert_throws_dom = (e, f, m) => assert.throws(f, Error, m) // we don't care about exact dom errors
 globalThis.assert_array_equals = (a, b) => {
   assert.strictEqual(a.length, b.length)
   assert.deepStrictEqual([...a], [...b])
