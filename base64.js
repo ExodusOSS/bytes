@@ -112,7 +112,13 @@ if (Uint8Array.fromBase64) {
         str = str.replaceAll('-', '+').replaceAll('_', '/')
       }
 
-      const raw = atob(str)
+      let raw
+      try {
+        raw = atob(str)
+      } catch {
+        throw new SyntaxError(E_CHAR) // convert atob errors
+      }
+
       const length = raw.length
       arr = new Uint8Array(length)
       for (let i = 0; i < length; i++) arr[i] = raw.charCodeAt(i)
