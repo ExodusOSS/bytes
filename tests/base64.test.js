@@ -60,7 +60,12 @@ describe('toBase64', () => {
 
 const INVALID_FROM_TYPES = [null, undefined, [], [1, 2], ['00'], new Uint8Array()]
 const INVALID_FROM_LAX = ['aa=='] // non-strict
-const INVALID_FROM_SPACES = [' ', 'aaaa aaaa', 'aaaa aaa', 'aa== ', 'aa =='] // spaces
+const INVALID_FROM_SPACES = [
+  ...[' ', '    ', 'aaaa aaaa', 'aaaa  aaaa', 'aaaa    aaaa', 'aaaa aaa', 'aa== ', 'aa =='], // spaces
+  ...['\n', '\n\n\n\n', 'aaaa\naaaa', 'aaaa\n\n\n\naaaa', 'aaaa\n', 'aaaa\n\n\n\n'], // newlines
+  ...['\u00A0', '\u00A0\u00A0\u00A0\u00A0', 'aaaa\u00A0\u00A0\u00A0\u00A0aaaa'], // nbsp
+]
+
 const INVALID_FROM_PADDED = ['_aY=', '_aa=', '-a==', '-Q=='] // padded base64url
 const INVALID_FROM_CONTENT = [
   ...['a', 'aaaaa'], // wrong length

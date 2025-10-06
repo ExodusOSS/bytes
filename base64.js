@@ -87,12 +87,15 @@ function fromBase64common(str, isBase64url, padding, format, rest) {
   return typedView(fromBase64impl(str, isBase64url), format)
 }
 
+// ASCII whitespace is U+0009 TAB, U+000A LF, U+000C FF, U+000D CR, or U+0020 SPACE
+const ASCII_WHITESPACE = /[\t\n\f\r ]/ // non-u for JSC perf
+
 let fromBase64impl
 if (Uint8Array.fromBase64) {
   // NOTICE: this is actually slower than our JS impl in older JavaScriptCore and (slightly) in SpiderMonkey, but faster on V8 and new JavaScriptCore
   fromBase64impl = (str, isBase64url) => {
     const alphabet = isBase64url ? 'base64url' : 'base64'
-    if (/\s/u.test(str)) throw new SyntaxError(E_CHAR) // all other chars are checked natively
+    if (ASCII_WHITESPACE.test(str)) throw new SyntaxError(E_CHAR) // all other chars are checked natively
     const padded = str.length % 4 > 0 ? `${str}${'='.repeat(4 - (str.length % 4))}` : str
     return Uint8Array.fromBase64(padded, { alphabet, lastChunkHandling: 'strict' })
   }
@@ -108,8 +111,10 @@ if (Uint8Array.fromBase64) {
     } else if (shouldUseAtob) {
       // atob is faster than manual parsing on Hermes
       if (isBase64url) {
-        if (/[+/]/iu.test(str)) throw new SyntaxError(E_CHAR) // atob verifies other invalid input
+        if (/[\t\n\f\r +/]/.test(str)) throw new SyntaxError(E_CHAR) // atob verifies other invalid input
         str = str.replaceAll('-', '+').replaceAll('_', '/')
+      } else {
+        if (ASCII_WHITESPACE.test(str)) throw new SyntaxError(E_CHAR) // all other chars are checked natively
       }
 
       let raw
