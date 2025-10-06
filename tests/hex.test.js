@@ -38,6 +38,8 @@ const INVALID = [
   '\t\t',
   '4321 ',
   ' 00\n00',
+  // Wrong chars, unicode
+  ...['✖✖', '0✖', '✖0', '✖✖00'],
 ]
 
 const VALID = [

@@ -67,6 +67,7 @@ const INVALID_FROM_CONTENT = [
   ...['=', '==', '===', '====', 'a=', 'a==', 'a===', 'a====', 'aa=', 'aa===', 'aa==='], // wrong padding
   ...['aaa==', 'aaa===', 'aaa====', 'aaaa=', 'aaaa==', 'aaaa==='], // wrong padding
   ...['####', '@@@@', 'aaa#', 'a%aa'], // wrong chars
+  ...['Z−==', '✖✖✖✖'], // wrong chars
   ...['a-+a', 'aa+_', 'aa_/', '-a/a'], // mixed base64/base64url
   ...['a=aa', 'aa=a', '=aaa', 'aa==a', 'aaa=a', 'aa==aaaa', 'aaa=aaaa'], // symbols after =
 ]

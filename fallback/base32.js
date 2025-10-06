@@ -96,6 +96,9 @@ export function toBase32(arr, isBase32Hex, padding) {
   return o
 }
 
+// TODO: can this be optimized? This only affects non-Hermes barebone engines though
+const mapSize = nativeEncoder ? 256 : 65_536 // we have to store 64 KiB map or recheck everything if we can't decode to byte array
+
 export function fromBase32(str, isBase32Hex) {
   let inputLength = str.length
   while (str[inputLength - 1] === '=') inputLength--
@@ -111,7 +114,7 @@ export function fromBase32(str, isBase32Hex) {
   const helpers = isBase32Hex ? BASE32HEX_HELPERS : BASE32_HELPERS
 
   if (!helpers.fromMap) {
-    helpers.fromMap = new Int8Array(256).fill(-1) // no regex input validation here, so we map all other bytes to -1 and recheck sign
+    helpers.fromMap = new Int8Array(mapSize).fill(-1) // no regex input validation here, so we map all other bytes to -1 and recheck sign
     alphabet.forEach((c, i) => {
       helpers.fromMap[c.charCodeAt(0)] = helpers.fromMap[c.toLowerCase().charCodeAt(0)] = i
     })
@@ -125,6 +128,7 @@ export function fromBase32(str, isBase32Hex) {
 
   if (nativeEncoder) {
     const codes = nativeEncoder.encode(str)
+    if (codes.length !== str.length) throw new SyntaxError(E_CHAR) // non-ascii
     while (i < mainLength) {
       // each 5 bits, grouped 5 * 4 = 20
       const a = (m[codes[i++]] << 15) | (m[codes[i++]] << 10) | (m[codes[i++]] << 5) | m[codes[i++]]

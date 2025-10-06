@@ -70,6 +70,8 @@ const INVALID_FROM_PADDING = [
 
 const INVALID_FROM_CONTENT = [
   ...['########', '@@@@@@@@', 'aa######', 'aa%aaaa', 'aa!aaaaa'], // wrong chars
+  ...['✖✖✖✖✖✖✖✖', '✖✖✖✖✖✖✖=', '✖✖✖✖✖===', '✖✖✖✖✖===', '✖✖======'], // wrong chars
+  ...['✖✖✖✖✖✖==', '✖✖✖=====', '✖======='], // wrong chars and padding
   ...['x0', 'xxxx0000'], // mixed base32/base32hex
 ]
 

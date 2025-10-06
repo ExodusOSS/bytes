@@ -51,6 +51,9 @@ export function toHex(arr) {
   return toHexPart(arr, 0, length)
 }
 
+// TODO: can this be optimized? This only affects non-Hermes barebone engines though
+const mapSize = nativeEncoder ? 256 : 65_536 // we have to store 64 KiB map or recheck everything if we can't decode to byte array
+
 export function fromHex(str) {
   if (typeof str !== 'string') throw new TypeError('Input is not a string')
   if (str.length % 2 !== 0) throw new SyntaxError(E_HEX)
@@ -59,7 +62,7 @@ export function fromHex(str) {
   // This path is used only on older engines though
 
   if (!dehexArray) {
-    dehexArray = new Int8Array(256).fill(-1) // no regex input validation here, so we map all other bytes to -1 and recheck sign
+    dehexArray = new Int8Array(mapSize).fill(-1) // no regex input validation here, so we map all other bytes to -1 and recheck sign
     for (let i = 0; i < 16; i++) {
       const s = i.toString(16)
       dehexArray[s.charCodeAt(0)] = dehexArray[s.toUpperCase().charCodeAt(0)] = i
@@ -72,6 +75,7 @@ export function fromHex(str) {
   if (nativeEncoder) {
     // Native encoder path is beneficial even for small arrays in Hermes
     const codes = nativeEncoder.encode(str)
+    if (codes.length !== str.length) throw new SyntaxError(E_HEX) // non-ascii
     const last3 = length - 3 // Unroll nativeEncoder path as this is what modern Hermes takes and a small perf improvement is nice there
     let i = 0
     while (i < last3) {
