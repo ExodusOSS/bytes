@@ -1,4 +1,5 @@
 import { toHex, fromHex } from '@exodus/bytes/hex.js'
+import * as js from '../fallback/hex.js'
 import { describe, test } from 'node:test'
 
 const raw = [new Uint8Array(), new Uint8Array([0]), new Uint8Array([1]), new Uint8Array([255])]
@@ -60,6 +61,7 @@ describe('toHex', () => {
   test('invalid input', (t) => {
     for (const input of [null, undefined, [], [1, 2], 'string']) {
       t.assert.throws(() => toHex(input))
+      t.assert.throws(() => js.toHex(input))
     }
   })
 
@@ -71,6 +73,7 @@ describe('toHex', () => {
         if (uint8.byteLength % A.BYTES_PER_ELEMENT !== 0) continue
         const x = new A(uint8.buffer, uint8.byteOffset, uint8.byteLength / A.BYTES_PER_ELEMENT)
         t.assert.strictEqual(toHex(x), hex.toLowerCase(), A.name)
+        t.assert.strictEqual(js.toHex(x), hex.toLowerCase(), A.name)
       }
     }
   })
@@ -79,6 +82,7 @@ describe('toHex', () => {
     for (const { uint8, buffer, hex } of pool) {
       t.assert.strictEqual(toHex(uint8), hex)
       t.assert.strictEqual(toHex(buffer), hex)
+      t.assert.strictEqual(js.toHex(uint8), hex)
     }
   })
 })
@@ -88,6 +92,7 @@ describe('fromHex', () => {
     for (const input of INVALID) {
       if (Uint8Array.fromHex) t.assert.throws(() => Uint8Array.fromHex(input), 'coherence')
       t.assert.throws(() => fromHex(input))
+      t.assert.throws(() => js.fromHex(input))
       for (const form of ['uint8', 'buffer', 'hex']) {
         t.assert.throws(() => fromHex(input, form))
       }
@@ -99,6 +104,7 @@ describe('fromHex', () => {
       if (Uint8Array.fromHex) t.assert.deepEqual(uint8, Uint8Array.fromHex(hex), 'coherence')
       t.assert.deepStrictEqual(fromHex(hex), uint8)
       t.assert.deepStrictEqual(fromHex(hex, 'uint8'), uint8)
+      t.assert.deepStrictEqual(js.fromHex(hex), uint8)
     }
   })
 
@@ -106,6 +112,7 @@ describe('fromHex', () => {
     for (const { hex, uint8 } of pool) {
       t.assert.deepStrictEqual(fromHex(hex), uint8)
       t.assert.deepStrictEqual(fromHex(hex, 'uint8'), uint8)
+      t.assert.deepStrictEqual(js.fromHex(hex), uint8)
     }
   })
 
