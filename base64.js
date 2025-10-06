@@ -1,4 +1,4 @@
-import { assert, assertUint8, assertEmptyRest } from './assert.js'
+import { assertUint8, assertEmptyRest } from './assert.js'
 import { typedView } from './array.js'
 import * as js from './fallback/base64.js'
 
@@ -73,13 +73,15 @@ function fromBase64common(str, isBase64url, padding, format, rest) {
   const auto = padding === 'both' ? str.endsWith('=') : undefined
   // Older JSC supporting Uint8Array.fromBase64 lacks proper checks
   if (padding === true || auto === true) {
-    assert(str.length % 4 === 0, E_PADDING) // JSC misses this
-    assert(str[str.length - 3] !== '=', E_PADDING) // no more than two = at the end
+    if (str.length % 4 !== 0) throw new SyntaxError(E_PADDING) // JSC misses this
+    if (str[str.length - 3] === '=') throw new SyntaxError(E_PADDING) // no more than two = at the end
   } else if (padding === false || auto === false) {
-    assert(str.length % 4 !== 1, E_LENGTH) // JSC misses this in fromBase64
-    if (padding === false) assert(!str.endsWith('='), 'Did not expect padding in base64 input') // inclusion is checked separately
+    if (str.length % 4 === 1) throw new SyntaxError(E_LENGTH) // JSC misses this in fromBase64
+    if (padding === false && str.endsWith('=')) {
+      throw new SyntaxError('Did not expect padding in base64 input') // inclusion is checked separately
+    }
   } else {
-    throw new Error('Invalid padding option')
+    throw new TypeError('Invalid padding option')
   }
 
   return typedView(fromBase64impl(str, isBase64url), format)
@@ -90,7 +92,7 @@ if (Uint8Array.fromBase64) {
   // NOTICE: this is actually slower than our JS impl in older JavaScriptCore and (slightly) in SpiderMonkey, but faster on V8 and new JavaScriptCore
   fromBase64impl = (str, isBase64url) => {
     const alphabet = isBase64url ? 'base64url' : 'base64'
-    assert(!/\s/u.test(str), `Invalid character in ${alphabet} input`) // all other chars are checked natively
+    if (/\s/u.test(str)) throw new SyntaxError(E_CHAR) // all other chars are checked natively
     const padded = str.length % 4 > 0 ? `${str}${'='.repeat(4 - (str.length % 4))}` : str
     return Uint8Array.fromBase64(padded, { alphabet, lastChunkHandling: 'strict' })
   }
@@ -99,14 +101,14 @@ if (Uint8Array.fromBase64) {
     let arr
     if (haveNativeBuffer) {
       const invalidRegex = isBase64url ? /[^0-9a-z=_-]/iu : /[^0-9a-z=+/]/iu
-      assert(!invalidRegex.test(str), E_CHAR)
+      if (invalidRegex.test(str)) throw new SyntaxError(E_CHAR)
       const at = str.indexOf('=')
-      if (at >= 0) assert(!/[^=]/iu.test(str.slice(at)), E_PADDING)
+      if (at >= 0 && /[^=]/iu.test(str.slice(at))) throw new SyntaxError(E_PADDING)
       arr = Buffer.from(str, 'base64')
     } else if (shouldUseAtob) {
       // atob is faster than manual parsing on Hermes
       if (isBase64url) {
-        assert(!/[+/]/iu.test(str), 'Invalid character in base64url input') // atob verifies other invalid input
+        if (/[+/]/iu.test(str)) throw new SyntaxError(E_CHAR) // atob verifies other invalid input
         str = str.replaceAll('-', '+').replaceAll('_', '/')
       }
 
@@ -123,7 +125,7 @@ if (Uint8Array.fromBase64) {
       const expected = toBase64(arr.subarray(-(arr.length % 3)))
       const end = str.length % 4 === 0 ? str.slice(-4) : str.slice(-(str.length % 4)).padEnd(4, '=')
       const actual = isBase64url ? end.replaceAll('-', '+').replaceAll('_', '/') : end
-      if (expected !== actual) throw new Error(E_LAST)
+      if (expected !== actual) throw new SyntaxError(E_LAST)
     }
 
     return arr

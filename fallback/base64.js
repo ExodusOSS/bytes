@@ -98,8 +98,10 @@ export function fromBase64(str, isURL) {
   const paddingLength = str.length - inputLength
   const tailLength = inputLength % 4
   const mainLength = inputLength - tailLength // multiples of 4
-  if (tailLength === 1) throw new Error(E_LENGTH)
-  if (paddingLength > 3 || (paddingLength !== 0 && str.length % 4 !== 0)) throw new Error(E_PADDING)
+  if (tailLength === 1) throw new SyntaxError(E_LENGTH)
+  if (paddingLength > 3 || (paddingLength !== 0 && str.length % 4 !== 0)) {
+    throw new SyntaxError(E_PADDING)
+  }
 
   const alphabet = isURL ? BASE64URL : BASE64
   const helpers = isURL ? BASE64URL_HELPERS : BASE64_HELPERS
@@ -119,7 +121,7 @@ export function fromBase64(str, isURL) {
     const codes = nativeEncoder.encode(str)
     while (i < mainLength) {
       const a = (m[codes[i++]] << 18) | (m[codes[i++]] << 12) | (m[codes[i++]] << 6) | m[codes[i++]]
-      if (a < 0) throw new Error(E_CHAR)
+      if (a < 0) throw new SyntaxError(E_CHAR)
       arr[at++] = a >> 16
       arr[at++] = (a >> 8) & 0xff
       arr[at++] = a & 0xff
@@ -131,7 +133,7 @@ export function fromBase64(str, isURL) {
         (m[str.charCodeAt(i++)] << 12) |
         (m[str.charCodeAt(i++)] << 6) |
         m[str.charCodeAt(i++)]
-      if (a < 0) throw new Error(E_CHAR)
+      if (a < 0) throw new SyntaxError(E_CHAR)
       arr[at++] = a >> 16
       arr[at++] = (a >> 8) & 0xff
       arr[at++] = a & 0xff
@@ -141,16 +143,16 @@ export function fromBase64(str, isURL) {
   // Can be 0, 2 or 3, verified by padding checks already
   if (tailLength < 2) return arr // 0
   const ab = (m[str.charCodeAt(i++)] << 6) | m[str.charCodeAt(i++)]
-  if (ab < 0) throw new Error(E_CHAR)
+  if (ab < 0) throw new SyntaxError(E_CHAR)
   arr[at++] = ab >> 4
   if (tailLength < 3) {
-    if (ab & 0xf) throw new Error(E_LAST)
+    if (ab & 0xf) throw new SyntaxError(E_LAST)
     return arr // 2
   }
 
   const c = m[str.charCodeAt(i++)]
-  if (c < 0) throw new Error(E_CHAR)
+  if (c < 0) throw new SyntaxError(E_CHAR)
   arr[at++] = ((ab << 4) & 0xff) | (c >> 2)
-  if (c & 0x3) throw new Error(E_LAST)
+  if (c & 0x3) throw new SyntaxError(E_LAST)
   return arr // 3
 }

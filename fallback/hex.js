@@ -53,7 +53,7 @@ export function toHex(arr) {
 
 export function fromHex(str) {
   if (typeof str !== 'string') throw new TypeError('Input is not a string')
-  if (str.length % 2 !== 0) throw new Error(E_HEX)
+  if (str.length % 2 !== 0) throw new SyntaxError(E_HEX)
 
   // We don't use native Buffer impl, as rechecking input make it slower than pure js
   // This path is used only on older engines though
@@ -79,7 +79,7 @@ export function fromHex(str) {
       const b = (dehexArray[codes[j++]] << 4) | dehexArray[codes[j++]]
       const c = (dehexArray[codes[j++]] << 4) | dehexArray[codes[j++]]
       const d = (dehexArray[codes[j++]] << 4) | dehexArray[codes[j++]]
-      if (a < 0 || b < 0 || c < 0 || d < 0) throw new Error(E_HEX)
+      if (a < 0 || b < 0 || c < 0 || d < 0) throw new SyntaxError(E_HEX)
       arr[i++] = a
       arr[i++] = b
       arr[i++] = c
@@ -88,13 +88,13 @@ export function fromHex(str) {
 
     while (i < length) {
       const res = (dehexArray[codes[j++]] << 4) | dehexArray[codes[j++]]
-      if (res < 0) throw new Error(E_HEX)
+      if (res < 0) throw new SyntaxError(E_HEX)
       arr[i++] = res
     }
   } else {
     for (let i = 0; i < length; i++) {
       const res = (dehexArray[str.charCodeAt(j++)] << 4) | dehexArray[str.charCodeAt(j++)]
-      if (res < 0) throw new Error(E_HEX)
+      if (res < 0) throw new SyntaxError(E_HEX)
       arr[i] = res
     }
   }

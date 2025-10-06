@@ -1,4 +1,4 @@
-import { assert, assertUint8 } from '../assert.js'
+import { assertUint8 } from '../assert.js'
 import { nativeEncoder, nativeDecoder } from './_utils.js'
 
 // See https://datatracker.ietf.org/doc/html/rfc4648
@@ -102,8 +102,10 @@ export function fromBase32(str, isBase32Hex) {
   const paddingLength = str.length - inputLength
   const tailLength = inputLength % 8
   const mainLength = inputLength - tailLength // multiples of 8
-  assert([0, 2, 4, 5, 7].includes(tailLength), E_LENGTH) // fast verification
-  if (paddingLength > 7 || (paddingLength !== 0 && str.length % 8 !== 0)) throw new Error(E_PADDING)
+  if (![0, 2, 4, 5, 7].includes(tailLength)) throw new SyntaxError(E_LENGTH) // fast verification
+  if (paddingLength > 7 || (paddingLength !== 0 && str.length % 8 !== 0)) {
+    throw new SyntaxError(E_PADDING)
+  }
 
   const alphabet = isBase32Hex ? BASE32HEX : BASE32
   const helpers = isBase32Hex ? BASE32HEX_HELPERS : BASE32_HELPERS
@@ -127,7 +129,7 @@ export function fromBase32(str, isBase32Hex) {
       // each 5 bits, grouped 5 * 4 = 20
       const a = (m[codes[i++]] << 15) | (m[codes[i++]] << 10) | (m[codes[i++]] << 5) | m[codes[i++]]
       const b = (m[codes[i++]] << 15) | (m[codes[i++]] << 10) | (m[codes[i++]] << 5) | m[codes[i++]]
-      if (a < 0 || b < 0) throw new Error(E_CHAR)
+      if (a < 0 || b < 0) throw new SyntaxError(E_CHAR)
       arr[at++] = a >> 12
       arr[at++] = (a >> 4) & 0xff
       arr[at++] = ((a << 4) & 0xff) | (b >> 16)
@@ -147,7 +149,7 @@ export function fromBase32(str, isBase32Hex) {
         (m[str.charCodeAt(i++)] << 10) |
         (m[str.charCodeAt(i++)] << 5) |
         m[str.charCodeAt(i++)]
-      if (a < 0 || b < 0) throw new Error(E_CHAR)
+      if (a < 0 || b < 0) throw new SyntaxError(E_CHAR)
       arr[at++] = a >> 12
       arr[at++] = (a >> 4) & 0xff
       arr[at++] = ((a << 4) & 0xff) | (b >> 16)
@@ -160,33 +162,33 @@ export function fromBase32(str, isBase32Hex) {
   // We check last chunk to be strict
   if (tailLength < 2) return arr
   const ab = (m[str.charCodeAt(i++)] << 5) | m[str.charCodeAt(i++)]
-  if (ab < 0) throw new Error(E_CHAR)
+  if (ab < 0) throw new SyntaxError(E_CHAR)
   arr[at++] = ab >> 2
   if (tailLength < 4) {
-    if (ab & 0x3) throw new Error(E_LAST)
+    if (ab & 0x3) throw new SyntaxError(E_LAST)
     return arr
   }
 
   const cd = (m[str.charCodeAt(i++)] << 5) | m[str.charCodeAt(i++)]
-  if (cd < 0) throw new Error(E_CHAR)
+  if (cd < 0) throw new SyntaxError(E_CHAR)
   arr[at++] = ((ab << 6) & 0xff) | (cd >> 4)
   if (tailLength < 5) {
-    if (cd & 0xf) throw new Error(E_LAST)
+    if (cd & 0xf) throw new SyntaxError(E_LAST)
     return arr
   }
 
   const e = m[str.charCodeAt(i++)]
-  if (e < 0) throw new Error(E_CHAR)
+  if (e < 0) throw new SyntaxError(E_CHAR)
   arr[at++] = ((cd << 4) & 0xff) | (e >> 1) // 4 + 4
   if (tailLength < 7) {
-    if (e & 0x1) throw new Error(E_LAST)
+    if (e & 0x1) throw new SyntaxError(E_LAST)
     return arr
   }
 
   const fg = (m[str.charCodeAt(i++)] << 5) | m[str.charCodeAt(i++)]
-  if (fg < 0) throw new Error(E_CHAR)
+  if (fg < 0) throw new SyntaxError(E_CHAR)
   arr[at++] = ((e << 7) & 0xff) | (fg >> 3) // 1 + 5 + 2
   // Can't be 8, so no h
-  if (fg & 0x7) throw new Error(E_LAST)
+  if (fg & 0x7) throw new SyntaxError(E_LAST)
   return arr
 }
