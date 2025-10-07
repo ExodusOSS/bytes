@@ -11,7 +11,7 @@ import { bufs } from './utils/random.js'
 
 if (!globalThis.Buffer) globalThis.Buffer = buffer.Buffer
 const bufferIsPolyfilled = Buffer === buffer.Buffer
-const toBuffer = (x, B) => B.from(x.buffer, x.byteOffet, x.byteLength)
+const toBuffer = (x, B) => B.from(x.buffer, x.byteOffset, x.byteLength)
 
 describe('benchmarks: base64', async () => {
   let scureJS // Fallback without Uint8Array.fromBase64, Uint8Array#toBase64

@@ -9,7 +9,7 @@ import { bufs as bufsRaw } from './utils/random.js'
 
 if (!globalThis.Buffer) globalThis.Buffer = buffer.Buffer
 const bufferIsPolyfilled = Buffer === buffer.Buffer
-const toBuffer = (x, B) => B.from(x.buffer, x.byteOffet, x.byteLength)
+const toBuffer = (x, B) => B.from(x.buffer, x.byteOffset, x.byteLength)
 
 const replacementChar = String.fromCodePoint(0xff_fd) // We don't expect much of these in real usage, and rng will spawn a lot of those, so strip
 const strings = bufsRaw.map((x) => Buffer.from(x).toString().replaceAll(replacementChar, '∀')) // loose, but we want that here
