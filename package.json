@@ -59,6 +59,7 @@
     "./utf8.js": "./utf8.js"
   },
   "devDependencies": {
+    "@ethersproject/strings": "^5.8.0",
     "@exodus/eslint-config": "^5.24.0",
     "@exodus/prettier": "^1.0.0",
     "@exodus/test": "^1.0.0-rc.105",

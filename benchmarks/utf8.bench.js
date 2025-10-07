@@ -4,6 +4,7 @@ import { benchmark } from '@exodus/test/benchmark' // eslint-disable-line @exodu
 import buffer from 'buffer/index.js'
 import { describe, test } from 'node:test'
 import js from 'text-encoding'
+import * as ethers from '@ethersproject/strings'
 
 import { bufs as bufsRaw } from './utils/random.js'
 
@@ -37,6 +38,7 @@ describe('benchmarks: utf8', async () => {
     ['Buffer.from', (x) => Buffer.from(x).toString('utf8')],
     ['buffer/Buffer', (x) => toBuffer(x, buffer.Buffer).toString('utf8'), bufferIsPolyfilled],
     ['buffer/Buffer.from', (x) => buffer.Buffer.from(x).toString('utf8'), bufferIsPolyfilled],
+    ['@ethersproject/strings', (x) => ethers.toUtf8String(x)],
   ]
 
   // [name, impl, skip]
@@ -48,6 +50,7 @@ describe('benchmarks: utf8', async () => {
     ['text-encoding', (x) => textEncoderJS.encode(x)],
     ['Buffer', (x) => Buffer.from(x, 'utf8')],
     ['buffer/Buffer', (x) => buffer.Buffer.from(x, 'utf8'), bufferIsPolyfilled],
+    ['@ethersproject/strings', (x) => ethers.toUtf8Bytes(x)],
   ]
 
   test('utf8toString coherence', (t) => {

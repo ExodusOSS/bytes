@@ -8,6 +8,9 @@ importers:
 
   .:
     devDependencies:
+      '@ethersproject/strings':
+        specifier: ^5.8.0
+        version: 5.8.0
       '@exodus/eslint-config':
         specifier: ^5.24.0
         version: 5.24.0(eslint@8.57.1)(prettier@3.6.2)(typescript@5.9.2)
@@ -376,6 +379,21 @@ packages:
   '@eslint/js@8.57.1':
     resolution: {integrity: sha512-d9zaMRSTIKDLhctzH12MtXvJKSSUhaHcjV+2Z+GK+EEY7XKpP5yR4x+N3TAcHTcu963nIr+TMcCb4DBCYX1z6Q==, tarball: https://registry.npmjs.org/@eslint/js/-/js-8.57.1.tgz}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
+
+  '@ethersproject/bignumber@5.8.0':
+    resolution: {integrity: sha512-ZyaT24bHaSeJon2tGPKIiHszWjD/54Sz8t57Toch475lCLljC6MgPmxk7Gtzz+ddNN5LuHea9qhAe0x3D+uYPA==, tarball: https://registry.npmjs.org/@ethersproject/bignumber/-/bignumber-5.8.0.tgz}
+
+  '@ethersproject/bytes@5.8.0':
+    resolution: {integrity: sha512-vTkeohgJVCPVHu5c25XWaWQOZ4v+DkGoC42/TS2ond+PARCxTJvgTFUNDZovyQ/uAQ4EcpqqowKydcdmRKjg7A==, tarball: https://registry.npmjs.org/@ethersproject/bytes/-/bytes-5.8.0.tgz}
+
+  '@ethersproject/constants@5.8.0':
+    resolution: {integrity: sha512-wigX4lrf5Vu+axVTIvNsuL6YrV4O5AXl5ubcURKMEME5TnWBouUh0CDTWxZ2GpnRn1kcCgE7l8O5+VbV9QTTcg==, tarball: https://registry.npmjs.org/@ethersproject/constants/-/constants-5.8.0.tgz}
+
+  '@ethersproject/logger@5.8.0':
+    resolution: {integrity: sha512-Qe6knGmY+zPPWTC+wQrpitodgBfH7XoceCGL5bJVejmH+yCS3R8jJm8iiWuvWbG76RUmyEG53oqv6GMVWqunjA==, tarball: https://registry.npmjs.org/@ethersproject/logger/-/logger-5.8.0.tgz}
+
+  '@ethersproject/strings@5.8.0':
+    resolution: {integrity: sha512-qWEAk0MAvl0LszjdfnZ2uC8xbR2wdv4cDabyHiBh3Cldq/T8dPH3V4BbBsAYJUeonwD+8afVXld274Ls+Y1xXg==, tarball: https://registry.npmjs.org/@ethersproject/strings/-/strings-5.8.0.tgz}
 
   '@exodus/eslint-config@5.24.0':
     resolution: {integrity: sha512-DiVWUZZJXSePm9JkZhzXilQ/4HPLWTzlSkFV5KYGUjBlmsVEFNAtcEE30oecuo+/Dz2mx2r+HnFE1e/bbX/2oQ==, tarball: https://registry.npmjs.org/@exodus/eslint-config/-/eslint-config-5.24.0.tgz}
@@ -754,6 +772,9 @@ packages:
   basic-ftp@5.0.5:
     resolution: {integrity: sha512-4Bcg1P8xhUuqcii/S0Z9wiHIrQVPMermM1any+MX5GeGD7faD3/msQUDGLol9wOcz4/jbg/WJnGqoJF6LiBdtg==, tarball: https://registry.npmjs.org/basic-ftp/-/basic-ftp-5.0.5.tgz}
     engines: {node: '>=10.0.0'}
+
+  bn.js@5.2.2:
+    resolution: {integrity: sha512-v2YAxEmKaBLahNwE1mjp4WON6huMNeuDvagFZW+ASCuA/ku0bXR9hSMw0XpiqMoA3+rmnyck/tPRSFQkoC9Cuw==, tarball: https://registry.npmjs.org/bn.js/-/bn.js-5.2.2.tgz}
 
   boolean@3.2.0:
     resolution: {integrity: sha512-d0II/GO9uf9lfUHH2BQsjxzRJZBdsjgsBiW4BvhWk/3qoKwQFjIDVN19PfX8F2D/r9PCMTtLWjYVCFrpeYUzsw==, tarball: https://registry.npmjs.org/boolean/-/boolean-3.2.0.tgz}
@@ -3263,6 +3284,28 @@ snapshots:
 
   '@eslint/js@8.57.1': {}
 
+  '@ethersproject/bignumber@5.8.0':
+    dependencies:
+      '@ethersproject/bytes': 5.8.0
+      '@ethersproject/logger': 5.8.0
+      bn.js: 5.2.2
+
+  '@ethersproject/bytes@5.8.0':
+    dependencies:
+      '@ethersproject/logger': 5.8.0
+
+  '@ethersproject/constants@5.8.0':
+    dependencies:
+      '@ethersproject/bignumber': 5.8.0
+
+  '@ethersproject/logger@5.8.0': {}
+
+  '@ethersproject/strings@5.8.0':
+    dependencies:
+      '@ethersproject/bytes': 5.8.0
+      '@ethersproject/constants': 5.8.0
+      '@ethersproject/logger': 5.8.0
+
   '@exodus/eslint-config@5.24.0(eslint@8.57.1)(prettier@3.6.2)(typescript@5.9.2)':
     dependencies:
       '@exodus/eslint-plugin-export-default': 2.0.0
@@ -3748,6 +3791,8 @@ snapshots:
 
   basic-ftp@5.0.5:
     optional: true
+
+  bn.js@5.2.2: {}
 
   boolean@3.2.0:
     optional: true
