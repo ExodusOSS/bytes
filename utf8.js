@@ -1,4 +1,4 @@
-import { assert, assertUint8 } from './assert.js'
+import { assertUint8 } from './assert.js'
 import { typedView } from './array.js'
 import * as js from './fallback/utf8.js'
 
@@ -28,7 +28,7 @@ function deLoose(str, loose, res) {
     start = pos + 1
     if (res[pos + 1] === 0xbf && res[pos + 2] === 0xbd) {
       // Found a replacement char in output, need to recheck if we encoded the input correctly
-      assert(str === decode(res), E_STRICT_UNICODE)
+      if (str !== decode(res)) throw new TypeError(E_STRICT_UNICODE)
       return res
     }
   }
@@ -37,7 +37,7 @@ function deLoose(str, loose, res) {
 }
 
 function encode(str, loose = false) {
-  assert(typeof str === 'string')
+  if (typeof str !== 'string') throw new TypeError('Input is not a string')
   if (haveNativeBuffer) return deLoose(str, loose, Buffer.from(str)) // faster on ascii on Node.js
   if (nativeEncoder) return deLoose(str, loose, nativeEncoder.encode(str)) // Node.js, browsers, and Hermes
   // No reason to use unescape + encodeURIComponent: it's slower than JS on normal engines, and modern Hermes already has TextEncoder

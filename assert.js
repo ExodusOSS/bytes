@@ -1,7 +1,3 @@
-export function assert(x, msg) {
-  if (!x) throw new Error(msg || 'Assertion failed')
-}
-
 export function assertEmptyRest(rest) {
   if (Object.keys(rest).length > 0) throw new TypeError('Unexpected extra options')
 }
