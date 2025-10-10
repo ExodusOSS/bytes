@@ -23,6 +23,12 @@ importers:
       '@scure/base':
         specifier: ^1.2.6
         version: 1.2.6
+      '@stablelib/base64':
+        specifier: ^2.0.1
+        version: 2.0.1
+      '@stablelib/hex':
+        specifier: ^2.0.1
+        version: 2.0.1
       '@types/node':
         specifier: ^24.0.10
         version: 24.0.10
@@ -529,6 +535,12 @@ packages:
   '@sindresorhus/is@4.6.0':
     resolution: {integrity: sha512-t09vSN3MdfsyCHoFcTRCH/iUtG7OJ0CsjzB8cjAmKc/va/kIgeDI/TxsigdncE/4be734m0cvIYwNaV4i2XqAw==, tarball: https://registry.npmjs.org/@sindresorhus/is/-/is-4.6.0.tgz}
     engines: {node: '>=10'}
+
+  '@stablelib/base64@2.0.1':
+    resolution: {integrity: sha512-P2z89A7N1ETt6RxgpVdDT2xlg8cnm3n6td0lY9gyK7EiWK3wdq388yFX/hLknkCC0we05OZAD1rfxlQJUbl5VQ==, tarball: https://registry.npmjs.org/@stablelib/base64/-/base64-2.0.1.tgz}
+
+  '@stablelib/hex@2.0.1':
+    resolution: {integrity: sha512-nsAgs3109myeijRQg3HASq3vlxe/8uDKHEUuIwn9ZLxfWtXavgojAGLBjI7Sda6seOhy7rKrpmeehYo0Z5VGQA==, tarball: https://registry.npmjs.org/@stablelib/hex/-/hex-2.0.1.tgz}
 
   '@szmarczak/http-timer@1.1.2':
     resolution: {integrity: sha512-XIB2XbzHTN6ieIjfIMV9hlVcfPU26s2vafYWQcZHWXHOxiaRZYEDKEwdl129Zyg50+foYV2jCgtrqSA6qNuNSA==, tarball: https://registry.npmjs.org/@szmarczak/http-timer/-/http-timer-1.1.2.tgz}
@@ -3518,6 +3530,10 @@ snapshots:
   '@sindresorhus/is@0.14.0': {}
 
   '@sindresorhus/is@4.6.0': {}
+
+  '@stablelib/base64@2.0.1': {}
+
+  '@stablelib/hex@2.0.1': {}
 
   '@szmarczak/http-timer@1.1.2':
     dependencies:

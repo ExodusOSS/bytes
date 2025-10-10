@@ -1,5 +1,6 @@
 import * as exodus from '@exodus/bytes/base64.js'
 import * as fallback from '../fallback/base64.js'
+import * as stablelib from '@stablelib/base64'
 import { benchmark } from '@exodus/test/benchmark' // eslint-disable-line @exodus/import/no-unresolved
 import { base64 as scure } from '@scure/base'
 import base64js from 'base64-js'
@@ -61,6 +62,7 @@ describe('benchmarks: base64', async () => {
     ['base64-js', (x) => base64js.fromByteArray(x)],
     ['scure.base64', (x) => scure.encode(x)],
     ['scure.base64, no native', (x) => scureJS.encode(x), !scureJS],
+    ['@stablelib', (x) => stablelib.encode(x)],
   ]
 
   // [name, impl, skip]
@@ -86,6 +88,7 @@ describe('benchmarks: base64', async () => {
     ['base64-js', (x) => base64js.toByteArray(x)],
     ['scure.base64', (x) => scure.decode(x)],
     ['scure.base64, no native', (x) => scureJS.decode(x), !scureJS],
+    ['@stablelib', (x) => stablelib.decode(x)],
   ]
 
   test('toBase64 coherence', (t) => {

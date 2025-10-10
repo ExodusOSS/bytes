@@ -1,5 +1,6 @@
 import * as exodus from '@exodus/bytes/hex.js'
 import * as fallback from '../fallback/hex.js'
+import * as stablelib from '@stablelib/hex'
 import { benchmark } from '@exodus/test/benchmark' // eslint-disable-line @exodus/import/no-unresolved
 import { hex as scure } from '@scure/base'
 import buffer from 'buffer/index.js'
@@ -50,6 +51,7 @@ describe('benchmarks: hex', async () => {
     ['buffer/Buffer.from', (x) => buffer.Buffer.from(x).toString('hex'), bufferIsPolyfilled],
     ['scure.hex', (x) => scure.encode(x)],
     ['scure.hex, no native', (x) => scureJS.encode(x), !scureJS],
+    ['@stablelib', (x) => stablelib.encode(x, true)],
   ]
 
   // [name, impl, skip]
@@ -61,6 +63,7 @@ describe('benchmarks: hex', async () => {
     ['buffer/Buffer', (x) => buffer.Buffer.from(x, 'hex'), bufferIsPolyfilled],
     ['scure.hex', (x) => scure.decode(x)],
     ['scure.hex, no native', (x) => scureJS.decode(x), !scureJS],
+    ['@stablelib', (x) => stablelib.decode(x)],
   ]
 
   test('toHex coherence', (t) => {

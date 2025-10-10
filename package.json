@@ -64,6 +64,8 @@
     "@exodus/prettier": "^1.0.0",
     "@exodus/test": "^1.0.0-rc.105",
     "@scure/base": "^1.2.6",
+    "@stablelib/base64": "^2.0.1",
+    "@stablelib/hex": "^2.0.1",
     "@types/node": "^24.0.10",
     "base-x": "^5.0.1",
     "base32.js": "^0.1.0",
