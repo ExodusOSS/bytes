@@ -4,9 +4,8 @@
   "description": "Various operations on Uint8Array data",
   "scripts": {
     "lint": "eslint .",
-    "test:v8": "npm run test:d8 --",
     "test:javascriptcore": "npm run test:jsc --",
-    "test:d8": "exodus-test --engine=d8:bundle",
+    "test:v8": "exodus-test --engine=v8:bundle",
     "test:jsc": "exodus-test --engine=jsc:bundle",
     "test:spidermonkey": "exodus-test --engine=spidermonkey:bundle",
     "test:hermes": "exodus-test --engine=hermes:bundle",
