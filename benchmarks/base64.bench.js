@@ -5,6 +5,7 @@ import { benchmark } from '@exodus/test/benchmark' // eslint-disable-line @exodu
 import { base64 as scure } from '@scure/base'
 import base64js from 'base64-js'
 import fastBase64Decode from 'fast-base64-decode'
+import fastBase64Encode from 'fast-base64-encode'
 import buffer from 'buffer/index.js'
 import { describe, test } from 'node:test'
 
@@ -59,6 +60,7 @@ describe('benchmarks: base64', async () => {
     ['Buffer.from', (x) => Buffer.from(x).toString('base64')],
     ['buffer/Buffer', (x) => toBuffer(x, buffer.Buffer).toString('base64'), bufferIsPolyfilled],
     ['buffer/Buffer.from', (x) => buffer.Buffer.from(x).toString('base64'), bufferIsPolyfilled],
+    ['fast-base64-encode', (x) => fastBase64Encode(x)],
     ['base64-js', (x) => base64js.fromByteArray(x)],
     ['scure.base64', (x) => scure.encode(x)],
     ['scure.base64, no native', (x) => scureJS.encode(x), !scureJS],
