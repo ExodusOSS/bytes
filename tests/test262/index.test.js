@@ -82,7 +82,7 @@ describe('test262', () => {
 })
 
 // List of files so that bundler can locate all these
-/*
+/* @preserve
 fs.readFileSync(path.join(__dirname, 'fixtures/built-ins/Uint8Array/fromBase64/alphabet.js'))
 fs.readFileSync(path.join(__dirname, 'fixtures/built-ins/Uint8Array/fromBase64/descriptor.js'))
 fs.readFileSync(path.join(__dirname, 'fixtures/built-ins/Uint8Array/fromBase64/ignores-receiver.js'))
