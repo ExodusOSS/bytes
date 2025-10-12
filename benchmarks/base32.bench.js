@@ -7,6 +7,9 @@ import buffer from 'buffer/index.js'
 import { describe, test } from 'node:test'
 
 import { bufs } from './utils/random.js'
+import { Table } from './utils/table.js'
+
+const columns = ['@exodus/bytes/base32', 'scure.base32', 'base32.js', 'hi-base32']
 
 if (!globalThis.Buffer) globalThis.Buffer = buffer.Buffer
 
@@ -40,9 +43,12 @@ describe('benchmarks: base32', async () => {
   })
 
   test('toBase32', { timeout: 10_000 }, async () => {
+    const res = new Table()
     for (const [name, f, skip] of toBase32) {
-      await benchmark(`toBase32: ${name}`, { skip, args: bufs }, f)
+      res.add(name, await benchmark(`toBase32: ${name}`, { skip, args: bufs }, f))
     }
+
+    res.print(columns)
   })
 
   test('fromBase32 coherence', (t) => {
@@ -56,8 +62,11 @@ describe('benchmarks: base32', async () => {
   })
 
   test('fromBase32', { timeout: 10_000 }, async () => {
+    const res = new Table()
     for (const [name, f, skip] of fromBase32) {
-      await benchmark(`fromBase32: ${name}`, { skip, args: strings }, f)
+      res.add(name, await benchmark(`fromBase32: ${name}`, { skip, args: strings }, f))
     }
+
+    res.print(columns)
   })
 })

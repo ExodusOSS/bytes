@@ -7,6 +7,17 @@ import js from 'text-encoding'
 import * as ethers from '@ethersproject/strings'
 
 import { bufs as bufsRaw } from './utils/random.js'
+import { Table } from './utils/table.js'
+
+const columns = [
+  '@exodus/bytes/utf8',
+  '@exodus/bytes/utf8, loose',
+  'Buffer',
+  'TextDecoder',
+  'TextEncoder',
+  '@ethersproject',
+  'Buffer.from',
+]
 
 if (!globalThis.Buffer) globalThis.Buffer = buffer.Buffer
 const bufferIsPolyfilled = Buffer === buffer.Buffer
@@ -64,15 +75,21 @@ describe('benchmarks: utf8', async () => {
   })
 
   test('utf8toString, ascii', { timeout: 10_000 }, async () => {
+    const res = new Table()
     for (const [name, f, skip] of utf8toString) {
-      await benchmark(`utf8toString, ascii: ${name}`, { skip, args: asciiBufs }, f)
+      res.add(name, await benchmark(`utf8toString, ascii: ${name}`, { skip, args: asciiBufs }, f))
     }
+
+    res.print(columns)
   })
 
   test('utf8toString, complex', { timeout: 10_000 }, async () => {
+    const res = new Table()
     for (const [name, f, skip] of utf8toString) {
-      await benchmark(`utf8toString, complex: ${name}`, { skip, args: bufs }, f)
+      res.add(name, await benchmark(`utf8toString, complex: ${name}`, { skip, args: bufs }, f))
     }
+
+    res.print(columns)
   })
 
   test('utf8fromString coherence', (t) => {
@@ -86,14 +103,23 @@ describe('benchmarks: utf8', async () => {
   })
 
   test('utf8fromString, ascii', { timeout: 10_000 }, async () => {
+    const res = new Table()
     for (const [name, f, skip] of utf8fromString) {
-      await benchmark(`utf8fromString, ascii: ${name}`, { skip, args: asciiStrings }, f)
+      res.add(
+        name,
+        await benchmark(`utf8fromString, ascii: ${name}`, { skip, args: asciiStrings }, f)
+      )
     }
+
+    res.print(columns)
   })
 
   test('utf8fromString, complex', { timeout: 10_000 }, async () => {
+    const res = new Table()
     for (const [name, f, skip] of utf8fromString) {
-      await benchmark(`utf8fromString, complex: ${name}`, { skip, args: strings }, f)
+      res.add(name, await benchmark(`utf8fromString, complex: ${name}`, { skip, args: strings }, f))
     }
+
+    res.print(columns)
   })
 })

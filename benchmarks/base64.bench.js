@@ -10,6 +10,18 @@ import buffer from 'buffer/index.js'
 import { describe, test } from 'node:test'
 
 import { bufs } from './utils/random.js'
+import { Table } from './utils/table.js'
+
+const columns = [
+  '@exodus/bytes/base64',
+  'scure.base64',
+  'Buffer',
+  '@stablelib',
+  'base64-js',
+  'fast-base64-decode',
+  'fast-base64-encode',
+  'Buffer.from',
+]
 
 if (!globalThis.Buffer) globalThis.Buffer = buffer.Buffer
 const bufferIsPolyfilled = Buffer === buffer.Buffer
@@ -102,9 +114,12 @@ describe('benchmarks: base64', async () => {
   })
 
   test('toBase64', { timeout: 20_000 }, async () => {
+    const res = new Table()
     for (const [name, f, skip] of toBase64) {
-      await benchmark(`toBase64: ${name}`, { skip, args: bufs }, f)
+      res.add(name, await benchmark(`toBase64: ${name}`, { skip, args: bufs }, f))
     }
+
+    res.print(columns)
   })
 
   test('fromBase64 coherence', (t) => {
@@ -116,8 +131,11 @@ describe('benchmarks: base64', async () => {
   })
 
   test('fromBase64', { timeout: 20_000 }, async () => {
+    const res = new Table()
     for (const [name, f, skip] of fromBase64) {
-      await benchmark(`fromBase64: ${name}`, { skip, args: strings }, f)
+      res.add(name, await benchmark(`fromBase64: ${name}`, { skip, args: strings }, f))
     }
+
+    res.print(columns)
   })
 })

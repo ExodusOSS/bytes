@@ -7,6 +7,9 @@ import buffer from 'buffer/index.js'
 import { describe, test } from 'node:test'
 
 import { bufs } from './utils/random.js'
+import { Table } from './utils/table.js'
+
+const columns = ['@exodus/bytes/hex', 'scure.hex', 'Buffer', '@stablelib', 'Buffer.from']
 
 if (!globalThis.Buffer) globalThis.Buffer = buffer.Buffer
 const bufferIsPolyfilled = Buffer === buffer.Buffer
@@ -75,9 +78,12 @@ describe('benchmarks: hex', async () => {
   })
 
   test('toHex', { timeout: 20_000 }, async () => {
+    const res = new Table()
     for (const [name, f, skip] of toHex) {
-      await benchmark(`toHex: ${name}`, { skip, args: bufs }, f)
+      res.add(name, await benchmark(`toHex: ${name}`, { skip, args: bufs }, f))
     }
+
+    res.print(columns)
   })
 
   test('fromHex coherence', (t) => {
@@ -89,8 +95,11 @@ describe('benchmarks: hex', async () => {
   })
 
   test('fromHex', { timeout: 20_000 }, async () => {
+    const res = new Table()
     for (const [name, f, skip] of fromHex) {
-      await benchmark(`fromHex: ${name}`, { skip, args: strings }, f)
+      res.add(name, await benchmark(`fromHex: ${name}`, { skip, args: strings }, f))
     }
+
+    res.print(columns)
   })
 })
