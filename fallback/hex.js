@@ -58,9 +58,6 @@ export function fromHex(str) {
   if (typeof str !== 'string') throw new TypeError('Input is not a string')
   if (str.length % 2 !== 0) throw new SyntaxError(E_HEX)
 
-  // We don't use native Buffer impl, as rechecking input make it slower than pure js
-  // This path is used only on older engines though
-
   if (!dehexArray) {
     dehexArray = new Int8Array(mapSize).fill(-1) // no regex input validation here, so we map all other bytes to -1 and recheck sign
     for (let i = 0; i < 16; i++) {

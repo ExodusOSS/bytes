@@ -61,6 +61,7 @@ describe('benchmarks: hex', async () => {
   const fromHex = [
     ['@exodus/bytes/hex', (x) => exodus.fromHex(x)],
     ['@exodus/bytes/hex, no native', (x) => exodusA.fromHex(x), !exodusA],
+    ['@exodus/bytes/hex, no Buffer', (x) => exodusB.fromHex(x), !exodusB],
     ['fallback', (x) => fallback.fromHex(x)],
     ['Buffer', (x) => Buffer.from(x, 'hex')],
     ['buffer/Buffer', (x) => buffer.Buffer.from(x, 'hex'), bufferIsPolyfilled],
