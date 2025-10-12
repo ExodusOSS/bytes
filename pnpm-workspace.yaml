@@ -5,3 +5,7 @@ enableGlobalVirtualStore: false
 onlyBuiltDependencies:
   - electron
   - esbuild
+overrides:
+  "@exodus/test>c8": "-"
+  "@exodus/test>tsx": "-"
+  "@exodus/test-bundler>flow-remove-types": "-"
