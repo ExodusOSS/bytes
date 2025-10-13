@@ -11,6 +11,7 @@ const nativeEncoder = isNative(TextEncoder) ? new TextEncoder() : null
 // We don't want to strip anything unexpectedly
 const decoderFatal = haveDecoder ? new TextDecoder('utf8', { ignoreBOM: true, fatal: true }) : null
 const decoderLoose = haveDecoder ? new TextDecoder('utf8', { ignoreBOM: true }) : null
+const { isWellFormed } = String.prototype
 
 const { E_STRICT, E_STRICT_UNICODE } = js
 
@@ -18,6 +19,12 @@ const shouldUseEscapePath = Boolean(globalThis.HermesInternal) // faster only on
 
 function deLoose(str, loose, res) {
   if (loose) return res
+  if (isWellFormed) {
+    // We have a fast native method
+    if (isWellFormed.call(str)) return res
+    throw new TypeError(E_STRICT_UNICODE)
+  }
+
   // Recheck if the string was encoded correctly
   let start = 0
   const last = res.length - 2
