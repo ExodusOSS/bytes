@@ -46,6 +46,12 @@ importers:
       base64-js:
         specifier: ^1.5.1
         version: 1.5.1
+      bs58:
+        specifier: ^6.0.0
+        version: 6.0.0
+      bstring:
+        specifier: ^0.3.9
+        version: 0.3.9
       buffer:
         specifier: ^6.0.3
         version: 6.0.3
@@ -811,6 +817,17 @@ packages:
     resolution: {integrity: sha512-lAUU+02RFBuCKQPj/P6NgjlbCnLBMp4UtgTx7vNHd3XSIJF87s9a5rA3aH2yw3GS9DqZAUbOtZdCCiZeVRqt0w==, tarball: https://registry.npmjs.org/browserslist/-/browserslist-4.26.3.tgz}
     engines: {node: ^6 || ^7 || ^8 || ^9 || ^10 || ^11 || ^12 || >=13.7}
     hasBin: true
+
+  bs58@6.0.0:
+    resolution: {integrity: sha512-PD0wEnEYg6ijszw/u8s+iI3H17cTymlrwkKhDhPZq+Sokl3AU4htyBFTjAeNAlCCmg0f53g6ih3jATyCKftTfw==, tarball: https://registry.npmjs.org/bs58/-/bs58-6.0.0.tgz}
+
+  bsert@0.0.13:
+    resolution: {integrity: sha512-gYzSj8I2lDTKvl4aRSYs2CZIpeJugq7RjGhLRG+Jl//gEW5B2u1MKB6exVCL09FqYj6JRQAAgRwQHMOWvr7A8A==, tarball: https://registry.npmjs.org/bsert/-/bsert-0.0.13.tgz}
+    engines: {node: '>=8.0.0'}
+
+  bstring@0.3.9:
+    resolution: {integrity: sha512-D95flI7SXL+UsQi9mW+hH+AK2AFfafIJi+3GbbyTAWMe2FqwR9keBxsjGiGd/JM+77Y9WsC+M4EhZVNVcym9jw==, tarball: https://registry.npmjs.org/bstring/-/bstring-0.3.9.tgz}
+    engines: {node: '>=8.0.0'}
 
   buffer-crc32@0.2.13:
     resolution: {integrity: sha512-VO9Ht/+p3SN7SKWqcrgEzjGbRSJYTx+Q1pTQC0wrWqHx0vpJraQ6GtHx8tvcg1rlK1byhU5gccxgOgj7B0TDkQ==, tarball: https://registry.npmjs.org/buffer-crc32/-/buffer-crc32-0.2.13.tgz}
@@ -1895,6 +1912,10 @@ packages:
   lines-and-columns@1.2.4:
     resolution: {integrity: sha512-7ylylesZQ/PV29jhEDl3Ufjo6ZX7gCqJr5F7PKrqc93v7fzSymt1BpwEU8nAUXs8qzzvqhbjhK5QZg6Mt/HkBg==, tarball: https://registry.npmjs.org/lines-and-columns/-/lines-and-columns-1.2.4.tgz}
 
+  loady@0.0.5:
+    resolution: {integrity: sha512-uxKD2HIj042/HBx77NBcmEPsD+hxCgAtjEWlYNScuUjIsh/62Uyu39GOR68TBR68v+jqDL9zfftCWoUo4y03sQ==, tarball: https://registry.npmjs.org/loady/-/loady-0.0.5.tgz}
+    engines: {node: '>=8.0.0'}
+
   locate-path@5.0.0:
     resolution: {integrity: sha512-t7hw9pI+WvuwNJXwk5zVHpyhIqzg2qTlklJOf0mVxGSbe3Fp2VieZcduNYjaLDoy6p9uGpQEGWG87WpMKlNq8g==, tarball: https://registry.npmjs.org/locate-path/-/locate-path-5.0.0.tgz}
     engines: {node: '>=8'}
@@ -1997,6 +2018,9 @@ packages:
 
   mute-stream@0.0.7:
     resolution: {integrity: sha512-r65nCZhrbXXb6dXOACihYApHw2Q6pV0M3V0PSxd74N0+D8nzAdEAITq2oAjA1jVnKI+tGvEBUpqiMh0+rW6zDQ==, tarball: https://registry.npmjs.org/mute-stream/-/mute-stream-0.0.7.tgz}
+
+  nan@2.23.0:
+    resolution: {integrity: sha512-1UxuyYGdoQHcGg87Lkqm3FzefucTa0NAiOcuRsDmysep3c1LVCRK2krrUDafMWtjSG04htvAmvg96+SDknOmgQ==, tarball: https://registry.npmjs.org/nan/-/nan-2.23.0.tgz}
 
   natural-compare@1.4.0:
     resolution: {integrity: sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw==, tarball: https://registry.npmjs.org/natural-compare/-/natural-compare-1.4.0.tgz}
@@ -3750,6 +3774,18 @@ snapshots:
       update-browserslist-db: 1.1.3(browserslist@4.26.3)
     optional: true
 
+  bs58@6.0.0:
+    dependencies:
+      base-x: 5.0.1
+
+  bsert@0.0.13: {}
+
+  bstring@0.3.9:
+    dependencies:
+      bsert: 0.0.13
+      loady: 0.0.5
+      nan: 2.23.0
+
   buffer-crc32@0.2.13: {}
 
   buffer-from@1.1.2: {}
@@ -5056,6 +5092,8 @@ snapshots:
 
   lines-and-columns@1.2.4: {}
 
+  loady@0.0.5: {}
+
   locate-path@5.0.0:
     dependencies:
       p-locate: 4.1.0
@@ -5142,6 +5180,8 @@ snapshots:
   ms@2.1.3: {}
 
   mute-stream@0.0.7: {}
+
+  nan@2.23.0: {}
 
   natural-compare@1.4.0: {}
 

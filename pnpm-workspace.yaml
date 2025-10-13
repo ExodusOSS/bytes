@@ -1,11 +1,17 @@
-lockfileIncludeTarballUrl: true
-linkWorkspacePackages: true
-preferWorkspacePackages: true
 enableGlobalVirtualStore: false
+
+linkWorkspacePackages: true
+
+lockfileIncludeTarballUrl: true
+
 onlyBuiltDependencies:
+  - bstring
   - electron
   - esbuild
+
 overrides:
-  "@exodus/test>c8": "-"
-  "@exodus/test>tsx": "-"
-  "@exodus/test-bundler>flow-remove-types": "-"
+  '@exodus/test>c8': '-'
+  '@exodus/test>tsx': '-'
+  '@exodus/test-bundler>flow-remove-types': '-'
+
+preferWorkspacePackages: true
