@@ -22,6 +22,16 @@ const columns = [
   'fast-base64-encode',
   'Buffer.from',
 ]
+const columnsOld = [
+  '@exodus/bytes/base64, no native',
+  'scure.base64, no native',
+  'Buffer',
+  '@stablelib',
+  'base64-js',
+  'fast-base64-decode',
+  'fast-base64-encode',
+  'Buffer.from',
+]
 
 if (!globalThis.Buffer) globalThis.Buffer = buffer.Buffer
 const bufferIsPolyfilled = Buffer === buffer.Buffer
@@ -120,6 +130,7 @@ describe('benchmarks: base64', async () => {
     }
 
     res.print(columns)
+    res.print(columnsOld)
   })
 
   test('fromBase64 coherence', (t) => {
@@ -137,5 +148,6 @@ describe('benchmarks: base64', async () => {
     }
 
     res.print(columns)
+    res.print(columnsOld)
   })
 })

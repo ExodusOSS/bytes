@@ -10,6 +10,13 @@ import { bufs } from './utils/random.js'
 import { Table } from './utils/table.js'
 
 const columns = ['@exodus/bytes/hex', 'scure.hex', 'Buffer', '@stablelib', 'Buffer.from']
+const columnsOld = [
+  '@exodus/bytes/hex, no native',
+  'scure.hex, no native',
+  'Buffer',
+  '@stablelib',
+  'Buffer.from',
+]
 
 if (!globalThis.Buffer) globalThis.Buffer = buffer.Buffer
 const bufferIsPolyfilled = Buffer === buffer.Buffer
@@ -85,6 +92,7 @@ describe('benchmarks: hex', async () => {
     }
 
     res.print(columns)
+    res.print(columnsOld)
   })
 
   test('fromHex coherence', (t) => {
@@ -102,5 +110,6 @@ describe('benchmarks: hex', async () => {
     }
 
     res.print(columns)
+    res.print(columnsOld)
   })
 })
