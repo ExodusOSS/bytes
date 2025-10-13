@@ -9,16 +9,6 @@ import * as ethers from '@ethersproject/strings'
 import { bufs as bufsRaw } from './utils/random.js'
 import { Table } from './utils/table.js'
 
-const columns = [
-  '@exodus/bytes/utf8',
-  '@exodus/bytes/utf8, loose',
-  'Buffer',
-  'TextDecoder',
-  'TextEncoder',
-  '@ethersproject',
-  'Buffer.from',
-]
-
 if (!globalThis.Buffer) globalThis.Buffer = buffer.Buffer
 const bufferIsPolyfilled = Buffer === buffer.Buffer
 const toBuffer = (x, B) => B.from(x.buffer, x.byteOffset, x.byteLength)
@@ -36,6 +26,23 @@ const textDecoder = isNative(TextDecoder) ? new TextDecoder() : null
 const textEncoder = isNative(TextEncoder) ? new TextEncoder() : null
 const textDecoderJS = new js.TextDecoder()
 const textEncoderJS = new js.TextEncoder()
+
+const columnsTo = [
+  '@exodus/bytes/utf8',
+  '@exodus/bytes/utf8, loose',
+  'Buffer',
+  textDecoder ? 'TextDecoder' : 'text-encoding',
+  '@ethersproject/strings',
+  'Buffer.from',
+]
+
+const columnsFrom = [
+  '@exodus/bytes/utf8',
+  '@exodus/bytes/utf8, loose',
+  'Buffer',
+  textEncoder ? 'TextEncoder' : 'text-encoding',
+  '@ethersproject/strings',
+]
 
 describe('benchmarks: utf8', async () => {
   // [name, impl, skip]
@@ -80,7 +87,7 @@ describe('benchmarks: utf8', async () => {
       res.add(name, await benchmark(`utf8toString, ascii: ${name}`, { skip, args: asciiBufs }, f))
     }
 
-    res.print(columns)
+    res.print(columnsTo)
   })
 
   test('utf8toString, complex', { timeout: 10_000 }, async () => {
@@ -89,7 +96,7 @@ describe('benchmarks: utf8', async () => {
       res.add(name, await benchmark(`utf8toString, complex: ${name}`, { skip, args: bufs }, f))
     }
 
-    res.print(columns)
+    res.print(columnsTo)
   })
 
   test('utf8fromString coherence', (t) => {
@@ -111,7 +118,7 @@ describe('benchmarks: utf8', async () => {
       )
     }
 
-    res.print(columns)
+    res.print(columnsFrom)
   })
 
   test('utf8fromString, complex', { timeout: 10_000 }, async () => {
@@ -120,6 +127,6 @@ describe('benchmarks: utf8', async () => {
       res.add(name, await benchmark(`utf8fromString, complex: ${name}`, { skip, args: strings }, f))
     }
 
-    res.print(columns)
+    res.print(columnsFrom)
   })
 })
