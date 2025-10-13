@@ -1,17 +1,23 @@
+import { typedView } from './array.js'
 import { assertUint8 } from './assert.js'
 import { nativeDecoder } from './fallback/_utils.js'
 
 const alphabet = [...'123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz']
 const codes = new Uint8Array(alphabet.map((x) => x.charCodeAt(0)))
 const ZERO = alphabet[0]
+const zeroC = codes[0]
 
 const _0n = BigInt(0)
 const _1n = BigInt(1)
 const _8n = BigInt(8)
 const _32n = BigInt(32)
 const _58n = BigInt(58)
+const _0xffffffffn = BigInt(0xff_ff_ff_ff)
 
 let table // 15 * 82, diagonal, <1kb
+let fromMap
+
+const E_CHAR = 'Invalid character in base58 input'
 
 export function toBase58(arr) {
   assertUint8(arr)
@@ -109,4 +115,50 @@ export function toBase58(arr) {
   let out = ''
   for (let i = res.length - 1; i >= 0; i--) out += alphabet[res[i]]
   return ZERO.repeat(zeros) + out
+}
+
+// TODO: optimize
+export function fromBase58(str, format = 'uint8') {
+  if (typeof str !== 'string') throw new TypeError('Input is not a string')
+  const length = str.length
+  if (length === 0) return typedView(new Uint8Array(), format)
+
+  let zeros = 0
+  while (zeros < length && str.charCodeAt(zeros) === zeroC) zeros++
+
+  if (!fromMap) {
+    fromMap = new Int8Array(256).fill(-1)
+    for (let i = 0; i < 58; i++) fromMap[alphabet[i].charCodeAt(0)] = i
+  }
+
+  let x = _0n
+  for (let i = zeros; i < length; i++) {
+    const charCode = str.charCodeAt(i)
+    const c = fromMap[charCode]
+    if (charCode > 255 || c < 0) throw new SyntaxError(E_CHAR)
+    x = x * _58n + BigInt(c)
+  }
+
+  // max is 58**(length - zeros)-1, which would need
+
+  // TODO: test on 'z'.repeat(from 1 to smth)
+  const size = ((length - zeros) * 3 + 1) >> 2 // 3/4 rounded up, larger than ~0.73 coef to fit everything
+  const res = new Uint8Array(zeros + size)
+  let i = res.length
+  while (x) {
+    let y = Number(x & _0xffffffffn)
+    x >>= 32n
+    res[--i] = y & 0xff
+    y >>>= 8
+    if (!x && !y) break
+    res[--i] = y & 0xff
+    y >>>= 8
+    if (!x && !y) break
+    res[--i] = y & 0xff
+    y >>>= 8
+    if (!x && !y) break
+    res[--i] = y & 0xff
+  }
+
+  return typedView(res.subarray(i - zeros), format)
 }
