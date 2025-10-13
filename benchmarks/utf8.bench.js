@@ -81,7 +81,7 @@ describe('benchmarks: utf8', async () => {
     }
   })
 
-  test('utf8toString, ascii', { timeout: 10_000 }, async () => {
+  test('utf8toString, ascii', { timeout: 20_000 }, async () => {
     const res = new Table()
     for (const [name, f, skip] of utf8toString) {
       res.add(name, await benchmark(`utf8toString, ascii: ${name}`, { skip, args: asciiBufs }, f))
@@ -90,7 +90,7 @@ describe('benchmarks: utf8', async () => {
     res.print(columnsTo)
   })
 
-  test('utf8toString, complex', { timeout: 10_000 }, async () => {
+  test('utf8toString, complex', { timeout: 20_000 }, async () => {
     const res = new Table()
     for (const [name, f, skip] of utf8toString) {
       res.add(name, await benchmark(`utf8toString, complex: ${name}`, { skip, args: bufs }, f))
@@ -109,7 +109,7 @@ describe('benchmarks: utf8', async () => {
     }
   })
 
-  test('utf8fromString, ascii', { timeout: 10_000 }, async () => {
+  test('utf8fromString, ascii', { timeout: 20_000 }, async () => {
     const res = new Table()
     for (const [name, f, skip] of utf8fromString) {
       res.add(
@@ -121,7 +121,7 @@ describe('benchmarks: utf8', async () => {
     res.print(columnsFrom)
   })
 
-  test('utf8fromString, complex', { timeout: 10_000 }, async () => {
+  test('utf8fromString, complex', { timeout: 20_000 }, async () => {
     const res = new Table()
     for (const [name, f, skip] of utf8fromString) {
       res.add(name, await benchmark(`utf8fromString, complex: ${name}`, { skip, args: strings }, f))
