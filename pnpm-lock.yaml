@@ -16,6 +16,9 @@ importers:
       '@ethersproject/strings':
         specifier: ^5.8.0
         version: 5.8.0
+      '@exodus/crypto':
+        specifier: 1.0.0-rc.29
+        version: 1.0.0-rc.29
       '@exodus/eslint-config':
         specifier: ^5.24.0
         version: 5.24.0(eslint@8.57.1)(prettier@3.6.2)(typescript@5.9.2)
@@ -25,6 +28,9 @@ importers:
       '@exodus/test':
         specifier: ^1.0.0-rc.107
         version: 1.0.0-rc.107(electron@36.5.0)
+      '@noble/hashes':
+        specifier: ^2.0.1
+        version: 2.0.1
       '@scure/base':
         specifier: ^1.2.6
         version: 1.2.6
@@ -49,6 +55,9 @@ importers:
       bs58:
         specifier: ^6.0.0
         version: 6.0.0
+      bs58check:
+        specifier: ^4.0.0
+        version: 4.0.0
       bstring:
         specifier: ^0.3.9
         version: 0.3.9
@@ -380,6 +389,10 @@ packages:
   '@ethersproject/strings@5.8.0':
     resolution: {integrity: sha512-qWEAk0MAvl0LszjdfnZ2uC8xbR2wdv4cDabyHiBh3Cldq/T8dPH3V4BbBsAYJUeonwD+8afVXld274Ls+Y1xXg==, tarball: https://registry.npmjs.org/@ethersproject/strings/-/strings-5.8.0.tgz}
 
+  '@exodus/crypto@1.0.0-rc.29':
+    resolution: {integrity: sha512-+2oEdwsFhHWUXggweL4q/PVIKWUwCwcyY2IoSgl25EToXdxJn0M1dryZBxq3soYnQMMW0YZc43mpBF1+frIiWA==, tarball: https://registry.npmjs.org/@exodus/crypto/-/crypto-1.0.0-rc.29.tgz}
+    engines: {node: ^20.19.0 || >=22.13.0}
+
   '@exodus/eslint-config@5.24.0':
     resolution: {integrity: sha512-DiVWUZZJXSePm9JkZhzXilQ/4HPLWTzlSkFV5KYGUjBlmsVEFNAtcEE30oecuo+/Dz2mx2r+HnFE1e/bbX/2oQ==, tarball: https://registry.npmjs.org/@exodus/eslint-config/-/eslint-config-5.24.0.tgz}
     peerDependencies:
@@ -483,6 +496,24 @@ packages:
 
   '@jridgewell/trace-mapping@0.3.31':
     resolution: {integrity: sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw==, tarball: https://registry.npmjs.org/@jridgewell/trace-mapping/-/trace-mapping-0.3.31.tgz}
+
+  '@noble/ciphers@1.3.0':
+    resolution: {integrity: sha512-2I0gnIVPtfnMw9ee9h1dJG7tp81+8Ob3OJb3Mv37rx5L40/b0i7djjCVvGOVqc9AEIQyvyu1i6ypKdFw8R8gQw==, tarball: https://registry.npmjs.org/@noble/ciphers/-/ciphers-1.3.0.tgz}
+    engines: {node: ^14.21.3 || >=16}
+
+  '@noble/ed25519@1.7.5':
+    resolution: {integrity: sha512-xuS0nwRMQBvSxDa7UxMb61xTiH3MxTgUfhyPUALVIe0FlOAz4sjELwyDRyUvqeEYfRSG9qNjFIycqLZppg4RSA==, tarball: https://registry.npmjs.org/@noble/ed25519/-/ed25519-1.7.5.tgz}
+
+  '@noble/hashes@1.8.0':
+    resolution: {integrity: sha512-jCs9ldd7NwzpgXDIf6P3+NrHh9/sD6CQdxHyjQI+h/6rDNo88ypBxxz45UDuZHz9r3tNz7N/VInSVoVdtXEI4A==, tarball: https://registry.npmjs.org/@noble/hashes/-/hashes-1.8.0.tgz}
+    engines: {node: ^14.21.3 || >=16}
+
+  '@noble/hashes@2.0.1':
+    resolution: {integrity: sha512-XlOlEbQcE9fmuXxrVTXCTlG2nlRXa9Rj3rr5Ue/+tX+nmkgbX720YHh0VR3hBF9xDvwnb8D2shVGOwNx+ulArw==, tarball: https://registry.npmjs.org/@noble/hashes/-/hashes-2.0.1.tgz}
+    engines: {node: '>= 20.19.0'}
+
+  '@noble/secp256k1@1.7.2':
+    resolution: {integrity: sha512-/qzwYl5eFLH8OWIecQWM31qld2g1NfjgylK+TNhqtaUKP37Nm+Y+z30Fjhw0Ct8p9yCQEm2N3W/AckdIb3SMcQ==, tarball: https://registry.npmjs.org/@noble/secp256k1/-/secp256k1-1.7.2.tgz}
 
   '@nodelib/fs.scandir@2.1.5':
     resolution: {integrity: sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g==, tarball: https://registry.npmjs.org/@nodelib/fs.scandir/-/fs.scandir-2.1.5.tgz}
@@ -820,6 +851,9 @@ packages:
 
   bs58@6.0.0:
     resolution: {integrity: sha512-PD0wEnEYg6ijszw/u8s+iI3H17cTymlrwkKhDhPZq+Sokl3AU4htyBFTjAeNAlCCmg0f53g6ih3jATyCKftTfw==, tarball: https://registry.npmjs.org/bs58/-/bs58-6.0.0.tgz}
+
+  bs58check@4.0.0:
+    resolution: {integrity: sha512-FsGDOnFg9aVI9erdriULkd/JjEWONV/lQE5aYziB5PoBsXRind56lh8doIZIc9X4HoxT5x4bLjMWN1/NB8Zp5g==, tarball: https://registry.npmjs.org/bs58check/-/bs58check-4.0.0.tgz}
 
   bsert@0.0.13:
     resolution: {integrity: sha512-gYzSj8I2lDTKvl4aRSYs2CZIpeJugq7RjGhLRG+Jl//gEW5B2u1MKB6exVCL09FqYj6JRQAAgRwQHMOWvr7A8A==, tarball: https://registry.npmjs.org/bsert/-/bsert-0.0.13.tgz}
@@ -3218,6 +3252,14 @@ snapshots:
       '@ethersproject/constants': 5.8.0
       '@ethersproject/logger': 5.8.0
 
+  '@exodus/crypto@1.0.0-rc.29':
+    dependencies:
+      '@noble/ciphers': 1.3.0
+      '@noble/ed25519': 1.7.5
+      '@noble/hashes': 2.0.1
+      '@noble/secp256k1': 1.7.2
+      pako: 1.0.11
+
   '@exodus/eslint-config@5.24.0(eslint@8.57.1)(prettier@3.6.2)(typescript@5.9.2)':
     dependencies:
       '@exodus/eslint-plugin-export-default': 2.0.0
@@ -3398,6 +3440,16 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.5
     optional: true
+
+  '@noble/ciphers@1.3.0': {}
+
+  '@noble/ed25519@1.7.5': {}
+
+  '@noble/hashes@1.8.0': {}
+
+  '@noble/hashes@2.0.1': {}
+
+  '@noble/secp256k1@1.7.2': {}
 
   '@nodelib/fs.scandir@2.1.5':
     dependencies:
@@ -3777,6 +3829,11 @@ snapshots:
   bs58@6.0.0:
     dependencies:
       base-x: 5.0.1
+
+  bs58check@4.0.0:
+    dependencies:
+      '@noble/hashes': 1.8.0
+      bs58: 6.0.0
 
   bsert@0.0.13: {}
 
@@ -5334,8 +5391,7 @@ snapshots:
       registry-url: 5.1.0
       semver: 6.3.1
 
-  pako@1.0.11:
-    optional: true
+  pako@1.0.11: {}
 
   parent-module@1.0.1:
     dependencies:

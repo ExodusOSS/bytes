@@ -1,0 +1,30 @@
+import { typedView } from './array.js'
+import { assertUint8 } from './assert.js'
+import { toBase58, fromBase58 } from './base58.js'
+import { hashSync } from '@exodus/crypto/hash'
+
+// Note: while API is async, we use hashSync for now until we improve webcrypto perf for hash256
+// Inputs to base58 are typically very small, and that makes a difference
+
+const hash256 = (x) => hashSync('sha256', hashSync('sha256', x, 'uint8'), 'uint8')
+
+const E_CHECKSUM = 'Invalid checksum'
+
+export async function toBase58check(arr) {
+  assertUint8(arr)
+  const checksum = hash256(arr)
+  const res = new Uint8Array(arr.length + 4)
+  res.set(arr, 0)
+  res.set(checksum.subarray(0, 4), arr.length)
+  return toBase58(res)
+}
+
+export async function fromBase58check(str, format = 'uint8') {
+  const arr = fromBase58(str) // checks input
+  const len4 = arr.length - 4
+  const payload = arr.subarray(0, len4)
+  const c = arr.subarray(len4)
+  const r = hash256(payload)
+  if ((c[0] ^ r[0]) | (c[1] ^ r[1]) | (c[2] ^ r[2]) | (c[3] ^ r[3])) throw new Error(E_CHECKSUM)
+  return typedView(payload, format)
+}
