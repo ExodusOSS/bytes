@@ -1,6 +1,6 @@
 import { typedView } from './array.js'
 import { assertUint8 } from './assert.js'
-import { nativeDecoder } from './fallback/_utils.js'
+import { nativeDecoder, nativeEncoder } from './fallback/_utils.js'
 
 const alphabet = [...'123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz']
 const codes = new Uint8Array(alphabet.map((x) => x.charCodeAt(0)))
@@ -18,6 +18,8 @@ let table // 15 * 82, diagonal, <1kb
 let fromMap
 
 const E_CHAR = 'Invalid character in base58 input'
+
+const shouldUseBigIntFrom = Boolean(globalThis.HermesInternal) // faster only on Hermes, numbers path beats it on normal engines
 
 export function toBase58(arr) {
   assertUint8(arr)
@@ -117,7 +119,7 @@ export function toBase58(arr) {
   return ZERO.repeat(zeros) + out
 }
 
-// TODO: optimize
+// TODO: test on 'z'.repeat(from 1 to smth)
 export function fromBase58(str, format = 'uint8') {
   if (typeof str !== 'string') throw new TypeError('Input is not a string')
   const length = str.length
@@ -131,34 +133,63 @@ export function fromBase58(str, format = 'uint8') {
     for (let i = 0; i < 58; i++) fromMap[alphabet[i].charCodeAt(0)] = i
   }
 
-  let x = _0n
-  for (let i = zeros; i < length; i++) {
-    const charCode = str.charCodeAt(i)
-    const c = fromMap[charCode]
-    if (charCode > 255 || c < 0) throw new SyntaxError(E_CHAR)
-    x = x * _58n + BigInt(c)
+  const size = zeros + (((length - zeros) * 3 + 1) >> 2) // 3/4 rounded up, larger than ~0.73 coef to fit everything
+  const res = new Uint8Array(size)
+  let at = size // where is the first significant byte written
+
+  if (shouldUseBigIntFrom) {
+    let x = _0n
+
+    // nativeEncoder gives a benefit here
+    if (nativeEncoder) {
+      const codes = nativeEncoder.encode(str)
+      if (codes.length !== str.length) throw new SyntaxError(E_CHAR) // non-ascii
+      for (let i = zeros; i < length; i++) {
+        const c = fromMap[codes[i]]
+        if (c < 0) throw new SyntaxError(E_CHAR)
+        x = x * _58n + BigInt(c)
+      }
+    } else {
+      for (let i = zeros; i < length; i++) {
+        const charCode = str.charCodeAt(i)
+        const c = fromMap[charCode]
+        if (charCode > 255 || c < 0) throw new SyntaxError(E_CHAR)
+        x = x * _58n + BigInt(c)
+      }
+    }
+
+    while (x) {
+      let y = Number(x & _0xffffffffn)
+      x >>= 32n
+      res[--at] = y & 0xff
+      y >>>= 8
+      if (!x && !y) break
+      res[--at] = y & 0xff
+      y >>>= 8
+      if (!x && !y) break
+      res[--at] = y & 0xff
+      y >>>= 8
+      if (!x && !y) break
+      res[--at] = y & 0xff
+    }
+  } else {
+    for (let i = zeros; i < length; i++) {
+      const charCode = str.charCodeAt(i)
+      let c = fromMap[charCode]
+      if (charCode > 255 || c < 0) throw new SyntaxError(E_CHAR)
+
+      let k = size - 1
+      for (; k >= zeros; k--) {
+        if (c === 0 && k < at) break
+        c += 58 * res[k]
+        res[k] = c & 0xff
+        c >>>= 8
+      }
+
+      at = k + 1
+      if (c !== 0) throw new Error('Unexpected') // unreachable
+    }
   }
 
-  // max is 58**(length - zeros)-1, which would need
-
-  // TODO: test on 'z'.repeat(from 1 to smth)
-  const size = ((length - zeros) * 3 + 1) >> 2 // 3/4 rounded up, larger than ~0.73 coef to fit everything
-  const res = new Uint8Array(zeros + size)
-  let i = res.length
-  while (x) {
-    let y = Number(x & _0xffffffffn)
-    x >>= 32n
-    res[--i] = y & 0xff
-    y >>>= 8
-    if (!x && !y) break
-    res[--i] = y & 0xff
-    y >>>= 8
-    if (!x && !y) break
-    res[--i] = y & 0xff
-    y >>>= 8
-    if (!x && !y) break
-    res[--i] = y & 0xff
-  }
-
-  return typedView(res.subarray(i - zeros), format)
+  return typedView(res.slice(at - zeros), format) // slice is faster for small sizes than subarray
 }
