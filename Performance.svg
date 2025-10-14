@@ -1,0 +1,1628 @@
+<svg xmlns="http://www.w3.org/2000/svg" font-family="Arial" font-weight="400" viewBox="0 0 1282.635 1817.001">
+  <path d="M0 0v1817.001h1282.635V0z"/>
+  <path fill="#4c1130" d="M159 565h11v22h-11z"/>
+  <path fill="#434343" d="M159 586h11v64h-11z"/>
+  <path fill="#4c1130" d="M159 691h11v22h-11z"/>
+  <path fill="#434343" d="M159 712h11v64h-11z"/>
+  <path fill="#4c1130" d="M728 323h95v22h-95zm0-126h95v22h-95z"/>
+  <path fill="#434343" d="M159 218h11v64h-11z"/>
+  <path fill="#4c1130" d="M159 197h11v22h-11zm0 126h11v22h-11z"/>
+  <path fill="#434343" d="M159 344h11v64h-11zm568.998-.002V408h95v-64.002zm0-126v64.003h95v-64.003z"/>
+  <path fill="#4c1130" d="M812 691h11v22h-11z"/>
+  <path fill="#434343" d="M812 712.002v63.997h11v-63.997z"/>
+  <path fill="#4c1130" d="M812 565h11v22h-11z"/>
+  <path fill="#434343" d="M812 586.002V650h11v-63.998z"/>
+  <path fill="#c9daf8" d="M10 9h150v22H10Z"/>
+  <path fill="#b7b7b7" d="M169 9h560v22H169Z"/>
+  <path fill="#900" d="M822 9h355v22H822Z"/>
+  <path fill="#8e7cc3" d="M169 39h560v22H169Z"/>
+  <path fill="#b45f06" d="M822 39h355v22H822Z"/>
+  <path fill="#d8e5f8" d="M169 69h560v24H169Zm653 0h355v24H822Z"/>
+  <path fill="#674ea7" d="M169 92h191v22H169Z"/>
+  <path fill="#900" d="M359 92h71v22h-71z"/>
+  <path fill="#674ea7" d="M429 92h88v22h-88z"/>
+  <path fill="#900" d="M516 92h213v22H516Z"/>
+  <path fill="#674ea7" d="M822 92h191v22H822Z"/>
+  <path fill="#a61c00" d="M1012 92h80v22h-80z"/>
+  <path fill="#674ea7" d="M1091 92h86v22h-86zM10 113h150v85H10Z"/>
+  <path fill="#bfcc73" d="M169 113h98v22h-98z"/>
+  <path fill="#ed9670" d="M266 113h94v22h-94z"/>
+  <path fill="#57bb8a" d="M359 113h71v22h-71z"/>
+  <path fill="#e67c73" d="M429 113h88v22h-88z"/>
+  <path fill="#e88672" d="M516 113h98v22h-98z"/>
+  <path fill="#e98972" d="M613 113h116v22H613Z"/>
+  <path fill="#59bc89" d="M822 113h98v22h-98z"/>
+  <path fill="#57bb8a" d="M919 113h94v22h-94z"/>
+  <path fill="#f5b26c" d="M1012 113h80v22h-80z"/>
+  <path fill="#e67c73" d="M1091 113h86v22h-86z"/>
+  <path fill="#ef9d6f" d="M169 134h98v22h-98z"/>
+  <path fill="#e67c73" d="M266 134h94v22h-94z"/>
+  <path fill="#57bb8a" d="M359 134h71v22h-71z"/>
+  <path fill="#e88472" d="M429 134h88v22h-88z"/>
+  <path fill="#eb8e71" d="M516 134h98v22h-98z"/>
+  <path fill="#eb8f71" d="M613 134h116v22H613Z"/>
+  <path fill="#58bc89" d="M822 134h98v22h-98z"/>
+  <path fill="#e67c73" d="M919 134h94v22h-94z"/>
+  <path fill="#57bb8a" d="M1012 134h80v22h-80z"/>
+  <path fill="#f0a36e" d="M1091 134h86v22h-86z"/>
+  <path fill="#57bb8a" d="M169 155h98v43h-98z"/>
+  <path fill="#f5b26c" d="M266 155h94v22h-94z"/>
+  <path fill="#e67c73" d="M359 155h71v22h-71z"/>
+  <path fill="#e78073" d="M429 155h88v22h-88z"/>
+  <path fill="#ec9370" d="M516 155h98v22h-98z"/>
+  <path fill="#eb9070" d="M613 155h116v22H613Z"/>
+  <path fill="#57bb8a" d="M822 155h98v22h-98z"/>
+  <path fill="#5ebd88" d="M919 155h94v22h-94z"/>
+  <path fill="#e67c73" d="M1012 155h80v22h-80z"/>
+  <path fill="#e88572" d="M1091 155h86v22h-86z"/>
+  <path fill="#f0a06e" d="M266 176h94v22h-94z"/>
+  <path fill="#e67c73" d="M359 176h71v22h-71z"/>
+  <path fill="#f0a26e" d="M429 176h88v22h-88z"/>
+  <path fill="#d8d06e" d="M516 176h98v22h-98z"/>
+  <path fill="#d1cf6f" d="M613 176h116v22H613Z"/>
+  <path fill="#64bd87" d="M822 176h98v22h-98z"/>
+  <path fill="#57bb8a" d="M919 176h94v22h-94z"/>
+  <path fill="#e67c73" d="M1012 176h80v22h-80z"/>
+  <path fill="#e88472" d="M1091 176h86v22h-86z"/>
+  <path fill="#8e7cc3" d="M10 197h150v22H10Z"/>
+  <path fill="#f5b56b" d="M169 197h98v22h-98z"/>
+  <path fill="#f3ae6c" d="M266 197h94v22h-94z"/>
+  <path fill="#e88372" d="M359 197h71v22h-71z"/>
+  <path fill="#e67c73" d="M429 197h88v22h-88z"/>
+  <path fill="#82c280" d="M516 197h98v22h-98z"/>
+  <path fill="#57bb8a" d="M613 197h116v22H613Z"/>
+  <path fill="#5dbc88" d="M822 197h98v22h-98z"/>
+  <path fill="#57bb8a" d="M919 197h94v22h-94z"/>
+  <path fill="#e67c73" d="M1012 197h80v22h-80z"/>
+  <path fill="#fac569" d="M1091 197h86v22h-86z"/>
+  <path fill="#b45f06" d="M10 218h150v64H10Z"/>
+  <path fill="#60bd88" d="M169 218h98v22h-98z"/>
+  <path fill="#e67c73" d="M266 218h94v22h-94z"/>
+  <path fill="#f2aa6d" d="M359 218h71v22h-71z"/>
+  <path fill="#fac469" d="M429 218h88v22h-88z"/>
+  <path fill="#57bb8a" d="M516 218h98v22h-98z"/>
+  <path fill="#70c084" d="M613 218h116v22H613Z"/>
+  <path fill="#57bb8a" d="M822 218h98v22h-98z"/>
+  <path fill="#e67c73" d="M919 218h94v22h-94z"/>
+  <path fill="#e98872" d="M1012 218h80v22h-80z"/>
+  <path fill="#ded16d" d="M1091 218h86v22h-86z"/>
+  <path fill="#83c280" d="M169 239h98v22h-98z"/>
+  <path fill="#e67c73" d="M266 239h94v22h-94z"/>
+  <path fill="#ea8b71" d="M359 239h71v22h-71z"/>
+  <path fill="#f9c269" d="M429 239h88v22h-88z"/>
+  <path fill="#62bd87" d="M516 239h98v22h-98z"/>
+  <path fill="#57bb8a" d="M613 239h116v22H613Zm209 0h98v22h-98z"/>
+  <path fill="#e67e73" d="M919 239h94v22h-94z"/>
+  <path fill="#e67c73" d="M1012 239h80v22h-80z"/>
+  <path fill="#fdd167" d="M1091 239h86v22h-86z"/>
+  <path fill="#57bb8a" d="M169 260h98v22h-98z"/>
+  <path fill="#e67c73" d="M266 260h94v22h-94z"/>
+  <path fill="#ee9c6f" d="M359 260h71v22h-71z"/>
+  <path fill="#ed9670" d="M429 260h88v22h-88z"/>
+  <path fill="#a0c77a" d="M516 260h98v22h-98z"/>
+  <path fill="#80c281" d="M613 260h116v22H613Z"/>
+  <path fill="#57bb8a" d="M822 260h98v22h-98z"/>
+  <path fill="#e67c73" d="M919 260h94v22h-94z"/>
+  <path fill="#ea8c71" d="M1012 260h80v22h-80z"/>
+  <path fill="#ed9770" d="M1091 260h86v22h-86z"/>
+  <path fill="#674ea7" d="M10 281h150v43H10Z"/>
+  <path fill="#57bb8a" d="M169 281h98v43h-98z"/>
+  <path fill="#f5b26c" d="M266 281h94v22h-94z"/>
+  <path fill="#e67c73" d="M359 281h71v22h-71z"/>
+  <path fill="#e78173" d="M429 281h88v22h-88z"/>
+  <path fill="#ef9e6f" d="M516 281h98v22h-98z"/>
+  <path fill="#ee996f" d="M613 281h116v22H613Z"/>
+  <path fill="#57bb8a" d="M822 281h98v22h-98z"/>
+  <path fill="#60bd88" d="M919 281h94v22h-94z"/>
+  <path fill="#e67c73" d="M1012 281h80v22h-80z"/>
+  <path fill="#e98972" d="M1091 281h86v22h-86z"/>
+  <path fill="#f0a26e" d="M266 302h94v22h-94z"/>
+  <path fill="#e67c73" d="M359 302h71v22h-71z"/>
+  <path fill="#f0a26e" d="M429 302h88v22h-88z"/>
+  <path fill="#d3cf6f" d="M516 302h98v22h-98z"/>
+  <path fill="#cbce71" d="M613 302h116v22H613Z"/>
+  <path fill="#57bb8a" d="M822 302h98v22h-98z"/>
+  <path fill="#5cbc89" d="M919 302h94v22h-94z"/>
+  <path fill="#e67c73" d="M1012 302h80v22h-80z"/>
+  <path fill="#e88572" d="M1091 302h86v22h-86z"/>
+  <path fill="#8e7cc3" d="M10 323h150v22H10Z"/>
+  <path fill="#f2a86d" d="M169 323h98v22h-98z"/>
+  <path fill="#f0a26e" d="M266 323h94v22h-94z"/>
+  <path fill="#e88572" d="M359 323h71v22h-71z"/>
+  <path fill="#e67c73" d="M429 323h88v22h-88z"/>
+  <path fill="#86c380" d="M516 323h98v22h-98z"/>
+  <path fill="#57bb8a" d="M613 323h116v22H613Z"/>
+  <path fill="#58bc89" d="M822 323h98v22h-98z"/>
+  <path fill="#57bb8a" d="M919 323h94v22h-94z"/>
+  <path fill="#e67c73" d="M1012 323h80v22h-80z"/>
+  <path fill="#fed567" d="M1091 323h86v22h-86z"/>
+  <path fill="#b45f06" d="M10 344h150v64H10Z"/>
+  <path fill="#72c084" d="M169 344h98v22h-98z"/>
+  <path fill="#e67c73" d="M266 344h94v22h-94z"/>
+  <path fill="#ef9e6f" d="M359 344h71v22h-71z"/>
+  <path fill="#f5b46b" d="M429 344h88v22h-88z"/>
+  <path fill="#57bb8a" d="M516 344h98v22h-98z"/>
+  <path fill="#7ec281" d="M613 344h116v22H613Z"/>
+  <path fill="#57bb8a" d="M822 344h98v22h-98z"/>
+  <path fill="#e67c73" d="M919 344h94v22h-94z"/>
+  <path fill="#e88572" d="M1012 344h80v22h-80z"/>
+  <path fill="#a4c879" d="M1091 344h86v22h-86z"/>
+  <path fill="#88c37f" d="M169 365h98v22h-98z"/>
+  <path fill="#e67c73" d="M266 365h94v22h-94z"/>
+  <path fill="#ea8b71" d="M359 365h71v22h-71z"/>
+  <path fill="#f9c169" d="M429 365h88v22h-88z"/>
+  <path fill="#62bd87" d="M516 365h98v22h-98z"/>
+  <path fill="#57bb8a" d="M613 365h116v22H613Zm209 0h98v22h-98z"/>
+  <path fill="#e67d73" d="M919 365h94v22h-94z"/>
+  <path fill="#e67c73" d="M1012 365h80v22h-80z"/>
+  <path fill="#edd36a" d="M1091 365h86v22h-86z"/>
+  <path fill="#69be86" d="M169 386h98v22h-98z"/>
+  <path fill="#e67c73" d="M266 386h94v22h-94z"/>
+  <path fill="#f0a26e" d="M359 386h71v22h-71z"/>
+  <path fill="#ee9a6f" d="M429 386h88v22h-88z"/>
+  <path fill="#7ec281" d="M516 386h98v22h-98z"/>
+  <path fill="#57bb8a" d="M613 386h116v22H613Zm209 0h98v22h-98z"/>
+  <path fill="#e67c73" d="M919 386h94v22h-94z"/>
+  <path fill="#ec9170" d="M1012 386h80v22h-80z"/>
+  <path fill="#f0a36e" d="M1091 386h86v22h-86z"/>
+  <path fill="#674ea7" d="M10 407h150v22H10Z"/>
+  <path fill="#57bb8a" d="M169 407h98v22h-98z"/>
+  <path fill="#e67c73" d="M266 407h94v22h-94z"/>
+  <path fill="#ea8c71" d="M359 407h71v22h-71z"/>
+  <path fill="#e98872" d="M429 407h88v22h-88z"/>
+  <path fill="#edd469" d="M516 407h98v22h-98z"/>
+  <path fill="#e6d26b" d="M613 407h116v22H613Z"/>
+  <path fill="#57bb8a" d="M822 407h98v22h-98z"/>
+  <path fill="#e67c73" d="M919 407h94v22h-94z"/>
+  <path fill="#dcd16d" d="M1012 407h80v22h-80z"/>
+  <path fill="#ed9670" d="M1091 407h86v22h-86z"/>
+  <path fill="#d8e5f8" d="M169 437h644v24H169Zm653 0h451v24H822Z"/>
+  <path fill="#674ea7" d="M169 460h261v22H169Z"/>
+  <path fill="#900" d="M429 460h384v22H429Z"/>
+  <path fill="#674ea7" d="M822 460h270v22H822Z"/>
+  <path fill="#900" d="M1091 460h182v22h-182z"/>
+  <path fill="#674ea7" d="M10 481h150v85H10Z"/>
+  <path fill="#57bb8a" d="M169 481h98v64h-98z"/>
+  <path fill="#5fbd88" d="M266 481h94v22h-94z"/>
+  <path fill="#d6d06e" d="M359 481h71v22h-71z"/>
+  <path fill="#e67d73" d="M429 481h88v22h-88z"/>
+  <path fill="#e67c73" d="M516 481h213v22H516Z"/>
+  <path fill="#fbca68" d="M728 481h85v22h-85z"/>
+  <path fill="#57bb8a" d="M822 481h98v22h-98z"/>
+  <path fill="#98c67c" d="M919 481h94v22h-94z"/>
+  <path fill="#e8d36b" d="M1012 481h80v22h-80z"/>
+  <path fill="#e67c73" d="M1091 481h86v22h-86z"/>
+  <path fill="#eed469" d="M1176 481h97v22h-97z"/>
+  <path fill="#e67c73" d="M266 502h94v22h-94z"/>
+  <path fill="#5bbc89" d="M359 502h71v22h-71z"/>
+  <path fill="#e78073" d="M429 502h88v22h-88z"/>
+  <path fill="#e67e73" d="M516 502h98v22h-98z"/>
+  <path fill="#e67f73" d="M613 502h116v22H613Z"/>
+  <path fill="#b8cb75" d="M728 502h85v22h-85z"/>
+  <path fill="#57bb8a" d="M822 502h98v22h-98z"/>
+  <path fill="#e67c73" d="M919 502h94v22h-94z"/>
+  <path fill="#5abc89" d="M1012 502h80v22h-80z"/>
+  <path fill="#e98872" d="M1091 502h86v22h-86z"/>
+  <path fill="#7ac182" d="M1176 502h97v22h-97z"/>
+  <path fill="#5dbc88" d="M266 523h94v22h-94z"/>
+  <path fill="#e67c73" d="M359 523h71v22h-71z"/>
+  <path fill="#e67e73" d="M429 523h88v22h-88z"/>
+  <path fill="#e67c73" d="M516 523h297v22H516Z"/>
+  <path fill="#57bb8a" d="M822 523h98v22h-98z"/>
+  <path fill="#5bbc89" d="M919 523h94v22h-94z"/>
+  <path fill="#e88572" d="M1012 523h80v22h-80z"/>
+  <path fill="#e67c73" d="M1091 523h86v22h-86z"/>
+  <path fill="#e88472" d="M1176 523h97v22h-97z"/>
+  <path fill="#59bc89" d="M169 544h98v22h-98z"/>
+  <path fill="#57bb8a" d="M266 544h94v22h-94z"/>
+  <path fill="#e67c73" d="M359 544h71v22h-71z"/>
+  <path fill="#e67d73" d="M429 544h88v22h-88z"/>
+  <path fill="#e67c73" d="M516 544h98v22h-98z"/>
+  <path fill="#e78073" d="M613 544h116v22H613Z"/>
+  <path fill="#e67c73" d="M728 544h85v22h-85z"/>
+  <path fill="#60bd88" d="M822 544h98v22h-98z"/>
+  <path fill="#57bb8a" d="M919 544h94v22h-94z"/>
+  <path fill="#e78073" d="M1012 544h80v22h-80z"/>
+  <path fill="#e67c73" d="M1091 544h86v22h-86z"/>
+  <path fill="#e78073" d="M1176 544h97v22h-97z"/>
+  <path fill="#8e7cc3" d="M10 565h150v22H10Z"/>
+  <path fill="#57bb8a" d="M169 565h98v22h-98z"/>
+  <path fill="#b3ca76" d="M266 565h94v22h-94z"/>
+  <path fill="#eb8f71" d="M359 565h71v22h-71z"/>
+  <path fill="#e67c73" d="M429 565h88v22h-88z"/>
+  <path fill="#ec9370" d="M516 565h98v22h-98z"/>
+  <path fill="#f3ad6c" d="M613 565h116v22H613Z"/>
+  <path fill="#ea8d71" d="M728 565h85v22h-85z"/>
+  <path fill="#f9c269" d="M822 565h98v22h-98z"/>
+  <path fill="#f3ad6c" d="M919 565h94v22h-94z"/>
+  <path fill="#57bb8a" d="M1012 565h80v22h-80z"/>
+  <path fill="#e67c73" d="M1091 565h86v22h-86z"/>
+  <path fill="#8dc47e" d="M1176 565h97v22h-97z"/>
+  <path fill="#b45f06" d="M10 586h150v64H10Z"/>
+  <path fill="#57bb8a" d="M169 586h98v64h-98z"/>
+  <path fill="#e67c73" d="M266 586h94v64h-94z"/>
+  <path fill="#eb8f71" d="M359 586h71v22h-71z"/>
+  <path fill="#f2aa6d" d="M429 586h88v22h-88z"/>
+  <path fill="#eb8f71" d="M516 586h98v22h-98z"/>
+  <path fill="#ed9670" d="M613 586h116v22H613Z"/>
+  <path fill="#eb8e71" d="M728 586h85v22h-85z"/>
+  <path fill="#57bb8a" d="M822 586h98v22h-98z"/>
+  <path fill="#e67c73" d="M919 586h94v22h-94z"/>
+  <path fill="#7ec281" d="M1012 586h80v22h-80z"/>
+  <path fill="#fed567" d="M1091 586h86v22h-86z"/>
+  <path fill="#87c37f" d="M1176 586h97v22h-97z"/>
+  <path fill="#e78173" d="M359 607h71v22h-71z"/>
+  <path fill="#eb9071" d="M429 607h88v22h-88z"/>
+  <path fill="#e78173" d="M516 607h98v22h-98z"/>
+  <path fill="#f0a26e" d="M613 607h116v22H613Z"/>
+  <path fill="#e78173" d="M728 607h85v22h-85z"/>
+  <path fill="#5abc89" d="M822 607h98v22h-98z"/>
+  <path fill="#e67c73" d="M919 607h94v22h-94z"/>
+  <path fill="#57bb8a" d="M1012 607h80v22h-80z"/>
+  <path fill="#fccd68" d="M1091 607h86v22h-86z"/>
+  <path fill="#64be87" d="M1176 607h97v22h-97z"/>
+  <path fill="#eb8f71" d="M359 628h71v22h-71z"/>
+  <path fill="#e88672" d="M429 628h88v22h-88z"/>
+  <path fill="#eb9071" d="M516 628h98v22h-98z"/>
+  <path fill="#ee9a6f" d="M613 628h116v22H613Z"/>
+  <path fill="#ea8d71" d="M728 628h85v22h-85z"/>
+  <path fill="#57bb8a" d="M822 628h98v22h-98z"/>
+  <path fill="#e67c73" d="M919 628h94v22h-94z"/>
+  <path fill="#7fc281" d="M1012 628h80v22h-80z"/>
+  <path fill="#fcce68" d="M1091 628h86v22h-86z"/>
+  <path fill="#96c67c" d="M1176 628h97v22h-97z"/>
+  <path fill="#674ea7" d="M10 649h150v43H10Z"/>
+  <path fill="#57bb8a" d="M169 649h98v22h-98z"/>
+  <path fill="#66be86" d="M266 649h94v22h-94z"/>
+  <path fill="#e67c73" d="M359 649h71v22h-71z"/>
+  <path fill="#e67d73" d="M429 649h88v22h-88z"/>
+  <path fill="#e67c73" d="M516 649h297v22H516Z"/>
+  <path fill="#57bb8a" d="M822 649h98v22h-98z"/>
+  <path fill="#7cc182" d="M919 649h94v22h-94z"/>
+  <path fill="#e88572" d="M1012 649h80v22h-80z"/>
+  <path fill="#e67c73" d="M1091 649h86v22h-86z"/>
+  <path fill="#e88472" d="M1176 649h97v22h-97z"/>
+  <path fill="#5cbc88" d="M169 670h98v22h-98z"/>
+  <path fill="#57bb8a" d="M266 670h94v22h-94z"/>
+  <path fill="#e67c73" d="M359 670h71v22h-71z"/>
+  <path fill="#e67d73" d="M429 670h88v22h-88z"/>
+  <path fill="#e67c73" d="M516 670h98v22h-98z"/>
+  <path fill="#e77f73" d="M613 670h116v22H613Z"/>
+  <path fill="#e67c73" d="M728 670h85v22h-85z"/>
+  <path fill="#5abc89" d="M822 670h98v22h-98z"/>
+  <path fill="#57bb8a" d="M919 670h94v22h-94z"/>
+  <path fill="#e78073" d="M1012 670h80v22h-80z"/>
+  <path fill="#e67c73" d="M1091 670h86v22h-86z"/>
+  <path fill="#e77f73" d="M1176 670h97v22h-97z"/>
+  <path fill="#8e7cc3" d="M10 691h150v22H10Z"/>
+  <path fill="#57bb8a" d="M169 691h98v22h-98z"/>
+  <path fill="#72c084" d="M266 691h94v22h-94z"/>
+  <path fill="#eb8f71" d="M359 691h71v22h-71z"/>
+  <path fill="#e67c73" d="M429 691h88v22h-88z"/>
+  <path fill="#ec9470" d="M516 691h98v22h-98z"/>
+  <path fill="#f3ac6c" d="M613 691h116v22H613Z"/>
+  <path fill="#ea8a71" d="M728 691h85v22h-85z"/>
+  <path fill="#fbc968" d="M822 691h98v22h-98z"/>
+  <path fill="#f3ab6d" d="M919 691h94v22h-94z"/>
+  <path fill="#57bb8a" d="M1012 691h80v22h-80z"/>
+  <path fill="#e67c73" d="M1091 691h86v22h-86z"/>
+  <path fill="#8dc47e" d="M1176 691h97v22h-97z"/>
+  <path fill="#b45f06" d="M10 712h150v64H10Z"/>
+  <path fill="#57bb8a" d="M169 712h98v64h-98z"/>
+  <path fill="#e67c73" d="M266 712h94v64h-94z"/>
+  <path fill="#f4af6c" d="M359 712h71v22h-71z"/>
+  <path fill="#d3cf6f" d="M429 712h88v22h-88z"/>
+  <path fill="#f4ae6c" d="M516 712h98v22h-98z"/>
+  <path fill="#fbca68" d="M613 712h116v22H613Z"/>
+  <path fill="#f3ae6c" d="M728 712h85v22h-85z"/>
+  <path fill="#57bb8a" d="M822 712h98v22h-98z"/>
+  <path fill="#e67c73" d="M919 712h94v22h-94z"/>
+  <path fill="#67be86" d="M1012 712h80v22h-80z"/>
+  <path fill="#f3d568" d="M1091 712h86v22h-86z"/>
+  <path fill="#72c084" d="M1176 712h97v22h-97z"/>
+  <path fill="#e98772" d="M359 733h71v22h-71z"/>
+  <path fill="#f2a86d" d="M429 733h88v22h-88z"/>
+  <path fill="#e98772" d="M516 733h98v22h-98z"/>
+  <path fill="#fccd68" d="M613 733h116v22H613Z"/>
+  <path fill="#e98772" d="M728 733h85v22h-85z"/>
+  <path fill="#57bb8a" d="M822 733h98v22h-98z"/>
+  <path fill="#e67c73" d="M919 733h94v22h-94z"/>
+  <path fill="#6bbf85" d="M1012 733h80v22h-80z"/>
+  <path fill="#fbc869" d="M1091 733h86v22h-86z"/>
+  <path fill="#79c182" d="M1176 733h97v22h-97z"/>
+  <path fill="#f3ab6d" d="M359 754h71v22h-71z"/>
+  <path fill="#ed9670" d="M429 754h88v22h-88z"/>
+  <path fill="#f4b16c" d="M516 754h98v22h-98z"/>
+  <path fill="#fbcb68" d="M613 754h116v22H613Z"/>
+  <path fill="#f1a66d" d="M728 754h85v22h-85z"/>
+  <path fill="#57bb8a" d="M822 754h98v22h-98z"/>
+  <path fill="#e67c73" d="M919 754h94v22h-94z"/>
+  <path fill="#57bb8a" d="M1012 754h80v22h-80z"/>
+  <path fill="#e67c73" d="M1091 754h86v22h-86z"/>
+  <path fill="#8dc47e" d="M1176 754h97v22h-97z"/>
+  <path fill="#674ea7" d="M10 775h150v22H10Z"/>
+  <path fill="#57bb8a" d="M169 775h98v22h-98z"/>
+  <path fill="#e67c73" d="M266 775h94v22h-94z"/>
+  <path fill="#f6b76b" d="M359 775h71v22h-71z"/>
+  <path fill="#ed9570" d="M429 775h88v22h-88z"/>
+  <path fill="#f6b86b" d="M516 775h98v22h-98z"/>
+  <path fill="#fdd167" d="M613 775h116v22H613Z"/>
+  <path fill="#f6b76b" d="M728 775h85v22h-85z"/>
+  <path fill="#57bb8a" d="M822 775h98v22h-98z"/>
+  <path fill="#e67c73" d="M919 775h94v22h-94z"/>
+  <path fill="#6bbf85" d="M1012 775h80v22h-80z"/>
+  <path fill="#ec9370" d="M1091 775h86v22h-86z"/>
+  <path fill="#6cbf85" d="M1176 775h97v22h-97z"/>
+  <path fill="#b7b7b7" d="M169 805h644v23H169Z"/>
+  <path fill="#3c78d8" d="M822 805h451v23H822Z"/>
+  <path fill="#d8e5f8" d="M169 836h644v24H169Zm653 0h451v24H822Z"/>
+  <path fill="#674ea7" d="M169 859h98v22h-98z"/>
+  <path fill="#900" d="M266 859h164v22H266Z"/>
+  <path fill="#674ea7" d="M429 859h88v22h-88z"/>
+  <path fill="#900" d="M516 859h98v22h-98z"/>
+  <path fill="#674ea7" d="M613 859h116v22H613Z"/>
+  <path fill="#900" d="M728 859h85v22h-85z"/>
+  <path fill="#674ea7" d="M822 859h98v22h-98z"/>
+  <path fill="#900" d="M919 859h258v22H919Z"/>
+  <path fill="#674ea7" d="M1176 859h97v22h-97zM10 880h150v190H10Z"/>
+  <path fill="#8bc47e" d="M169 880h98v22h-98z"/>
+  <path fill="#5cbc89" d="M266 880h94v22h-94z"/>
+  <path fill="#72c084" d="M359 880h71v22h-71z"/>
+  <path fill="#89c37f" d="M429 880h88v22h-88z"/>
+  <path fill="#57bb8a" d="M516 880h98v22h-98z"/>
+  <path fill="#e67c73" d="M613 880h116v22H613Z"/>
+  <path fill="#ffd666" d="M728 880h85v22h-85z"/>
+  <path fill="#67be86" d="M822 880h98v22h-98z"/>
+  <path fill="#57bb8a" d="M919 880h94v22h-94z"/>
+  <path fill="#58bc89" d="M1012 880h80v22h-80z"/>
+  <path fill="#f3ab6d" d="M1091 880h86v22h-86z"/>
+  <path fill="#e67c73" d="M1176 880h97v22h-97z"/>
+  <path fill="#8ac47f" d="M169 901h98v22h-98z"/>
+  <path fill="#58bc89" d="M266 901h94v22h-94z"/>
+  <path fill="#76c083" d="M359 901h71v22h-71z"/>
+  <path fill="#8dc47e" d="M429 901h88v22h-88z"/>
+  <path fill="#57bb8a" d="M516 901h98v22h-98z"/>
+  <path fill="#e67c73" d="M613 901h116v22H613Z"/>
+  <path fill="#e5d26b" d="M728 901h85v22h-85z"/>
+  <path fill="#8fc47e" d="M822 901h98v22h-98z"/>
+  <path fill="#89c37f" d="M919 901h94v22h-94z"/>
+  <path fill="#84c380" d="M1012 901h80v22h-80z"/>
+  <path fill="#57bb8a" d="M1091 901h86v22h-86z"/>
+  <path fill="#e67c73" d="M1176 901h97v22h-97z"/>
+  <path fill="#59bc89" d="M169 922h98v22h-98z"/>
+  <path fill="#57bb8a" d="M266 922h94v22h-94z"/>
+  <path fill="#e78073" d="M359 922h71v22h-71z"/>
+  <path fill="#5abc89" d="M429 922h88v22h-88z"/>
+  <path fill="#5bbc89" d="M516 922h98v22h-98z"/>
+  <path fill="#e67c73" d="M613 922h116v22H613Z"/>
+  <path fill="#e78073" d="M728 922h85v22h-85z"/>
+  <path fill="#61bd87" d="M822 922h98v22h-98z"/>
+  <path fill="#57bb8a" d="M919 922h94v22h-94z"/>
+  <path fill="#e67c73" d="M1012 922h80v22h-80z"/>
+  <path fill="#5abc89" d="M1091 922h86v22h-86z"/>
+  <path fill="#ec9270" d="M1176 922h97v22h-97z"/>
+  <path fill="#62bd87" d="M169 943h98v22h-98z"/>
+  <path fill="#58bc89" d="M266 943h94v22h-94z"/>
+  <path fill="#e78073" d="M359 943h71v22h-71z"/>
+  <path fill="#57bb8a" d="M429 943h88v22h-88z"/>
+  <path fill="#61bd88" d="M516 943h98v22h-98z"/>
+  <path fill="#e67c73" d="M613 943h116v22H613Z"/>
+  <path fill="#e78073" d="M728 943h85v22h-85z"/>
+  <path fill="#77c183" d="M822 943h98v22h-98z"/>
+  <path fill="#57bb8a" d="M919 943h94v22h-94z"/>
+  <path fill="#e67c73" d="M1012 943h80v22h-80z"/>
+  <path fill="#59bc89" d="M1091 943h86v22h-86z"/>
+  <path fill="#e67e73" d="M1176 943h97v22h-97z"/>
+  <path fill="#5bbc89" d="M169 964h98v22h-98z"/>
+  <path fill="#64be87" d="M266 964h94v22h-94z"/>
+  <path fill="#e77f73" d="M359 964h71v22h-71z"/>
+  <path fill="#57bb8a" d="M429 964h88v22h-88z"/>
+  <path fill="#60bd88" d="M516 964h98v22h-98z"/>
+  <path fill="#e67c73" d="M613 964h116v22H613Z"/>
+  <path fill="#e77f73" d="M728 964h85v22h-85z"/>
+  <path fill="#6fbf84" d="M822 964h98v22h-98z"/>
+  <path fill="#70c084" d="M919 964h94v22h-94z"/>
+  <path fill="#e67c73" d="M1012 964h80v22h-80z"/>
+  <path fill="#57bb8a" d="M1091 964h86v22h-86z"/>
+  <path fill="#e78273" d="M1176 964h97v22h-97z"/>
+  <path fill="#57bb8a" d="M169 985h98v43h-98z"/>
+  <path fill="#58bc89" d="M266 985h94v22h-94z"/>
+  <path fill="#fccc68" d="M359 985h71v22h-71z"/>
+  <path fill="#e67c73" d="M429 985h185v22H429Z"/>
+  <path fill="#ea8c71" d="M613 985h116v22H613Z"/>
+  <path fill="#fbca68" d="M728 985h85v22h-85z"/>
+  <path fill="#58bc89" d="M822 985h98v22h-98z"/>
+  <path fill="#57bb8a" d="M919 985h94v22h-94z"/>
+  <path fill="#e67c73" d="M1012 985h80v22h-80z"/>
+  <path fill="#e78372" d="M1091 985h86v22h-86z"/>
+  <path fill="#f7bb6a" d="M1176 985h97v22h-97z"/>
+  <path fill="#5bbc89" d="M266 1006h94v22h-94z"/>
+  <path fill="#cdce70" d="M359 1006h71v22h-71z"/>
+  <path fill="#e67c73" d="M429 1006h185v22H429Z"/>
+  <path fill="#f3ab6d" d="M613 1006h116v22H613Z"/>
+  <path fill="#d2cf6f" d="M728 1006h85v22h-85z"/>
+  <path fill="#5bbc89" d="M822 1006h98v22h-98z"/>
+  <path fill="#57bb8a" d="M919 1006h94v22h-94z"/>
+  <path fill="#e88572" d="M1012 1006h80v22h-80z"/>
+  <path fill="#e67c73" d="M1091 1006h86v22h-86z"/>
+  <path fill="#f3ac6d" d="M1176 1006h97v22h-97z"/>
+  <path fill="#5cbc88" d="M169 1027h98v22h-98z"/>
+  <path fill="#57bb8a" d="M266 1027h94v22h-94z"/>
+  <path fill="#77c183" d="M359 1027h71v22h-71z"/>
+  <path fill="#e67c73" d="M429 1027h185v22H429Z"/>
+  <path fill="#f8bd6a" d="M613 1027h116v22H613Z"/>
+  <path fill="#85c380" d="M728 1027h85v22h-85z"/>
+  <path fill="#69be86" d="M822 1027h98v22h-98z"/>
+  <path fill="#57bb8a" d="M919 1027h94v22h-94z"/>
+  <path fill="#eb9170" d="M1012 1027h80v22h-80z"/>
+  <path fill="#e67c73" d="M1091 1027h86v22h-86z"/>
+  <path fill="#f1a46e" d="M1176 1027h97v22h-97z"/>
+  <path fill="#61bd87" d="M169 1048h98v22h-98z"/>
+  <path fill="#57bb8a" d="M266 1048h94v22h-94z"/>
+  <path fill="#f2a86d" d="M359 1048h71v22h-71z"/>
+  <path fill="#e67c73" d="M429 1048h185v22H429Z"/>
+  <path fill="#eb8f71" d="M613 1048h116v22H613Z"/>
+  <path fill="#f2a86d" d="M728 1048h85v22h-85z"/>
+  <path fill="#fed567" d="M822 1048h98v22h-98z"/>
+  <path fill="#57bb8a" d="M919 1048h94v22h-94z"/>
+  <path fill="#e67c73" d="M1012 1048h80v22h-80z"/>
+  <path fill="#6dbf85" d="M1091 1048h86v22h-86z"/>
+  <path fill="#e67c73" d="M1176 1048h97v22h-97z"/>
+  <path fill="#d8e5f8" d="M169 1078h644v24H169Zm653 0h451v24H822Z"/>
+  <path fill="#674ea7" d="M169 1101h98v22h-98z"/>
+  <path fill="#900" d="M266 1101h164v22H266Z"/>
+  <path fill="#674ea7" d="M429 1101h88v22h-88z"/>
+  <path fill="#900" d="M516 1101h98v22h-98z"/>
+  <path fill="#674ea7" d="M613 1101h116v22H613Z"/>
+  <path fill="#900" d="M728 1101h85v22h-85z"/>
+  <path fill="#674ea7" d="M822 1101h98v22h-98z"/>
+  <path fill="#900" d="M919 1101h258v22H919Z"/>
+  <path fill="#674ea7" d="M1176 1101h97v22h-97zM10 1122h150v190H10Z"/>
+  <path fill="#65be87" d="M169 1122h98v22h-98z"/>
+  <path fill="#58bc89" d="M266 1122h94v22h-94z"/>
+  <path fill="#6abe86" d="M359 1122h71v22h-71z"/>
+  <path fill="#62bd87" d="M429 1122h88v22h-88z"/>
+  <path fill="#57bb8a" d="M516 1122h98v22h-98z"/>
+  <path fill="#e67c73" d="M613 1122h116v22H613Z"/>
+  <path fill="#61bd87" d="M728 1122h85v22h-85z"/>
+  <path fill="#71c084" d="M822 1122h98v22h-98z"/>
+  <path fill="#61bd88" d="M919 1122h94v22h-94z"/>
+  <path fill="#60bd88" d="M1012 1122h80v22h-80z"/>
+  <path fill="#57bb8a" d="M1091 1122h86v22h-86z"/>
+  <path fill="#e67c73" d="M1176 1122h97v22h-97z"/>
+  <path fill="#66be86" d="M169 1143h98v22h-98z"/>
+  <path fill="#57bb8a" d="M266 1143h94v22h-94z"/>
+  <path fill="#61bd88" d="M359 1143h71v22h-71z"/>
+  <path fill="#60bd88" d="M429 1143h88v22h-88z"/>
+  <path fill="#5fbd88" d="M516 1143h98v22h-98z"/>
+  <path fill="#e67c73" d="M613 1143h116v22H613Z"/>
+  <path fill="#6ebf85" d="M728 1143h85v22h-85z"/>
+  <path fill="#96c67c" d="M822 1143h98v22h-98z"/>
+  <path fill="#64be87" d="M919 1143h94v22h-94z"/>
+  <path fill="#5abc89" d="M1012 1143h80v22h-80z"/>
+  <path fill="#57bb8a" d="M1091 1143h86v22h-86z"/>
+  <path fill="#e67c73" d="M1176 1143h97v22h-97z"/>
+  <path fill="#59bc89" d="M169 1164h191v22H169Z"/>
+  <path fill="#fac669" d="M359 1164h71v22h-71z"/>
+  <path fill="#57bb8a" d="M429 1164h88v22h-88z"/>
+  <path fill="#59bc89" d="M516 1164h98v22h-98z"/>
+  <path fill="#e67c73" d="M613 1164h116v22H613Z"/>
+  <path fill="#fac469" d="M728 1164h85v22h-85z"/>
+  <path fill="#5cbc88" d="M822 1164h98v22h-98z"/>
+  <path fill="#57bb8a" d="M919 1164h94v22h-94z"/>
+  <path fill="#e67c73" d="M1012 1164h80v22h-80z"/>
+  <path fill="#58bc89" d="M1091 1164h86v22h-86z"/>
+  <path fill="#f7bb6a" d="M1176 1164h97v22h-97z"/>
+  <path fill="#5cbc89" d="M169 1185h98v22h-98z"/>
+  <path fill="#58bc89" d="M266 1185h94v22h-94z"/>
+  <path fill="#f5d568" d="M359 1185h71v22h-71z"/>
+  <path fill="#5bbc89" d="M429 1185h88v22h-88z"/>
+  <path fill="#57bb8a" d="M516 1185h98v22h-98z"/>
+  <path fill="#e67c73" d="M613 1185h116v22H613Z"/>
+  <path fill="#fdd666" d="M728 1185h85v22h-85z"/>
+  <path fill="#79c182" d="M822 1185h98v22h-98z"/>
+  <path fill="#57bb8a" d="M919 1185h94v22h-94z"/>
+  <path fill="#e67c73" d="M1012 1185h80v22h-80z"/>
+  <path fill="#5abc89" d="M1091 1185h86v22h-86z"/>
+  <path fill="#e3d26c" d="M1176 1185h97v22h-97z"/>
+  <path fill="#59bc89" d="M169 1206h191v22H169Z"/>
+  <path fill="#f5b36b" d="M359 1206h71v22h-71z"/>
+  <path fill="#57bb8a" d="M429 1206h88v22h-88z"/>
+  <path fill="#59bc89" d="M516 1206h98v22h-98z"/>
+  <path fill="#e67c73" d="M613 1206h116v22H613Z"/>
+  <path fill="#f5b26c" d="M728 1206h85v22h-85z"/>
+  <path fill="#81c281" d="M822 1206h98v22h-98z"/>
+  <path fill="#5cbc89" d="M919 1206h94v22h-94z"/>
+  <path fill="#e67c73" d="M1012 1206h80v22h-80z"/>
+  <path fill="#57bb8a" d="M1091 1206h86v22h-86z"/>
+  <path fill="#f5b36c" d="M1176 1206h97v22h-97z"/>
+  <path fill="#5bbc89" d="M169 1227h98v22h-98z"/>
+  <path fill="#57bb8a" d="M266 1227h94v22h-94z"/>
+  <path fill="#76c083" d="M359 1227h71v22h-71z"/>
+  <path fill="#e67c73" d="M429 1227h185v22H429Z"/>
+  <path fill="#ef9e6f" d="M613 1227h116v22H613Z"/>
+  <path fill="#80c281" d="M728 1227h85v22h-85z"/>
+  <path fill="#57bb8a" d="M822 1227h98v22h-98z"/>
+  <path fill="#58bc89" d="M919 1227h94v22h-94z"/>
+  <path fill="#ea8a71" d="M1012 1227h80v22h-80z"/>
+  <path fill="#e67c73" d="M1091 1227h86v22h-86z"/>
+  <path fill="#bccc74" d="M1176 1227h97v22h-97z"/>
+  <path fill="#57bb8a" d="M169 1248h98v22h-98z"/>
+  <path fill="#58bc89" d="M266 1248h94v22h-94z"/>
+  <path fill="#7cc182" d="M359 1248h71v22h-71z"/>
+  <path fill="#e67c73" d="M429 1248h185v22H429Z"/>
+  <path fill="#ec9470" d="M613 1248h116v22H613Z"/>
+  <path fill="#7ec281" d="M728 1248h85v22h-85z"/>
+  <path fill="#5dbc88" d="M822 1248h98v22h-98z"/>
+  <path fill="#57bb8a" d="M919 1248h94v22h-94z"/>
+  <path fill="#f1a56d" d="M1012 1248h80v22h-80z"/>
+  <path fill="#e67c73" d="M1091 1248h86v22h-86z"/>
+  <path fill="#d2cf6f" d="M1176 1248h97v22h-97z"/>
+  <path fill="#a5c879" d="M169 1269h191v22H169Z"/>
+  <path fill="#57bb8a" d="M359 1269h71v22h-71z"/>
+  <path fill="#e67c73" d="M429 1269h185v22H429Z"/>
+  <path fill="#f4af6c" d="M613 1269h116v22H613Z"/>
+  <path fill="#63bd87" d="M728 1269h85v22h-85z"/>
+  <path fill="#58bc89" d="M822 1269h98v22h-98z"/>
+  <path fill="#57bb8a" d="M919 1269h94v22h-94z"/>
+  <path fill="#e88572" d="M1012 1269h80v22h-80z"/>
+  <path fill="#e67c73" d="M1091 1269h86v22h-86z"/>
+  <path fill="#f6d568" d="M1176 1269h97v22h-97z"/>
+  <path fill="#5cbc88" d="M169 1290h98v22h-98z"/>
+  <path fill="#57bb8a" d="M266 1290h94v22h-94z"/>
+  <path fill="#fac669" d="M359 1290h71v22h-71z"/>
+  <path fill="#e67c73" d="M429 1290h185v22H429Z"/>
+  <path fill="#ee9a6f" d="M613 1290h116v22H613Z"/>
+  <path fill="#fac669" d="M728 1290h85v22h-85z"/>
+  <path fill="#cace71" d="M822 1290h98v22h-98z"/>
+  <path fill="#57bb8a" d="M919 1290h94v22h-94z"/>
+  <path fill="#e67c73" d="M1012 1290h80v22h-80z"/>
+  <path fill="#5bbc89" d="M1091 1290h86v22h-86z"/>
+  <path fill="#e67d73" d="M1176 1290h97v22h-97z"/>
+  <path fill="#d8e5f8" d="M169 1320h348v24H169Z"/>
+  <path fill="#c9daf8" d="M582.435 1320h355v24h-355Z"/>
+  <path fill="#cfe2f3" d="M1009.615 1320h263v24h-263z"/>
+  <path fill="#674ea7" d="M169 1343h191v22H169Z"/>
+  <path fill="#900" d="M359 1343h158v22H359Z"/>
+  <path fill="#674ea7" d="M582.435 1343h355v22h-355Zm427.18 0h263v22h-263zM10 1364h150v190H10Z"/>
+  <path fill="#57bb8a" d="M169 1364h98v190h-98z"/>
+  <path fill="#e67c73" d="M266 1364h94v64h-94z"/>
+  <path fill="#e88572" d="M359 1364h71v22h-71z"/>
+  <path fill="#e78073" d="M429 1364h88v22h-88z"/>
+  <path fill="#57bb8a" d="M582.436 1364.001V1554h98v-190z"/>
+  <path fill="#e67c73" d="M679.435 1364h94v22h-94z"/>
+  <path fill="#fed666" d="M772.435 1364h80v22h-80z"/>
+  <path fill="#d0cf70" d="M851.435 1364h86v22h-86z"/>
+  <path fill="#57bb8a" d="M1009.614 1364.001V1554h98.003v-190z"/>
+  <path fill="#e67c73" d="M1106.615 1364h91v22h-91z"/>
+  <path fill="#7ac182" d="M1196.615 1364h76v22h-76z"/>
+  <path fill="#e88472" d="M359 1385h71v22h-71z"/>
+  <path fill="#e67d73" d="M429 1385h88v22h-88z"/>
+  <path fill="#e67c73" d="M679.435 1385h94v22h-94z"/>
+  <path fill="#f8d567" d="M772.435 1385h80v22h-80z"/>
+  <path fill="#cecf70" d="M851.435 1385h86v22h-86z"/>
+  <path fill="#e67c73" d="M1106.615 1385h91v22h-91z"/>
+  <path fill="#79c182" d="M1196.615 1385h76v22h-76z"/>
+  <path fill="#e98872" d="M359 1406h71v22h-71z"/>
+  <path fill="#e78273" d="M429 1406h88v22h-88z"/>
+  <path fill="#e67c73" d="M679.435 1406h94v22h-94z"/>
+  <path fill="#ecd36a" d="M772.435 1406h80v22h-80z"/>
+  <path fill="#dbd16d" d="M851.435 1406h86v22h-86z"/>
+  <path fill="#e67c73" d="M1106.615 1406h91v22h-91z"/>
+  <path fill="#d5d06f" d="M1196.615 1406h76v22h-76z"/>
+  <path fill="#e67f73" d="M266 1427h94v22h-94z"/>
+  <path fill="#e67c73" d="M359 1427h71v22h-71z"/>
+  <path fill="#e67e73" d="M429 1427h88v22h-88z"/>
+  <path fill="#e67c73" d="M679.435 1427h94v22h-94z"/>
+  <path fill="#f2a86d" d="M772.435 1427h80v22h-80z"/>
+  <path fill="#b2ca76" d="M851.435 1427h86v22h-86z"/>
+  <path fill="#e67c73" d="M1106.615 1427h91v22h-91z"/>
+  <path fill="#fbc868" d="M1196.615 1427h76v22h-76z"/>
+  <path fill="#e67c73" d="M266 1448h94v43h-94z"/>
+  <path fill="#e78273" d="M359 1448h71v22h-71z"/>
+  <path fill="#e88372" d="M429 1448h88v22h-88z"/>
+  <path fill="#e67c73" d="M679.435 1448h94v22h-94z"/>
+  <path fill="#e78173" d="M772.435 1448h80v22h-80z"/>
+  <path fill="#fbc968" d="M851.435 1448h86v22h-86z"/>
+  <path fill="#e67c73" d="M1106.615 1448h91v22h-91z"/>
+  <path fill="#ea8d71" d="M1196.615 1448h76v22h-76z"/>
+  <path fill="#ea8c71" d="M359 1469h71v22h-71z"/>
+  <path fill="#e88472" d="M429 1469h88v22h-88z"/>
+  <path fill="#e67c73" d="M679.435 1469h94v22h-94z"/>
+  <path fill="#fad667" d="M772.435 1469h80v22h-80z"/>
+  <path fill="#e6d26b" d="M851.435 1469h86v22h-86z"/>
+  <path fill="#e67c73" d="M1106.615 1469h91v22h-91z"/>
+  <path fill="#d5d06f" d="M1196.615 1469h76v22h-76z"/>
+  <path fill="#e77f73" d="M266 1490h94v22h-94z"/>
+  <path fill="#e67c73" d="M359 1490h71v22h-71z"/>
+  <path fill="#e67e73" d="M429 1490h88v22h-88z"/>
+  <path fill="#e67c73" d="M679.435 1490h94v22h-94z"/>
+  <path fill="#f2aa6d" d="M772.435 1490h80v22h-80z"/>
+  <path fill="#cace71" d="M851.435 1490h86v22h-86z"/>
+  <path fill="#e67c73" d="M1106.615 1490h91v22h-91z"/>
+  <path fill="#f4d568" d="M1196.615 1490h76v22h-76z"/>
+  <path fill="#e67c73" d="M266 1511h94v43h-94z"/>
+  <path fill="#e88572" d="M359 1511h71v22h-71z"/>
+  <path fill="#e98772" d="M429 1511h88v22h-88z"/>
+  <path fill="#e67c73" d="M679.435 1511h94v22h-94z"/>
+  <path fill="#e78273" d="M772.435 1511h80v22h-80z"/>
+  <path fill="#f8bd6a" d="M851.435 1511h86v22h-86z"/>
+  <path fill="#e67c73" d="M1106.615 1511h91v22h-91z"/>
+  <path fill="#ef9d6f" d="M1196.615 1511h76v22h-76z"/>
+  <path fill="#ea8b71" d="M359 1532h71v22h-71z"/>
+  <path fill="#f2a86d" d="M429 1532h88v22h-88z"/>
+  <path fill="#e67c73" d="M679.435 1532h94v22h-94z"/>
+  <path fill="#e98772" d="M772.435 1532h80v22h-80z"/>
+  <path fill="#ee996f" d="M851.435 1532h86v22h-86z"/>
+  <path fill="#e67c73" d="M1106.615 1532h91v22h-91z"/>
+  <path fill="#f7b96b" d="M1196.615 1532h76v22h-76z"/>
+  <path fill="#d8e5f8" d="M169 1562h348v24H169Zm413.435 0h355v24h-355Zm427.18 0h263v24h-263z"/>
+  <path fill="#674ea7" d="M169 1585h191v22H169Z"/>
+  <path fill="#900" d="M359 1585h158v22H359Z"/>
+  <path fill="#674ea7" d="M582.435 1585h355v22h-355Zm427.18 0h263v22h-263zM10 1606h150v190H10Z"/>
+  <path fill="#57bb8a" d="M169 1606h98v190h-98z"/>
+  <path fill="#e67c73" d="M266 1606h94v190h-94z"/>
+  <path fill="#ed9570" d="M359 1606h71v22h-71z"/>
+  <path fill="#eb8f71" d="M429 1606h88v22h-88z"/>
+  <path fill="#57bb8a" d="M582.436 1606v189.998h98v-189.997z"/>
+  <path fill="#e67c73" d="M679.435 1606h94v22h-94z"/>
+  <path fill="#f0a16e" d="M772.435 1606h80v22h-80z"/>
+  <path fill="#ef9d6f" d="M851.435 1606h86v22h-86z"/>
+  <path fill="#57bb8a" d="M1009.614 1606v106h98.003v-106zm0 126v63.998h98.003V1732z"/>
+  <path fill="#e67c73" d="M1106.615 1606h91v22h-91z"/>
+  <path fill="#fed467" d="M1196.615 1606h76v22h-76z"/>
+  <path fill="#eb9071" d="M359 1627h71v22h-71z"/>
+  <path fill="#ea8d71" d="M429 1627h88v22h-88z"/>
+  <path fill="#e67c73" d="M679.435 1627h94v22h-94z"/>
+  <path fill="#ef9d6f" d="M772.435 1627h80v22h-80z"/>
+  <path fill="#f1a46e" d="M851.435 1627h86v22h-86z"/>
+  <path fill="#e67c73" d="M1106.615 1627h91v22h-91z"/>
+  <path fill="#f7bb6a" d="M1196.615 1627h76v22h-76z"/>
+  <path fill="#ef9f6e" d="M359 1648h71v22h-71z"/>
+  <path fill="#eb9070" d="M429 1648h88v22h-88z"/>
+  <path fill="#e67c73" d="M679.435 1648h94v22h-94z"/>
+  <path fill="#f1a46e" d="M772.435 1648h80v22h-80z"/>
+  <path fill="#ef9e6f" d="M851.435 1648h86v22h-86z"/>
+  <path fill="#e67c73" d="M1106.615 1648h91v22h-91z"/>
+  <path fill="#f6b76b" d="M1196.615 1648h76v22h-76z"/>
+  <path fill="#ed986f" d="M359 1669h71v22h-71z"/>
+  <path fill="#f0a26e" d="M429 1669h88v22h-88z"/>
+  <path fill="#e67c73" d="M679.435 1669h94v22h-94z"/>
+  <path fill="#f1a46e" d="M772.435 1669h80v22h-80z"/>
+  <path fill="#ee9c6f" d="M851.435 1669h86v22h-86z"/>
+  <path fill="#e67c73" d="M1106.615 1669h91v22h-91z"/>
+  <path fill="#f7bc6a" d="M1196.615 1669h76v22h-76z"/>
+  <path fill="#ec9370" d="M359 1690h71v22h-71z"/>
+  <path fill="#ec9470" d="M429 1690h88v22h-88z"/>
+  <path fill="#e67e73" d="M679.435 1690h94v22h-94z"/>
+  <path fill="#e67c73" d="M772.435 1690h165v22h-165z"/>
+  <path fill="#fac669" d="M1106.615 1690h91v22h-91z"/>
+  <path fill="#e67c73" d="M1196.615 1690h76v22h-76z"/>
+  <path fill="#f8be6a" d="M359 1711h71v22h-71z"/>
+  <path fill="#f2a86d" d="M429 1711h88v22h-88z"/>
+  <path fill="#e67c73" d="M679.435 1711h94v22h-94z"/>
+  <path fill="#f1a66d" d="M772.435 1711h80v22h-80z"/>
+  <path fill="#ef9f6e" d="M851.435 1711h86v22h-86z"/>
+  <path fill="#57bb8a" d="M1009.615 1711h98v22h-98z"/>
+  <path fill="#e67c73" d="M1106.615 1711h91v22h-91z"/>
+  <path fill="#f6b76b" d="M1196.615 1711h76v22h-76z"/>
+  <path fill="#fac569" d="M359 1732h71v22h-71z"/>
+  <path fill="#fcd666" d="M429 1732h88v22h-88z"/>
+  <path fill="#e67c73" d="M679.435 1732h94v22h-94z"/>
+  <path fill="#ee9b6f" d="M772.435 1732h80v22h-80z"/>
+  <path fill="#ee996f" d="M851.435 1732h86v22h-86z"/>
+  <path fill="#e67c73" d="M1106.615 1732h91v22h-91z"/>
+  <path fill="#f9c169" d="M1196.615 1732h76v22h-76z"/>
+  <path fill="#f4af6c" d="M359 1753h158v22H359Z"/>
+  <path fill="#e67e73" d="M679.435 1753h94v22h-94z"/>
+  <path fill="#e67c73" d="M772.435 1753h165v22h-165z"/>
+  <path fill="#ee9c6f" d="M1106.615 1753h91v22h-91z"/>
+  <path fill="#e67c73" d="M1196.615 1753h76v22h-76z"/>
+  <path fill="#f2aa6d" d="M359 1774h71v22h-71z"/>
+  <path fill="#fccd68" d="M429 1774h88v22h-88z"/>
+  <path fill="#e67c73" d="M679.435 1774h94v22h-94z"/>
+  <path fill="#ea8d71" d="M772.435 1774h80v22h-80z"/>
+  <path fill="#eb8e71" d="M851.435 1774h86v22h-86z"/>
+  <path fill="#e67c73" d="M1106.615 1774h91v22h-91z"/>
+  <path fill="#f7bb6a" d="M1196.615 1774h76v22h-76z"/>
+  <path fill="none" stroke="#fff" stroke-miterlimit="10" d="M181 56.5h536"/>
+  <text transform="translate(14 25)"><tspan x="0" y="0" font-size="13.33" font-weight="700">Notes: </tspan></text>
+  <text transform="translate(194.574 822)"><tspan x="0" y="0" font-size="13.33" font-weight="700">For Buffer and TextDecoder/TextEncoder scores, popular polyfills are used where unavailable</tspan></text>
+  <text transform="translate(182.15 25)"><tspan x="0" y="0" font-size="12" font-weight="700">For Buffer and TextDecoder/TextEncoder scores, popular polyfills are used where unavailable</tspan></text>
+  <text transform="translate(873.236 25)"><tspan x="0" y="0" fill="#fff" font-size="13.33" font-weight="700">Red libs do not perform input validation</tspan></text>
+  <text transform="translate(271.673 108)"><tspan x="0" y="0" fill="#fff" font-size="13.33" font-weight="700">@scure/base</tspan></text>
+  <text transform="translate(374.876 108)"><tspan x="0" y="0" fill="#fff" font-size="13.33" font-weight="700">Buffer</tspan></text>
+  <text transform="translate(439.464 108)"><tspan x="0" y="0" fill="#fff" font-size="13.33" font-weight="700">@stablelib</tspan></text>
+  <text transform="translate(534.617 108)"><tspan x="0" y="0" fill="#fff" font-size="13.33" font-weight="700">base64-js</tspan></text>
+  <text transform="translate(924.673 108)"><tspan x="0" y="0" fill="#fff" font-size="13.33" font-weight="700">@scure/base</tspan></text>
+  <text transform="translate(1032.376 108)"><tspan x="0" y="0" fill="#fff" font-size="13.33" font-weight="700">Buffer</tspan></text>
+  <text transform="translate(1100.464 108)"><tspan x="0" y="0" fill="#fff" font-size="13.33" font-weight="700">@stablelib</tspan></text>
+  <text transform="translate(14 129)"><tspan x="0" y="0" fill="#fff" font-size="13.33" font-weight="700">Node.js 25</tspan></text>
+  <text transform="translate(14 150)"><tspan x="0" y="0" fill="#fff" font-size="13.33" font-weight="700">Node.js 22</tspan></text>
+  <text transform="translate(14 171)"><tspan x="0" y="0" fill="#fff" font-size="13.33" font-weight="700">Chrome</tspan></text>
+  <text transform="translate(14 192)"><tspan x="0" y="0" fill="#fff" font-size="13.33" font-weight="700">Safari</tspan></text>
+  <text transform="translate(14 213)"><tspan x="0" y="0" fill="#fff" font-size="13.33" font-weight="700">Firefox</tspan></text>
+  <text transform="translate(14 234)"><tspan x="0" y="0" fill="#fff" font-size="13.33" font-weight="700">Chrome (old)</tspan></text>
+  <text transform="translate(14 255)"><tspan x="0" y="0" fill="#fff" font-size="13.33" font-weight="700">Safari (old)</tspan></text>
+  <text transform="translate(14 276)"><tspan x="0" y="0" fill="#fff" font-size="13.33" font-weight="700">Firefox (old)</tspan></text>
+  <text transform="translate(14 297)"><tspan x="0" y="0" fill="#fff" font-size="13.33" font-weight="700">v8</tspan></text>
+  <text transform="translate(14 318)"><tspan x="0" y="0" fill="#fff" font-size="13.33" font-weight="700">JavaScriptCore</tspan></text>
+  <text transform="translate(14 339)"><tspan x="0" y="0" fill="#fff" font-size="13.33" font-weight="700">SpiderMonkey</tspan></text>
+  <text transform="translate(14 360)"><tspan x="0" y="0" fill="#fff" font-size="13.33" font-weight="700">v8 (old)</tspan></text>
+  <text transform="translate(14 381)"><tspan x="0" y="0" fill="#fff" font-size="13.33" font-weight="700">JavaScriptCore (old)</tspan></text>
+  <text transform="translate(14 402)"><tspan x="0" y="0" fill="#fff" font-size="13.33" font-weight="700">SpiderMonkey (old)</tspan></text>
+  <text transform="translate(14 423)"><tspan x="0" y="0" fill="#fff" font-size="13.33" font-weight="700">Hermes / React Native</tspan></text>
+  <text transform="translate(271.673 476)"><tspan x="0" y="0" fill="#fff" font-size="13.33" font-weight="700">@scure/base</tspan></text>
+  <text transform="translate(374.876 476)"><tspan x="0" y="0" fill="#fff" font-size="13.33" font-weight="700">Buffer</tspan></text>
+  <text transform="translate(439.464 476)"><tspan x="0" y="0" fill="#fff" font-size="13.33" font-weight="700">@stablelib</tspan></text>
+  <text transform="translate(534.617 476)"><tspan x="0" y="0" fill="#fff" font-size="13.33" font-weight="700">base64-js</tspan></text>
+  <text transform="translate(734.581 476)"><tspan x="0" y="0" fill="#fff" font-size="13.33" font-weight="700">Buffer.from</tspan></text>
+  <text transform="translate(924.673 476)"><tspan x="0" y="0" fill="#fff" font-size="13.33" font-weight="700">@scure/base</tspan></text>
+  <text transform="translate(1032.376 476)"><tspan x="0" y="0" fill="#fff" font-size="13.33" font-weight="700">Buffer</tspan></text>
+  <text transform="translate(1100.464 476)"><tspan x="0" y="0" fill="#fff" font-size="13.33" font-weight="700">@stablelib</tspan></text>
+  <text transform="translate(1188.581 476)"><tspan x="0" y="0" fill="#fff" font-size="13.33" font-weight="700">Buffer.from</tspan></text>
+  <text transform="translate(14 497)"><tspan x="0" y="0" fill="#fff" font-size="13.33" font-weight="700">Node.js 25</tspan></text>
+  <text transform="translate(14 518)"><tspan x="0" y="0" fill="#fff" font-size="13.33" font-weight="700">Node.js 22</tspan></text>
+  <text transform="translate(14 539)"><tspan x="0" y="0" fill="#fff" font-size="13.33" font-weight="700">Chrome</tspan></text>
+  <text transform="translate(14 560)"><tspan x="0" y="0" fill="#fff" font-size="13.33" font-weight="700">Safari</tspan></text>
+  <text transform="translate(14 581)"><tspan x="0" y="0" fill="#fff" font-size="13.33" font-weight="700">Firefox</tspan></text>
+  <text transform="translate(14 602)"><tspan x="0" y="0" fill="#fff" font-size="13.33" font-weight="700">Chrome (old)</tspan></text>
+  <text transform="translate(14 623)"><tspan x="0" y="0" fill="#fff" font-size="13.33" font-weight="700">Safari (old)</tspan></text>
+  <text transform="translate(14 644)"><tspan x="0" y="0" fill="#fff" font-size="13.33" font-weight="700">Firefox (old)</tspan></text>
+  <text transform="translate(14 665)"><tspan x="0" y="0" fill="#fff" font-size="13.33" font-weight="700">v8</tspan></text>
+  <text transform="translate(14 686)"><tspan x="0" y="0" fill="#fff" font-size="13.33" font-weight="700">JavaScriptCore</tspan></text>
+  <text transform="translate(14 707)"><tspan x="0" y="0" fill="#fff" font-size="13.33" font-weight="700">SpiderMonkey</tspan></text>
+  <text transform="translate(14 728)"><tspan x="0" y="0" fill="#fff" font-size="13.33" font-weight="700">v8 (old)</tspan></text>
+  <text transform="translate(14 749)"><tspan x="0" y="0" fill="#fff" font-size="13.33" font-weight="700">JavaScriptCore (old)</tspan></text>
+  <text transform="translate(14 770)"><tspan x="0" y="0" fill="#fff" font-size="13.33" font-weight="700">SpiderMonkey (old)</tspan></text>
+  <text transform="translate(14 791)"><tspan x="0" y="0" fill="#fff" font-size="13.33" font-weight="700">Hermes / React Native</tspan></text>
+  <text transform="translate(374.876 875)"><tspan x="0" y="0" fill="#fff" font-size="13.33" font-weight="700">Buffer</tspan></text>
+  <text transform="translate(433.12 875)"><tspan x="0" y="0" fill="#fff" font-size="13.33" font-weight="700">TextDecoder</tspan></text>
+  <text transform="translate(525.12 875)"><tspan x="0" y="0" fill="#fff" font-size="13.33" font-weight="700">TextDecoder</tspan></text>
+  <text transform="translate(734.581 875)"><tspan x="0" y="0" fill="#fff" font-size="13.33" font-weight="700">Buffer.from</tspan></text>
+  <text transform="translate(1032.376 875)"><tspan x="0" y="0" fill="#fff" font-size="13.33" font-weight="700">Buffer</tspan></text>
+  <text transform="translate(1094.124 875)"><tspan x="0" y="0" fill="#fff" font-size="13.33" font-weight="700">TextEncoder</tspan></text>
+  <text transform="translate(14 896)"><tspan x="0" y="0" fill="#fff" font-size="13.33" font-weight="700">Node.js 25</tspan></text>
+  <text transform="translate(14 917)"><tspan x="0" y="0" fill="#fff" font-size="13.33" font-weight="700">Node.js 22</tspan></text>
+  <text transform="translate(14 938)"><tspan x="0" y="0" fill="#fff" font-size="13.33" font-weight="700">Chrome</tspan></text>
+  <text transform="translate(14 959)"><tspan x="0" y="0" fill="#fff" font-size="13.33" font-weight="700">Safari</tspan></text>
+  <text transform="translate(14 980)"><tspan x="0" y="0" fill="#fff" font-size="13.33" font-weight="700">Firefox</tspan></text>
+  <text transform="translate(14 1001)"><tspan x="0" y="0" fill="#fff" font-size="13.33" font-weight="700">v8</tspan></text>
+  <text transform="translate(14 1022)"><tspan x="0" y="0" fill="#fff" font-size="13.33" font-weight="700">JavaScriptCore</tspan></text>
+  <text transform="translate(14 1043)"><tspan x="0" y="0" fill="#fff" font-size="13.33" font-weight="700">SpiderMonkey</tspan></text>
+  <text transform="translate(14 1064)"><tspan x="0" y="0" fill="#fff" font-size="13.33" font-weight="700">Hermes / React Native</tspan></text>
+  <text transform="translate(374.876 1117)"><tspan x="0" y="0" fill="#fff" font-size="13.33" font-weight="700">Buffer</tspan></text>
+  <text transform="translate(433.12 1117)"><tspan x="0" y="0" fill="#fff" font-size="13.33" font-weight="700">TextDecoder</tspan></text>
+  <text transform="translate(525.12 1117)"><tspan x="0" y="0" fill="#fff" font-size="13.33" font-weight="700">TextDecoder</tspan></text>
+  <text transform="translate(734.581 1117)"><tspan x="0" y="0" fill="#fff" font-size="13.33" font-weight="700">Buffer.from</tspan></text>
+  <text transform="translate(1032.376 1117)"><tspan x="0" y="0" fill="#fff" font-size="13.33" font-weight="700">Buffer</tspan></text>
+  <text transform="translate(1094.124 1117)"><tspan x="0" y="0" fill="#fff" font-size="13.33" font-weight="700">TextEncoder</tspan></text>
+  <text transform="translate(14 1138)"><tspan x="0" y="0" fill="#fff" font-size="13.33" font-weight="700">Node.js 25</tspan></text>
+  <text transform="translate(14 1159)"><tspan x="0" y="0" fill="#fff" font-size="13.33" font-weight="700">Node.js 22</tspan></text>
+  <text transform="translate(14 1180)"><tspan x="0" y="0" fill="#fff" font-size="13.33" font-weight="700">Chrome</tspan></text>
+  <text transform="translate(14 1201)"><tspan x="0" y="0" fill="#fff" font-size="13.33" font-weight="700">Safari</tspan></text>
+  <text transform="translate(14 1222)"><tspan x="0" y="0" fill="#fff" font-size="13.33" font-weight="700">Firefox</tspan></text>
+  <text transform="translate(14 1243)"><tspan x="0" y="0" fill="#fff" font-size="13.33" font-weight="700">v8</tspan></text>
+  <text transform="translate(14 1264)"><tspan x="0" y="0" fill="#fff" font-size="13.33" font-weight="700">JavaScriptCore</tspan></text>
+  <text transform="translate(14 1285)"><tspan x="0" y="0" fill="#fff" font-size="13.33" font-weight="700">SpiderMonkey</tspan></text>
+  <text transform="translate(14 1306)"><tspan x="0" y="0" fill="#fff" font-size="13.33" font-weight="700">Hermes / React Native</tspan></text>
+  <text transform="translate(271.673 1359)"><tspan x="0" y="0" fill="#fff" font-size="13.33" font-weight="700">@scure/base</tspan></text>
+  <text transform="translate(364.485 1359)"><tspan x="0" y="0" fill="#fff" font-size="13.33" font-weight="700">base32.js</tspan></text>
+  <text transform="translate(442.253 1359)"><tspan x="0" y="0" fill="#fff" font-size="13.33" font-weight="700">hi-base32</tspan></text>
+  <text transform="translate(685.108 1359)"><tspan x="0" y="0" fill="#fff" font-size="13.33" font-weight="700">@scure/base</tspan></text>
+  <text transform="translate(1110.788 1359)"><tspan x="0" y="0" fill="#fff" font-size="13.33" font-weight="700">@scure/base</tspan></text>
+  <text transform="translate(1200.525 1359)"><tspan x="0" y="0" fill="#fff" font-size="13.33" font-weight="700">bs58check</tspan></text>
+  <text transform="translate(14 1380)"><tspan x="0" y="0" fill="#fff" font-size="13.33" font-weight="700">Node.js 25</tspan></text>
+  <text transform="translate(14 1401)"><tspan x="0" y="0" fill="#fff" font-size="13.33" font-weight="700">Node.js 22</tspan></text>
+  <text transform="translate(14 1422)"><tspan x="0" y="0" fill="#fff" font-size="13.33" font-weight="700">Chrome</tspan></text>
+  <text transform="translate(14 1443)"><tspan x="0" y="0" fill="#fff" font-size="13.33" font-weight="700">Safari</tspan></text>
+  <text transform="translate(14 1464)"><tspan x="0" y="0" fill="#fff" font-size="13.33" font-weight="700">Firefox</tspan></text>
+  <text transform="translate(14 1485)"><tspan x="0" y="0" fill="#fff" font-size="13.33" font-weight="700">v8</tspan></text>
+  <text transform="translate(14 1506)"><tspan x="0" y="0" fill="#fff" font-size="13.33" font-weight="700">JavaScriptCore</tspan></text>
+  <text transform="translate(14 1527)"><tspan x="0" y="0" fill="#fff" font-size="13.33" font-weight="700">SpiderMonkey</tspan></text>
+  <text transform="translate(14 1548)"><tspan x="0" y="0" fill="#fff" font-size="13.33" font-weight="700">Hermes / React Native</tspan></text>
+  <text transform="translate(271.673 1601)"><tspan x="0" y="0" fill="#fff" font-size="13.33" font-weight="700">@scure/base</tspan></text>
+  <text transform="translate(364.485 1601)"><tspan x="0" y="0" fill="#fff" font-size="13.33" font-weight="700">base32.js</tspan></text>
+  <text transform="translate(442.253 1601)"><tspan x="0" y="0" fill="#fff" font-size="13.33" font-weight="700">hi-base32</tspan></text>
+  <text transform="translate(685.108 1601)"><tspan x="0" y="0" fill="#fff" font-size="13.33" font-weight="700">@scure/base</tspan></text>
+  <text transform="translate(1110.788 1601)"><tspan x="0" y="0" fill="#fff" font-size="13.33" font-weight="700">@scure/base</tspan></text>
+  <text transform="translate(1200.525 1601)"><tspan x="0" y="0" fill="#fff" font-size="13.33" font-weight="700">bs58check</tspan></text>
+  <text transform="translate(14 1622)"><tspan x="0" y="0" fill="#fff" font-size="13.33" font-weight="700">Node.js 25</tspan></text>
+  <text transform="translate(14 1643)"><tspan x="0" y="0" fill="#fff" font-size="13.33" font-weight="700">Node.js 22</tspan></text>
+  <text transform="translate(14 1664)"><tspan x="0" y="0" fill="#fff" font-size="13.33" font-weight="700">Chrome</tspan></text>
+  <text transform="translate(14 1685)"><tspan x="0" y="0" fill="#fff" font-size="13.33" font-weight="700">Safari</tspan></text>
+  <text transform="translate(14 1706)"><tspan x="0" y="0" fill="#fff" font-size="13.33" font-weight="700">Firefox</tspan></text>
+  <text transform="translate(14 1727)"><tspan x="0" y="0" fill="#fff" font-size="13.33" font-weight="700">v8</tspan></text>
+  <text transform="translate(14 1748)"><tspan x="0" y="0" fill="#fff" font-size="13.33" font-weight="700">JavaScriptCore</tspan></text>
+  <text transform="translate(14 1769)"><tspan x="0" y="0" fill="#fff" font-size="13.33" font-weight="700">SpiderMonkey</tspan></text>
+  <text transform="translate(14 1790)"><tspan x="0" y="0" fill="#fff" font-size="13.33" font-weight="700">Hermes / React Native</tspan></text>
+  <text transform="translate(180.597 55)"><tspan x="0" y="0" fill="#fff" font-size="12" font-weight="700">Firefox native methods are unexpectedly slower than js, should be fixed upstream. Not critical</tspan></text>
+  <text transform="translate(838.783 55)"><tspan x="0" y="0" fill="#fff" font-size="12" font-weight="700">Label &quot;(old)&quot; means using JS codepath instead of native</tspan></text>
+  <text transform="translate(173.803 108)"><tspan x="0" y="0" fill="#fff" font-size="12" font-weight="700">@exodus/bytes</tspan></text>
+  <text transform="translate(614.979 108)"><tspan x="0" y="0" fill="#fff" font-size="12" font-weight="700">fast-base64-decode</tspan></text>
+  <text transform="translate(826.803 108)"><tspan x="0" y="0" fill="#fff" font-size="12" font-weight="700">@exodus/bytes</tspan></text>
+  <text transform="translate(173.803 476)"><tspan x="0" y="0" fill="#fff" font-size="12" font-weight="700">@exodus/bytes</tspan></text>
+  <text transform="translate(614.979 476)"><tspan x="0" y="0" fill="#fff" font-size="12" font-weight="700">fast-base64-encode</tspan></text>
+  <text transform="translate(826.803 476)"><tspan x="0" y="0" fill="#fff" font-size="12" font-weight="700">@exodus/bytes</tspan></text>
+  <text transform="translate(835.382 822)"><tspan x="0" y="0" fill="#fff" font-size="12" font-weight="700">@scure/base/utf8 exists, but it&apos;s just an alias for TextEncoder/TextDecoder</tspan></text>
+  <text transform="translate(173.803 875)"><tspan x="0" y="0" fill="#fff" font-size="12" font-weight="700">@exodus/bytes</tspan></text>
+  <text transform="translate(268.803 875)"><tspan x="0" y="0" fill="#fff" font-size="12" font-weight="700">@exodus/bytes</tspan></text>
+  <text transform="translate(627.137 875)"><tspan x="0" y="0" fill="#fff" font-size="12" font-weight="700">@ethersproject</tspan></text>
+  <text transform="translate(826.803 875)"><tspan x="0" y="0" fill="#fff" font-size="12" font-weight="700">@exodus/bytes</tspan></text>
+  <text transform="translate(921.803 875)"><tspan x="0" y="0" fill="#fff" font-size="12" font-weight="700">@exodus/bytes</tspan></text>
+  <text transform="translate(1180.637 875)"><tspan x="0" y="0" fill="#fff" font-size="12" font-weight="700">@ethersproject</tspan></text>
+  <text transform="translate(173.803 1117)"><tspan x="0" y="0" fill="#fff" font-size="12" font-weight="700">@exodus/bytes</tspan></text>
+  <text transform="translate(268.803 1117)"><tspan x="0" y="0" fill="#fff" font-size="12" font-weight="700">@exodus/bytes</tspan></text>
+  <text transform="translate(627.137 1117)"><tspan x="0" y="0" fill="#fff" font-size="12" font-weight="700">@ethersproject</tspan></text>
+  <text transform="translate(826.803 1117)"><tspan x="0" y="0" fill="#fff" font-size="12" font-weight="700">@exodus/bytes</tspan></text>
+  <text transform="translate(921.803 1117)"><tspan x="0" y="0" fill="#fff" font-size="12" font-weight="700">@exodus/bytes</tspan></text>
+  <text transform="translate(1180.637 1117)"><tspan x="0" y="0" fill="#fff" font-size="12" font-weight="700">@ethersproject</tspan></text>
+  <text transform="translate(173.803 1359)"><tspan x="0" y="0" fill="#fff" font-size="12" font-weight="700">@exodus/bytes</tspan></text>
+  <text transform="translate(587.238 1359)"><tspan x="0" y="0" fill="#fff" font-size="12" font-weight="700">@exodus/bytes</tspan></text>
+  <text transform="translate(774.748 1359)"><tspan x="0" y="0" fill="#fff" font-size="12" font-weight="700">base-x / bs58</tspan></text>
+  <text transform="translate(874.104 1359)"><tspan x="0" y="0" fill="#fff" font-size="12" font-weight="700">bstring</tspan></text>
+  <text transform="translate(1014.418 1359)"><tspan x="0" y="0" fill="#fff" font-size="12" font-weight="700">@exodus/bytes</tspan></text>
+  <text transform="translate(173.803 1601)"><tspan x="0" y="0" fill="#fff" font-size="12" font-weight="700">@exodus/bytes</tspan></text>
+  <text transform="translate(587.238 1601)"><tspan x="0" y="0" fill="#fff" font-size="12" font-weight="700">@exodus/bytes</tspan></text>
+  <text transform="translate(774.748 1601)"><tspan x="0" y="0" fill="#fff" font-size="12" font-weight="700">base-x / bs58</tspan></text>
+  <text transform="translate(874.104 1601)"><tspan x="0" y="0" fill="#fff" font-size="12" font-weight="700">bstring</tspan></text>
+  <text transform="translate(1014.418 1601)"><tspan x="0" y="0" fill="#fff" font-size="12" font-weight="700">@exodus/bytes</tspan></text>
+  <text transform="translate(407.035 86)"><tspan x="0" y="0" fill="#222" font-size="14.66" font-weight="700">fromBase64</tspan></text>
+  <text transform="translate(969.765 86)"><tspan x="0" y="0" fill="#222" font-size="14.66" font-weight="700">fromHex</tspan></text>
+  <text transform="translate(458.405 454)"><tspan x="0" y="0" fill="#222" font-size="14.66" font-weight="700">toBase64</tspan></text>
+  <text transform="translate(1027.135 454)"><tspan x="0" y="0" fill="#222" font-size="14.66" font-weight="700">toHex</tspan></text>
+  <text transform="translate(429.096 853)"><tspan x="0" y="0" fill="#222" font-size="14.66" font-weight="700">utf8toString, ascii</tspan></text>
+  <text transform="translate(976.226 853)"><tspan x="0" y="0" fill="#222" font-size="14.66" font-weight="700">utf8fromString, ascii</tspan></text>
+  <text transform="translate(398.552 1095)"><tspan x="0" y="0" fill="#222" font-size="14.66" font-weight="700">utf8toString, complex data</tspan></text>
+  <text transform="translate(945.682 1095)"><tspan x="0" y="0" fill="#222" font-size="14.66" font-weight="700">utf8fromString, complex data</tspan></text>
+  <text transform="translate(301.035 1337)"><tspan x="0" y="0" fill="#222" font-size="14.66" font-weight="700">fromBase32</tspan></text>
+  <text transform="translate(717.97 1337)"><tspan x="0" y="0" fill="#222" font-size="14.66" font-weight="700">fromBase58</tspan></text>
+  <text transform="translate(1078.366 1337)"><tspan x="0" y="0" fill="#222" font-size="14.66" font-weight="700">fromBase58check</tspan></text>
+  <text transform="translate(310.405 1579)"><tspan x="0" y="0" fill="#222" font-size="14.66" font-weight="700">toBase32</tspan></text>
+  <text transform="translate(727.34 1579)"><tspan x="0" y="0" fill="#222" font-size="14.66" font-weight="700">toBase58</tspan></text>
+  <text transform="translate(1087.737 1579)"><tspan x="0" y="0" fill="#222" font-size="14.66" font-weight="700">toBase58check</tspan></text>
+  <text transform="translate(214.816 129)"><tspan x="0" y="0" font-size="13.33">823,045</tspan></text>
+  <text transform="translate(307.816 129)"><tspan x="0" y="0" font-size="13.33">220,994</tspan></text>
+  <text transform="translate(366.699 129)"><tspan x="0" y="0" font-size="13.33">1,166,861</tspan></text>
+  <text transform="translate(472.229 129)"><tspan x="0" y="0" font-size="13.33">55,160</tspan></text>
+  <text transform="translate(561.816 129)"><tspan x="0" y="0" font-size="13.33">120,685</tspan></text>
+  <text transform="translate(676.816 129)"><tspan x="0" y="0" font-size="13.33">138,619</tspan></text>
+  <text transform="translate(867.816 129)"><tspan x="0" y="0" font-size="13.33">901,713</tspan></text>
+  <text transform="translate(960.816 129)"><tspan x="0" y="0" font-size="13.33">904,977</tspan></text>
+  <text transform="translate(1039.816 129)"><tspan x="0" y="0" font-size="13.33">319,285</tspan></text>
+  <text transform="translate(1132.23 129)"><tspan x="0" y="0" font-size="13.33">66,609</tspan></text>
+  <text transform="translate(214.816 150)"><tspan x="0" y="0" font-size="13.33">200,521</tspan></text>
+  <text transform="translate(322.643 150)"><tspan x="0" y="0" font-size="13.33">5,676</tspan></text>
+  <text transform="translate(366.699 150)"><tspan x="0" y="0" font-size="13.33">1,039,501</tspan></text>
+  <text transform="translate(472.229 150)"><tspan x="0" y="0" font-size="13.33">55,337</tspan></text>
+  <text transform="translate(562.805 150)"><tspan x="0" y="0" font-size="13.33">110,607</tspan></text>
+  <text transform="translate(677.805 150)"><tspan x="0" y="0" font-size="13.33">116,959</tspan></text>
+  <text transform="translate(867.816 150)"><tspan x="0" y="0" font-size="13.33">283,046</tspan></text>
+  <text transform="translate(975.643 150)"><tspan x="0" y="0" font-size="13.33">4,309</tspan></text>
+  <text transform="translate(1039.816 150)"><tspan x="0" y="0" font-size="13.33">283,768</tspan></text>
+  <text transform="translate(1132.23 150)"><tspan x="0" y="0" font-size="13.33">65,138</tspan></text>
+  <text transform="translate(214.816 171)"><tspan x="0" y="0" font-size="13.33">568,505</tspan></text>
+  <text transform="translate(307.816 171)"><tspan x="0" y="0" font-size="13.33">193,498</tspan></text>
+  <text transform="translate(385.229 171)"><tspan x="0" y="0" font-size="13.33">28,863</tspan></text>
+  <text transform="translate(472.229 171)"><tspan x="0" y="0" font-size="13.33">42,260</tspan></text>
+  <text transform="translate(569.229 171)"><tspan x="0" y="0" font-size="13.33">98,600</tspan></text>
+  <text transform="translate(684.229 171)"><tspan x="0" y="0" font-size="13.33">91,617</tspan></text>
+  <text transform="translate(867.816 171)"><tspan x="0" y="0" font-size="13.33">679,810</tspan></text>
+  <text transform="translate(960.816 171)"><tspan x="0" y="0" font-size="13.33">666,223</tspan></text>
+  <text transform="translate(1054.643 171)"><tspan x="0" y="0" font-size="13.33">8,736</tspan></text>
+  <text transform="translate(1132.23 171)"><tspan x="0" y="0" font-size="13.33">45,017</tspan></text>
+  <text transform="translate(214.816 192)"><tspan x="0" y="0" font-size="13.33">312,793</tspan></text>
+  <text transform="translate(315.229 192)"><tspan x="0" y="0" font-size="13.33">84,696</tspan></text>
+  <text transform="translate(385.229 192)"><tspan x="0" y="0" font-size="13.33">27,334</tspan></text>
+  <text transform="translate(472.229 192)"><tspan x="0" y="0" font-size="13.33">88,363</tspan></text>
+  <text transform="translate(561.816 192)"><tspan x="0" y="0" font-size="13.33">203,252</tspan></text>
+  <text transform="translate(676.816 192)"><tspan x="0" y="0" font-size="13.33">209,556</tspan></text>
+  <text transform="translate(856.699 192)"><tspan x="0" y="0" font-size="13.33">1,322,751</tspan></text>
+  <text transform="translate(949.699 192)"><tspan x="0" y="0" font-size="13.33">1,371,742</tspan></text>
+  <text transform="translate(1054.643 192)"><tspan x="0" y="0" font-size="13.33">6,510</tspan></text>
+  <text transform="translate(1132.23 192)"><tspan x="0" y="0" font-size="13.33">74,200</tspan></text>
+  <text transform="translate(222.229 213)"><tspan x="0" y="0" font-size="13.33">51,669</tspan></text>
+  <text transform="translate(315.229 213)"><tspan x="0" y="0" font-size="13.33">48,100</tspan></text>
+  <text transform="translate(385.229 213)"><tspan x="0" y="0" font-size="13.33">26,643</tspan></text>
+  <text transform="translate(472.229 213)"><tspan x="0" y="0" font-size="13.33">22,666</tspan></text>
+  <text transform="translate(561.816 213)"><tspan x="0" y="0" font-size="13.33">102,543</tspan></text>
+  <text transform="translate(677.805 213)"><tspan x="0" y="0" font-size="13.33">114,220</tspan></text>
+  <text transform="translate(875.229 213)"><tspan x="0" y="0" font-size="13.33">28,735</tspan></text>
+  <text transform="translate(968.229 213)"><tspan x="0" y="0" font-size="13.33">29,002</tspan></text>
+  <text transform="translate(1047.23 213)"><tspan x="0" y="0" font-size="13.33">13,181</tspan></text>
+  <text transform="translate(1132.23 213)"><tspan x="0" y="0" font-size="13.33">19,671</tspan></text>
+  <text transform="translate(222.229 234)"><tspan x="0" y="0" font-size="13.33">96,200</tspan></text>
+  <text transform="translate(322.643 234)"><tspan x="0" y="0" font-size="13.33">4,542</tspan></text>
+  <text transform="translate(385.229 234)"><tspan x="0" y="0" font-size="13.33">28,863</tspan></text>
+  <text transform="translate(472.229 234)"><tspan x="0" y="0" font-size="13.33">42,260</tspan></text>
+  <text transform="translate(569.229 234)"><tspan x="0" y="0" font-size="13.33">98,600</tspan></text>
+  <text transform="translate(684.229 234)"><tspan x="0" y="0" font-size="13.33">91,617</tspan></text>
+  <text transform="translate(875.229 234)"><tspan x="0" y="0" font-size="13.33">72,296</tspan></text>
+  <text transform="translate(975.643 234)"><tspan x="0" y="0" font-size="13.33">3,898</tspan></text>
+  <text transform="translate(1054.643 234)"><tspan x="0" y="0" font-size="13.33">8,736</tspan></text>
+  <text transform="translate(1132.23 234)"><tspan x="0" y="0" font-size="13.33">45,017</tspan></text>
+  <text transform="translate(214.816 255)"><tspan x="0" y="0" font-size="13.33">183,857</tspan></text>
+  <text transform="translate(322.643 255)"><tspan x="0" y="0" font-size="13.33">9,633</tspan></text>
+  <text transform="translate(385.229 255)"><tspan x="0" y="0" font-size="13.33">27,334</tspan></text>
+  <text transform="translate(472.229 255)"><tspan x="0" y="0" font-size="13.33">88,363</tspan></text>
+  <text transform="translate(561.816 255)"><tspan x="0" y="0" font-size="13.33">203,252</tspan></text>
+  <text transform="translate(676.816 255)"><tspan x="0" y="0" font-size="13.33">209,556</tspan></text>
+  <text transform="translate(867.816 255)"><tspan x="0" y="0" font-size="13.33">148,324</tspan></text>
+  <text transform="translate(975.643 255)"><tspan x="0" y="0" font-size="13.33">8,138</tspan></text>
+  <text transform="translate(1054.643 255)"><tspan x="0" y="0" font-size="13.33">6,485</tspan></text>
+  <text transform="translate(1132.23 255)"><tspan x="0" y="0" font-size="13.33">73,708</tspan></text>
+  <text transform="translate(214.816 276)"><tspan x="0" y="0" font-size="13.33">129,483</tspan></text>
+  <text transform="translate(322.643 276)"><tspan x="0" y="0" font-size="13.33">4,173</tspan></text>
+  <text transform="translate(385.229 276)"><tspan x="0" y="0" font-size="13.33">26,643</tspan></text>
+  <text transform="translate(472.229 276)"><tspan x="0" y="0" font-size="13.33">22,666</tspan></text>
+  <text transform="translate(561.816 276)"><tspan x="0" y="0" font-size="13.33">102,543</tspan></text>
+  <text transform="translate(677.805 276)"><tspan x="0" y="0" font-size="13.33">114,220</tspan></text>
+  <text transform="translate(867.816 276)"><tspan x="0" y="0" font-size="13.33">108,589</tspan></text>
+  <text transform="translate(975.643 276)"><tspan x="0" y="0" font-size="13.33">3,557</tspan></text>
+  <text transform="translate(1047.23 276)"><tspan x="0" y="0" font-size="13.33">13,181</tspan></text>
+  <text transform="translate(1132.23 276)"><tspan x="0" y="0" font-size="13.33">19,671</tspan></text>
+  <text transform="translate(214.816 297)"><tspan x="0" y="0" font-size="13.33">599,880</tspan></text>
+  <text transform="translate(307.816 297)"><tspan x="0" y="0" font-size="13.33">203,707</tspan></text>
+  <text transform="translate(385.229 297)"><tspan x="0" y="0" font-size="13.33">29,813</tspan></text>
+  <text transform="translate(472.229 297)"><tspan x="0" y="0" font-size="13.33">47,605</tspan></text>
+  <text transform="translate(561.816 297)"><tspan x="0" y="0" font-size="13.33">137,514</tspan></text>
+  <text transform="translate(676.816 297)"><tspan x="0" y="0" font-size="13.33">122,264</tspan></text>
+  <text transform="translate(867.816 297)"><tspan x="0" y="0" font-size="13.33">641,849</tspan></text>
+  <text transform="translate(960.816 297)"><tspan x="0" y="0" font-size="13.33">625,000</tspan></text>
+  <text transform="translate(1054.643 297)"><tspan x="0" y="0" font-size="13.33">7,562</tspan></text>
+  <text transform="translate(1132.23 297)"><tspan x="0" y="0" font-size="13.33">54,198</tspan></text>
+  <text transform="translate(214.816 318)"><tspan x="0" y="0" font-size="13.33">307,031</tspan></text>
+  <text transform="translate(315.229 318)"><tspan x="0" y="0" font-size="13.33">87,750</tspan></text>
+  <text transform="translate(385.229 318)"><tspan x="0" y="0" font-size="13.33">27,592</tspan></text>
+  <text transform="translate(472.229 318)"><tspan x="0" y="0" font-size="13.33">87,199</tspan></text>
+  <text transform="translate(561.816 318)"><tspan x="0" y="0" font-size="13.33">204,541</tspan></text>
+  <text transform="translate(676.816 318)"><tspan x="0" y="0" font-size="13.33">210,659</tspan></text>
+  <text transform="translate(856.699 318)"><tspan x="0" y="0" font-size="13.33">1,364,256</tspan></text>
+  <text transform="translate(949.699 318)"><tspan x="0" y="0" font-size="13.33">1,347,709</tspan></text>
+  <text transform="translate(1054.643 318)"><tspan x="0" y="0" font-size="13.33">6,512</tspan></text>
+  <text transform="translate(1132.23 318)"><tspan x="0" y="0" font-size="13.33">74,644</tspan></text>
+  <text transform="translate(222.229 339)"><tspan x="0" y="0" font-size="13.33">45,884</tspan></text>
+  <text transform="translate(315.229 339)"><tspan x="0" y="0" font-size="13.33">42,748</tspan></text>
+  <text transform="translate(385.229 339)"><tspan x="0" y="0" font-size="13.33">28,017</tspan></text>
+  <text transform="translate(472.229 339)"><tspan x="0" y="0" font-size="13.33">23,039</tspan></text>
+  <text transform="translate(561.816 339)"><tspan x="0" y="0" font-size="13.33">102,997</tspan></text>
+  <text transform="translate(677.805 339)"><tspan x="0" y="0" font-size="13.33">115,754</tspan></text>
+  <text transform="translate(875.229 339)"><tspan x="0" y="0" font-size="13.33">28,279</tspan></text>
+  <text transform="translate(968.229 339)"><tspan x="0" y="0" font-size="13.33">28,302</tspan></text>
+  <text transform="translate(1047.23 339)"><tspan x="0" y="0" font-size="13.33">12,462</tspan></text>
+  <text transform="translate(1132.23 339)"><tspan x="0" y="0" font-size="13.33">20,379</tspan></text>
+  <text transform="translate(214.816 360)"><tspan x="0" y="0" font-size="13.33">126,743</tspan></text>
+  <text transform="translate(322.643 360)"><tspan x="0" y="0" font-size="13.33">4,680</tspan></text>
+  <text transform="translate(385.229 360)"><tspan x="0" y="0" font-size="13.33">29,750</tspan></text>
+  <text transform="translate(472.229 360)"><tspan x="0" y="0" font-size="13.33">46,200</tspan></text>
+  <text transform="translate(561.816 360)"><tspan x="0" y="0" font-size="13.33">137,212</tspan></text>
+  <text transform="translate(676.816 360)"><tspan x="0" y="0" font-size="13.33">122,130</tspan></text>
+  <text transform="translate(875.229 360)"><tspan x="0" y="0" font-size="13.33">69,075</tspan></text>
+  <text transform="translate(975.643 360)"><tspan x="0" y="0" font-size="13.33">4,068</tspan></text>
+  <text transform="translate(1054.643 360)"><tspan x="0" y="0" font-size="13.33">7,562</tspan></text>
+  <text transform="translate(1132.23 360)"><tspan x="0" y="0" font-size="13.33">54,198</tspan></text>
+  <text transform="translate(214.816 381)"><tspan x="0" y="0" font-size="13.33">181,785</tspan></text>
+  <text transform="translate(322.643 381)"><tspan x="0" y="0" font-size="13.33">9,732</tspan></text>
+  <text transform="translate(385.229 381)"><tspan x="0" y="0" font-size="13.33">27,592</tspan></text>
+  <text transform="translate(472.229 381)"><tspan x="0" y="0" font-size="13.33">87,199</tspan></text>
+  <text transform="translate(561.816 381)"><tspan x="0" y="0" font-size="13.33">204,541</tspan></text>
+  <text transform="translate(676.816 381)"><tspan x="0" y="0" font-size="13.33">210,659</tspan></text>
+  <text transform="translate(867.816 381)"><tspan x="0" y="0" font-size="13.33">129,016</tspan></text>
+  <text transform="translate(975.643 381)"><tspan x="0" y="0" font-size="13.33">7,851</tspan></text>
+  <text transform="translate(1054.643 381)"><tspan x="0" y="0" font-size="13.33">6,512</tspan></text>
+  <text transform="translate(1132.23 381)"><tspan x="0" y="0" font-size="13.33">74,644</tspan></text>
+  <text transform="translate(214.816 402)"><tspan x="0" y="0" font-size="13.33">109,951</tspan></text>
+  <text transform="translate(322.643 402)"><tspan x="0" y="0" font-size="13.33">4,323</tspan></text>
+  <text transform="translate(385.229 402)"><tspan x="0" y="0" font-size="13.33">28,017</tspan></text>
+  <text transform="translate(472.229 402)"><tspan x="0" y="0" font-size="13.33">23,039</tspan></text>
+  <text transform="translate(561.816 402)"><tspan x="0" y="0" font-size="13.33">102,997</tspan></text>
+  <text transform="translate(677.805 402)"><tspan x="0" y="0" font-size="13.33">115,754</tspan></text>
+  <text transform="translate(875.229 402)"><tspan x="0" y="0" font-size="13.33">84,617</tspan></text>
+  <text transform="translate(975.643 402)"><tspan x="0" y="0" font-size="13.33">2,514</tspan></text>
+  <text transform="translate(1047.23 402)"><tspan x="0" y="0" font-size="13.33">12,462</tspan></text>
+  <text transform="translate(1132.23 402)"><tspan x="0" y="0" font-size="13.33">20,379</tspan></text>
+  <text transform="translate(229.643 423)"><tspan x="0" y="0" font-size="13.33">5,468</tspan></text>
+  <text transform="translate(333.76 423)"><tspan x="0" y="0" font-size="13.33">446</tspan></text>
+  <text transform="translate(403.76 423)"><tspan x="0" y="0" font-size="13.33">905</tspan></text>
+  <text transform="translate(490.76 423)"><tspan x="0" y="0" font-size="13.33">786</tspan></text>
+  <text transform="translate(576.643 423)"><tspan x="0" y="0" font-size="13.33">3,228</tspan></text>
+  <text transform="translate(691.643 423)"><tspan x="0" y="0" font-size="13.33">3,342</tspan></text>
+  <text transform="translate(882.643 423)"><tspan x="0" y="0" font-size="13.33">3,954</tspan></text>
+  <text transform="translate(986.76 423)"><tspan x="0" y="0" font-size="13.33">374</tspan></text>
+  <text transform="translate(1054.643 423)"><tspan x="0" y="0" font-size="13.33">2,542</tspan></text>
+  <text transform="translate(1150.76 423)"><tspan x="0" y="0" font-size="13.33">905</tspan></text>
+  <text transform="translate(203.699 497)"><tspan x="0" y="0" font-size="13.33">2,617,801</tspan></text>
+  <text transform="translate(296.699 497)"><tspan x="0" y="0" font-size="13.33">2,557,545</tspan></text>
+  <text transform="translate(366.699 497)"><tspan x="0" y="0" font-size="13.33">1,644,737</tspan></text>
+  <text transform="translate(472.229 497)"><tspan x="0" y="0" font-size="13.33">49,434</tspan></text>
+  <text transform="translate(569.229 497)"><tspan x="0" y="0" font-size="13.33">26,837</tspan></text>
+  <text transform="translate(684.229 497)"><tspan x="0" y="0" font-size="13.33">36,053</tspan></text>
+  <text transform="translate(749.699 497)"><tspan x="0" y="0" font-size="13.33">1,157,407</tspan></text>
+  <text transform="translate(867.816 497)"><tspan x="0" y="0" font-size="13.33">657,462</tspan></text>
+  <text transform="translate(960.816 497)"><tspan x="0" y="0" font-size="13.33">539,084</tspan></text>
+  <text transform="translate(1039.816 497)"><tspan x="0" y="0" font-size="13.33">392,157</tspan></text>
+  <text transform="translate(1132.23 497)"><tspan x="0" y="0" font-size="13.33">39,925</tspan></text>
+  <text transform="translate(1220.816 497)"><tspan x="0" y="0" font-size="13.33">380,952</tspan></text>
+  <text transform="translate(203.699 518)"><tspan x="0" y="0" font-size="13.33">1,642,036</tspan></text>
+  <text transform="translate(322.643 518)"><tspan x="0" y="0" font-size="13.33">5,102</tspan></text>
+  <text transform="translate(366.699 518)"><tspan x="0" y="0" font-size="13.33">1,626,016</tspan></text>
+  <text transform="translate(472.229 518)"><tspan x="0" y="0" font-size="13.33">46,642</tspan></text>
+  <text transform="translate(569.229 518)"><tspan x="0" y="0" font-size="13.33">25,776</tspan></text>
+  <text transform="translate(684.229 518)"><tspan x="0" y="0" font-size="13.33">35,008</tspan></text>
+  <text transform="translate(749.699 518)"><tspan x="0" y="0" font-size="13.33">1,170,960</tspan></text>
+  <text transform="translate(867.816 518)"><tspan x="0" y="0" font-size="13.33">429,185</tspan></text>
+  <text transform="translate(975.643 518)"><tspan x="0" y="0" font-size="13.33">3,683</tspan></text>
+  <text transform="translate(1039.816 518)"><tspan x="0" y="0" font-size="13.33">425,894</tspan></text>
+  <text transform="translate(1132.23 518)"><tspan x="0" y="0" font-size="13.33">33,143</tspan></text>
+  <text transform="translate(1220.816 518)"><tspan x="0" y="0" font-size="13.33">385,060</tspan></text>
+  <text transform="translate(203.699 539)"><tspan x="0" y="0" font-size="13.33">2,506,266</tspan></text>
+  <text transform="translate(296.699 539)"><tspan x="0" y="0" font-size="13.33">2,469,136</tspan></text>
+  <text transform="translate(385.229 539)"><tspan x="0" y="0" font-size="13.33">24,473</tspan></text>
+  <text transform="translate(472.229 539)"><tspan x="0" y="0" font-size="13.33">53,485</tspan></text>
+  <text transform="translate(569.229 539)"><tspan x="0" y="0" font-size="13.33">24,193</tspan></text>
+  <text transform="translate(684.229 539)"><tspan x="0" y="0" font-size="13.33">32,471</tspan></text>
+  <text transform="translate(768.229 539)"><tspan x="0" y="0" font-size="13.33">24,724</tspan></text>
+  <text transform="translate(867.816 539)"><tspan x="0" y="0" font-size="13.33">646,831</tspan></text>
+  <text transform="translate(960.816 539)"><tspan x="0" y="0" font-size="13.33">640,615</tspan></text>
+  <text transform="translate(1047.23 539)"><tspan x="0" y="0" font-size="13.33">74,839</tspan></text>
+  <text transform="translate(1132.23 539)"><tspan x="0" y="0" font-size="13.33">43,390</tspan></text>
+  <text transform="translate(1228.23 539)"><tspan x="0" y="0" font-size="13.33">72,616</tspan></text>
+  <text transform="translate(203.699 560)"><tspan x="0" y="0" font-size="13.33">1,923,077</tspan></text>
+  <text transform="translate(296.699 560)"><tspan x="0" y="0" font-size="13.33">1,934,236</tspan></text>
+  <text transform="translate(385.229 560)"><tspan x="0" y="0" font-size="13.33">14,718</tspan></text>
+  <text transform="translate(472.229 560)"><tspan x="0" y="0" font-size="13.33">34,158</tspan></text>
+  <text transform="translate(569.229 560)"><tspan x="0" y="0" font-size="13.33">15,169</tspan></text>
+  <text transform="translate(684.229 560)"><tspan x="0" y="0" font-size="13.33">58,593</tspan></text>
+  <text transform="translate(768.229 560)"><tspan x="0" y="0" font-size="13.33">14,537</tspan></text>
+  <text transform="translate(856.699 560)"><tspan x="0" y="0" font-size="13.33">1,338,688</tspan></text>
+  <text transform="translate(949.699 560)"><tspan x="0" y="0" font-size="13.33">1,373,626</tspan></text>
+  <text transform="translate(1047.23 560)"><tspan x="0" y="0" font-size="13.33">69,305</tspan></text>
+  <text transform="translate(1132.23 560)"><tspan x="0" y="0" font-size="13.33">34,880</tspan></text>
+  <text transform="translate(1228.23 560)"><tspan x="0" y="0" font-size="13.33">66,912</tspan></text>
+  <text transform="translate(222.229 581)"><tspan x="0" y="0" font-size="13.33">93,371</tspan></text>
+  <text transform="translate(315.229 581)"><tspan x="0" y="0" font-size="13.33">72,908</tspan></text>
+  <text transform="translate(385.229 581)"><tspan x="0" y="0" font-size="13.33">26,410</tspan></text>
+  <text transform="translate(472.229 581)"><tspan x="0" y="0" font-size="13.33">18,196</tspan></text>
+  <text transform="translate(569.229 581)"><tspan x="0" y="0" font-size="13.33">28,210</tspan></text>
+  <text transform="translate(684.229 581)"><tspan x="0" y="0" font-size="13.33">38,806</tspan></text>
+  <text transform="translate(768.229 581)"><tspan x="0" y="0" font-size="13.33">25,504</tspan></text>
+  <text transform="translate(875.229 581)"><tspan x="0" y="0" font-size="13.33">51,980</tspan></text>
+  <text transform="translate(968.229 581)"><tspan x="0" y="0" font-size="13.33">48,330</tspan></text>
+  <text transform="translate(1047.23 581)"><tspan x="0" y="0" font-size="13.33">70,877</tspan></text>
+  <text transform="translate(1132.23 581)"><tspan x="0" y="0" font-size="13.33">39,850</tspan></text>
+  <text transform="translate(1228.23 581)"><tspan x="0" y="0" font-size="13.33">65,976</tspan></text>
+  <text transform="translate(214.816 602)"><tspan x="0" y="0" font-size="13.33">195,580</tspan></text>
+  <text transform="translate(322.643 602)"><tspan x="0" y="0" font-size="13.33">4,245</tspan></text>
+  <text transform="translate(385.229 602)"><tspan x="0" y="0" font-size="13.33">24,718</tspan></text>
+  <text transform="translate(472.229 602)"><tspan x="0" y="0" font-size="13.33">53,228</tspan></text>
+  <text transform="translate(570.218 602)"><tspan x="0" y="0" font-size="13.33">25,119</tspan></text>
+  <text transform="translate(684.229 602)"><tspan x="0" y="0" font-size="13.33">32,560</tspan></text>
+  <text transform="translate(768.229 602)"><tspan x="0" y="0" font-size="13.33">24,282</tspan></text>
+  <text transform="translate(875.229 602)"><tspan x="0" y="0" font-size="13.33">83,928</tspan></text>
+  <text transform="translate(975.643 602)"><tspan x="0" y="0" font-size="13.33">3,595</tspan></text>
+  <text transform="translate(1047.23 602)"><tspan x="0" y="0" font-size="13.33">74,839</tspan></text>
+  <text transform="translate(1132.23 602)"><tspan x="0" y="0" font-size="13.33">43,390</tspan></text>
+  <text transform="translate(1228.23 602)"><tspan x="0" y="0" font-size="13.33">72,616</tspan></text>
+  <text transform="translate(214.816 623)"><tspan x="0" y="0" font-size="13.33">243,427</tspan></text>
+  <text transform="translate(322.643 623)"><tspan x="0" y="0" font-size="13.33">7,492</tspan></text>
+  <text transform="translate(385.229 623)"><tspan x="0" y="0" font-size="13.33">14,718</tspan></text>
+  <text transform="translate(472.229 623)"><tspan x="0" y="0" font-size="13.33">34,158</tspan></text>
+  <text transform="translate(569.229 623)"><tspan x="0" y="0" font-size="13.33">15,169</tspan></text>
+  <text transform="translate(684.229 623)"><tspan x="0" y="0" font-size="13.33">58,593</tspan></text>
+  <text transform="translate(768.229 623)"><tspan x="0" y="0" font-size="13.33">14,537</tspan></text>
+  <text transform="translate(875.229 623)"><tspan x="0" y="0" font-size="13.33">68,866</tspan></text>
+  <text transform="translate(975.643 623)"><tspan x="0" y="0" font-size="13.33">6,700</tspan></text>
+  <text transform="translate(1047.23 623)"><tspan x="0" y="0" font-size="13.33">69,305</tspan></text>
+  <text transform="translate(1132.23 623)"><tspan x="0" y="0" font-size="13.33">34,880</tspan></text>
+  <text transform="translate(1228.23 623)"><tspan x="0" y="0" font-size="13.33">66,912</tspan></text>
+  <text transform="translate(214.816 644)"><tspan x="0" y="0" font-size="13.33">185,632</tspan></text>
+  <text transform="translate(322.643 644)"><tspan x="0" y="0" font-size="13.33">8,014</tspan></text>
+  <text transform="translate(385.229 644)"><tspan x="0" y="0" font-size="13.33">26,891</tspan></text>
+  <text transform="translate(472.229 644)"><tspan x="0" y="0" font-size="13.33">17,986</tspan></text>
+  <text transform="translate(569.229 644)"><tspan x="0" y="0" font-size="13.33">27,772</tspan></text>
+  <text transform="translate(684.229 644)"><tspan x="0" y="0" font-size="13.33">38,305</tspan></text>
+  <text transform="translate(768.229 644)"><tspan x="0" y="0" font-size="13.33">25,657</tspan></text>
+  <text transform="translate(875.229 644)"><tspan x="0" y="0" font-size="13.33">79,523</tspan></text>
+  <text transform="translate(975.643 644)"><tspan x="0" y="0" font-size="13.33">6,559</tspan></text>
+  <text transform="translate(1047.23 644)"><tspan x="0" y="0" font-size="13.33">70,877</tspan></text>
+  <text transform="translate(1132.23 644)"><tspan x="0" y="0" font-size="13.33">39,850</tspan></text>
+  <text transform="translate(1228.23 644)"><tspan x="0" y="0" font-size="13.33">65,976</tspan></text>
+  <text transform="translate(203.699 665)"><tspan x="0" y="0" font-size="13.33">2,695,418</tspan></text>
+  <text transform="translate(296.699 665)"><tspan x="0" y="0" font-size="13.33">2,577,320</tspan></text>
+  <text transform="translate(385.229 665)"><tspan x="0" y="0" font-size="13.33">26,252</tspan></text>
+  <text transform="translate(472.229 665)"><tspan x="0" y="0" font-size="13.33">53,079</tspan></text>
+  <text transform="translate(569.229 665)"><tspan x="0" y="0" font-size="13.33">25,940</tspan></text>
+  <text transform="translate(684.229 665)"><tspan x="0" y="0" font-size="13.33">37,859</tspan></text>
+  <text transform="translate(768.229 665)"><tspan x="0" y="0" font-size="13.33">25,777</tspan></text>
+  <text transform="translate(867.816 665)"><tspan x="0" y="0" font-size="13.33">651,042</tspan></text>
+  <text transform="translate(960.816 665)"><tspan x="0" y="0" font-size="13.33">585,138</tspan></text>
+  <text transform="translate(1047.23 665)"><tspan x="0" y="0" font-size="13.33">74,427</tspan></text>
+  <text transform="translate(1132.23 665)"><tspan x="0" y="0" font-size="13.33">43,465</tspan></text>
+  <text transform="translate(1228.23 665)"><tspan x="0" y="0" font-size="13.33">71,958</tspan></text>
+  <text transform="translate(203.699 686)"><tspan x="0" y="0" font-size="13.33">1,824,818</tspan></text>
+  <text transform="translate(296.699 686)"><tspan x="0" y="0" font-size="13.33">1,851,852</tspan></text>
+  <text transform="translate(385.229 686)"><tspan x="0" y="0" font-size="13.33">14,583</tspan></text>
+  <text transform="translate(472.229 686)"><tspan x="0" y="0" font-size="13.33">33,176</tspan></text>
+  <text transform="translate(569.229 686)"><tspan x="0" y="0" font-size="13.33">14,731</tspan></text>
+  <text transform="translate(684.229 686)"><tspan x="0" y="0" font-size="13.33">53,648</tspan></text>
+  <text transform="translate(768.229 686)"><tspan x="0" y="0" font-size="13.33">14,576</tspan></text>
+  <text transform="translate(856.699 686)"><tspan x="0" y="0" font-size="13.33">1,360,544</tspan></text>
+  <text transform="translate(949.699 686)"><tspan x="0" y="0" font-size="13.33">1,369,863</tspan></text>
+  <text transform="translate(1047.23 686)"><tspan x="0" y="0" font-size="13.33">63,751</tspan></text>
+  <text transform="translate(1132.23 686)"><tspan x="0" y="0" font-size="13.33">32,482</tspan></text>
+  <text transform="translate(1228.23 686)"><tspan x="0" y="0" font-size="13.33">61,241</tspan></text>
+  <text transform="translate(222.229 707)"><tspan x="0" y="0" font-size="13.33">93,694</tspan></text>
+  <text transform="translate(315.229 707)"><tspan x="0" y="0" font-size="13.33">87,781</tspan></text>
+  <text transform="translate(385.229 707)"><tspan x="0" y="0" font-size="13.33">27,164</tspan></text>
+  <text transform="translate(472.229 707)"><tspan x="0" y="0" font-size="13.33">19,138</tspan></text>
+  <text transform="translate(569.229 707)"><tspan x="0" y="0" font-size="13.33">29,201</tspan></text>
+  <text transform="translate(684.229 707)"><tspan x="0" y="0" font-size="13.33">39,234</tspan></text>
+  <text transform="translate(768.229 707)"><tspan x="0" y="0" font-size="13.33">25,122</tspan></text>
+  <text transform="translate(875.229 707)"><tspan x="0" y="0" font-size="13.33">53,536</tspan></text>
+  <text transform="translate(969.218 707)"><tspan x="0" y="0" font-size="13.33">48,511</tspan></text>
+  <text transform="translate(1047.23 707)"><tspan x="0" y="0" font-size="13.33">71,296</tspan></text>
+  <text transform="translate(1132.23 707)"><tspan x="0" y="0" font-size="13.33">40,227</tspan></text>
+  <text transform="translate(1228.23 707)"><tspan x="0" y="0" font-size="13.33">66,383</tspan></text>
+  <text transform="translate(222.229 728)"><tspan x="0" y="0" font-size="13.33">81,553</tspan></text>
+  <text transform="translate(322.643 728)"><tspan x="0" y="0" font-size="13.33">4,271</tspan></text>
+  <text transform="translate(385.229 728)"><tspan x="0" y="0" font-size="13.33">26,252</tspan></text>
+  <text transform="translate(472.229 728)"><tspan x="0" y="0" font-size="13.33">53,079</tspan></text>
+  <text transform="translate(569.229 728)"><tspan x="0" y="0" font-size="13.33">25,940</tspan></text>
+  <text transform="translate(684.229 728)"><tspan x="0" y="0" font-size="13.33">37,859</tspan></text>
+  <text transform="translate(768.229 728)"><tspan x="0" y="0" font-size="13.33">25,777</tspan></text>
+  <text transform="translate(875.229 728)"><tspan x="0" y="0" font-size="13.33">77,821</tspan></text>
+  <text transform="translate(975.643 728)"><tspan x="0" y="0" font-size="13.33">3,651</tspan></text>
+  <text transform="translate(1047.23 728)"><tspan x="0" y="0" font-size="13.33">74,427</tspan></text>
+  <text transform="translate(1132.23 728)"><tspan x="0" y="0" font-size="13.33">43,465</tspan></text>
+  <text transform="translate(1228.23 728)"><tspan x="0" y="0" font-size="13.33">71,958</tspan></text>
+  <text transform="translate(216.794 749)"><tspan x="0" y="0" font-size="13.33">109,111</tspan></text>
+  <text transform="translate(322.643 749)"><tspan x="0" y="0" font-size="13.33">8,212</tspan></text>
+  <text transform="translate(385.229 749)"><tspan x="0" y="0" font-size="13.33">14,583</tspan></text>
+  <text transform="translate(472.229 749)"><tspan x="0" y="0" font-size="13.33">33,176</tspan></text>
+  <text transform="translate(569.229 749)"><tspan x="0" y="0" font-size="13.33">14,731</tspan></text>
+  <text transform="translate(684.229 749)"><tspan x="0" y="0" font-size="13.33">53,648</tspan></text>
+  <text transform="translate(768.229 749)"><tspan x="0" y="0" font-size="13.33">14,576</tspan></text>
+  <text transform="translate(875.229 749)"><tspan x="0" y="0" font-size="13.33">67,299</tspan></text>
+  <text transform="translate(975.643 749)"><tspan x="0" y="0" font-size="13.33">6,955</tspan></text>
+  <text transform="translate(1047.23 749)"><tspan x="0" y="0" font-size="13.33">63,751</tspan></text>
+  <text transform="translate(1132.23 749)"><tspan x="0" y="0" font-size="13.33">32,482</tspan></text>
+  <text transform="translate(1228.23 749)"><tspan x="0" y="0" font-size="13.33">61,241</tspan></text>
+  <text transform="translate(222.229 770)"><tspan x="0" y="0" font-size="13.33">78,021</tspan></text>
+  <text transform="translate(322.643 770)"><tspan x="0" y="0" font-size="13.33">8,760</tspan></text>
+  <text transform="translate(385.229 770)"><tspan x="0" y="0" font-size="13.33">27,164</tspan></text>
+  <text transform="translate(472.229 770)"><tspan x="0" y="0" font-size="13.33">19,138</tspan></text>
+  <text transform="translate(569.229 770)"><tspan x="0" y="0" font-size="13.33">29,201</tspan></text>
+  <text transform="translate(684.229 770)"><tspan x="0" y="0" font-size="13.33">39,234</tspan></text>
+  <text transform="translate(768.229 770)"><tspan x="0" y="0" font-size="13.33">25,122</tspan></text>
+  <text transform="translate(875.229 770)"><tspan x="0" y="0" font-size="13.33">75,609</tspan></text>
+  <text transform="translate(975.643 770)"><tspan x="0" y="0" font-size="13.33">7,134</tspan></text>
+  <text transform="translate(1047.23 770)"><tspan x="0" y="0" font-size="13.33">71,296</tspan></text>
+  <text transform="translate(1132.23 770)"><tspan x="0" y="0" font-size="13.33">40,227</tspan></text>
+  <text transform="translate(1228.23 770)"><tspan x="0" y="0" font-size="13.33">66,383</tspan></text>
+  <text transform="translate(229.643 791)"><tspan x="0" y="0" font-size="13.33">6,530</tspan></text>
+  <text transform="translate(333.76 791)"><tspan x="0" y="0" font-size="13.33">429</tspan></text>
+  <text transform="translate(392.643 791)"><tspan x="0" y="0" font-size="13.33">2,446</tspan></text>
+  <text transform="translate(479.643 791)"><tspan x="0" y="0" font-size="13.33">1,307</tspan></text>
+  <text transform="translate(576.643 791)"><tspan x="0" y="0" font-size="13.33">2,473</tspan></text>
+  <text transform="translate(691.643 791)"><tspan x="0" y="0" font-size="13.33">3,322</tspan></text>
+  <text transform="translate(775.643 791)"><tspan x="0" y="0" font-size="13.33">2,441</tspan></text>
+  <text transform="translate(882.643 791)"><tspan x="0" y="0" font-size="13.33">6,421</tspan></text>
+  <text transform="translate(986.76 791)"><tspan x="0" y="0" font-size="13.33">358</tspan></text>
+  <text transform="translate(1054.643 791)"><tspan x="0" y="0" font-size="13.33">6,067</tspan></text>
+  <text transform="translate(1139.643 791)"><tspan x="0" y="0" font-size="13.33">1,158</tspan></text>
+  <text transform="translate(1235.643 791)"><tspan x="0" y="0" font-size="13.33">6,060</tspan></text>
+  <text transform="translate(203.699 896)"><tspan x="0" y="0" font-size="13.33">2,304,147</tspan></text>
+  <text transform="translate(296.699 896)"><tspan x="0" y="0" font-size="13.33">2,680,965</tspan></text>
+  <text transform="translate(366.699 896)"><tspan x="0" y="0" font-size="13.33">2,506,266</tspan></text>
+  <text transform="translate(453.699 896)"><tspan x="0" y="0" font-size="13.33">2,320,186</tspan></text>
+  <text transform="translate(550.699 896)"><tspan x="0" y="0" font-size="13.33">2,717,391</tspan></text>
+  <text transform="translate(684.229 896)"><tspan x="0" y="0" font-size="13.33">13,223</tspan></text>
+  <text transform="translate(749.699 896)"><tspan x="0" y="0" font-size="13.33">1,367,989</tspan></text>
+  <text transform="translate(856.699 896)"><tspan x="0" y="0" font-size="13.33">1,275,510</tspan></text>
+  <text transform="translate(950.688 896)"><tspan x="0" y="0" font-size="13.33">1,335,113</tspan></text>
+  <text transform="translate(1028.699 896)"><tspan x="0" y="0" font-size="13.33">1,333,333</tspan></text>
+  <text transform="translate(1124.816 896)"><tspan x="0" y="0" font-size="13.33">388,651</tspan></text>
+  <text transform="translate(1228.23 896)"><tspan x="0" y="0" font-size="13.33">51,232</tspan></text>
+  <text transform="translate(203.699 917)"><tspan x="0" y="0" font-size="13.33">2,247,191</tspan></text>
+  <text transform="translate(296.699 917)"><tspan x="0" y="0" font-size="13.33">2,638,522</tspan></text>
+  <text transform="translate(366.699 917)"><tspan x="0" y="0" font-size="13.33">2,409,639</tspan></text>
+  <text transform="translate(453.699 917)"><tspan x="0" y="0" font-size="13.33">2,227,171</tspan></text>
+  <text transform="translate(550.699 917)"><tspan x="0" y="0" font-size="13.33">2,645,503</tspan></text>
+  <text transform="translate(684.229 917)"><tspan x="0" y="0" font-size="13.33">15,305</tspan></text>
+  <text transform="translate(749.699 917)"><tspan x="0" y="0" font-size="13.33">1,540,832</tspan></text>
+  <text transform="translate(856.699 917)"><tspan x="0" y="0" font-size="13.33">1,326,260</tspan></text>
+  <text transform="translate(949.699 917)"><tspan x="0" y="0" font-size="13.33">1,353,180</tspan></text>
+  <text transform="translate(1028.699 917)"><tspan x="0" y="0" font-size="13.33">1,375,516</tspan></text>
+  <text transform="translate(1113.699 917)"><tspan x="0" y="0" font-size="13.33">1,577,287</tspan></text>
+  <text transform="translate(1228.23 917)"><tspan x="0" y="0" font-size="13.33">45,581</tspan></text>
+  <text transform="translate(203.699 938)"><tspan x="0" y="0" font-size="13.33">1,291,990</tspan></text>
+  <text transform="translate(296.699 938)"><tspan x="0" y="0" font-size="13.33">1,298,701</tspan></text>
+  <text transform="translate(385.229 938)"><tspan x="0" y="0" font-size="13.33">43,683</tspan></text>
+  <text transform="translate(453.699 938)"><tspan x="0" y="0" font-size="13.33">1,288,660</tspan></text>
+  <text transform="translate(550.699 938)"><tspan x="0" y="0" font-size="13.33">1,287,001</tspan></text>
+  <text transform="translate(684.229 938)"><tspan x="0" y="0" font-size="13.33">12,629</tspan></text>
+  <text transform="translate(768.229 938)"><tspan x="0" y="0" font-size="13.33">41,839</tspan></text>
+  <text transform="translate(867.816 938)"><tspan x="0" y="0" font-size="13.33">297,089</tspan></text>
+  <text transform="translate(960.816 938)"><tspan x="0" y="0" font-size="13.33">305,250</tspan></text>
+  <text transform="translate(1047.23 938)"><tspan x="0" y="0" font-size="13.33">17,256</tspan></text>
+  <text transform="translate(1124.816 938)"><tspan x="0" y="0" font-size="13.33">303,306</tspan></text>
+  <text transform="translate(1228.23 938)"><tspan x="0" y="0" font-size="13.33">53,206</tspan></text>
+  <text transform="translate(214.816 959)"><tspan x="0" y="0" font-size="13.33">619,963</tspan></text>
+  <text transform="translate(307.816 959)"><tspan x="0" y="0" font-size="13.33">638,162</tspan></text>
+  <text transform="translate(385.229 959)"><tspan x="0" y="0" font-size="13.33">36,960</tspan></text>
+  <text transform="translate(464.816 959)"><tspan x="0" y="0" font-size="13.33">638,978</tspan></text>
+  <text transform="translate(561.816 959)"><tspan x="0" y="0" font-size="13.33">621,891</tspan></text>
+  <text transform="translate(684.229 959)"><tspan x="0" y="0" font-size="13.33">22,706</tspan></text>
+  <text transform="translate(768.229 959)"><tspan x="0" y="0" font-size="13.33">36,753</tspan></text>
+  <text transform="translate(856.699 959)"><tspan x="0" y="0" font-size="13.33">2,020,202</tspan></text>
+  <text transform="translate(949.699 959)"><tspan x="0" y="0" font-size="13.33">2,227,171</tspan></text>
+  <text transform="translate(1047.23 959)"><tspan x="0" y="0" font-size="13.33">22,027</tspan></text>
+  <text transform="translate(1113.699 959)"><tspan x="0" y="0" font-size="13.33">2,217,295</tspan></text>
+  <text transform="translate(1228.23 959)"><tspan x="0" y="0" font-size="13.33">54,517</tspan></text>
+  <text transform="translate(214.816 980)"><tspan x="0" y="0" font-size="13.33">833,333</tspan></text>
+  <text transform="translate(308.805 980)"><tspan x="0" y="0" font-size="13.33">811,688</tspan></text>
+  <text transform="translate(385.229 980)"><tspan x="0" y="0" font-size="13.33">38,561</tspan></text>
+  <text transform="translate(464.816 980)"><tspan x="0" y="0" font-size="13.33">842,460</tspan></text>
+  <text transform="translate(561.816 980)"><tspan x="0" y="0" font-size="13.33">822,368</tspan></text>
+  <text transform="translate(684.229 980)"><tspan x="0" y="0" font-size="13.33">20,491</tspan></text>
+  <text transform="translate(768.229 980)"><tspan x="0" y="0" font-size="13.33">37,121</tspan></text>
+  <text transform="translate(867.816 980)"><tspan x="0" y="0" font-size="13.33">688,231</tspan></text>
+  <text transform="translate(960.816 980)"><tspan x="0" y="0" font-size="13.33">685,871</tspan></text>
+  <text transform="translate(1047.23 980)"><tspan x="0" y="0" font-size="13.33">23,098</tspan></text>
+  <text transform="translate(1124.816 980)"><tspan x="0" y="0" font-size="13.33">739,098</tspan></text>
+  <text transform="translate(1228.23 980)"><tspan x="0" y="0" font-size="13.33">47,787</tspan></text>
+  <text transform="translate(222.229 1001)"><tspan x="0" y="0" font-size="13.33">82,028</tspan></text>
+  <text transform="translate(315.229 1001)"><tspan x="0" y="0" font-size="13.33">82,014</tspan></text>
+  <text transform="translate(385.229 1001)"><tspan x="0" y="0" font-size="13.33">39,939</tspan></text>
+  <text transform="translate(479.643 1001)"><tspan x="0" y="0" font-size="13.33">5,777</tspan></text>
+  <text transform="translate(576.643 1001)"><tspan x="0" y="0" font-size="13.33">5,795</tspan></text>
+  <text transform="translate(684.229 1001)"><tspan x="0" y="0" font-size="13.33">12,588</tspan></text>
+  <text transform="translate(768.229 1001)"><tspan x="0" y="0" font-size="13.33">39,017</tspan></text>
+  <text transform="translate(868.805 1001)"><tspan x="0" y="0" font-size="13.33">110,436</tspan></text>
+  <text transform="translate(961.805 1001)"><tspan x="0" y="0" font-size="13.33">110,583</tspan></text>
+  <text transform="translate(1047.23 1001)"><tspan x="0" y="0" font-size="13.33">17,207</tspan></text>
+  <text transform="translate(1132.23 1001)"><tspan x="0" y="0" font-size="13.33">20,891</tspan></text>
+  <text transform="translate(1228.23 1001)"><tspan x="0" y="0" font-size="13.33">49,998</tspan></text>
+  <text transform="translate(222.229 1022)"><tspan x="0" y="0" font-size="13.33">49,186</tspan></text>
+  <text transform="translate(315.229 1022)"><tspan x="0" y="0" font-size="13.33">48,804</tspan></text>
+  <text transform="translate(385.229 1022)"><tspan x="0" y="0" font-size="13.33">36,707</tspan></text>
+  <text transform="translate(472.229 1022)"><tspan x="0" y="0" font-size="13.33">13,648</tspan></text>
+  <text transform="translate(569.229 1022)"><tspan x="0" y="0" font-size="13.33">13,499</tspan></text>
+  <text transform="translate(684.229 1022)"><tspan x="0" y="0" font-size="13.33">22,933</tspan></text>
+  <text transform="translate(768.229 1022)"><tspan x="0" y="0" font-size="13.33">36,225</tspan></text>
+  <text transform="translate(868.805 1022)"><tspan x="0" y="0" font-size="13.33">211,954</tspan></text>
+  <text transform="translate(960.816 1022)"><tspan x="0" y="0" font-size="13.33">214,133</tspan></text>
+  <text transform="translate(1047.23 1022)"><tspan x="0" y="0" font-size="13.33">22,890</tspan></text>
+  <text transform="translate(1132.23 1022)"><tspan x="0" y="0" font-size="13.33">12,748</tspan></text>
+  <text transform="translate(1228.23 1022)"><tspan x="0" y="0" font-size="13.33">66,774</tspan></text>
+  <text transform="translate(222.229 1043)"><tspan x="0" y="0" font-size="13.33">47,246</tspan></text>
+  <text transform="translate(315.229 1043)"><tspan x="0" y="0" font-size="13.33">47,819</tspan></text>
+  <text transform="translate(385.229 1043)"><tspan x="0" y="0" font-size="13.33">44,068</tspan></text>
+  <text transform="translate(479.643 1043)"><tspan x="0" y="0" font-size="13.33">7,529</tspan></text>
+  <text transform="translate(576.643 1043)"><tspan x="0" y="0" font-size="13.33">7,575</tspan></text>
+  <text transform="translate(684.229 1043)"><tspan x="0" y="0" font-size="13.33">22,254</tspan></text>
+  <text transform="translate(768.229 1043)"><tspan x="0" y="0" font-size="13.33">42,389</tspan></text>
+  <text transform="translate(875.229 1043)"><tspan x="0" y="0" font-size="13.33">94,322</tspan></text>
+  <text transform="translate(968.229 1043)"><tspan x="0" y="0" font-size="13.33">98,834</tspan></text>
+  <text transform="translate(1047.23 1043)"><tspan x="0" y="0" font-size="13.33">22,948</tspan></text>
+  <text transform="translate(1132.23 1043)"><tspan x="0" y="0" font-size="13.33">12,815</tspan></text>
+  <text transform="translate(1228.23 1043)"><tspan x="0" y="0" font-size="13.33">32,060</tspan></text>
+  <text transform="translate(229.643 1064)"><tspan x="0" y="0" font-size="13.33">4,749</tspan></text>
+  <text transform="translate(322.643 1064)"><tspan x="0" y="0" font-size="13.33">4,868</tspan></text>
+  <text transform="translate(392.643 1064)"><tspan x="0" y="0" font-size="13.33">1,733</tspan></text>
+  <text transform="translate(491.749 1064)"><tspan x="0" y="0" font-size="13.33">711</tspan></text>
+  <text transform="translate(587.76 1064)"><tspan x="0" y="0" font-size="13.33">700</tspan></text>
+  <text transform="translate(691.643 1064)"><tspan x="0" y="0" font-size="13.33">1,141</tspan></text>
+  <text transform="translate(775.643 1064)"><tspan x="0" y="0" font-size="13.33">1,728</tspan></text>
+  <text transform="translate(876.218 1064)"><tspan x="0" y="0" font-size="13.33">52,110</tspan></text>
+  <text transform="translate(960.816 1064)"><tspan x="0" y="0" font-size="13.33">103,918</tspan></text>
+  <text transform="translate(1065.76 1064)"><tspan x="0" y="0" font-size="13.33">866</tspan></text>
+  <text transform="translate(1132.23 1064)"><tspan x="0" y="0" font-size="13.33">97,305</tspan></text>
+  <text transform="translate(1235.643 1064)"><tspan x="0" y="0" font-size="13.33">1,330</tspan></text>
+  <text transform="translate(222.229 1138)"><tspan x="0" y="0" font-size="13.33">23,506</tspan></text>
+  <text transform="translate(315.229 1138)"><tspan x="0" y="0" font-size="13.33">24,163</tspan></text>
+  <text transform="translate(385.229 1138)"><tspan x="0" y="0" font-size="13.33">23,255</tspan></text>
+  <text transform="translate(472.229 1138)"><tspan x="0" y="0" font-size="13.33">23,678</tspan></text>
+  <text transform="translate(569.229 1138)"><tspan x="0" y="0" font-size="13.33">24,195</tspan></text>
+  <text transform="translate(691.643 1138)"><tspan x="0" y="0" font-size="13.33">6,934</tspan></text>
+  <text transform="translate(768.229 1138)"><tspan x="0" y="0" font-size="13.33">23,702</tspan></text>
+  <text transform="translate(875.229 1138)"><tspan x="0" y="0" font-size="13.33">45,481</tspan></text>
+  <text transform="translate(968.229 1138)"><tspan x="0" y="0" font-size="13.33">46,635</tspan></text>
+  <text transform="translate(1047.23 1138)"><tspan x="0" y="0" font-size="13.33">46,640</tspan></text>
+  <text transform="translate(1132.23 1138)"><tspan x="0" y="0" font-size="13.33">47,284</tspan></text>
+  <text transform="translate(1228.23 1138)"><tspan x="0" y="0" font-size="13.33">23,063</tspan></text>
+  <text transform="translate(222.229 1159)"><tspan x="0" y="0" font-size="13.33">23,102</tspan></text>
+  <text transform="translate(315.229 1159)"><tspan x="0" y="0" font-size="13.33">23,797</tspan></text>
+  <text transform="translate(385.229 1159)"><tspan x="0" y="0" font-size="13.33">23,355</tspan></text>
+  <text transform="translate(472.229 1159)"><tspan x="0" y="0" font-size="13.33">23,395</tspan></text>
+  <text transform="translate(569.229 1159)"><tspan x="0" y="0" font-size="13.33">23,436</tspan></text>
+  <text transform="translate(691.643 1159)"><tspan x="0" y="0" font-size="13.33">7,395</tspan></text>
+  <text transform="translate(768.229 1159)"><tspan x="0" y="0" font-size="13.33">22,715</tspan></text>
+  <text transform="translate(875.229 1159)"><tspan x="0" y="0" font-size="13.33">54,392</tspan></text>
+  <text transform="translate(968.229 1159)"><tspan x="0" y="0" font-size="13.33">60,485</tspan></text>
+  <text transform="translate(1047.23 1159)"><tspan x="0" y="0" font-size="13.33">61,778</tspan></text>
+  <text transform="translate(1132.23 1159)"><tspan x="0" y="0" font-size="13.33">62,027</tspan></text>
+  <text transform="translate(1228.23 1159)"><tspan x="0" y="0" font-size="13.33">21,039</tspan></text>
+  <text transform="translate(222.229 1180)"><tspan x="0" y="0" font-size="13.33">49,094</tspan></text>
+  <text transform="translate(315.229 1180)"><tspan x="0" y="0" font-size="13.33">49,077</tspan></text>
+  <text transform="translate(385.229 1180)"><tspan x="0" y="0" font-size="13.33">24,770</tspan></text>
+  <text transform="translate(472.229 1180)"><tspan x="0" y="0" font-size="13.33">49,222</tspan></text>
+  <text transform="translate(569.229 1180)"><tspan x="0" y="0" font-size="13.33">49,077</tspan></text>
+  <text transform="translate(691.643 1180)"><tspan x="0" y="0" font-size="13.33">7,443</tspan></text>
+  <text transform="translate(768.229 1180)"><tspan x="0" y="0" font-size="13.33">24,156</tspan></text>
+  <text transform="translate(875.229 1180)"><tspan x="0" y="0" font-size="13.33">45,641</tspan></text>
+  <text transform="translate(968.229 1180)"><tspan x="0" y="0" font-size="13.33">46,132</tspan></text>
+  <text transform="translate(1047.23 1180)"><tspan x="0" y="0" font-size="13.33">10,794</tspan></text>
+  <text transform="translate(1132.23 1180)"><tspan x="0" y="0" font-size="13.33">46,130</tspan></text>
+  <text transform="translate(1228.23 1180)"><tspan x="0" y="0" font-size="13.33">23,179</tspan></text>
+  <text transform="translate(222.229 1201)"><tspan x="0" y="0" font-size="13.33">35,520</tspan></text>
+  <text transform="translate(315.229 1201)"><tspan x="0" y="0" font-size="13.33">35,818</tspan></text>
+  <text transform="translate(385.229 1201)"><tspan x="0" y="0" font-size="13.33">22,695</tspan></text>
+  <text transform="translate(472.229 1201)"><tspan x="0" y="0" font-size="13.33">35,599</tspan></text>
+  <text transform="translate(569.229 1201)"><tspan x="0" y="0" font-size="13.33">35,862</tspan></text>
+  <text transform="translate(691.643 1201)"><tspan x="0" y="0" font-size="13.33">7,804</tspan></text>
+  <text transform="translate(768.229 1201)"><tspan x="0" y="0" font-size="13.33">22,082</tspan></text>
+  <text transform="translate(875.229 1201)"><tspan x="0" y="0" font-size="13.33">39,664</tspan></text>
+  <text transform="translate(968.229 1201)"><tspan x="0" y="0" font-size="13.33">42,488</tspan></text>
+  <text transform="translate(1047.23 1201)"><tspan x="0" y="0" font-size="13.33">14,392</tspan></text>
+  <text transform="translate(1132.23 1201)"><tspan x="0" y="0" font-size="13.33">42,246</tspan></text>
+  <text transform="translate(1228.23 1201)"><tspan x="0" y="0" font-size="13.33">30,850</tspan></text>
+  <text transform="translate(222.229 1222)"><tspan x="0" y="0" font-size="13.33">54,654</tspan></text>
+  <text transform="translate(315.229 1222)"><tspan x="0" y="0" font-size="13.33">54,705</tspan></text>
+  <text transform="translate(385.229 1222)"><tspan x="0" y="0" font-size="13.33">23,157</tspan></text>
+  <text transform="translate(472.229 1222)"><tspan x="0" y="0" font-size="13.33">54,906</tspan></text>
+  <text transform="translate(569.229 1222)"><tspan x="0" y="0" font-size="13.33">54,759</tspan></text>
+  <text transform="translate(691.643 1222)"><tspan x="0" y="0" font-size="13.33">9,033</tspan></text>
+  <text transform="translate(768.229 1222)"><tspan x="0" y="0" font-size="13.33">22,852</tspan></text>
+  <text transform="translate(875.229 1222)"><tspan x="0" y="0" font-size="13.33">50,135</tspan></text>
+  <text transform="translate(968.229 1222)"><tspan x="0" y="0" font-size="13.33">55,685</tspan></text>
+  <text transform="translate(1054.643 1222)"><tspan x="0" y="0" font-size="13.33">6,129</tspan></text>
+  <text transform="translate(1132.23 1222)"><tspan x="0" y="0" font-size="13.33">56,309</tspan></text>
+  <text transform="translate(1228.23 1222)"><tspan x="0" y="0" font-size="13.33">21,563</tspan></text>
+  <text transform="translate(222.229 1243)"><tspan x="0" y="0" font-size="13.33">26,870</tspan></text>
+  <text transform="translate(315.229 1243)"><tspan x="0" y="0" font-size="13.33">27,125</tspan></text>
+  <text transform="translate(385.229 1243)"><tspan x="0" y="0" font-size="13.33">24,913</tspan></text>
+  <text transform="translate(479.643 1243)"><tspan x="0" y="0" font-size="13.33">2,828</tspan></text>
+  <text transform="translate(576.643 1243)"><tspan x="0" y="0" font-size="13.33">2,879</tspan></text>
+  <text transform="translate(691.643 1243)"><tspan x="0" y="0" font-size="13.33">7,455</tspan></text>
+  <text transform="translate(768.229 1243)"><tspan x="0" y="0" font-size="13.33">24,226</tspan></text>
+  <text transform="translate(875.229 1243)"><tspan x="0" y="0" font-size="13.33">30,374</tspan></text>
+  <text transform="translate(968.229 1243)"><tspan x="0" y="0" font-size="13.33">30,343</tspan></text>
+  <text transform="translate(1047.23 1243)"><tspan x="0" y="0" font-size="13.33">10,866</tspan></text>
+  <text transform="translate(1139.643 1243)"><tspan x="0" y="0" font-size="13.33">9,144</tspan></text>
+  <text transform="translate(1228.23 1243)"><tspan x="0" y="0" font-size="13.33">24,014</tspan></text>
+  <text transform="translate(222.229 1264)"><tspan x="0" y="0" font-size="13.33">25,228</tspan></text>
+  <text transform="translate(315.229 1264)"><tspan x="0" y="0" font-size="13.33">25,178</tspan></text>
+  <text transform="translate(385.229 1264)"><tspan x="0" y="0" font-size="13.33">23,092</tspan></text>
+  <text transform="translate(479.643 1264)"><tspan x="0" y="0" font-size="13.33">5,502</tspan></text>
+  <text transform="translate(576.643 1264)"><tspan x="0" y="0" font-size="13.33">5,450</tspan></text>
+  <text transform="translate(691.643 1264)"><tspan x="0" y="0" font-size="13.33">8,154</tspan></text>
+  <text transform="translate(768.229 1264)"><tspan x="0" y="0" font-size="13.33">22,937</tspan></text>
+  <text transform="translate(875.229 1264)"><tspan x="0" y="0" font-size="13.33">43,601</tspan></text>
+  <text transform="translate(968.229 1264)"><tspan x="0" y="0" font-size="13.33">44,283</tspan></text>
+  <text transform="translate(1047.23 1264)"><tspan x="0" y="0" font-size="13.33">14,522</tspan></text>
+  <text transform="translate(1139.643 1264)"><tspan x="0" y="0" font-size="13.33">5,504</tspan></text>
+  <text transform="translate(1228.23 1264)"><tspan x="0" y="0" font-size="13.33">30,122</tspan></text>
+  <text transform="translate(222.229 1285)"><tspan x="0" y="0" font-size="13.33">18,523</tspan></text>
+  <text transform="translate(315.229 1285)"><tspan x="0" y="0" font-size="13.33">18,499</tspan></text>
+  <text transform="translate(385.229 1285)"><tspan x="0" y="0" font-size="13.33">23,062</tspan></text>
+  <text transform="translate(479.643 1285)"><tspan x="0" y="0" font-size="13.33">3,363</tspan></text>
+  <text transform="translate(576.643 1285)"><tspan x="0" y="0" font-size="13.33">3,341</tspan></text>
+  <text transform="translate(691.643 1285)"><tspan x="0" y="0" font-size="13.33">9,020</tspan></text>
+  <text transform="translate(768.229 1285)"><tspan x="0" y="0" font-size="13.33">22,397</tspan></text>
+  <text transform="translate(875.229 1285)"><tspan x="0" y="0" font-size="13.33">23,807</tspan></text>
+  <text transform="translate(968.229 1285)"><tspan x="0" y="0" font-size="13.33">23,827</tspan></text>
+  <text transform="translate(1054.643 1285)"><tspan x="0" y="0" font-size="13.33">7,073</tspan></text>
+  <text transform="translate(1139.643 1285)"><tspan x="0" y="0" font-size="13.33">6,155</tspan></text>
+  <text transform="translate(1228.23 1285)"><tspan x="0" y="0" font-size="13.33">15,485</tspan></text>
+  <text transform="translate(229.643 1306)"><tspan x="0" y="0" font-size="13.33">2,881</tspan></text>
+  <text transform="translate(322.643 1306)"><tspan x="0" y="0" font-size="13.33">2,918</tspan></text>
+  <text transform="translate(392.643 1306)"><tspan x="0" y="0" font-size="13.33">1,448</tspan></text>
+  <text transform="translate(490.76 1306)"><tspan x="0" y="0" font-size="13.33">404</tspan></text>
+  <text transform="translate(587.76 1306)"><tspan x="0" y="0" font-size="13.33">406</tspan></text>
+  <text transform="translate(702.76 1306)"><tspan x="0" y="0" font-size="13.33">832</tspan></text>
+  <text transform="translate(775.643 1306)"><tspan x="0" y="0" font-size="13.33">1,446</tspan></text>
+  <text transform="translate(875.229 1306)"><tspan x="0" y="0" font-size="13.33">21,317</tspan></text>
+  <text transform="translate(969.218 1306)"><tspan x="0" y="0" font-size="13.33">32,114</tspan></text>
+  <text transform="translate(1065.76 1306)"><tspan x="0" y="0" font-size="13.33">552</tspan></text>
+  <text transform="translate(1132.23 1306)"><tspan x="0" y="0" font-size="13.33">31,754</tspan></text>
+  <text transform="translate(1246.76 1306)"><tspan x="0" y="0" font-size="13.33">752</tspan></text>
+  <text transform="translate(222.229 1380)"><tspan x="0" y="0" font-size="13.33">98,610</tspan></text>
+  <text transform="translate(322.643 1380)"><tspan x="0" y="0" font-size="13.33">4,337</tspan></text>
+  <text transform="translate(392.643 1380)"><tspan x="0" y="0" font-size="13.33">9,277</tspan></text>
+  <text transform="translate(479.643 1380)"><tspan x="0" y="0" font-size="13.33">6,953</tspan></text>
+  <text transform="translate(617.134 1380)"><tspan x="0" y="0" font-size="13.33">1,353,180</tspan></text>
+  <text transform="translate(721.251 1380)"><tspan x="0" y="0" font-size="13.33">230,044</tspan></text>
+  <text transform="translate(800.251 1380)"><tspan x="0" y="0" font-size="13.33">796,178</tspan></text>
+  <text transform="translate(885.251 1380)"><tspan x="0" y="0" font-size="13.33">949,668</tspan></text>
+  <text transform="translate(1055.43 1380)"><tspan x="0" y="0" font-size="13.33">346,741</tspan></text>
+  <text transform="translate(1145.43 1380)"><tspan x="0" y="0" font-size="13.33">143,493</tspan></text>
+  <text transform="translate(1220.43 1380)"><tspan x="0" y="0" font-size="13.33">325,733</tspan></text>
+  <text transform="translate(214.816 1401)"><tspan x="0" y="0" font-size="13.33">145,879</tspan></text>
+  <text transform="translate(322.643 1401)"><tspan x="0" y="0" font-size="13.33">5,091</tspan></text>
+  <text transform="translate(386.218 1401)"><tspan x="0" y="0" font-size="13.33">11,922</tspan></text>
+  <text transform="translate(479.643 1401)"><tspan x="0" y="0" font-size="13.33">6,654</tspan></text>
+  <text transform="translate(617.134 1401)"><tspan x="0" y="0" font-size="13.33">1,317,523</tspan></text>
+  <text transform="translate(721.251 1401)"><tspan x="0" y="0" font-size="13.33">215,657</tspan></text>
+  <text transform="translate(800.251 1401)"><tspan x="0" y="0" font-size="13.33">790,514</tspan></text>
+  <text transform="translate(885.251 1401)"><tspan x="0" y="0" font-size="13.33">929,368</tspan></text>
+  <text transform="translate(1055.43 1401)"><tspan x="0" y="0" font-size="13.33">347,947</tspan></text>
+  <text transform="translate(1145.43 1401)"><tspan x="0" y="0" font-size="13.33">145,243</tspan></text>
+  <text transform="translate(1220.43 1401)"><tspan x="0" y="0" font-size="13.33">327,761</tspan></text>
+  <text transform="translate(222.229 1422)"><tspan x="0" y="0" font-size="13.33">85,077</tspan></text>
+  <text transform="translate(322.643 1422)"><tspan x="0" y="0" font-size="13.33">4,319</tspan></text>
+  <text transform="translate(386.218 1422)"><tspan x="0" y="0" font-size="13.33">10,011</tspan></text>
+  <text transform="translate(479.643 1422)"><tspan x="0" y="0" font-size="13.33">7,091</tspan></text>
+  <text transform="translate(617.134 1422)"><tspan x="0" y="0" font-size="13.33">1,183,432</tspan></text>
+  <text transform="translate(721.251 1422)"><tspan x="0" y="0" font-size="13.33">244,200</tspan></text>
+  <text transform="translate(800.251 1422)"><tspan x="0" y="0" font-size="13.33">768,049</tspan></text>
+  <text transform="translate(885.251 1422)"><tspan x="0" y="0" font-size="13.33">816,327</tspan></text>
+  <text transform="translate(1055.43 1422)"><tspan x="0" y="0" font-size="13.33">349,040</tspan></text>
+  <text transform="translate(1145.43 1422)"><tspan x="0" y="0" font-size="13.33">146,499</tspan></text>
+  <text transform="translate(1220.43 1422)"><tspan x="0" y="0" font-size="13.33">273,673</tspan></text>
+  <text transform="translate(214.816 1443)"><tspan x="0" y="0" font-size="13.33">167,870</tspan></text>
+  <text transform="translate(315.229 1443)"><tspan x="0" y="0" font-size="13.33">10,608</tspan></text>
+  <text transform="translate(392.643 1443)"><tspan x="0" y="0" font-size="13.33">7,546</tspan></text>
+  <text transform="translate(479.643 1443)"><tspan x="0" y="0" font-size="13.33">9,410</tspan></text>
+  <text transform="translate(617.134 1443)"><tspan x="0" y="0" font-size="13.33">1,383,126</tspan></text>
+  <text transform="translate(721.251 1443)"><tspan x="0" y="0" font-size="13.33">221,386</tspan></text>
+  <text transform="translate(800.251 1443)"><tspan x="0" y="0" font-size="13.33">506,586</tspan></text>
+  <text transform="translate(874.134 1443)"><tspan x="0" y="0" font-size="13.33">1,070,664</tspan></text>
+  <text transform="translate(1055.43 1443)"><tspan x="0" y="0" font-size="13.33">349,406</tspan></text>
+  <text transform="translate(1145.43 1443)"><tspan x="0" y="0" font-size="13.33">133,529</tspan></text>
+  <text transform="translate(1220.43 1443)"><tspan x="0" y="0" font-size="13.33">225,479</tspan></text>
+  <text transform="translate(222.229 1464)"><tspan x="0" y="0" font-size="13.33">99,790</tspan></text>
+  <text transform="translate(322.643 1464)"><tspan x="0" y="0" font-size="13.33">4,403</tspan></text>
+  <text transform="translate(392.643 1464)"><tspan x="0" y="0" font-size="13.33">7,699</tspan></text>
+  <text transform="translate(479.643 1464)"><tspan x="0" y="0" font-size="13.33">8,442</tspan></text>
+  <text transform="translate(617.134 1464)"><tspan x="0" y="0" font-size="13.33">1,034,126</tspan></text>
+  <text transform="translate(721.251 1464)"><tspan x="0" y="0" font-size="13.33">203,128</tspan></text>
+  <text transform="translate(800.251 1464)"><tspan x="0" y="0" font-size="13.33">228,050</tspan></text>
+  <text transform="translate(885.251 1464)"><tspan x="0" y="0" font-size="13.33">560,852</tspan></text>
+  <text transform="translate(1056.42 1464)"><tspan x="0" y="0" font-size="13.33">118,991</tspan></text>
+  <text transform="translate(1152.844 1464)"><tspan x="0" y="0" font-size="13.33">90,131</tspan></text>
+  <text transform="translate(1227.844 1464)"><tspan x="0" y="0" font-size="13.33">92,928</tspan></text>
+  <text transform="translate(222.229 1485)"><tspan x="0" y="0" font-size="13.33">68,087</tspan></text>
+  <text transform="translate(322.643 1485)"><tspan x="0" y="0" font-size="13.33">4,538</tspan></text>
+  <text transform="translate(385.229 1485)"><tspan x="0" y="0" font-size="13.33">10,262</tspan></text>
+  <text transform="translate(479.643 1485)"><tspan x="0" y="0" font-size="13.33">7,494</tspan></text>
+  <text transform="translate(617.134 1485)"><tspan x="0" y="0" font-size="13.33">1,237,624</tspan></text>
+  <text transform="translate(721.251 1485)"><tspan x="0" y="0" font-size="13.33">251,889</tspan></text>
+  <text transform="translate(800.251 1485)"><tspan x="0" y="0" font-size="13.33">761,615</tspan></text>
+  <text transform="translate(885.251 1485)"><tspan x="0" y="0" font-size="13.33">819,001</tspan></text>
+  <text transform="translate(1055.43 1485)"><tspan x="0" y="0" font-size="13.33">349,650</tspan></text>
+  <text transform="translate(1145.43 1485)"><tspan x="0" y="0" font-size="13.33">149,098</tspan></text>
+  <text transform="translate(1220.43 1485)"><tspan x="0" y="0" font-size="13.33">275,028</tspan></text>
+  <text transform="translate(214.816 1506)"><tspan x="0" y="0" font-size="13.33">136,333</tspan></text>
+  <text transform="translate(315.229 1506)"><tspan x="0" y="0" font-size="13.33">10,400</tspan></text>
+  <text transform="translate(392.643 1506)"><tspan x="0" y="0" font-size="13.33">7,554</tspan></text>
+  <text transform="translate(479.643 1506)"><tspan x="0" y="0" font-size="13.33">9,363</tspan></text>
+  <text transform="translate(617.134 1506)"><tspan x="0" y="0" font-size="13.33">1,392,758</tspan></text>
+  <text transform="translate(721.251 1506)"><tspan x="0" y="0" font-size="13.33">215,424</tspan></text>
+  <text transform="translate(800.251 1506)"><tspan x="0" y="0" font-size="13.33">518,672</tspan></text>
+  <text transform="translate(885.251 1506)"><tspan x="0" y="0" font-size="13.33">992,063</tspan></text>
+  <text transform="translate(1055.43 1506)"><tspan x="0" y="0" font-size="13.33">332,889</tspan></text>
+  <text transform="translate(1145.43 1506)"><tspan x="0" y="0" font-size="13.33">137,874</tspan></text>
+  <text transform="translate(1220.43 1506)"><tspan x="0" y="0" font-size="13.33">241,955</tspan></text>
+  <text transform="translate(222.229 1527)"><tspan x="0" y="0" font-size="13.33">67,627</tspan></text>
+  <text transform="translate(322.643 1527)"><tspan x="0" y="0" font-size="13.33">4,768</tspan></text>
+  <text transform="translate(392.643 1527)"><tspan x="0" y="0" font-size="13.33">8,084</tspan></text>
+  <text transform="translate(479.643 1527)"><tspan x="0" y="0" font-size="13.33">8,629</tspan></text>
+  <text transform="translate(617.134 1527)"><tspan x="0" y="0" font-size="13.33">1,272,265</tspan></text>
+  <text transform="translate(721.251 1527)"><tspan x="0" y="0" font-size="13.33">209,249</tspan></text>
+  <text transform="translate(800.251 1527)"><tspan x="0" y="0" font-size="13.33">246,427</tspan></text>
+  <text transform="translate(885.251 1527)"><tspan x="0" y="0" font-size="13.33">595,238</tspan></text>
+  <text transform="translate(1055.43 1527)"><tspan x="0" y="0" font-size="13.33">173,040</tspan></text>
+  <text transform="translate(1145.43 1527)"><tspan x="0" y="0" font-size="13.33">100,624</tspan></text>
+  <text transform="translate(1221.42 1527)"><tspan x="0" y="0" font-size="13.33">114,090</tspan></text>
+  <text transform="translate(229.643 1548)"><tspan x="0" y="0" font-size="13.33">4,400</tspan></text>
+  <text transform="translate(333.76 1548)"><tspan x="0" y="0" font-size="13.33">447</tspan></text>
+  <text transform="translate(403.76 1548)"><tspan x="0" y="0" font-size="13.33">786</tspan></text>
+  <text transform="translate(479.643 1548)"><tspan x="0" y="0" font-size="13.33">1,417</tspan></text>
+  <text transform="translate(628.251 1548)"><tspan x="0" y="0" font-size="13.33">166,362</tspan></text>
+  <text transform="translate(729.654 1548)"><tspan x="0" y="0" font-size="13.33">11,649</tspan></text>
+  <text transform="translate(807.665 1548)"><tspan x="0" y="0" font-size="13.33">21,717</tspan></text>
+  <text transform="translate(892.665 1548)"><tspan x="0" y="0" font-size="13.33">37,298</tspan></text>
+  <text transform="translate(1063.834 1548)"><tspan x="0" y="0" font-size="13.33">11,500</tspan></text>
+  <text transform="translate(1160.258 1548)"><tspan x="0" y="0" font-size="13.33">5,216</tspan></text>
+  <text transform="translate(1235.258 1548)"><tspan x="0" y="0" font-size="13.33">7,362</tspan></text>
+  <text transform="translate(214.816 1622)"><tspan x="0" y="0" font-size="13.33">243,250</tspan></text>
+  <text transform="translate(322.643 1622)"><tspan x="0" y="0" font-size="13.33">4,363</tspan></text>
+  <text transform="translate(385.229 1622)"><tspan x="0" y="0" font-size="13.33">38,004</tspan></text>
+  <text transform="translate(472.229 1622)"><tspan x="0" y="0" font-size="13.33">29,753</tspan></text>
+  <text transform="translate(617.134 1622)"><tspan x="0" y="0" font-size="13.33">1,745,201</tspan></text>
+  <text transform="translate(721.251 1622)"><tspan x="0" y="0" font-size="13.33">213,174</tspan></text>
+  <text transform="translate(800.251 1622)"><tspan x="0" y="0" font-size="13.33">529,661</tspan></text>
+  <text transform="translate(885.251 1622)"><tspan x="0" y="0" font-size="13.33">502,513</tspan></text>
+  <text transform="translate(1055.43 1622)"><tspan x="0" y="0" font-size="13.33">366,569</tspan></text>
+  <text transform="translate(1145.43 1622)"><tspan x="0" y="0" font-size="13.33">131,354</tspan></text>
+  <text transform="translate(1220.43 1622)"><tspan x="0" y="0" font-size="13.33">246,366</tspan></text>
+  <text transform="translate(214.816 1643)"><tspan x="0" y="0" font-size="13.33">241,313</tspan></text>
+  <text transform="translate(322.643 1643)"><tspan x="0" y="0" font-size="13.33">4,628</tspan></text>
+  <text transform="translate(385.229 1643)"><tspan x="0" y="0" font-size="13.33">31,041</tspan></text>
+  <text transform="translate(472.229 1643)"><tspan x="0" y="0" font-size="13.33">27,063</tspan></text>
+  <text transform="translate(617.134 1643)"><tspan x="0" y="0" font-size="13.33">2,061,856</tspan></text>
+  <text transform="translate(721.251 1643)"><tspan x="0" y="0" font-size="13.33">213,174</tspan></text>
+  <text transform="translate(800.251 1643)"><tspan x="0" y="0" font-size="13.33">561,167</tspan></text>
+  <text transform="translate(885.251 1643)"><tspan x="0" y="0" font-size="13.33">626,959</tspan></text>
+  <text transform="translate(1055.43 1643)"><tspan x="0" y="0" font-size="13.33">421,941</tspan></text>
+  <text transform="translate(1145.43 1643)"><tspan x="0" y="0" font-size="13.33">131,354</tspan></text>
+  <text transform="translate(1220.43 1643)"><tspan x="0" y="0" font-size="13.33">233,699</tspan></text>
+  <text transform="translate(214.816 1664)"><tspan x="0" y="0" font-size="13.33">187,161</tspan></text>
+  <text transform="translate(322.643 1664)"><tspan x="0" y="0" font-size="13.33">4,375</tspan></text>
+  <text transform="translate(385.229 1664)"><tspan x="0" y="0" font-size="13.33">40,422</tspan></text>
+  <text transform="translate(472.229 1664)"><tspan x="0" y="0" font-size="13.33">25,514</tspan></text>
+  <text transform="translate(617.134 1664)"><tspan x="0" y="0" font-size="13.33">1,569,859</tspan></text>
+  <text transform="translate(722.24 1664)"><tspan x="0" y="0" font-size="13.33">211,193</tspan></text>
+  <text transform="translate(800.251 1664)"><tspan x="0" y="0" font-size="13.33">513,875</tspan></text>
+  <text transform="translate(885.251 1664)"><tspan x="0" y="0" font-size="13.33">469,263</tspan></text>
+  <text transform="translate(1056.42 1664)"><tspan x="0" y="0" font-size="13.33">394,011</tspan></text>
+  <text transform="translate(1145.43 1664)"><tspan x="0" y="0" font-size="13.33">136,203</tspan></text>
+  <text transform="translate(1220.43 1664)"><tspan x="0" y="0" font-size="13.33">221,582</tspan></text>
+  <text transform="translate(214.816 1685)"><tspan x="0" y="0" font-size="13.33">217,533</tspan></text>
+  <text transform="translate(322.643 1685)"><tspan x="0" y="0" font-size="13.33">8,341</tspan></text>
+  <text transform="translate(385.229 1685)"><tspan x="0" y="0" font-size="13.33">41,483</tspan></text>
+  <text transform="translate(472.229 1685)"><tspan x="0" y="0" font-size="13.33">53,259</tspan></text>
+  <text transform="translate(617.134 1685)"><tspan x="0" y="0" font-size="13.33">1,628,664</tspan></text>
+  <text transform="translate(721.251 1685)"><tspan x="0" y="0" font-size="13.33">250,250</tspan></text>
+  <text transform="translate(800.251 1685)"><tspan x="0" y="0" font-size="13.33">557,414</tspan></text>
+  <text transform="translate(885.251 1685)"><tspan x="0" y="0" font-size="13.33">496,524</tspan></text>
+  <text transform="translate(1055.43 1685)"><tspan x="0" y="0" font-size="13.33">373,134</tspan></text>
+  <text transform="translate(1145.43 1685)"><tspan x="0" y="0" font-size="13.33">151,012</tspan></text>
+  <text transform="translate(1220.43 1685)"><tspan x="0" y="0" font-size="13.33">230,203</tspan></text>
+  <text transform="translate(214.816 1706)"><tspan x="0" y="0" font-size="13.33">180,278</tspan></text>
+  <text transform="translate(322.643 1706)"><tspan x="0" y="0" font-size="13.33">7,725</tspan></text>
+  <text transform="translate(385.229 1706)"><tspan x="0" y="0" font-size="13.33">30,677</tspan></text>
+  <text transform="translate(472.229 1706)"><tspan x="0" y="0" font-size="13.33">30,977</tspan></text>
+  <text transform="translate(617.134 1706)"><tspan x="0" y="0" font-size="13.33">1,424,501</tspan></text>
+  <text transform="translate(721.251 1706)"><tspan x="0" y="0" font-size="13.33">204,541</tspan></text>
+  <text transform="translate(800.251 1706)"><tspan x="0" y="0" font-size="13.33">188,857</tspan></text>
+  <text transform="translate(885.251 1706)"><tspan x="0" y="0" font-size="13.33">185,219</tspan></text>
+  <text transform="translate(1056.42 1706)"><tspan x="0" y="0" font-size="13.33">119,789</tspan></text>
+  <text transform="translate(1152.844 1706)"><tspan x="0" y="0" font-size="13.33">93,101</tspan></text>
+  <text transform="translate(1227.844 1706)"><tspan x="0" y="0" font-size="13.33">74,278</tspan></text>
+  <text transform="translate(222.229 1727)"><tspan x="0" y="0" font-size="13.33">98,902</tspan></text>
+  <text transform="translate(322.643 1727)"><tspan x="0" y="0" font-size="13.33">4,321</tspan></text>
+  <text transform="translate(385.229 1727)"><tspan x="0" y="0" font-size="13.33">39,053</tspan></text>
+  <text transform="translate(472.229 1727)"><tspan x="0" y="0" font-size="13.33">27,609</tspan></text>
+  <text transform="translate(617.134 1727)"><tspan x="0" y="0" font-size="13.33">1,579,779</tspan></text>
+  <text transform="translate(721.251 1727)"><tspan x="0" y="0" font-size="13.33">209,952</tspan></text>
+  <text transform="translate(800.251 1727)"><tspan x="0" y="0" font-size="13.33">533,333</tspan></text>
+  <text transform="translate(885.251 1727)"><tspan x="0" y="0" font-size="13.33">480,077</tspan></text>
+  <text transform="translate(1055.43 1727)"><tspan x="0" y="0" font-size="13.33">381,098</tspan></text>
+  <text transform="translate(1145.43 1727)"><tspan x="0" y="0" font-size="13.33">133,298</tspan></text>
+  <text transform="translate(1220.43 1727)"><tspan x="0" y="0" font-size="13.33">215,285</tspan></text>
+  <text transform="translate(222.229 1748)"><tspan x="0" y="0" font-size="13.33">80,619</tspan></text>
+  <text transform="translate(322.643 1748)"><tspan x="0" y="0" font-size="13.33">7,956</tspan></text>
+  <text transform="translate(385.229 1748)"><tspan x="0" y="0" font-size="13.33">37,581</tspan></text>
+  <text transform="translate(472.229 1748)"><tspan x="0" y="0" font-size="13.33">45,090</tspan></text>
+  <text transform="translate(617.134 1748)"><tspan x="0" y="0" font-size="13.33">1,926,782</tspan></text>
+  <text transform="translate(721.251 1748)"><tspan x="0" y="0" font-size="13.33">255,037</tspan></text>
+  <text transform="translate(800.251 1748)"><tspan x="0" y="0" font-size="13.33">544,070</tspan></text>
+  <text transform="translate(885.251 1748)"><tspan x="0" y="0" font-size="13.33">528,821</tspan></text>
+  <text transform="translate(1055.43 1748)"><tspan x="0" y="0" font-size="13.33">366,972</tspan></text>
+  <text transform="translate(1145.43 1748)"><tspan x="0" y="0" font-size="13.33">149,566</tspan></text>
+  <text transform="translate(1220.43 1748)"><tspan x="0" y="0" font-size="13.33">233,209</tspan></text>
+  <text transform="translate(222.229 1769)"><tspan x="0" y="0" font-size="13.33">89,558</tspan></text>
+  <text transform="translate(322.643 1769)"><tspan x="0" y="0" font-size="13.33">7,338</tspan></text>
+  <text transform="translate(385.229 1769)"><tspan x="0" y="0" font-size="13.33">31,083</tspan></text>
+  <text transform="translate(472.229 1769)"><tspan x="0" y="0" font-size="13.33">31,046</tspan></text>
+  <text transform="translate(617.134 1769)"><tspan x="0" y="0" font-size="13.33">1,412,429</tspan></text>
+  <text transform="translate(721.251 1769)"><tspan x="0" y="0" font-size="13.33">208,290</tspan></text>
+  <text transform="translate(800.251 1769)"><tspan x="0" y="0" font-size="13.33">196,812</tspan></text>
+  <text transform="translate(885.251 1769)"><tspan x="0" y="0" font-size="13.33">192,790</tspan></text>
+  <text transform="translate(1055.43 1769)"><tspan x="0" y="0" font-size="13.33">183,083</tspan></text>
+  <text transform="translate(1145.43 1769)"><tspan x="0" y="0" font-size="13.33">106,315</tspan></text>
+  <text transform="translate(1227.844 1769)"><tspan x="0" y="0" font-size="13.33">89,509</tspan></text>
+  <text transform="translate(229.643 1790)"><tspan x="0" y="0" font-size="13.33">5,806</tspan></text>
+  <text transform="translate(333.76 1790)"><tspan x="0" y="0" font-size="13.33">409</tspan></text>
+  <text transform="translate(392.643 1790)"><tspan x="0" y="0" font-size="13.33">1,805</tspan></text>
+  <text transform="translate(479.643 1790)"><tspan x="0" y="0" font-size="13.33">2,843</tspan></text>
+  <text transform="translate(635.665 1790)"><tspan x="0" y="0" font-size="13.33">96,956</tspan></text>
+  <text transform="translate(729.654 1790)"><tspan x="0" y="0" font-size="13.33">11,143</tspan></text>
+  <text transform="translate(807.665 1790)"><tspan x="0" y="0" font-size="13.33">19,445</tspan></text>
+  <text transform="translate(892.665 1790)"><tspan x="0" y="0" font-size="13.33">19,983</tspan></text>
+  <text transform="translate(1062.844 1790)"><tspan x="0" y="0" font-size="13.33">10,462</tspan></text>
+  <text transform="translate(1160.258 1790)"><tspan x="0" y="0" font-size="13.33">5,301</tspan></text>
+  <text transform="translate(1237.236 1790)"><tspan x="0" y="0" font-size="13.33">7,111</tspan></text>
+</svg>
