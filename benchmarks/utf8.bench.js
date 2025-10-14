@@ -22,9 +22,11 @@ const asciiStrings = asciiBufs.map((x) => Buffer.from(x).toString())
 
 const isNative = (x) => x && (!bufferIsPolyfilled || `${x}`.includes('[native code]')) // we consider Node.js TextDecoder/TextEncoder native
 const { TextEncoder, TextDecoder } = globalThis
-const textDecoder = isNative(TextDecoder) ? new TextDecoder() : null
+const textDecoder = isNative(TextDecoder) ? new TextDecoder('utf8', { fatal: true }) : null
+const textDecoderLoose = isNative(TextDecoder) ? new TextDecoder() : null
 const textEncoder = isNative(TextEncoder) ? new TextEncoder() : null
-const textDecoderJS = new js.TextDecoder()
+const textDecoderJS = new js.TextDecoder('utf8', { fatal: true })
+const textDecoderJSLoose = new js.TextDecoder()
 const textEncoderJS = new js.TextEncoder()
 
 const columnsTo = [
@@ -32,6 +34,7 @@ const columnsTo = [
   '@exodus/bytes/utf8, loose',
   'Buffer',
   textDecoder ? 'TextDecoder' : 'text-encoding',
+  textDecoderLoose ? 'TextDecoder (loose)' : 'text-encoding (loose)',
   '@ethersproject/strings',
   'Buffer.from',
 ]
@@ -51,7 +54,9 @@ describe('benchmarks: utf8', async () => {
     ['@exodus/bytes/utf8, loose', (x) => exodus.utf8toStringLoose(x)],
     ['fallback', (x) => fallback.decode(x, true)],
     ['TextDecoder', (x) => textDecoder.decode(x), !textDecoder],
+    ['TextDecoder (loose)', (x) => textDecoderLoose.decode(x), !textDecoderLoose],
     ['text-encoding', (x) => textDecoderJS.decode(x)],
+    ['text-encoding (loose)', (x) => textDecoderJSLoose.decode(x)],
     ['Buffer', (x) => toBuffer(x, Buffer).toString('utf8')],
     ['Buffer.from', (x) => Buffer.from(x).toString('utf8')],
     ['buffer/Buffer', (x) => toBuffer(x, buffer.Buffer).toString('utf8'), bufferIsPolyfilled],
