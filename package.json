@@ -46,6 +46,8 @@
     "/array.js",
     "/assert.js",
     "/base32.js",
+    "/base58.js",
+    "/base58check.js",
     "/base64.js",
     "/hex.js",
     "/utf8.js"
@@ -53,6 +55,8 @@
   "exports": {
     "./array.js": "./array.js",
     "./base32.js": "./base32.js",
+    "./base58.js": "./base58.js",
+    "./base58check.js": "./base58check.js",
     "./base64.js": "./base64.js",
     "./hex.js": "./hex.js",
     "./utf8.js": "./utf8.js"
