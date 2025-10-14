@@ -179,15 +179,32 @@ export function fromBase58(str, format = 'uint8') {
       if (charCode > 255 || c < 0) throw new SyntaxError(E_CHAR)
 
       let k = size - 1
-      for (; k >= zeros; k--) {
+      for (;;) {
         if (c === 0 && k < at) break
         c += 58 * res[k]
         res[k] = c & 0xff
         c >>>= 8
+        k--
+        // unroll a bit
+        if (c === 0 && k < at) break
+        c += 58 * res[k]
+        res[k] = c & 0xff
+        c >>>= 8
+        k--
+        if (c === 0 && k < at) break
+        c += 58 * res[k]
+        res[k] = c & 0xff
+        c >>>= 8
+        k--
+        if (c === 0 && k < at) break
+        c += 58 * res[k]
+        res[k] = c & 0xff
+        c >>>= 8
+        k--
       }
 
       at = k + 1
-      if (c !== 0) throw new Error('Unexpected') // unreachable
+      if (c !== 0 || at < zeros) throw new Error('Unexpected') // unreachable
     }
   }
 
