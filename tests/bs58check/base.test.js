@@ -2,11 +2,11 @@
 
 import tape from '@exodus/test/tape'
 import { fromHex as hexToBytes } from '@exodus/bytes/hex.js'
-import { makeBase58Check } from '@exodus/bytes/base58check.js'
+import { makeBase58check } from '@exodus/bytes/base58check.js'
 import { hash } from '@exodus/crypto/hash'
 
 const blake256x2 = async (x) => hash('blake256', await hash('blake256', x, 'uint8'), 'uint8')
-const bs58check = makeBase58Check(blake256x2)
+const bs58check = makeBase58check(blake256x2)
 
 tape('custom checksum function (blake256x2)', async function (t) {
   const address = 'DsRLWShUQexhKE1yRdpe2kVH7fmULcEUFDk'

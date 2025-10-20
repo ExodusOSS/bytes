@@ -8,7 +8,7 @@ import { hashSync } from '@exodus/crypto/hash'
 
 const E_CHECKSUM = 'Invalid checksum'
 
-export const makeBase58Check = (hashAlgo) => ({
+export const makeBase58check = (hashAlgo) => ({
   async encode(arr) {
     assertUint8(arr)
     const checksum = await hashAlgo(arr)
@@ -29,6 +29,6 @@ export const makeBase58Check = (hashAlgo) => ({
 })
 
 const hash256 = (x) => hashSync('sha256', hashSync('sha256', x, 'uint8'), 'uint8')
-const { encode: toBase58check, decode: fromBase58check } = makeBase58Check(hash256)
+const { encode: toBase58check, decode: fromBase58check } = makeBase58check(hash256)
 
 export { toBase58check, fromBase58check }
