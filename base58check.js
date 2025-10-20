@@ -19,9 +19,10 @@ export const makeBase58check = (hashAlgo) => ({
   },
   async decode(str, format = 'uint8') {
     const arr = fromBase58(str) // checks input
-    const len4 = arr.length - 4
-    const payload = arr.subarray(0, len4)
-    const c = arr.subarray(len4)
+    const payloadSize = arr.length - 4
+    if (payloadSize < 0) throw new Error(E_CHECKSUM)
+    const payload = arr.subarray(0, payloadSize)
+    const c = arr.subarray(payloadSize)
     const r = await hashAlgo(payload)
     if ((c[0] ^ r[0]) | (c[1] ^ r[1]) | (c[2] ^ r[2]) | (c[3] ^ r[3])) throw new Error(E_CHECKSUM)
     return typedView(payload, format)
