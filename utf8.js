@@ -51,25 +51,27 @@ function encode(str, loose = false) {
   return js.encode(str, loose)
 }
 
-let escapes
+let esc
 
+// This function is used only in escape + decodeURIComponent path, i.e. on Hermes
 function toEscapesPart(arr, start, end) {
   let o = ''
   let i = start
-  const last3 = end - 3
+  const last7 = end - 7
   // Unrolled loop is faster
-  while (i < last3) {
+  while (i < last7) {
     const a = arr[i++]
     const b = arr[i++]
     const c = arr[i++]
     const d = arr[i++]
-    o += escapes[a]
-    o += escapes[b]
-    o += escapes[c]
-    o += escapes[d]
+    const e = arr[i++]
+    const f = arr[i++]
+    const g = arr[i++]
+    const h = arr[i++]
+    o += `${esc[a]}${esc[b]}${esc[c]}${esc[d]}${esc[e]}${esc[f]}${esc[g]}${esc[h]}` // templates are faster on Hermes
   }
 
-  while (i < end) o += escapes[arr[i++]]
+  while (i < end) o += esc[arr[i++]]
   return o
 }
 
@@ -80,7 +82,7 @@ function decode(arr, loose = false) {
 
   // This codepath gives a ~2x perf boost on Hermes
   if (shouldUseEscapePath && escape && decodeURIComponent) {
-    if (!escapes) escapes = Array.from({ length: 256 }, (_, i) => escape(String.fromCharCode(i)))
+    if (!esc) esc = Array.from({ length: 256 }, (_, i) => escape(String.fromCharCode(i)))
     const length = arr.length
     let o
     if (length > 30_000) {
