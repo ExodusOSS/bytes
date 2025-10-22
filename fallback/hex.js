@@ -51,15 +51,14 @@ export function toHex(arr) {
   return toHexPart(arr, 0, length)
 }
 
-// TODO: can this be optimized? This only affects non-Hermes barebone engines though
-const mapSize = nativeEncoder ? 128 : 65_536 // we have to store 64 KiB map or recheck everything if we can't decode to byte array
-
 export function fromHex(str) {
   if (typeof str !== 'string') throw new TypeError('Input is not a string')
   if (str.length % 2 !== 0) throw new SyntaxError(E_HEX)
 
   if (!dehexArray) {
-    dehexArray = new Int8Array(mapSize).fill(-1) // no regex input validation here, so we map all other bytes to -1 and recheck sign
+    // no regex input validation here, so we map all other bytes to -1 and recheck sign
+    // non-ASCII chars throw already though, so we should process only 0-127
+    dehexArray = new Int8Array(128).fill(-1)
     for (let i = 0; i < 16; i++) {
       const s = i.toString(16)
       dehexArray[s.charCodeAt(0)] = dehexArray[s.toUpperCase().charCodeAt(0)] = i
@@ -94,8 +93,10 @@ export function fromHex(str) {
     }
   } else {
     for (let i = 0; i < length; i++) {
-      const res = (dehexArray[str.charCodeAt(j++)] << 4) | dehexArray[str.charCodeAt(j++)]
-      if (res < 0) throw new SyntaxError(E_HEX)
+      const a = str.charCodeAt(j++)
+      const b = str.charCodeAt(j++)
+      const res = (dehexArray[a] << 4) | dehexArray[b]
+      if (res < 0 || (0x7f | a | b) !== 0x7f) throw new SyntaxError(E_HEX) // 0-127
       arr[i] = res
     }
   }
