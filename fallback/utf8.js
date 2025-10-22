@@ -173,7 +173,7 @@ export function encode(string, loose) {
   let p = 0
 
   for (let i = 0; i < length; i++) {
-    const code = string.charCodeAt(i)
+    let code = string.charCodeAt(i)
     if (code < 0x80) {
       // Fast path for ascii
       if (lead) {
@@ -186,30 +186,31 @@ export function encode(string, loose) {
 
       bytes[p++] = code
       // Unroll the loop a bit for faster ops
-      for (let j = 0; j < 5; j++) {
-        if (i + 1 >= length) break
-        const c1 = string.charCodeAt(i + 1)
-        if (c1 >= 0x80) break
-        bytes[p++] = c1
+      while (true) {
         i++
-        if (i + 1 >= length) break
-        const c2 = string.charCodeAt(i + 1)
-        if (c2 >= 0x80) break
-        bytes[p++] = c2
+        if (i >= length) break
+        code = string.charCodeAt(i)
+        if (code >= 0x80) break
+        bytes[p++] = code
         i++
-        if (i + 1 >= length) break
-        const c3 = string.charCodeAt(i + 1)
-        if (c3 >= 0x80) break
-        bytes[p++] = c3
+        if (i >= length) break
+        code = string.charCodeAt(i)
+        if (code >= 0x80) break
+        bytes[p++] = code
         i++
-        if (i + 1 >= length) break
-        const c4 = string.charCodeAt(i + 1)
-        if (c4 >= 0x80) break
-        bytes[p++] = c4
+        if (i >= length) break
+        code = string.charCodeAt(i)
+        if (code >= 0x80) break
+        bytes[p++] = code
         i++
+        if (i >= length) break
+        code = string.charCodeAt(i)
+        if (code >= 0x80) break
+        bytes[p++] = code
       }
 
-      continue
+      if (i >= length) break
+      // now, code is present and >= 0x80
     }
 
     if (small) {
