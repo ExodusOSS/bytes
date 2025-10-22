@@ -92,7 +92,7 @@ export function toBase64(arr, isURL, padding) {
 }
 
 // TODO: can this be optimized? This only affects non-Hermes barebone engines though
-const mapSize = nativeEncoder ? 256 : 65_536 // we have to store 64 KiB map or recheck everything if we can't decode to byte array
+const mapSize = nativeEncoder ? 128 : 65_536 // we have to store 64 KiB map or recheck everything if we can't decode to byte array
 
 export function fromBase64(str, isURL) {
   let inputLength = str.length

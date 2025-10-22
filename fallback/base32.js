@@ -97,7 +97,7 @@ export function toBase32(arr, isBase32Hex, padding) {
 }
 
 // TODO: can this be optimized? This only affects non-Hermes barebone engines though
-const mapSize = nativeEncoder ? 256 : 65_536 // we have to store 64 KiB map or recheck everything if we can't decode to byte array
+const mapSize = nativeEncoder ? 128 : 65_536 // we have to store 64 KiB map or recheck everything if we can't decode to byte array
 
 export function fromBase32(str, isBase32Hex) {
   let inputLength = str.length
