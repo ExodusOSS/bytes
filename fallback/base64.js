@@ -16,6 +16,8 @@ export const E_LAST = 'Invalid last chunk'
 // Alternatively, we could have mapped 0-255 bytes to charcodes and just used btoa(ascii),
 // but that approach is _slower_ than our toBase64js function, even on Hermes
 
+const useTemplates = Boolean(globalThis.HermesInternal) // Faster on Hermes and JSC, but we need only Hermes
+
 // We construct output by concatenating chars, this seems to be fine enough on modern JS engines
 export function toBase64(arr, isURL, padding) {
   assertUint8(arr)
@@ -61,6 +63,36 @@ export function toBase64(arr, isURL, padding) {
 
     o = nativeDecoder.decode(oa)
   } else {
+    // Templates are faster only on Hermes. Other engines have built-in toBase64 and don't need this extra opt anyway
+    if (useTemplates) {
+      const fullChunksBytes3 = fullChunksBytes - 9 // this ensures we can fit 4 = 3 + 1 full chunks
+      const p = pairs
+      for (; i < fullChunksBytes3; i += 12) {
+        const a0 = arr[i]
+        const a1 = arr[i + 1]
+        const a2 = arr[i + 2]
+        const b0 = arr[i + 3]
+        const b1 = arr[i + 4]
+        const b2 = arr[i + 5]
+        const c0 = arr[i + 6]
+        const c1 = arr[i + 7]
+        const c2 = arr[i + 8]
+        const d0 = arr[i + 9]
+        const d1 = arr[i + 10]
+        const d2 = arr[i + 11]
+        // prettier-ignore
+        o += `${
+          p[(a0 << 4) | (a1 >> 4)]}${p[((a1 & 0x0f) << 8) | a2]
+        }${
+          p[(b0 << 4) | (b1 >> 4)]}${p[((b1 & 0x0f) << 8) | b2]
+        }${
+          p[(c0 << 4) | (c1 >> 4)]}${p[((c1 & 0x0f) << 8) | c2]
+        }${
+          p[(d0 << 4) | (d1 >> 4)]}${p[((d1 & 0x0f) << 8) | d2]
+        }`
+      }
+    }
+
     for (; i < fullChunksBytes; i += 3) {
       const a = arr[i]
       const b = arr[i + 1]
