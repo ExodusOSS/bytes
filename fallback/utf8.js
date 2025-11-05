@@ -167,7 +167,6 @@ export function decode(arr, loose) {
 
 export function encode(string, loose) {
   const length = string.length
-  let lead = null
   let small = true
   let bytes = new Uint8Array(length) // assume ascii
   let p = 0
@@ -175,15 +174,6 @@ export function encode(string, loose) {
   for (let i = 0; i < length; i++) {
     let code = string.charCodeAt(i)
     if (code < 0x80) {
-      // Fast path for ascii
-      if (lead) {
-        if (!loose) throw new TypeError(E_STRICT_UNICODE)
-        bytes[p++] = 0xef
-        bytes[p++] = 0xbf
-        bytes[p++] = 0xbd
-        lead = null
-      }
-
       bytes[p++] = code
       // Unroll the loop a bit for faster ops
       while (true) {
@@ -215,7 +205,8 @@ export function encode(string, loose) {
 
     if (small) {
       // TODO: use resizable array buffers? will have to return a non-resizeable one
-      const bytesNew = new Uint8Array(length * 3) // maximium can be 3x of the string length in charcodes
+      if (p !== i) throw new Error('Unreachable') // Here, p === i (only when small is still true)
+      const bytesNew = new Uint8Array(p + (length - i) * 3) // maximium can be 3x of the string length in charcodes
       bytesNew.set(bytes)
       bytes = bytesNew
       small = false
@@ -225,45 +216,35 @@ export function encode(string, loose) {
     // lead: d800 - dbff
     // trail: dc00 - dfff
     if (code >= 0xd8_00 && code < 0xe0_00) {
-      if (lead && code < 0xdc_00) {
-        // a second lead, meaning the previous one was unpaired
+      // Can't be a valid trail as we already processed that below
+
+      if (code > 0xdb_ff || i + 1 >= length) {
+        // An unexpected trail or a lead at the very end of input
         if (!loose) throw new TypeError(E_STRICT_UNICODE)
         bytes[p++] = 0xef
         bytes[p++] = 0xbf
         bytes[p++] = 0xbd
-        lead = null
-        // code is still processed as a new lead
-      }
-
-      if (!lead) {
-        if (code > 0xdb_ff || i + 1 >= length) {
-          // lead out of range || unpaired
-          if (!loose) throw new TypeError(E_STRICT_UNICODE)
-          bytes[p++] = 0xef
-          bytes[p++] = 0xbf
-          bytes[p++] = 0xbd
-          continue
-        }
-
-        lead = code
         continue
       }
 
-      // here, codePoint is always between 0x1_00_00 and 0x11_00_00, we encode as 4 bytes
-      const codePoint = (((lead - 0xd8_00) << 10) | (code - 0xdc_00)) + 0x1_00_00
-      bytes[p++] = (codePoint >> 18) | 0xf0
-      bytes[p++] = ((codePoint >> 12) & 0x3f) | 0x80
-      bytes[p++] = ((codePoint >> 6) & 0x3f) | 0x80
-      bytes[p++] = (codePoint & 0x3f) | 0x80
-      lead = null
+      const next = string.charCodeAt(i + 1) // Process valid pairs immediately
+      if (next >= 0xdc_00 && next < 0xe0_00) {
+        // here, codePoint is always between 0x1_00_00 and 0x11_00_00, we encode as 4 bytes
+        const codePoint = (((code - 0xd8_00) << 10) | (next - 0xdc_00)) + 0x1_00_00
+        bytes[p++] = (codePoint >> 18) | 0xf0
+        bytes[p++] = ((codePoint >> 12) & 0x3f) | 0x80
+        bytes[p++] = ((codePoint >> 6) & 0x3f) | 0x80
+        bytes[p++] = (codePoint & 0x3f) | 0x80
+        i++ // consume next
+      } else {
+        // Next is not a trail, leave next unconsumed but process unmatched lead error
+        if (!loose) throw new TypeError(E_STRICT_UNICODE)
+        bytes[p++] = 0xef
+        bytes[p++] = 0xbf
+        bytes[p++] = 0xbd
+      }
+
       continue
-    } else if (lead) {
-      if (!loose) throw new TypeError(E_STRICT_UNICODE)
-      bytes[p++] = 0xef
-      bytes[p++] = 0xbf
-      bytes[p++] = 0xbd
-      lead = null
-      // code is still processed
     }
 
     // We are left with a non-pair char code above ascii, it gets encoded to 2 or 3 bytes
