@@ -6,7 +6,7 @@ let dehexArray
 
 export const E_HEX = 'Input is not a hex string'
 
-function toHexPart(arr, start, end) {
+function toHexPartAddition(arr, start, end) {
   let o = ''
   let i = start
   const last3 = end - 3
@@ -25,6 +25,33 @@ function toHexPart(arr, start, end) {
   while (i < end) o += hexArray[arr[i++]]
   return o
 }
+
+// Optimiziation for Hermes which is the main user of fallback
+function toHexPartTemplates(arr, start, end) {
+  let o = ''
+  let i = start
+  const last7 = end - 7
+  const ha = hexArray
+  // Unrolled loop is faster
+  while (i < last7) {
+    const a = arr[i++]
+    const b = arr[i++]
+    const c = arr[i++]
+    const d = arr[i++]
+    const e = arr[i++]
+    const f = arr[i++]
+    const g = arr[i++]
+    const h = arr[i++]
+    o += `${ha[a]}${ha[b]}${ha[c]}${ha[d]}${ha[e]}${ha[f]}${ha[g]}${ha[h]}`
+  }
+
+  while (i < end) o += hexArray[arr[i++]]
+  return o
+}
+
+// Using templates is significantly faster in Hermes and JSC
+// It's harder to detect JSC and not important anyway as it has native impl, so we detect only Hermes
+const toHexPart = globalThis.HermesInternal ? toHexPartTemplates : toHexPartAddition
 
 export function toHex(arr) {
   assertUint8(arr)
