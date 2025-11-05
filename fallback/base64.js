@@ -80,16 +80,16 @@ export function toBase64(arr, isURL, padding) {
         const d0 = arr[i + 9]
         const d1 = arr[i + 10]
         const d2 = arr[i + 11]
-        // prettier-ignore
-        o += `${
-          p[(a0 << 4) | (a1 >> 4)]}${p[((a1 & 0x0f) << 8) | a2]
-        }${
-          p[(b0 << 4) | (b1 >> 4)]}${p[((b1 & 0x0f) << 8) | b2]
-        }${
-          p[(c0 << 4) | (c1 >> 4)]}${p[((c1 & 0x0f) << 8) | c2]
-        }${
-          p[(d0 << 4) | (d1 >> 4)]}${p[((d1 & 0x0f) << 8) | d2]
-        }`
+        // Make pairs
+        const x0 = (a0 << 4) | (a1 >> 4)
+        const x1 = ((a1 & 0x0f) << 8) | a2
+        const x2 = (b0 << 4) | (b1 >> 4)
+        const x3 = ((b1 & 0x0f) << 8) | b2
+        const x4 = (c0 << 4) | (c1 >> 4)
+        const x5 = ((c1 & 0x0f) << 8) | c2
+        const x6 = (d0 << 4) | (d1 >> 4)
+        const x7 = ((d1 & 0x0f) << 8) | d2
+        o += `${p[x0]}${p[x1]}${p[x2]}${p[x3]}${p[x4]}${p[x5]}${p[x6]}${p[x7]}`
       }
     }
 
