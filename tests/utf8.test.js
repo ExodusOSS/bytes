@@ -33,6 +33,16 @@ describe('utf8toString', () => {
   test('non-utf8 bytes throw in utf8toString', (t) => {
     for (const { bytes } of nonUtf8) {
       t.assert.throws(() => utf8toString(Uint8Array.of(...bytes)))
+
+      for (let p = 0; p < 130; p++) {
+        const prefixBytes = new Uint8Array(p).fill(0x20)
+        t.assert.throws(() => utf8toString(Uint8Array.of(...prefixBytes, ...bytes)))
+      }
+
+      for (let s = 0; s < 130; s++) {
+        const suffixBytes = new Uint8Array(s).fill(0x20)
+        t.assert.throws(() => utf8toString(Uint8Array.of(...bytes, ...suffixBytes)))
+      }
     }
   })
 
@@ -41,6 +51,22 @@ describe('utf8toString', () => {
       const res = utf8toStringLoose(Uint8Array.of(...bytes))
       t.assert.strictEqual(res.length, charcodes.length)
       t.assert.strictEqual(res, String.fromCharCode(...charcodes))
+
+      for (let p = 0; p < 130; p++) {
+        const prefixBytes = new Uint8Array(p).fill(0x20)
+        const prefixString = ' '.repeat(p)
+        const res = utf8toStringLoose(Uint8Array.of(...prefixBytes, ...bytes))
+        t.assert.strictEqual(res.length, p + charcodes.length)
+        t.assert.strictEqual(res, prefixString + String.fromCharCode(...charcodes))
+      }
+
+      for (let s = 0; s < 130; s++) {
+        const suffixBytes = new Uint8Array(s).fill(0x20)
+        const suffixString = ' '.repeat(s)
+        const res = utf8toStringLoose(Uint8Array.of(...bytes, ...suffixBytes))
+        t.assert.strictEqual(res.length, charcodes.length + s)
+        t.assert.strictEqual(res, String.fromCharCode(...charcodes) + suffixString)
+      }
     }
   })
 })
