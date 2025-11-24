@@ -57,17 +57,16 @@ let esc
 function toEscapesPart(arr, start, end) {
   let o = ''
   let i = start
-  const last7 = end - 7
   // Unrolled loop is faster
-  while (i < last7) {
-    const a = arr[i++]
-    const b = arr[i++]
-    const c = arr[i++]
-    const d = arr[i++]
-    const e = arr[i++]
-    const f = arr[i++]
-    const g = arr[i++]
-    const h = arr[i++]
+  for (const last7 = end - 7; i < last7; i += 8) {
+    const a = arr[i]
+    const b = arr[i + 1]
+    const c = arr[i + 2]
+    const d = arr[i + 3]
+    const e = arr[i + 4]
+    const f = arr[i + 5]
+    const g = arr[i + 6]
+    const h = arr[i + 7]
     o += `${esc[a]}${esc[b]}${esc[c]}${esc[d]}${esc[e]}${esc[f]}${esc[g]}${esc[h]}` // templates are faster on Hermes
   }
 
