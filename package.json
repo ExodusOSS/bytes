@@ -79,7 +79,7 @@
     "@scure/base": "^1.2.6",
     "@stablelib/base64": "^2.0.1",
     "@stablelib/hex": "^2.0.1",
-    "@types/node": "^24.0.10",
+    "@types/node": "^22.13.0",
     "base-x": "^5.0.1",
     "base32.js": "^0.1.0",
     "base64-js": "^1.5.1",
@@ -93,7 +93,8 @@
     "fast-base64-encode": "^1.0.0",
     "hi-base32": "^0.5.1",
     "jsvu": "^3.0.0",
-    "text-encoding": "^0.7.0"
+    "text-encoding": "^0.7.0",
+    "typescript": "^5.9.3"
   },
   "prettier": "@exodus/prettier",
   "packageManager": "pnpm@10.12.1+sha256.889bac470ec93ccc3764488a19d6ba8f9c648ad5e50a9a6e4be3768a5de387a3"
