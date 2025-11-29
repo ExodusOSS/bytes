@@ -22,40 +22,34 @@ const shouldUseAtob = atob && Boolean(globalThis.HermesInternal)
 const isBuffer = (x) => x.constructor === Buffer && Buffer.isBuffer(x)
 const toBuffer = (x) => (isBuffer(x) ? x : Buffer.from(x.buffer, x.byteOffset, x.byteLength))
 
-export function toBase64(x, { padding = true } = {}) {
-  assertUint8(x)
-  if (web64 && x.toBase64 === web64) {
-    return padding ? x.toBase64() : x.toBase64({ omitPadding: !padding }) // Modern, optionless is slightly faster
-  }
-
-  if (!haveNativeBuffer && !shouldUseBtoa) return js.toBase64(x, false, padding) // Fallback
-  const res = haveNativeBuffer
-    ? toBuffer(x).toString('base64') // Older Node.js, padded
-    : btoa(ascii.decode(x)) // padded
+function maybeUnpad(res, padding) {
   if (padding) return res
   const at = res.indexOf('=', res.length - 3)
   return at === -1 ? res : res.slice(0, at)
 }
 
+function maybePad(res, padding) {
+  return padding && res.length % 4 !== 0 ? res + '='.repeat(4 - (res.length % 4)) : res
+}
+
+const toUrl = (x) => x.replaceAll('+', '-').replaceAll('/', '_')
+const fromUrl = (x) => x.replaceAll('-', '+').replaceAll('_', '/')
+const haveWeb = (x) => web64 && x.toBase64 === web64
+
+export function toBase64(x, { padding = true } = {}) {
+  assertUint8(x)
+  if (haveWeb(x)) return padding ? x.toBase64() : x.toBase64({ omitPadding: !padding }) // Modern, optionless is slightly faster
+  if (haveNativeBuffer) return maybeUnpad(toBuffer(x).toString('base64'), padding) // Older Node.js
+  if (shouldUseBtoa) return maybeUnpad(btoa(ascii.decode(x)), padding)
+  return js.toBase64(x, false, padding) // Fallback
+}
+
 // NOTE: base64url omits padding by default
 export function toBase64url(x, { padding = false } = {}) {
   assertUint8(x)
-  if (web64 && x.toBase64 === web64) {
-    return x.toBase64({ alphabet: 'base64url', omitPadding: !padding }) // Modern
-  }
-
-  if (haveNativeBuffer) {
-    const res = toBuffer(x).toString('base64url') // Older Node.js, unpadded
-    return padding && res.length % 4 !== 0 ? res + '='.repeat(4 - (res.length % 4)) : res
-  }
-
-  if (shouldUseBtoa) {
-    const res = btoa(ascii.decode(x)).replaceAll('+', '-').replaceAll('/', '_') // padded
-    if (padding) return res
-    const at = res.indexOf('=', res.length - 3)
-    return at === -1 ? res : res.slice(0, at)
-  }
-
+  if (haveWeb(x)) return x.toBase64({ alphabet: 'base64url', omitPadding: !padding }) // Modern
+  if (haveNativeBuffer) return maybePad(toBuffer(x).toString('base64url'), padding) // Older Node.js
+  if (shouldUseBtoa) return maybeUnpad(toUrl(btoa(ascii.decode(x))), padding)
   return js.toBase64(x, true, padding) // Fallback
 }
 
@@ -126,7 +120,7 @@ if (Uint8Array.fromBase64) {
       // atob is faster than manual parsing on Hermes
       if (isBase64url) {
         if (/[\t\n\f\r +/]/.test(str)) throw new SyntaxError(E_CHAR) // atob verifies other invalid input
-        str = str.replaceAll('-', '+').replaceAll('_', '/')
+        str = fromUrl(str)
       } else {
         if (ASCII_WHITESPACE.test(str)) throw new SyntaxError(E_CHAR) // all other chars are checked natively
       }
@@ -149,7 +143,7 @@ if (Uint8Array.fromBase64) {
       // Check last chunk to be strict if it was incomplete
       const expected = toBase64(arr.subarray(-(arr.length % 3)))
       const end = str.length % 4 === 0 ? str.slice(-4) : str.slice(-(str.length % 4)).padEnd(4, '=')
-      const actual = isBase64url ? end.replaceAll('-', '+').replaceAll('_', '/') : end
+      const actual = isBase64url ? fromUrl(end) : end
       if (expected !== actual) throw new SyntaxError(E_LAST)
     }
 
