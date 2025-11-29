@@ -48,3 +48,10 @@ export function decode(arr, start = 0, stop = arr.length) {
   const sliced = start === 0 && stop === arr.length ? arr : arr.subarray(start, stop)
   return String.fromCharCode.apply(String, sliced)
 }
+
+export function encodeLatin1(str) {
+  const length = str.length
+  const arr = new Uint8Array(length)
+  for (let i = 0; i < length; i++) arr[i] = str.charCodeAt(i)
+  return arr
+}

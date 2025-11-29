@@ -125,16 +125,11 @@ if (Uint8Array.fromBase64) {
         if (ASCII_WHITESPACE.test(str)) throw new SyntaxError(E_CHAR) // all other chars are checked natively
       }
 
-      let raw
       try {
-        raw = atob(str)
+        arr = ascii.encodeLatin1(atob(str))
       } catch {
         throw new SyntaxError(E_CHAR) // convert atob errors
       }
-
-      const length = raw.length
-      arr = new Uint8Array(length)
-      for (let i = 0; i < length; i++) arr[i] = raw.charCodeAt(i)
     } else {
       return js.fromBase64(str, isBase64url) // early return to skip last chunk verification, it's already validated in js
     }
