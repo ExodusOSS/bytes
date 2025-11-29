@@ -41,7 +41,7 @@ describe('benchmarks: hex', async () => {
 
   if (!Buffer.TYPED_ARRAY_SUPPORT) {
     Buffer.TYPED_ARRAY_SUPPORT = true
-    reset.push(() => delete delete Buffer.TYPED_ARRAY_SUPPORT)
+    reset.push(() => delete Buffer.TYPED_ARRAY_SUPPORT)
     exodusB = await import('../hex.js?b') // eslint-disable-line @exodus/import/no-unresolved
   }
 
