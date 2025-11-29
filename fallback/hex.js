@@ -3,6 +3,10 @@ import { nativeEncoder } from './_utils.js'
 
 let hexArray
 let dehexArray
+const _00 = 0x30_30 // '00' string in hex, the only allowed char pair to generate 0 byte
+const _ff = 0x66_66 // 'ff' string in hex, max allowed char pair (larger than 'FF' string)
+const allowed = '0123456789ABCDEFabcdef'
+const useEncodeInto = Boolean(nativeEncoder?.encodeInto && globalThis.HermesInternal) // faster on Hermes, much slower on Webkit
 
 export const E_HEX = 'Input is not a hex string'
 
@@ -82,31 +86,53 @@ export function fromHex(str) {
   if (typeof str !== 'string') throw new TypeError('Input is not a string')
   if (str.length % 2 !== 0) throw new SyntaxError(E_HEX)
 
-  if (!dehexArray) {
-    // no regex input validation here, so we map all other bytes to -1 and recheck sign
-    // non-ASCII chars throw already though, so we should process only 0-127
-    dehexArray = new Int8Array(128).fill(-1)
-    for (let i = 0; i < 16; i++) {
-      const s = i.toString(16)
-      dehexArray[s.charCodeAt(0)] = dehexArray[s.toUpperCase().charCodeAt(0)] = i
-    }
-  }
-
   const length = str.length / 2 // this helps Hermes in loops
   const arr = new Uint8Array(length)
   let j = 0
+
+  // Native encoder path is beneficial even for small arrays in Hermes
   if (nativeEncoder) {
-    // Native encoder path is beneficial even for small arrays in Hermes
-    const codes = nativeEncoder.encode(str)
-    if (codes.length !== str.length) throw new SyntaxError(E_HEX) // non-ascii
-    const last3 = length - 3 // Unroll nativeEncoder path as this is what modern Hermes takes and a small perf improvement is nice there
+    if (!dehexArray) {
+      dehexArray = new Uint8Array(_ff + 1)
+      const u8 = new Uint8Array(2)
+      const u16 = new Uint16Array(u8.buffer, u8.byteOffset, 1) // for endianess-agnostic transform
+      const map = [...allowed].map((c) => [c.charCodeAt(0), parseInt(c, 16)])
+      for (const [ch, vh] of map) {
+        u8[0] = ch // first we read high hex char
+        for (const [cl, vl] of map) {
+          u8[1] = cl // then we read low hex char
+          dehexArray[u16[0]] = (vh << 4) | vl
+        }
+      }
+    }
+
+    let codes
+    if (useEncodeInto) {
+      // Much faster in Hermes
+      codes = new Uint8Array(str.length + 4) // overshoot by a full utf8 char
+      const info = nativeEncoder.encodeInto(str, codes)
+      if (info.read !== str.length || info.written !== str.length) throw new SyntaxError(E_HEX) // non-ascii
+      codes = codes.subarray(0, str.length)
+    } else {
+      codes = nativeEncoder.encode(str)
+      if (codes.length !== str.length) throw new SyntaxError(E_HEX) // non-ascii
+    }
+
+    const codes16 = new Uint16Array(codes.buffer, codes.byteOffset, codes.byteLength / 2)
     let i = 0
-    while (i < last3) {
-      const a = (dehexArray[codes[j++]] << 4) | dehexArray[codes[j++]]
-      const b = (dehexArray[codes[j++]] << 4) | dehexArray[codes[j++]]
-      const c = (dehexArray[codes[j++]] << 4) | dehexArray[codes[j++]]
-      const d = (dehexArray[codes[j++]] << 4) | dehexArray[codes[j++]]
-      if (a < 0 || b < 0 || c < 0 || d < 0) throw new SyntaxError(E_HEX)
+    for (const last3 = length - 3; i < last3; ) {
+      const ai = codes16[j++]
+      const bi = codes16[j++]
+      const ci = codes16[j++]
+      const di = codes16[j++]
+      const a = dehexArray[ai]
+      const b = dehexArray[bi]
+      const c = dehexArray[ci]
+      const d = dehexArray[di]
+      if ((!a && ai !== _00) || (!b && bi !== _00) || (!c && ci !== _00) || (!d && di !== _00)) {
+        throw new SyntaxError(E_HEX)
+      }
+
       arr[i++] = a
       arr[i++] = b
       arr[i++] = c
@@ -114,11 +140,22 @@ export function fromHex(str) {
     }
 
     while (i < length) {
-      const res = (dehexArray[codes[j++]] << 4) | dehexArray[codes[j++]]
-      if (res < 0) throw new SyntaxError(E_HEX)
-      arr[i++] = res
+      const ai = codes16[j++]
+      const a = dehexArray[ai]
+      if (!a && ai !== _00) throw new SyntaxError(E_HEX)
+      arr[i++] = a
     }
   } else {
+    if (!dehexArray) {
+      // no regex input validation here, so we map all other bytes to -1 and recheck sign
+      // non-ASCII chars throw already though, so we should process only 0-127
+      dehexArray = new Int8Array(128).fill(-1)
+      for (let i = 0; i < 16; i++) {
+        const s = i.toString(16)
+        dehexArray[s.charCodeAt(0)] = dehexArray[s.toUpperCase().charCodeAt(0)] = i
+      }
+    }
+
     for (let i = 0; i < length; i++) {
       const a = str.charCodeAt(j++)
       const b = str.charCodeAt(j++)
