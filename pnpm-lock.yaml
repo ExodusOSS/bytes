@@ -76,6 +76,9 @@ importers:
       fast-base64-encode:
         specifier: ^1.0.0
         version: 1.0.0
+      hextreme:
+        specifier: ^1.0.7
+        version: 1.0.7
       hi-base32:
         specifier: ^0.5.1
         version: 0.5.1
@@ -1612,6 +1615,9 @@ packages:
   hasown@2.0.2:
     resolution: {integrity: sha512-0hJU9SCPvmMzIBdZFqNPXWa6dqh7WdH0cII9y+CyS8rG3nL48Bclra9HmKhVVUHyPWNH5Y7xDwAB7bfgSjkUMQ==, tarball: https://registry.npmjs.org/hasown/-/hasown-2.0.2.tgz}
     engines: {node: '>= 0.4'}
+
+  hextreme@1.0.7:
+    resolution: {integrity: sha512-ccYjVs+ptfpybXoA4015VcF4Hd6extDnW7tPJNNCmDp5LpCHzt508BCMIB58vIN9i9bvgyzl/ZE+Q/lWZI8sGw==, tarball: https://registry.npmjs.org/hextreme/-/hextreme-1.0.7.tgz}
 
   hi-base32@0.5.1:
     resolution: {integrity: sha512-EmBBpvdYh/4XxsnUybsPag6VikPYnN30td+vQk+GI3qpahVEG9+gTkG0aXVxTjBqQ5T6ijbWIu77O+C5WFWsnA==, tarball: https://registry.npmjs.org/hi-base32/-/hi-base32-0.5.1.tgz}
@@ -4778,6 +4784,8 @@ snapshots:
   hasown@2.0.2:
     dependencies:
       function-bind: 1.1.2
+
+  hextreme@1.0.7: {}
 
   hi-base32@0.5.1: {}
 

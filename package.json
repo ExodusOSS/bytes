@@ -92,6 +92,7 @@
     "eslint": "^8.44.0",
     "fast-base64-decode": "^2.0.0",
     "fast-base64-encode": "^1.0.0",
+    "hextreme": "^1.0.7",
     "hi-base32": "^0.5.1",
     "jsvu": "^3.0.0",
     "text-encoding": "^0.7.0",

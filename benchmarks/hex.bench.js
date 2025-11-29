@@ -4,6 +4,7 @@ import * as stablelib from '@stablelib/hex'
 import { benchmark } from '@exodus/test/benchmark' // eslint-disable-line @exodus/import/no-unresolved
 import { hex as scure } from '@scure/base'
 import buffer from 'buffer/index.js'
+import * as hextreme from 'hextreme'
 import { describe, test } from 'node:test'
 
 import { bufs } from './utils/random.js'
@@ -22,7 +23,9 @@ if (!globalThis.Buffer) globalThis.Buffer = buffer.Buffer
 const bufferIsPolyfilled = Buffer === buffer.Buffer
 const toBuffer = (x, B) => B.from(x.buffer, x.byteOffset, x.byteLength)
 
+const timeout = 30_000
 describe('benchmarks: hex', async () => {
+  let hextremeJS // Fallback without Uint8Array.fromHex, Uint8Array#toHex
   let scureJS // Fallback without Uint8Array.fromHex, Uint8Array#toHex
   let exodusA // Fallback without Uint8Array.fromHex, Uint8Array#toHex
   let exodusB // Fallback without native Buffer
@@ -37,6 +40,7 @@ describe('benchmarks: hex', async () => {
     reset.push(() => (Uint8Array.prototype.toHex = toHexNative)) // eslint-disable-line no-extend-native
     exodusA = await import('../hex.js?a') // eslint-disable-line @exodus/import/no-unresolved
     scureJS = (await import('../node_modules/@scure/base/lib/esm/index.js?a')).hex // eslint-disable-line @exodus/import/no-unresolved, unicorn/no-await-expression-member
+    hextremeJS = await import('../node_modules/hextreme/index.mjs?a') // eslint-disable-line @exodus/import/no-unresolved, unicorn/no-await-expression-member
   }
 
   if (!Buffer.TYPED_ARRAY_SUPPORT) {
@@ -62,6 +66,8 @@ describe('benchmarks: hex', async () => {
     ['scure.hex', (x) => scure.encode(x)],
     ['scure.hex, no native', (x) => scureJS.encode(x), !scureJS],
     ['@stablelib', (x) => stablelib.encode(x, true)],
+    ['hextreme', (x) => hextreme.toHex(x)],
+    ['hextreme, no native', (x) => hextremeJS.toHex(x), !hextremeJS, true], // uses TextDecoder
   ]
 
   // [name, impl, skip, removeNative]
@@ -75,6 +81,8 @@ describe('benchmarks: hex', async () => {
     ['scure.hex', (x) => scure.decode(x)],
     ['scure.hex, no native', (x) => scureJS.decode(x), !scureJS],
     ['@stablelib', (x) => stablelib.decode(x)],
+    ['hextreme', (x) => hextreme.fromHex(x)],
+    ['hextreme, no native', (x) => hextremeJS.fromHex(x), !hextremeJS, true], // uses TextEncoder
   ]
 
   test('toHex coherence', (t) => {
@@ -89,7 +97,7 @@ describe('benchmarks: hex', async () => {
     }
   })
 
-  test('toHex', { timeout: 20_000 }, async () => {
+  test('toHex', { timeout }, async () => {
     const res = new Table()
     for (const [name, f, skip, removeNative] of toHex) {
       if (removeNative) Uint8Array.prototype.toHex = undefined // eslint-disable-line no-extend-native
@@ -113,7 +121,7 @@ describe('benchmarks: hex', async () => {
     }
   })
 
-  test('fromHex', { timeout: 20_000 }, async () => {
+  test('fromHex', { timeout }, async () => {
     const res = new Table()
     for (const [name, f, skip, removeNative] of fromHex) {
       if (removeNative) delete Uint8Array.fromHex // eslint-disable-line no-extend-native

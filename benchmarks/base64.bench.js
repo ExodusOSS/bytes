@@ -7,6 +7,7 @@ import base64js from 'base64-js'
 import fastBase64Decode from 'fast-base64-decode'
 import fastBase64Encode from 'fast-base64-encode'
 import buffer from 'buffer/index.js'
+import * as hextreme from 'hextreme'
 import { describe, test } from 'node:test'
 
 import { bufs } from './utils/random.js'
@@ -37,7 +38,9 @@ if (!globalThis.Buffer) globalThis.Buffer = buffer.Buffer
 const bufferIsPolyfilled = Buffer === buffer.Buffer
 const toBuffer = (x, B) => B.from(x.buffer, x.byteOffset, x.byteLength)
 
+const timeout = 30_000
 describe('benchmarks: base64', async () => {
+  let hextremeJS // Fallback without Uint8Array.fromBase64, Uint8Array#toBase64
   let scureJS // Fallback without Uint8Array.fromBase64, Uint8Array#toBase64
   let exodusA // Fallback without Uint8Array.fromBase64, Uint8Array#toBase64
   let exodusB // Fallback without native Buffer
@@ -53,6 +56,7 @@ describe('benchmarks: base64', async () => {
     reset.push(() => (Uint8Array.prototype.toBase64 = toBase64Native)) // eslint-disable-line no-extend-native
     exodusA = await import('../base64.js?a') // eslint-disable-line @exodus/import/no-unresolved
     scureJS = (await import('../node_modules/@scure/base/lib/esm/index.js?a')).base64 // eslint-disable-line @exodus/import/no-unresolved, unicorn/no-await-expression-member
+    hextremeJS = await import('../node_modules/hextreme/index.mjs?a') // eslint-disable-line @exodus/import/no-unresolved, unicorn/no-await-expression-member
   }
 
   if (!Buffer.TYPED_ARRAY_SUPPORT) {
@@ -89,6 +93,8 @@ describe('benchmarks: base64', async () => {
     ['scure.base64', (x) => scure.encode(x)],
     ['scure.base64, no native', (x) => scureJS.encode(x), !scureJS],
     ['@stablelib', (x) => stablelib.encode(x)],
+    ['hextreme', (x) => hextreme.toBase64(x)],
+    ['hextreme, no native', (x) => hextremeJS.toBase64(x), !hextremeJS, true], // uses TextDecoder
   ]
 
   // [name, impl, skip, removeNative]
@@ -115,6 +121,8 @@ describe('benchmarks: base64', async () => {
     ['scure.base64', (x) => scure.decode(x)],
     ['scure.base64, no native', (x) => scureJS.decode(x), !scureJS],
     ['@stablelib', (x) => stablelib.decode(x)],
+    ['hextreme', (x) => hextreme.fromBase64(x)],
+    ['hextreme, no native', (x) => hextremeJS.fromBase64(x), !hextremeJS, true], // uses TextEncoder
   ]
 
   test('toBase64 coherence', (t) => {
@@ -129,7 +137,7 @@ describe('benchmarks: base64', async () => {
     }
   })
 
-  test('toBase64', { timeout: 20_000 }, async () => {
+  test('toBase64', { timeout }, async () => {
     const res = new Table()
     for (const [name, f, skip, removeNative] of toBase64) {
       if (removeNative) Uint8Array.prototype.toBase64 = undefined // eslint-disable-line no-extend-native
@@ -153,7 +161,7 @@ describe('benchmarks: base64', async () => {
     }
   })
 
-  test('fromBase64', { timeout: 20_000 }, async () => {
+  test('fromBase64', { timeout }, async () => {
     const res = new Table()
     for (const [name, f, skip, removeNative] of fromBase64) {
       if (removeNative) delete Uint8Array.fromBase64 // eslint-disable-line no-extend-native
