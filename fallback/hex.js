@@ -88,7 +88,6 @@ export function fromHex(str) {
 
   const length = str.length / 2 // this helps Hermes in loops
   const arr = new Uint8Array(length)
-  let j = 0
 
   // Native encoder path is beneficial even for small arrays in Hermes
   if (nativeEncoder) {
@@ -120,11 +119,11 @@ export function fromHex(str) {
 
     const codes16 = new Uint16Array(codes.buffer, codes.byteOffset, codes.byteLength / 2)
     let i = 0
-    for (const last3 = length - 3; i < last3; ) {
-      const ai = codes16[j++]
-      const bi = codes16[j++]
-      const ci = codes16[j++]
-      const di = codes16[j++]
+    for (const last3 = length - 3; i < last3; i += 4) {
+      const ai = codes16[i]
+      const bi = codes16[i + 1]
+      const ci = codes16[i + 2]
+      const di = codes16[i + 3]
       const a = dehexArray[ai]
       const b = dehexArray[bi]
       const c = dehexArray[ci]
@@ -133,14 +132,14 @@ export function fromHex(str) {
         throw new SyntaxError(E_HEX)
       }
 
-      arr[i++] = a
-      arr[i++] = b
-      arr[i++] = c
-      arr[i++] = d
+      arr[i] = a
+      arr[i + 1] = b
+      arr[i + 2] = c
+      arr[i + 3] = d
     }
 
     while (i < length) {
-      const ai = codes16[j++]
+      const ai = codes16[i]
       const a = dehexArray[ai]
       if (!a && ai !== _00) throw new SyntaxError(E_HEX)
       arr[i++] = a
@@ -156,6 +155,7 @@ export function fromHex(str) {
       }
     }
 
+    let j = 0
     for (let i = 0; i < length; i++) {
       const a = str.charCodeAt(j++)
       const b = str.charCodeAt(j++)
