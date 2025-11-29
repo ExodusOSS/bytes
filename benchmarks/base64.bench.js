@@ -118,10 +118,9 @@ describe('benchmarks: base64', async () => {
   ]
 
   test('toBase64 coherence', (t) => {
-    for (let i = 0; i < 100; i++) {
-      for (const [name, f, skip] of toBase64) {
-        if (!skip) t.assert.deepEqual(f(bufs[i]), strings[i], name)
-      }
+    for (const [name, f, skip] of toBase64) {
+      if (skip) continue
+      for (let i = 0; i < 100; i++) t.assert.deepEqual(f(bufs[i]), strings[i], name)
     }
   })
 
@@ -136,10 +135,9 @@ describe('benchmarks: base64', async () => {
   })
 
   test('fromBase64 coherence', (t) => {
-    for (let i = 0; i < 100; i++) {
-      for (const [name, f, skip] of fromBase64) {
-        if (!skip) t.assert.deepEqual(f(strings[i]), bufs[i], name)
-      }
+    for (const [name, f, skip] of fromBase64) {
+      if (skip) continue
+      for (let i = 0; i < 100; i++) t.assert.deepEqual(f(strings[i]), bufs[i], name)
     }
   })
 

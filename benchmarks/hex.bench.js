@@ -78,10 +78,9 @@ describe('benchmarks: hex', async () => {
   ]
 
   test('toHex coherence', (t) => {
-    for (let i = 0; i < 100; i++) {
-      for (const [name, f, skip] of toHex) {
-        if (!skip) t.assert.deepEqual(f(bufs[i]), strings[i], name)
-      }
+    for (const [name, f, skip] of toHex) {
+      if (skip) continue
+      for (let i = 0; i < 100; i++) t.assert.deepEqual(f(bufs[i]), strings[i], name)
     }
   })
 
@@ -96,10 +95,9 @@ describe('benchmarks: hex', async () => {
   })
 
   test('fromHex coherence', (t) => {
-    for (let i = 0; i < 100; i++) {
-      for (const [name, f, skip] of fromHex) {
-        if (!skip) t.assert.deepEqual(f(strings[i]), bufs[i], name)
-      }
+    for (const [name, f, skip] of fromHex) {
+      if (skip) continue
+      for (let i = 0; i < 100; i++) t.assert.deepEqual(f(strings[i]), bufs[i], name)
     }
   })
 
