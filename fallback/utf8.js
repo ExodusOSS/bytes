@@ -6,6 +6,7 @@ const replacementPoint = 0xff_fd
 // https://encoding.spec.whatwg.org/#utf-8-decoder
 // We are most likely in loose mode, for non-loose escape & decodeURIComponent solved everything
 export function decode(arr, loose, start = 0) {
+  start |= 0
   const end = arr.length
   let out = ''
   const tmp = []
