@@ -1,7 +1,8 @@
 import { assertUint8 } from '../assert.js'
-import { nativeEncoder } from './_utils.js'
+import { nativeDecoder, nativeEncoder } from './_utils.js'
 
-let hexArray
+let hexArray // array of 256 bytes converted to two-char hex strings
+let hexCodes // hexArray converted to u16 code pairs
 let dehexArray
 const _00 = 0x30_30 // '00' string in hex, the only allowed char pair to generate 0 byte
 const _ff = 0x66_66 // 'ff' string in hex, max allowed char pair (larger than 'FF' string)
@@ -62,6 +63,24 @@ export function toHex(arr) {
 
   if (!hexArray) hexArray = Array.from({ length: 256 }, (_, i) => i.toString(16).padStart(2, '0'))
   const length = arr.length // this helps Hermes
+
+  // Only old browsers use this, barebone engines don't have TextDecoder
+  // But Hermes can use this when it (hopefully) implements TextDecoder
+  if (nativeDecoder) {
+    if (!hexCodes) {
+      hexCodes = new Uint16Array(256)
+      const u8 = new Uint8Array(hexCodes.buffer, hexCodes.byteOffset, hexCodes.byteLength)
+      for (let i = 0; i < 256; i++) {
+        const pair = hexArray[i]
+        u8[2 * i] = pair.charCodeAt(0)
+        u8[2 * i + 1] = pair.charCodeAt(1)
+      }
+    }
+
+    const pairs = new Uint16Array(length)
+    for (let i = 0; i < length; i++) pairs[i] = hexCodes[arr[i]]
+    return nativeDecoder.decode(new Uint8Array(pairs.buffer, pairs.byteOffset, pairs.byteLength))
+  }
 
   if (length > 30_000) {
     // Limit concatenation to avoid excessive GC
