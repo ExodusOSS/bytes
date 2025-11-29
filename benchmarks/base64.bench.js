@@ -43,14 +43,14 @@ describe('benchmarks: base64', async () => {
   let exodusB // Fallback without native Buffer
   let exodusC // Fallback without atob
 
+  const toBase64Native = Uint8Array.prototype.toBase64Native
+  const fromBase64Native = Uint8Array.fromBase64
   const reset = []
   if (Uint8Array.fromBase64 || Uint8Array.prototype.toBase64) {
-    const { fromBase64 } = Uint8Array
     delete Uint8Array.fromBase64
-    reset.push(() => (Uint8Array.fromBase64 = fromBase64))
-    const { toBase64 } = Uint8Array.prototype
+    reset.push(() => (Uint8Array.fromBase64 = fromBase64Native))
     Uint8Array.prototype.toBase64 = undefined // eslint-disable-line no-extend-native
-    reset.push(() => (Uint8Array.prototype.toBase64 = toBase64)) // eslint-disable-line no-extend-native
+    reset.push(() => (Uint8Array.prototype.toBase64 = toBase64Native)) // eslint-disable-line no-extend-native
     exodusA = await import('../base64.js?a') // eslint-disable-line @exodus/import/no-unresolved
     scureJS = (await import('../node_modules/@scure/base/lib/esm/index.js?a')).base64 // eslint-disable-line @exodus/import/no-unresolved, unicorn/no-await-expression-member
   }
@@ -73,7 +73,7 @@ describe('benchmarks: base64', async () => {
 
   const strings = bufs.map((x) => exodus.toBase64(x))
 
-  // [name, impl, skip]
+  // [name, impl, skip, removeNative]
   const toBase64 = [
     ['@exodus/bytes/base64', (x) => exodus.toBase64(x)],
     ['@exodus/bytes/base64, no native', (x) => exodusA.toBase64(x), !exodusA],
@@ -91,7 +91,7 @@ describe('benchmarks: base64', async () => {
     ['@stablelib', (x) => stablelib.encode(x)],
   ]
 
-  // [name, impl, skip]
+  // [name, impl, skip, removeNative]
   const fromBase64 = [
     ['@exodus/bytes/base64', (x) => exodus.fromBase64(x)],
     ['@exodus/bytes/base64, no native', (x) => exodusA.fromBase64(x), !exodusA],
@@ -118,16 +118,23 @@ describe('benchmarks: base64', async () => {
   ]
 
   test('toBase64 coherence', (t) => {
-    for (const [name, f, skip] of toBase64) {
+    for (const [name, f, skip, removeNative] of toBase64) {
       if (skip) continue
-      for (let i = 0; i < 100; i++) t.assert.deepEqual(f(bufs[i]), strings[i], name)
+      if (removeNative) Uint8Array.prototype.toBase64 = undefined // eslint-disable-line no-extend-native
+      try {
+        for (let i = 0; i < 100; i++) t.assert.deepEqual(f(bufs[i]), strings[i], name)
+      } finally {
+        if (removeNative) Uint8Array.prototype.toBase64 = toBase64Native // eslint-disable-line no-extend-native
+      }
     }
   })
 
   test('toBase64', { timeout: 20_000 }, async () => {
     const res = new Table()
-    for (const [name, f, skip] of toBase64) {
+    for (const [name, f, skip, removeNative] of toBase64) {
+      if (removeNative) Uint8Array.prototype.toBase64 = undefined // eslint-disable-line no-extend-native
       res.add(name, await benchmark(`toBase64: ${name}`, { skip, args: bufs }, f))
+      if (removeNative) Uint8Array.prototype.toBase64 = toBase64Native // eslint-disable-line no-extend-native
     }
 
     res.print(columns)
@@ -135,16 +142,23 @@ describe('benchmarks: base64', async () => {
   })
 
   test('fromBase64 coherence', (t) => {
-    for (const [name, f, skip] of fromBase64) {
+    for (const [name, f, skip, removeNative] of fromBase64) {
       if (skip) continue
-      for (let i = 0; i < 100; i++) t.assert.deepEqual(f(strings[i]), bufs[i], name)
+      if (removeNative) delete Uint8Array.fromBase64 // eslint-disable-line no-extend-native
+      try {
+        for (let i = 0; i < 100; i++) t.assert.deepEqual(f(strings[i]), bufs[i], name)
+      } finally {
+        if (removeNative) Uint8Array.fromBase64 = fromBase64Native // eslint-disable-line no-extend-native
+      }
     }
   })
 
   test('fromBase64', { timeout: 20_000 }, async () => {
     const res = new Table()
-    for (const [name, f, skip] of fromBase64) {
+    for (const [name, f, skip, removeNative] of fromBase64) {
+      if (removeNative) delete Uint8Array.fromBase64 // eslint-disable-line no-extend-native
       res.add(name, await benchmark(`fromBase64: ${name}`, { skip, args: strings }, f))
+      if (removeNative) Uint8Array.fromBase64 = fromBase64Native // eslint-disable-line no-extend-native
     }
 
     res.print(columns)

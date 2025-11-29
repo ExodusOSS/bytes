@@ -27,14 +27,14 @@ describe('benchmarks: hex', async () => {
   let exodusA // Fallback without Uint8Array.fromHex, Uint8Array#toHex
   let exodusB // Fallback without native Buffer
 
+  const toHexNative = Uint8Array.prototype.toHex
+  const fromHexNative = Uint8Array.fromHex
   const reset = []
   if (Uint8Array.fromHex || Uint8Array.prototype.toHex) {
-    const { fromHex } = Uint8Array
     delete Uint8Array.fromHex
-    reset.push(() => (Uint8Array.fromHex = fromHex))
-    const { toHex } = Uint8Array.prototype
+    reset.push(() => (Uint8Array.fromHex = fromHexNative))
     Uint8Array.prototype.toHex = undefined // eslint-disable-line no-extend-native
-    reset.push(() => (Uint8Array.prototype.toHex = toHex)) // eslint-disable-line no-extend-native
+    reset.push(() => (Uint8Array.prototype.toHex = toHexNative)) // eslint-disable-line no-extend-native
     exodusA = await import('../hex.js?a') // eslint-disable-line @exodus/import/no-unresolved
     scureJS = (await import('../node_modules/@scure/base/lib/esm/index.js?a')).hex // eslint-disable-line @exodus/import/no-unresolved, unicorn/no-await-expression-member
   }
@@ -49,7 +49,7 @@ describe('benchmarks: hex', async () => {
 
   const strings = bufs.map((x) => exodus.toHex(x))
 
-  // [name, impl, skip]
+  // [name, impl, skip, removeNative]
   const toHex = [
     ['@exodus/bytes/hex', (x) => exodus.toHex(x)],
     ['@exodus/bytes/hex, no native', (x) => exodusA.toHex(x), !exodusA],
@@ -64,7 +64,7 @@ describe('benchmarks: hex', async () => {
     ['@stablelib', (x) => stablelib.encode(x, true)],
   ]
 
-  // [name, impl, skip]
+  // [name, impl, skip, removeNative]
   const fromHex = [
     ['@exodus/bytes/hex', (x) => exodus.fromHex(x)],
     ['@exodus/bytes/hex, no native', (x) => exodusA.fromHex(x), !exodusA],
@@ -78,16 +78,23 @@ describe('benchmarks: hex', async () => {
   ]
 
   test('toHex coherence', (t) => {
-    for (const [name, f, skip] of toHex) {
+    for (const [name, f, skip, removeNative] of toHex) {
       if (skip) continue
-      for (let i = 0; i < 100; i++) t.assert.deepEqual(f(bufs[i]), strings[i], name)
+      if (removeNative) Uint8Array.prototype.toHex = undefined // eslint-disable-line no-extend-native
+      try {
+        for (let i = 0; i < 100; i++) t.assert.deepEqual(f(bufs[i]), strings[i], name)
+      } finally {
+        if (removeNative) Uint8Array.prototype.toHex = toHexNative // eslint-disable-line no-extend-native
+      }
     }
   })
 
   test('toHex', { timeout: 20_000 }, async () => {
     const res = new Table()
-    for (const [name, f, skip] of toHex) {
+    for (const [name, f, skip, removeNative] of toHex) {
+      if (removeNative) Uint8Array.prototype.toHex = undefined // eslint-disable-line no-extend-native
       res.add(name, await benchmark(`toHex: ${name}`, { skip, args: bufs }, f))
+      if (removeNative) Uint8Array.prototype.toHex = toHexNative // eslint-disable-line no-extend-native
     }
 
     res.print(columns)
@@ -95,16 +102,23 @@ describe('benchmarks: hex', async () => {
   })
 
   test('fromHex coherence', (t) => {
-    for (const [name, f, skip] of fromHex) {
+    for (const [name, f, skip, removeNative] of fromHex) {
       if (skip) continue
-      for (let i = 0; i < 100; i++) t.assert.deepEqual(f(strings[i]), bufs[i], name)
+      if (removeNative) delete Uint8Array.fromHex // eslint-disable-line no-extend-native
+      try {
+        for (let i = 0; i < 100; i++) t.assert.deepEqual(f(strings[i]), bufs[i], name)
+      } finally {
+        if (removeNative) Uint8Array.fromHex = fromHexNative // eslint-disable-line no-extend-native
+      }
     }
   })
 
   test('fromHex', { timeout: 20_000 }, async () => {
     const res = new Table()
-    for (const [name, f, skip] of fromHex) {
+    for (const [name, f, skip, removeNative] of fromHex) {
+      if (removeNative) delete Uint8Array.fromHex // eslint-disable-line no-extend-native
       res.add(name, await benchmark(`fromHex: ${name}`, { skip, args: strings }, f))
+      if (removeNative) Uint8Array.fromHex = fromHexNative // eslint-disable-line no-extend-native
     }
 
     res.print(columns)
