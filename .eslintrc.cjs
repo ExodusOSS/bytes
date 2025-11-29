@@ -13,6 +13,7 @@ module.exports = {
         ],
         'unicorn/no-new-array': 'off',
         'unicorn/prefer-code-point': 'off',
+        'unicorn/prefer-math-trunc': 'off',
       },
     },
     {
