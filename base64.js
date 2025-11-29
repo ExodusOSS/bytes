@@ -40,7 +40,6 @@ export function toBase64url(x, { padding = false } = {}) {
   }
 
   if (!haveNativeBuffer) return js.toBase64(x, true, padding) // Fallback
-  if (x.constructor === Buffer && Buffer.isBuffer(x)) return x.toString('base64url') // Older Node.js
   const res = toBuffer(x).toString('base64url') // Older Node.js
   return padding && res.length % 4 !== 0 ? res + '='.repeat(4 - (res.length % 4)) : res
 }
