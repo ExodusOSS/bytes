@@ -1,6 +1,7 @@
 import { assertUint8 } from './assert.js'
 import { typedView } from './array.js'
 import * as js from './fallback/utf8.js'
+import * as ascii from './fallback/ascii.js'
 
 const { Buffer, TextEncoder, TextDecoder, decodeURIComponent, escape } = globalThis // Buffer is optional
 const haveNativeBuffer = Buffer && !Buffer.TYPED_ARRAY_SUPPORT
@@ -79,37 +80,40 @@ function decode(arr, loose = false) {
   if (haveDecoder) return loose ? decoderLoose.decode(arr) : decoderFatal.decode(arr) // Node.js and browsers
   // No reason to use native Buffer: it's not faster than TextDecoder, needs rechecks in non-loose mode, and Node.js has TextDecoder
 
+  // Fast path for ASCII prefix, this is faster than all alternatives below
+  const prefix = ascii.decode(arr, 0, ascii.asciiPrefix(arr))
+  if (prefix.length === arr.length) return prefix
+
   // This codepath gives a ~2x perf boost on Hermes
   if (shouldUseEscapePath && escape && decodeURIComponent) {
     if (!esc) esc = Array.from({ length: 256 }, (_, i) => escape(String.fromCharCode(i)))
     const length = arr.length
     let o
-    if (length > 30_000) {
+    if (length - prefix.length > 30_000) {
       // Limit concatenation to avoid excessive GC
       // TODO: recheck thresholds on Hermes (taken from hex)
       const concat = []
-      for (let i = 0; i < length; ) {
-        const step = i + 500
-        const end = step > length ? length : step
-        concat.push(toEscapesPart(arr, i, end))
-        i = end
+      for (let i = prefix.length; i < length; ) {
+        const i1 = Math.min(length, i + 500)
+        concat.push(toEscapesPart(arr, i, i1))
+        i = i1
       }
 
       o = concat.join('')
       concat.length = 0
     } else {
-      o = toEscapesPart(arr, 0, length)
+      o = toEscapesPart(arr, prefix.length, length)
     }
 
     try {
-      return decodeURIComponent(o) // asci to utf8, escape() is precalucated
+      return prefix + decodeURIComponent(o) // ascii to utf8, escape() is precalculated
     } catch {
       if (!loose) throw new TypeError(E_STRICT)
       // Ok, we have to use manual implementation for loose decoder
     }
   }
 
-  return js.decode(arr, loose)
+  return prefix + js.decode(arr, loose, prefix.length)
 }
 
 export const utf8fromString = (str, format = 'uint8') => typedView(encode(str, false), format)
