@@ -61,11 +61,12 @@ describe('benchmarks: base64', async () => {
     exodusB = await import('../base64.js?b') // eslint-disable-line @exodus/import/no-unresolved
   }
 
-  if (globalThis.atob && globalThis.HermesInternal) {
-    const { atob } = globalThis
+  if (globalThis.atob && globalThis.btoa && globalThis.HermesInternal) {
+    const { atob, btoa } = globalThis
     delete globalThis.atob
+    delete globalThis.btoa
     exodusC = await import('../base64.js?c') // eslint-disable-line @exodus/import/no-unresolved
-    globalThis.atob = atob
+    Object.assign(globalThis, { atob, btoa })
   }
 
   for (const f of reset) f()
@@ -77,6 +78,7 @@ describe('benchmarks: base64', async () => {
     ['@exodus/bytes/base64', (x) => exodus.toBase64(x)],
     ['@exodus/bytes/base64, no native', (x) => exodusA.toBase64(x), !exodusA],
     ['@exodus/bytes/base64, no Buffer', (x) => exodusB.toBase64(x), !exodusB],
+    ['@exodus/bytes/base64, no btoa', (x) => exodusC.toBase64(x), !exodusC],
     ['fallback', (x) => fallback.toBase64(x, false, true)],
     ['Buffer', (x) => toBuffer(x, Buffer).toString('base64')],
     ['Buffer.from', (x) => Buffer.from(x).toString('base64')],
