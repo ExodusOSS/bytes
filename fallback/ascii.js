@@ -28,6 +28,7 @@ export function asciiPrefix(arr) {
   return length
 }
 
+// This is actually compatible with Latin1 and supports range 0-255, not just 0-127
 export function decode(arr, start = 0, stop = arr.length) {
   const total = stop - start
   if (total === 0) return ''
