@@ -1,5 +1,6 @@
 import { assertUint8, assertEmptyRest } from './assert.js'
 import { typedView } from './array.js'
+import * as ascii from './fallback/ascii.js'
 import * as js from './fallback/base64.js'
 
 // See https://datatracker.ietf.org/doc/html/rfc4648
@@ -7,13 +8,15 @@ import * as js from './fallback/base64.js'
 // base64:    A-Za-z0-9+/ and = if padding not disabled
 // base64url: A-Za-z0-9_- and = if padding enabled
 
-const { Buffer, atob } = globalThis // Buffer is optional, only used when native
+const { Buffer, atob, btoa } = globalThis // Buffer is optional, only used when native
 const haveNativeBuffer = Buffer && !Buffer.TYPED_ARRAY_SUPPORT
 const { toBase64: web64 } = Uint8Array.prototype // Modern engines have this
 
 const { E_CHAR, E_PADDING, E_LENGTH, E_LAST } = js
 
-const shouldUseAtob = atob && Boolean(globalThis.HermesInternal) // faster only on Hermes (and a little in old Chrome), js path beats it on normal engines
+// faster only on Hermes (and a little in old Chrome), js path beats it on normal engines
+const shouldUseBtoa = btoa && Boolean(globalThis.HermesInternal)
+const shouldUseAtob = atob && Boolean(globalThis.HermesInternal)
 
 // For native Buffer codepaths only
 const isBuffer = (x) => x.constructor === Buffer && Buffer.isBuffer(x)
@@ -25,8 +28,10 @@ export function toBase64(x, { padding = true } = {}) {
     return padding ? x.toBase64() : x.toBase64({ omitPadding: !padding }) // Modern, optionless is slightly faster
   }
 
-  if (!haveNativeBuffer) return js.toBase64(x, false, padding) // Fallback
-  const res = toBuffer(x).toString('base64') // Older Node.js
+  if (!haveNativeBuffer && !shouldUseBtoa) return js.toBase64(x, false, padding) // Fallback
+  const res = haveNativeBuffer
+    ? toBuffer(x).toString('base64') // Older Node.js, padded
+    : btoa(ascii.decode(x)) // padded
   if (padding) return res
   const at = res.indexOf('=', res.length - 3)
   return at === -1 ? res : res.slice(0, at)
@@ -39,9 +44,19 @@ export function toBase64url(x, { padding = false } = {}) {
     return x.toBase64({ alphabet: 'base64url', omitPadding: !padding }) // Modern
   }
 
-  if (!haveNativeBuffer) return js.toBase64(x, true, padding) // Fallback
-  const res = toBuffer(x).toString('base64url') // Older Node.js
-  return padding && res.length % 4 !== 0 ? res + '='.repeat(4 - (res.length % 4)) : res
+  if (haveNativeBuffer) {
+    const res = toBuffer(x).toString('base64url') // Older Node.js, unpadded
+    return padding && res.length % 4 !== 0 ? res + '='.repeat(4 - (res.length % 4)) : res
+  }
+
+  if (shouldUseBtoa) {
+    const res = btoa(ascii.decode(x)).replaceAll('+', '-').replaceAll('/', '_') // padded
+    if (padding) return res
+    const at = res.indexOf('=', res.length - 3)
+    return at === -1 ? res : res.slice(0, at)
+  }
+
+  return js.toBase64(x, true, padding) // Fallback
 }
 
 // Unlike Buffer.from(), throws on invalid input (non-base64 symbols and incomplete chunks)
