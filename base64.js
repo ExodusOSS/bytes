@@ -98,11 +98,22 @@ function fromBase64common(str, isBase64url, padding, format, rest) {
 // ASCII whitespace is U+0009 TAB, U+000A LF, U+000C FF, U+000D CR, or U+0020 SPACE
 const ASCII_WHITESPACE = /[\t\n\f\r ]/ // non-u for JSC perf
 
+function noWhitespaceSeen(str, arr) {
+  const at = str.indexOf('=', str.length - 3)
+  const paddingLength = at >= 0 ? str.length - at : 0
+  const chars = str.length - paddingLength
+  const e = chars % 4 // extra chars past blocks of 4
+  const b = arr.length - ((chars - e) / 4) * 3 // remaining bytes not covered by full blocks of chars
+  return (e === 0 && b === 0) || (e === 2 && b === 1) || (e === 3 && b === 2)
+}
+
 let fromBase64impl
 if (Uint8Array.fromBase64) {
   // NOTICE: this is actually slower than our JS impl in older JavaScriptCore and (slightly) in SpiderMonkey, but faster on V8 and new JavaScriptCore
   fromBase64impl = (str, isBase64url) => {
     const alphabet = isBase64url ? 'base64url' : 'base64'
+    // We have to check for whitespace _before_ constructing padding (unlike in noWhitespaceSeen logic),
+    // otherwise we won't get correct error reporting
     if (ASCII_WHITESPACE.test(str)) throw new SyntaxError(E_CHAR) // all other chars are checked natively
     const padded = str.length % 4 > 0 ? `${str}${'='.repeat(4 - (str.length % 4))}` : str
     return Uint8Array.fromBase64(padded, { alphabet, lastChunkHandling: 'strict' })
@@ -121,8 +132,6 @@ if (Uint8Array.fromBase64) {
       if (isBase64url) {
         if (/[\t\n\f\r +/]/.test(str)) throw new SyntaxError(E_CHAR) // atob verifies other invalid input
         str = fromUrl(str)
-      } else {
-        if (ASCII_WHITESPACE.test(str)) throw new SyntaxError(E_CHAR) // all other chars are checked natively
       }
 
       try {
@@ -130,6 +139,8 @@ if (Uint8Array.fromBase64) {
       } catch {
         throw new SyntaxError(E_CHAR) // convert atob errors
       }
+
+      if (!isBase64url && !noWhitespaceSeen(str, arr)) throw new SyntaxError(E_CHAR) // base64url checks input above
     } else {
       return js.fromBase64(str, isBase64url) // early return to skip last chunk verification, it's already validated in js
     }
