@@ -56,10 +56,15 @@ export function toBase32(arr, isBase32Hex, padding) {
       const c = arr[i + 2]
       const d = arr[i + 3]
       const e = arr[i + 4]
-      oa[j++] = codepairs[(a << 2) | (b >> 6)] // 8 + 8 - 5 - 5 = 6 left
-      oa[j++] = codepairs[((b & 0x3f) << 4) | (c >> 4)] // 6 + 8 - 5 - 5 = 4 left
-      oa[j++] = codepairs[((c & 0xf) << 6) | (d >> 2)] // 4 + 8 - 5 - 5 = 2 left
-      oa[j++] = codepairs[((d & 0x3) << 8) | e] // 2 + 8 - 5 - 5 = 0 left
+      const x0 = (a << 2) | (b >> 6) // 8 + 8 - 5 - 5 = 6 left
+      const x1 = ((b & 0x3f) << 4) | (c >> 4) // 6 + 8 - 5 - 5 = 4 left
+      const x2 = ((c & 0xf) << 6) | (d >> 2) // 4 + 8 - 5 - 5 = 2 left
+      const x3 = ((d & 0x3) << 8) | e // 2 + 8 - 5 - 5 = 0 left
+      oa[j] = codepairs[x0]
+      oa[j + 1] = codepairs[x1]
+      oa[j + 2] = codepairs[x2]
+      oa[j + 3] = codepairs[x3]
+      j += 4
     }
 
     o = nativeDecoder.decode(oa)
@@ -84,10 +89,14 @@ export function toBase32(arr, isBase32Hex, padding) {
       const c = arr[i + 2]
       const d = arr[i + 3]
       const e = arr[i + 4]
-      o += pairs[(a << 2) | (b >> 6)] // 8 + 8 - 5 - 5 = 6 left
-      o += pairs[((b & 0x3f) << 4) | (c >> 4)] // 6 + 8 - 5 - 5 = 4 left
-      o += pairs[((c & 0xf) << 6) | (d >> 2)] // 4 + 8 - 5 - 5 = 2 left
-      o += pairs[((d & 0x3) << 8) | e] // 2 + 8 - 5 - 5 = 0 left
+      const x0 = (a << 2) | (b >> 6) // 8 + 8 - 5 - 5 = 6 left
+      const x1 = ((b & 0x3f) << 4) | (c >> 4) // 6 + 8 - 5 - 5 = 4 left
+      const x2 = ((c & 0xf) << 6) | (d >> 2) // 4 + 8 - 5 - 5 = 2 left
+      const x3 = ((d & 0x3) << 8) | e // 2 + 8 - 5 - 5 = 0 left
+      o += pairs[x0]
+      o += pairs[x1]
+      o += pairs[x2]
+      o += pairs[x3]
     }
   }
 
