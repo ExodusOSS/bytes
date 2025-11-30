@@ -58,14 +58,17 @@ export function toBase64url(x, { padding = false } = {}) {
 // NOTE: Always operates in strict mode for last chunk
 
 // By default accepts both padded and non-padded variants, only strict base64
-export function fromBase64(str, options = {}) {
+export function fromBase64(str, options) {
   if (typeof options === 'string') options = { format: options } // Compat due to usage, TODO: remove
+  if (!options) return fromBase64common(str, false, 'both', 'uint8', null)
   const { format = 'uint8', padding = 'both', ...rest } = options
   return fromBase64common(str, false, padding, format, rest)
 }
 
 // By default accepts only non-padded strict base64url
-export function fromBase64url(str, { format = 'uint8', padding = false, ...rest } = {}) {
+export function fromBase64url(str, options) {
+  if (!options) return fromBase64common(str, true, false, 'uint8', null)
+  const { format = 'uint8', padding = false, ...rest } = options
   return fromBase64common(str, true, padding, format, rest)
 }
 
@@ -77,7 +80,7 @@ export function fromBase64any(str, { format = 'uint8', padding = 'both', ...rest
 
 function fromBase64common(str, isBase64url, padding, format, rest) {
   if (typeof str !== 'string') throw new TypeError('Input is not a string')
-  assertEmptyRest(rest)
+  if (rest !== null) assertEmptyRest(rest)
   const auto = padding === 'both' ? str.endsWith('=') : undefined
   // Older JSC supporting Uint8Array.fromBase64 lacks proper checks
   if (padding === true || auto === true) {
