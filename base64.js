@@ -112,21 +112,27 @@ if (Uint8Array.fromBase64) {
   // NOTICE: this is actually slower than our JS impl in older JavaScriptCore and (slightly) in SpiderMonkey, but faster on V8 and new JavaScriptCore
   fromBase64impl = (str, isBase64url, padding) => {
     const alphabet = isBase64url ? 'base64url' : 'base64'
+
+    let arr
     if (padding === true) {
       // Padding is required from user, and we already checked that string length is divisible by 4
       // Padding might still be wrong due to whitespace, but in that case native impl throws expected error
-      // So we can optimize and recheck output length instead of regexing whitespace on input
-      const arr = Uint8Array.fromBase64(str, { alphabet, lastChunkHandling: 'strict' })
-      if (!noWhitespaceSeen(str, arr)) throw new SyntaxError(E_CHAR)
-      return arr
+      arr = Uint8Array.fromBase64(str, { alphabet, lastChunkHandling: 'strict' })
+    } else {
+      try {
+        const padded = str.length % 4 > 0 ? `${str}${'='.repeat(4 - (str.length % 4))}` : str
+        arr = Uint8Array.fromBase64(padded, { alphabet, lastChunkHandling: 'strict' })
+      } catch (err) {
+        // Normalize error: whitespace in input could have caused added padding to be invalid
+        // But reporting that as a padding error would be confusing
+        throw ASCII_WHITESPACE.test(str) ? new SyntaxError(E_CHAR) : err
+      }
     }
 
-    // For cases when we do not require padding from user, throwing a padding-related error
-    // on length being invalid because of whitespace is confusing.
-    // So, we have to check for whitespace _before_ constructing padding for correct error reporting
-    if (ASCII_WHITESPACE.test(str)) throw new SyntaxError(E_CHAR) // all other chars are checked natively
-    const padded = str.length % 4 > 0 ? `${str}${'='.repeat(4 - (str.length % 4))}` : str
-    return Uint8Array.fromBase64(padded, { alphabet, lastChunkHandling: 'strict' })
+    // We don't allow whitespace in input, but that can be rechecked based on output length
+    // All other chars are checked natively
+    if (!noWhitespaceSeen(str, arr)) throw new SyntaxError(E_CHAR)
+    return arr
   }
 } else {
   fromBase64impl = (str, isBase64url, padding) => {
