@@ -155,23 +155,31 @@ export function fromBase64(str, isURL) {
     const codes = nativeEncoder.encode(str)
     if (codes.length !== str.length) throw new SyntaxError(E_CHAR) // non-ascii
     while (i < mainLength) {
-      const a = (m[codes[i++]] << 18) | (m[codes[i++]] << 12) | (m[codes[i++]] << 6) | m[codes[i++]]
+      const c0 = codes[i]
+      const c1 = codes[i + 1]
+      const c2 = codes[i + 2]
+      const c3 = codes[i + 3]
+      i += 4
+      const a = (m[c0] << 18) | (m[c1] << 12) | (m[c2] << 6) | m[c3]
       if (a < 0) throw new SyntaxError(E_CHAR)
-      arr[at++] = a >> 16
-      arr[at++] = (a >> 8) & 0xff
-      arr[at++] = a & 0xff
+      arr[at] = a >> 16
+      arr[at + 1] = (a >> 8) & 0xff
+      arr[at + 2] = a & 0xff
+      at += 3
     }
   } else {
     while (i < mainLength) {
-      const a =
-        (m[str.charCodeAt(i++)] << 18) |
-        (m[str.charCodeAt(i++)] << 12) |
-        (m[str.charCodeAt(i++)] << 6) |
-        m[str.charCodeAt(i++)]
+      const c0 = str.charCodeAt(i)
+      const c1 = str.charCodeAt(i + 1)
+      const c2 = str.charCodeAt(i + 2)
+      const c3 = str.charCodeAt(i + 3)
+      i += 4
+      const a = (m[c0] << 18) | (m[c1] << 12) | (m[c2] << 6) | m[c3]
       if (a < 0) throw new SyntaxError(E_CHAR)
-      arr[at++] = a >> 16
-      arr[at++] = (a >> 8) & 0xff
-      arr[at++] = a & 0xff
+      arr[at] = a >> 16
+      arr[at + 1] = (a >> 8) & 0xff
+      arr[at + 2] = a & 0xff
+      at += 3
     }
   }
 
