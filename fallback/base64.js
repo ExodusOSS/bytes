@@ -63,7 +63,7 @@ export function toBase64(arr, isURL, padding) {
 
     o = nativeDecoder.decode(oa)
   } else {
-    // Templates are faster only on Hermes. Other engines have built-in toBase64 and don't need this extra opt anyway
+    // Templates are faster only on Hermes and JSC. Other engines have built-in toBase64 and don't need this extra opt anyway
     if (useTemplates) {
       const fullChunksBytes3 = fullChunksBytes - 9 // this ensures we can fit 4 = 3 + 1 full chunks
       const p = pairs
