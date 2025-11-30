@@ -19,7 +19,7 @@ const { E_STRICT, E_STRICT_UNICODE } = js
 const shouldUseEscapePath = Boolean(globalThis.HermesInternal) // faster only on Hermes, js path beats it on normal engines
 
 function deLoose(str, loose, res) {
-  if (loose) return res
+  if (loose || str.length === res.length) return res // length is equal only for ascii, which is automatically fine
   if (isWellFormed) {
     // We have a fast native method
     if (isWellFormed.call(str)) return res
