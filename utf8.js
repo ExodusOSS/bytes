@@ -52,29 +52,6 @@ function encode(str, loose = false) {
   return js.encode(str, loose)
 }
 
-let esc
-
-// This function is used only in escape + decodeURIComponent path, i.e. on Hermes
-function toEscapesPart(arr, start, end) {
-  let o = ''
-  let i = start
-  // Unrolled loop is faster
-  for (const last7 = end - 7; i < last7; i += 8) {
-    const a = arr[i]
-    const b = arr[i + 1]
-    const c = arr[i + 2]
-    const d = arr[i + 3]
-    const e = arr[i + 4]
-    const f = arr[i + 5]
-    const g = arr[i + 6]
-    const h = arr[i + 7]
-    o += `${esc[a]}${esc[b]}${esc[c]}${esc[d]}${esc[e]}${esc[f]}${esc[g]}${esc[h]}` // templates are faster on Hermes
-  }
-
-  while (i < end) o += esc[arr[i++]]
-  return o
-}
-
 function decode(arr, loose = false) {
   assertUint8(arr)
   if (haveDecoder) return loose ? decoderLoose.decode(arr) : decoderFatal.decode(arr) // Node.js and browsers
@@ -84,32 +61,11 @@ function decode(arr, loose = false) {
   const prefix = ascii.decode(arr, 0, ascii.asciiPrefix(arr))
   if (prefix.length === arr.length) return prefix
 
-  // This codepath gives a ~2x perf boost on Hermes
+  // This codepath gives a ~3x perf boost on Hermes
   if (shouldUseEscapePath && escape && decodeURIComponent) {
-    if (!esc) {
-      const maybeEscape = (s, i) => i < 128 && s !== '%' ? s : escape(s) // don't escape ascii except the escape sign %
-      esc = Array.from({ length: 256 }, (_, i) => String.fromCharCode(i)).map(maybeEscape)
-    }
-    const length = arr.length
-    let o
-    if (length - prefix.length > 30_000) {
-      // Limit concatenation to avoid excessive GC
-      // TODO: recheck thresholds on Hermes (taken from hex)
-      const concat = []
-      for (let i = prefix.length; i < length; ) {
-        const i1 = Math.min(length, i + 500)
-        concat.push(toEscapesPart(arr, i, i1))
-        i = i1
-      }
-
-      o = concat.join('')
-      concat.length = 0
-    } else {
-      o = toEscapesPart(arr, prefix.length, length)
-    }
-
+    const o = escape(ascii.decode(arr, prefix.length, arr.length))
     try {
-      return prefix + decodeURIComponent(o) // ascii to utf8, escape() is precalculated
+      return prefix + decodeURIComponent(o) // Latin1 to utf8
     } catch {
       if (!loose) throw new TypeError(E_STRICT)
       // Ok, we have to use manual implementation for loose decoder
