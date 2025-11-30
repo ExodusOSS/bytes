@@ -43,7 +43,7 @@ describe('benchmarks: base64', async () => {
   let exodusB // Fallback without native Buffer
   let exodusC // Fallback without atob
 
-  const toBase64Native = Uint8Array.prototype.toBase64Native
+  const toBase64Native = Uint8Array.prototype.toBase64
   const fromBase64Native = Uint8Array.fromBase64
   const reset = []
   if (Uint8Array.fromBase64 || Uint8Array.prototype.toBase64) {
