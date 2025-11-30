@@ -28,6 +28,7 @@ describe('benchmarks: base58check', async () => {
   // [name, impl, skip]
   const toBase58check = [
     ['@exodus/bytes/base58check', (x) => exodus.toBase58check(x)],
+    ['@exodus/bytes/base58check, sync', (x) => exodus.toBase58checkSync(x)],
     ['bs58check', (x) => bs58check.encode(x)],
     ['scure.base58check', (x) => scure.encode(x)],
   ]
@@ -35,6 +36,7 @@ describe('benchmarks: base58check', async () => {
   // [name, impl, skip]
   const fromBase58check = [
     ['@exodus/bytes/base58check', (x) => exodus.fromBase58check(x)],
+    ['@exodus/bytes/base58check, sync', (x) => exodus.fromBase58checkSync(x)],
     ['bs58check', (x) => bs58check.decode(x)],
     ['scure.base58check', (x) => scure.decode(x)],
   ]
