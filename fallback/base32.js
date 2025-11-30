@@ -154,36 +154,46 @@ export function fromBase32(str, isBase32Hex) {
 
   if (nativeEncoder) {
     const codes = encodeAscii(str, E_CHAR)
-    while (i < mainLength) {
+    for (; i < mainLength; i += 8) {
       // each 5 bits, grouped 5 * 4 = 20
-      const a = (m[codes[i++]] << 15) | (m[codes[i++]] << 10) | (m[codes[i++]] << 5) | m[codes[i++]]
-      const b = (m[codes[i++]] << 15) | (m[codes[i++]] << 10) | (m[codes[i++]] << 5) | m[codes[i++]]
+      const x0 = codes[i]
+      const x1 = codes[i + 1]
+      const x2 = codes[i + 2]
+      const x3 = codes[i + 3]
+      const x4 = codes[i + 4]
+      const x5 = codes[i + 5]
+      const x6 = codes[i + 6]
+      const x7 = codes[i + 7]
+      const a = (m[x0] << 15) | (m[x1] << 10) | (m[x2] << 5) | m[x3]
+      const b = (m[x4] << 15) | (m[x5] << 10) | (m[x6] << 5) | m[x7]
       if (a < 0 || b < 0) throw new SyntaxError(E_CHAR)
-      arr[at++] = a >> 12
-      arr[at++] = (a >> 4) & 0xff
-      arr[at++] = ((a << 4) & 0xff) | (b >> 16)
-      arr[at++] = (b >> 8) & 0xff
-      arr[at++] = b & 0xff
+      arr[at] = a >> 12
+      arr[at + 1] = (a >> 4) & 0xff
+      arr[at + 2] = ((a << 4) & 0xff) | (b >> 16)
+      arr[at + 3] = (b >> 8) & 0xff
+      arr[at + 4] = b & 0xff
+      at += 5
     }
   } else {
-    while (i < mainLength) {
+    for (; i < mainLength; i += 8) {
       // each 5 bits, grouped 5 * 4 = 20
-      const a =
-        (m[str.charCodeAt(i++)] << 15) |
-        (m[str.charCodeAt(i++)] << 10) |
-        (m[str.charCodeAt(i++)] << 5) |
-        m[str.charCodeAt(i++)]
-      const b =
-        (m[str.charCodeAt(i++)] << 15) |
-        (m[str.charCodeAt(i++)] << 10) |
-        (m[str.charCodeAt(i++)] << 5) |
-        m[str.charCodeAt(i++)]
+      const x0 = str.charCodeAt(i)
+      const x1 = str.charCodeAt(i + 1)
+      const x2 = str.charCodeAt(i + 2)
+      const x3 = str.charCodeAt(i + 3)
+      const x4 = str.charCodeAt(i + 4)
+      const x5 = str.charCodeAt(i + 5)
+      const x6 = str.charCodeAt(i + 6)
+      const x7 = str.charCodeAt(i + 7)
+      const a = (m[x0] << 15) | (m[x1] << 10) | (m[x2] << 5) | m[x3]
+      const b = (m[x4] << 15) | (m[x5] << 10) | (m[x6] << 5) | m[x7]
       if (a < 0 || b < 0) throw new SyntaxError(E_CHAR)
-      arr[at++] = a >> 12
-      arr[at++] = (a >> 4) & 0xff
-      arr[at++] = ((a << 4) & 0xff) | (b >> 16)
-      arr[at++] = (b >> 8) & 0xff
-      arr[at++] = b & 0xff
+      arr[at] = a >> 12
+      arr[at + 1] = (a >> 4) & 0xff
+      arr[at + 2] = ((a << 4) & 0xff) | (b >> 16)
+      arr[at + 3] = (b >> 8) & 0xff
+      arr[at + 4] = b & 0xff
+      at += 5
     }
   }
 

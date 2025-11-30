@@ -154,12 +154,11 @@ export function fromBase64(str, isURL) {
 
   if (nativeEncoder) {
     const codes = encodeAscii(str, E_CHAR)
-    while (i < mainLength) {
+    for (; i < mainLength; i += 4) {
       const c0 = codes[i]
       const c1 = codes[i + 1]
       const c2 = codes[i + 2]
       const c3 = codes[i + 3]
-      i += 4
       const a = (m[c0] << 18) | (m[c1] << 12) | (m[c2] << 6) | m[c3]
       if (a < 0) throw new SyntaxError(E_CHAR)
       arr[at] = a >> 16
@@ -168,12 +167,11 @@ export function fromBase64(str, isURL) {
       at += 3
     }
   } else {
-    while (i < mainLength) {
+    for (; i < mainLength; i += 4) {
       const c0 = str.charCodeAt(i)
       const c1 = str.charCodeAt(i + 1)
       const c2 = str.charCodeAt(i + 2)
       const c3 = str.charCodeAt(i + 3)
-      i += 4
       const a = (m[c0] << 18) | (m[c1] << 12) | (m[c2] << 6) | m[c3]
       if (a < 0) throw new SyntaxError(E_CHAR)
       arr[at] = a >> 16
