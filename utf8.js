@@ -86,7 +86,10 @@ function decode(arr, loose = false) {
 
   // This codepath gives a ~2x perf boost on Hermes
   if (shouldUseEscapePath && escape && decodeURIComponent) {
-    if (!esc) esc = Array.from({ length: 256 }, (_, i) => escape(String.fromCharCode(i)))
+    if (!esc) {
+      const maybeEscape = (s, i) => i < 128 && s !== '%' ? s : escape(s) // don't escape ascii except the escape sign %
+      esc = Array.from({ length: 256 }, (_, i) => String.fromCharCode(i)).map(maybeEscape)
+    }
     const length = arr.length
     let o
     if (length - prefix.length > 30_000) {
