@@ -13,6 +13,8 @@ export const E_PADDING = 'Invalid base32 padding'
 export const E_LENGTH = 'Invalid base32 length'
 export const E_LAST = 'Invalid last chunk'
 
+const useTemplates = Boolean(globalThis.HermesInternal) // Faster on Hermes and JSC, but we use it only on Hermes
+
 // We construct output by concatenating chars, this seems to be fine enough on modern JS engines
 export function toBase32(arr, isBase32Hex, padding) {
   assertUint8(arr)
@@ -61,6 +63,20 @@ export function toBase32(arr, isBase32Hex, padding) {
     }
 
     o = nativeDecoder.decode(oa)
+  } else if (useTemplates) {
+    // Templates are faster only on Hermes and JSC. Browsers have TextDecoder anyway
+    for (; i < fullChunksBytes; i += 5) {
+      const a = arr[i]
+      const b = arr[i + 1]
+      const c = arr[i + 2]
+      const d = arr[i + 3]
+      const e = arr[i + 4]
+      const x0 = (a << 2) | (b >> 6) // 8 + 8 - 5 - 5 = 6 left
+      const x1 = ((b & 0x3f) << 4) | (c >> 4) // 6 + 8 - 5 - 5 = 4 left
+      const x2 = ((c & 0xf) << 6) | (d >> 2) // 4 + 8 - 5 - 5 = 2 left
+      const x3 = ((d & 0x3) << 8) | e // 2 + 8 - 5 - 5 = 0 left
+      o += `${pairs[x0]}${pairs[x1]}${pairs[x2]}${pairs[x3]}`
+    }
   } else {
     for (; i < fullChunksBytes; i += 5) {
       const a = arr[i]
