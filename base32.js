@@ -12,14 +12,21 @@ export const toBase32 = (arr, { padding = false } = {}) => js.toBase32(arr, fals
 export const toBase32hex = (arr, { padding = false } = {}) => js.toBase32(arr, true, padding)
 
 // By default, valid padding is accepted but not required
-export const fromBase32 = (str, { format = 'uint8', padding = 'both', ...rest } = {}) =>
-  fromBase32common(str, false, padding, format, rest)
-export const fromBase32hex = (str, { format = 'uint8', padding = 'both', ...rest } = {}) =>
-  fromBase32common(str, true, padding, format, rest)
+export function fromBase32(str, options) {
+  if (!options) return fromBase32common(str, false, 'both', 'uint8', null)
+  const { format = 'uint8', padding = 'both', ...rest } = options
+  return fromBase32common(str, false, padding, format, rest)
+}
+
+export function fromBase32hex(str, options) {
+  if (!options) return fromBase32common(str, true, 'both', 'uint8', null)
+  const { format = 'uint8', padding = 'both', ...rest } = options
+  return fromBase32common(str, true, padding, format, rest)
+}
 
 function fromBase32common(str, isBase32Hex, padding, format, rest) {
   if (typeof str !== 'string') throw new TypeError('Input is not a string')
-  assertEmptyRest(rest)
+  if (rest !== null) assertEmptyRest(rest)
 
   if (padding === true) {
     if (str.length % 8 !== 0) throw new SyntaxError(E_PADDING)
