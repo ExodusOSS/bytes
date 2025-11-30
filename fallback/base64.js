@@ -1,5 +1,6 @@
 import { assertUint8 } from '../assert.js'
 import { nativeEncoder, nativeDecoder } from './_utils.js'
+import { encodeAscii } from './ascii.js'
 
 // See https://datatracker.ietf.org/doc/html/rfc4648
 
@@ -152,8 +153,7 @@ export function fromBase64(str, isURL) {
   let i = 0
 
   if (nativeEncoder) {
-    const codes = nativeEncoder.encode(str)
-    if (codes.length !== str.length) throw new SyntaxError(E_CHAR) // non-ascii
+    const codes = encodeAscii(str, E_CHAR)
     while (i < mainLength) {
       const c0 = codes[i]
       const c1 = codes[i + 1]

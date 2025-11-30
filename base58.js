@@ -1,6 +1,7 @@
 import { typedView } from './array.js'
 import { assertUint8 } from './assert.js'
 import { nativeDecoder, nativeEncoder } from './fallback/_utils.js'
+import { encodeAscii } from './fallback/ascii.js'
 
 const alphabet = [...'123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz']
 const codes = new Uint8Array(alphabet.map((x) => x.charCodeAt(0)))
@@ -142,8 +143,7 @@ export function fromBase58(str, format = 'uint8') {
 
     // nativeEncoder gives a benefit here
     if (nativeEncoder) {
-      const codes = nativeEncoder.encode(str)
-      if (codes.length !== str.length) throw new SyntaxError(E_CHAR) // non-ascii
+      const codes = encodeAscii(str, E_CHAR)
       for (let i = zeros; i < length; i++) {
         const c = fromMap[codes[i]]
         if (c < 0) throw new SyntaxError(E_CHAR)

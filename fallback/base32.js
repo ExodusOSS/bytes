@@ -1,5 +1,6 @@
 import { assertUint8 } from '../assert.js'
 import { nativeEncoder, nativeDecoder } from './_utils.js'
+import { encodeAscii } from './ascii.js'
 
 // See https://datatracker.ietf.org/doc/html/rfc4648
 
@@ -152,8 +153,7 @@ export function fromBase32(str, isBase32Hex) {
   let i = 0
 
   if (nativeEncoder) {
-    const codes = nativeEncoder.encode(str)
-    if (codes.length !== str.length) throw new SyntaxError(E_CHAR) // non-ascii
+    const codes = encodeAscii(str, E_CHAR)
     while (i < mainLength) {
       // each 5 bits, grouped 5 * 4 = 20
       const a = (m[codes[i++]] << 15) | (m[codes[i++]] << 10) | (m[codes[i++]] << 5) | m[codes[i++]]
