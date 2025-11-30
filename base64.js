@@ -92,7 +92,7 @@ function fromBase64common(str, isBase64url, padding, format, rest) {
     throw new TypeError('Invalid padding option')
   }
 
-  return typedView(fromBase64impl(str, isBase64url), format)
+  return typedView(fromBase64impl(str, isBase64url, padding), format)
 }
 
 // ASCII whitespace is U+0009 TAB, U+000A LF, U+000C FF, U+000D CR, or U+0020 SPACE
@@ -110,16 +110,26 @@ function noWhitespaceSeen(str, arr) {
 let fromBase64impl
 if (Uint8Array.fromBase64) {
   // NOTICE: this is actually slower than our JS impl in older JavaScriptCore and (slightly) in SpiderMonkey, but faster on V8 and new JavaScriptCore
-  fromBase64impl = (str, isBase64url) => {
+  fromBase64impl = (str, isBase64url, padding) => {
     const alphabet = isBase64url ? 'base64url' : 'base64'
-    // We have to check for whitespace _before_ constructing padding (unlike in noWhitespaceSeen logic),
-    // otherwise we won't get correct error reporting
+    if (padding === true) {
+      // Padding is required from user, and we already checked that string length is divisible by 4
+      // Padding might still be wrong due to whitespace, but in that case native impl throws expected error
+      // So we can optimize and recheck output length instead of regexing whitespace on input
+      const arr = Uint8Array.fromBase64(str, { alphabet, lastChunkHandling: 'strict' })
+      if (!noWhitespaceSeen(str, arr)) throw new SyntaxError(E_CHAR)
+      return arr
+    }
+
+    // For cases when we do not require padding from user, throwing a padding-related error
+    // on length being invalid because of whitespace is confusing.
+    // So, we have to check for whitespace _before_ constructing padding for correct error reporting
     if (ASCII_WHITESPACE.test(str)) throw new SyntaxError(E_CHAR) // all other chars are checked natively
     const padded = str.length % 4 > 0 ? `${str}${'='.repeat(4 - (str.length % 4))}` : str
     return Uint8Array.fromBase64(padded, { alphabet, lastChunkHandling: 'strict' })
   }
 } else {
-  fromBase64impl = (str, isBase64url) => {
+  fromBase64impl = (str, isBase64url, padding) => {
     let arr
     if (haveNativeBuffer) {
       const invalidRegex = isBase64url ? /[^0-9a-z=_-]/iu : /[^0-9a-z=+/]/iu
