@@ -10,7 +10,8 @@ export function decode(arr, loose, start = 0) {
   const end = arr.length
   let out = ''
   const chunkSize = 0x2_00 // far below MAX_ARGUMENTS_LENGTH in npmjs.com/buffer, we use smaller chunks
-  const tmp = new Array(chunkSize + 1).fill(0) // need 1 extra slot for last codepoint, which can be 2 charcodes
+  const tmpSize = Math.min(end - start, chunkSize + 1) // need 1 extra slot for last codepoint, which can be 2 charcodes
+  const tmp = new Array(tmpSize).fill(0)
   let ti = 0
 
   for (let i = start; i < end; i++) {
