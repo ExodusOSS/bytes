@@ -1,5 +1,6 @@
 import { assertUint8 } from '../assert.js'
 import { nativeDecoder, nativeEncoder } from './_utils.js'
+import { encodeAscii } from './ascii.js'
 
 let hexArray // array of 256 bytes converted to two-char hex strings
 let hexCodes // hexArray converted to u16 code pairs
@@ -7,7 +8,6 @@ let dehexArray
 const _00 = 0x30_30 // '00' string in hex, the only allowed char pair to generate 0 byte
 const _ff = 0x66_66 // 'ff' string in hex, max allowed char pair (larger than 'FF' string)
 const allowed = '0123456789ABCDEFabcdef'
-const useEncodeInto = Boolean(nativeEncoder?.encodeInto && globalThis.HermesInternal) // faster on Hermes, much slower on Webkit
 
 export const E_HEX = 'Input is not a hex string'
 
@@ -123,18 +123,7 @@ export function fromHex(str) {
       }
     }
 
-    let codes
-    if (useEncodeInto) {
-      // Much faster in Hermes
-      codes = new Uint8Array(str.length + 4) // overshoot by a full utf8 char
-      const info = nativeEncoder.encodeInto(str, codes)
-      if (info.read !== str.length || info.written !== str.length) throw new SyntaxError(E_HEX) // non-ascii
-      codes = codes.subarray(0, str.length)
-    } else {
-      codes = nativeEncoder.encode(str)
-      if (codes.length !== str.length) throw new SyntaxError(E_HEX) // non-ascii
-    }
-
+    const codes = encodeAscii(str, E_HEX)
     const codes16 = new Uint16Array(codes.buffer, codes.byteOffset, codes.byteLength / 2)
     let i = 0
     for (const last3 = length - 3; i < last3; i += 4) {
