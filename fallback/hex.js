@@ -110,7 +110,7 @@ export function fromHex(str) {
   // Native encoder path is beneficial even for small arrays in Hermes
   if (nativeEncoder) {
     if (!dehexArray) {
-      dehexArray = new Uint8Array(_ff + 1)
+      dehexArray = new Uint8Array(_ff + 1) // 26 KiB cache, >2x perf improvement on Hermes
       const u8 = new Uint8Array(2)
       const u16 = new Uint16Array(u8.buffer, u8.byteOffset, 1) // for endianess-agnostic transform
       const map = [...allowed].map((c) => [c.charCodeAt(0), parseInt(c, 16)])
