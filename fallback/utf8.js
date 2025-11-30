@@ -9,68 +9,48 @@ export function decode(arr, loose, start = 0) {
   start |= 0
   const end = arr.length
   let out = ''
-  const tmp = []
+  const chunkSize = 0x2_00 // far below MAX_ARGUMENTS_LENGTH in npmjs.com/buffer, we use smaller chunks
+  const tmp = new Array(chunkSize + 1).fill(0) // need 1 extra slot for last codepoint, which can be 2 charcodes
+  let ti = 0
 
   for (let i = start; i < end; i++) {
-    if (tmp.length > 0x2_00) {
-      // far below MAX_ARGUMENTS_LENGTH in npmjs.com/buffer, we use smaller chunks
-      // length can be off by a few as large code points produce two utf-16 char codes, also we overshoot in unrolled loop
+    if (ti >= chunkSize) {
+      tmp.length = ti // can be larger by 1 if last codepoint is two charcodes
       out += String.fromCharCode.apply(String, tmp)
-      tmp.length = 0
+      if (tmp.length <= chunkSize) tmp.push(0) // restore 1 extra slot for last codepoint
+      ti = 0
     }
 
     const byte = arr[i]
     if (byte < 0x80) {
-      // Fast path ascii
-      tmp.push(byte)
-      // Unroll the loop a bit for faster ops, overshoot by 20 chars
-      for (let j = 0; j < 5; j++) {
-        if (i + 1 >= end) break
-        const byte1 = arr[i + 1]
-        if (byte1 >= 0x80) break
-        tmp.push(byte1)
-        i++
-        if (i + 1 >= end) break
-        const byte2 = arr[i + 1]
-        if (byte2 >= 0x80) break
-        tmp.push(byte2)
-        i++
-        if (i + 1 >= end) break
-        const byte3 = arr[i + 1]
-        if (byte3 >= 0x80) break
-        tmp.push(byte3)
-        i++
-        if (i + 1 >= end) break
-        const byte4 = arr[i + 1]
-        if (byte4 >= 0x80) break
-        tmp.push(byte4)
-        i++
-      }
+      tmp[ti++] = byte
+      // ascii fast path is in ../utf8.js, this is called only on non-ascii input
+      // so we don't unroll this anymore
     } else if (byte < 0xc2) {
       if (!loose) throw new TypeError(E_STRICT)
-      tmp.push(replacementPoint)
+      tmp[ti++] = replacementPoint
     } else if (byte < 0xe0) {
       // need 1 more
       if (i + 1 >= end) {
         if (!loose) throw new TypeError(E_STRICT)
-        tmp.push(replacementPoint)
+        tmp[ti++] = replacementPoint
         break
       }
 
       const byte1 = arr[i + 1]
       if (byte1 < 0x80 || byte1 > 0xbf) {
         if (!loose) throw new TypeError(E_STRICT)
-        tmp.push(replacementPoint)
+        tmp[ti++] = replacementPoint
         continue
       }
 
       i++
-      tmp.push(((byte & 0x1f) << 6) | (byte1 & 0x3f))
+      tmp[ti++] = ((byte & 0x1f) << 6) | (byte1 & 0x3f)
     } else if (byte < 0xf0) {
       // need 2 more
       if (i + 1 >= end) {
         if (!loose) throw new TypeError(E_STRICT)
-        tmp.push(replacementPoint)
+        tmp[ti++] = replacementPoint
         break
       }
 
@@ -79,31 +59,31 @@ export function decode(arr, loose, start = 0) {
       const byte1 = arr[i + 1]
       if (byte1 < lower || byte1 > upper) {
         if (!loose) throw new TypeError(E_STRICT)
-        tmp.push(replacementPoint)
+        tmp[ti++] = replacementPoint
         continue
       }
 
       i++
       if (i + 1 >= end) {
         if (!loose) throw new TypeError(E_STRICT)
-        tmp.push(replacementPoint)
+        tmp[ti++] = replacementPoint
         break
       }
 
       const byte2 = arr[i + 1]
       if (byte2 < 0x80 || byte2 > 0xbf) {
         if (!loose) throw new TypeError(E_STRICT)
-        tmp.push(replacementPoint)
+        tmp[ti++] = replacementPoint
         continue
       }
 
       i++
-      tmp.push(((byte & 0xf) << 12) | ((byte1 & 0x3f) << 6) | (byte2 & 0x3f))
+      tmp[ti++] = ((byte & 0xf) << 12) | ((byte1 & 0x3f) << 6) | (byte2 & 0x3f)
     } else if (byte <= 0xf4) {
       // need 3 more
       if (i + 1 >= end) {
         if (!loose) throw new TypeError(E_STRICT)
-        tmp.push(replacementPoint)
+        tmp[ti++] = replacementPoint
         break
       }
 
@@ -112,35 +92,35 @@ export function decode(arr, loose, start = 0) {
       const byte1 = arr[i + 1]
       if (byte1 < lower || byte1 > upper) {
         if (!loose) throw new TypeError(E_STRICT)
-        tmp.push(replacementPoint)
+        tmp[ti++] = replacementPoint
         continue
       }
 
       i++
       if (i + 1 >= end) {
         if (!loose) throw new TypeError(E_STRICT)
-        tmp.push(replacementPoint)
+        tmp[ti++] = replacementPoint
         break
       }
 
       const byte2 = arr[i + 1]
       if (byte2 < 0x80 || byte2 > 0xbf) {
         if (!loose) throw new TypeError(E_STRICT)
-        tmp.push(replacementPoint)
+        tmp[ti++] = replacementPoint
         continue
       }
 
       i++
       if (i + 1 >= end) {
         if (!loose) throw new TypeError(E_STRICT)
-        tmp.push(replacementPoint)
+        tmp[ti++] = replacementPoint
         break
       }
 
       const byte3 = arr[i + 1]
       if (byte3 < 0x80 || byte3 > 0xbf) {
         if (!loose) throw new TypeError(E_STRICT)
-        tmp.push(replacementPoint)
+        tmp[ti++] = replacementPoint
         continue
       }
 
@@ -150,19 +130,21 @@ export function decode(arr, loose, start = 0) {
       if (codePoint > 0xff_ff) {
         // split into char codes as String.fromCharCode is faster than String.fromCodePoint
         const u = codePoint - 0x1_00_00
-        tmp.push(0xd8_00 + ((u >> 10) & 0x3_ff), 0xdc_00 + (u & 0x3_ff))
+        tmp[ti++] = 0xd8_00 + ((u >> 10) & 0x3_ff)
+        tmp[ti++] = 0xdc_00 + (u & 0x3_ff)
       } else {
-        tmp.push(codePoint)
+        tmp[ti++] = codePoint
       }
       // eslint-disable-next-line sonarjs/no-duplicated-branches
     } else {
       if (!loose) throw new TypeError(E_STRICT)
-      tmp.push(replacementPoint)
+      tmp[ti++] = replacementPoint
     }
   }
 
-  if (tmp.length > 0) out += String.fromCharCode.apply(String, tmp)
-  return out
+  if (ti === 0) return out
+  tmp.length = ti
+  return out + String.fromCharCode.apply(String, tmp)
 }
 
 export function encode(string, loose) {
