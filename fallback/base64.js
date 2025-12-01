@@ -17,7 +17,7 @@ export const E_LAST = 'Invalid last chunk'
 // We construct output by concatenating chars, this seems to be fine enough on modern JS engines
 export function toBase64(arr, isURL, padding) {
   assertUint8(arr)
-  const fullChunks = Math.floor(arr.length / 3)
+  const fullChunks = (arr.length / 3) | 0
   const fullChunksBytes = fullChunks * 3
   let o = ''
   let i = 0
@@ -65,7 +65,8 @@ export function toBase64(arr, isURL, padding) {
       const a = arr[i]
       const b = arr[i + 1]
       const c = arr[i + 2]
-      o += pairs[(a << 4) | (b >> 4)] + pairs[((b & 0x0f) << 8) | c]
+      o += pairs[(a << 4) | (b >> 4)]
+      o += pairs[((b & 0x0f) << 8) | c]
     }
   }
 
