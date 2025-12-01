@@ -3,7 +3,6 @@ import { nativeEncoder } from './_utils.js'
 // See http://stackoverflow.com/a/22747272/680742, which says that lowest limit is in Chrome, with 0xffff args
 // On Hermes, actual max is 0x20_000 minus current stack depth, 1/16 of that should be safe
 const maxFunctionArgs = 0x20_00
-const useEncodeInto = Boolean(nativeEncoder?.encodeInto && globalThis.HermesInternal) // faster on Hermes, much slower on Webkit
 
 export function asciiPrefix(arr) {
   let p = 0 // verified ascii bytes
@@ -51,24 +50,38 @@ export function decodeLatin1(arr, start = 0, stop = arr.length) {
   return String.fromCharCode.apply(String, sliced)
 }
 
-export function encodeLatin1(str) {
-  const length = str.length
-  const arr = new Uint8Array(length)
-  for (let i = 0; i < length; i++) arr[i] = str.charCodeAt(i)
-  return arr
-}
+export const encodeLatin1 = globalThis.HermesInternal
+  ? (str) => {
+      const length = str.length
+      const arr = new Uint8Array(length)
+      if (length > 64) {
+        const at = str.charCodeAt.bind(str) // faster on strings from ~64 chars on Hermes, but can be 10x slower on e.g. JSC
+        for (let i = 0; i < length; i++) arr[i] = at(i)
+      } else {
+        for (let i = 0; i < length; i++) arr[i] = str.charCodeAt(i)
+      }
+
+      return arr
+    }
+  : (str) => {
+      const length = str.length
+      const arr = new Uint8Array(length)
+      // Can be optimized with unrolling, but this is not used on non-Hermes atm
+      for (let i = 0; i < length; i++) arr[i] = str.charCodeAt(i)
+      return arr
+    }
 
 // Expects nativeEncoder to be present
-export function encodeAscii(str, ERR) {
-  if (useEncodeInto) {
-    // Much faster in Hermes
-    const codes = new Uint8Array(str.length + 4) // overshoot by a full utf8 char
-    const info = nativeEncoder.encodeInto(str, codes)
-    if (info.read !== str.length || info.written !== str.length) throw new SyntaxError(ERR) // non-ascii
-    return codes.subarray(0, str.length)
-  }
-
-  const codes = nativeEncoder.encode(str)
-  if (codes.length !== str.length) throw new SyntaxError(ERR) // non-ascii
-  return codes
-}
+export const encodeAscii = globalThis.HermesInternal
+  ? (str, ERR) => {
+      // Much faster in Hermes
+      const codes = new Uint8Array(str.length + 4) // overshoot by a full utf8 char
+      const info = nativeEncoder.encodeInto(str, codes)
+      if (info.read !== str.length || info.written !== str.length) throw new SyntaxError(ERR) // non-ascii
+      return codes.subarray(0, str.length)
+    }
+  : (str, ERR) => {
+      const codes = nativeEncoder.encode(str)
+      if (codes.length !== str.length) throw new SyntaxError(ERR) // non-ascii
+      return codes
+    }
