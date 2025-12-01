@@ -141,11 +141,10 @@ if (Uint8Array.fromBase64) {
   fromBase64impl = (str, isBase64url, padding) => {
     let arr
     if (haveNativeBuffer) {
-      const invalidRegex = isBase64url ? /[^0-9a-z=_-]/iu : /[^0-9a-z=+/]/iu
-      if (invalidRegex.test(str)) throw new SyntaxError(E_CHAR)
-      const at = str.indexOf('=')
-      if (at >= 0 && /[^=]/iu.test(str.slice(at))) throw new SyntaxError(E_PADDING)
       arr = Buffer.from(str, 'base64')
+      // Rechecking is cheaper than regexes on Node.js
+      const r = isBase64url ? maybeUnpad(str, padding === false) : maybePad(str, padding !== true)
+      if (r !== arr.toString(isBase64url ? 'base64url' : 'base64')) throw new SyntaxError(E_PADDING)
     } else if (shouldUseAtob) {
       // atob is faster than manual parsing on Hermes
       if (isBase64url) {
