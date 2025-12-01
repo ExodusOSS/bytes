@@ -16,7 +16,8 @@ export function asciiPrefix(arr) {
     const u32length = ((arr.byteLength - u32start) / 4) | 0
     const u32 = new Uint32Array(arr.buffer, arr.byteOffset + u32start, u32length)
     let i = 0
-    for (const u32length4 = u32length - 3; i < u32length4; p += 16, i += 4) {
+    for (const last3 = u32length - 3; ; p += 16, i += 4) {
+      if (i >= last3) break // loop is fast enough for moving this here to be _very_ useful, likely due to array access checks
       const a = u32[i]
       const b = u32[i + 1]
       const c = u32[i + 2]
