@@ -10,12 +10,20 @@ import { describe, test } from 'node:test'
 import { bufs } from './utils/random.js'
 import { Table } from './utils/table.js'
 
-const columns = ['@exodus/bytes/hex', 'scure.hex', 'Buffer', '@stablelib', 'Buffer.from']
+const columns = [
+  '@exodus/bytes/hex',
+  'scure.hex',
+  'Buffer',
+  '@stablelib',
+  'hextreme',
+  'Buffer.from',
+]
 const columnsOld = [
   '@exodus/bytes/hex, no native',
   'scure.hex, no native',
   'Buffer',
   '@stablelib',
+  'hextreme, no native',
   'Buffer.from',
 ]
 

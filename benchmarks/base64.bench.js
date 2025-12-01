@@ -21,6 +21,7 @@ const columns = [
   'base64-js',
   'fast-base64-decode',
   'fast-base64-encode',
+  'hextreme',
   'Buffer.from',
 ]
 const columnsOld = [
@@ -31,6 +32,7 @@ const columnsOld = [
   'base64-js',
   'fast-base64-decode',
   'fast-base64-encode',
+  'hextreme, no native',
   'Buffer.from',
 ]
 
