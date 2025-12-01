@@ -17,10 +17,11 @@ export function asciiPrefix(arr) {
     const u32 = new Uint32Array(arr.buffer, arr.byteOffset + u32start, u32length)
     let i = 0
     for (const u32length4 = u32length - 3; i < u32length4; p += 16, i += 4) {
-      if (u32[i] & 0x80_80_80_80) break
-      if (u32[i + 1] & 0x80_80_80_80) break
-      if (u32[i + 2] & 0x80_80_80_80) break
-      if (u32[i + 3] & 0x80_80_80_80) break
+      const a = u32[i]
+      const b = u32[i + 1]
+      const c = u32[i + 2]
+      const d = u32[i + 3]
+      if (a & 0x80_80_80_80 || b & 0x80_80_80_80 || c & 0x80_80_80_80 || d & 0x80_80_80_80) break
     }
 
     for (; i < u32length; p += 4, i++) if (u32[i] & 0x80_80_80_80) break
