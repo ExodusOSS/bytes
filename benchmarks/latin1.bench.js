@@ -13,7 +13,7 @@ const toBuffer = (x, B) => B.from(x.buffer, x.byteOffset, x.byteLength)
 const replacementChar = String.fromCodePoint(0xff_fd) // We don't expect much of these in real usage, and rng will spawn a lot of those, so strip
 const strings = bufsRaw.map((x) => Buffer.from(x).toString().replaceAll(replacementChar, '∀')) // loose, but we want that here
 const bufs = strings.map((x) => utf8fromString(x))
-const latinStrings = bufs.map((x) => Buffer.from(x).toString('latin1'))
+const latin = bufs.map((x) => Buffer.from(x).toString('latin1'))
 
 const asciiBufs = bufsRaw.map((x) => x.map((c) => (c >= 0x80 ? c - 0x80 : c)))
 const asciiStrings = asciiBufs.map((x) => Buffer.from(x).toString())
@@ -50,9 +50,23 @@ describe('benchmarks: latin1', async () => {
     ['TextEncoder', (x) => textEncoder.encode(x), !textEncoder],
   ]
 
+  test('asciiPrefix coherence', (t) => {
+    for (const [name, f, skip] of asciiPrefix) {
+      if (skip) continue
+      for (const x of asciiBufs) t.assert.strictEqual(f(x), x.length, name)
+    }
+  })
+
   test('asciiPrefix', { timeout }, async () => {
     for (const [name, f, skip] of asciiPrefix) {
       await benchmark(`asciiPrefix: ${name}`, { skip, args: asciiBufs }, f)
+    }
+  })
+
+  test('decodeLatin1 coherence', (t) => {
+    for (const [name, f, skip] of decodeLatin1) {
+      if (skip) continue
+      for (let i = 0; i < bufs.length; i++) t.assert.strictEqual(f(bufs[i]), latin[i], name)
     }
   })
 
@@ -62,9 +76,25 @@ describe('benchmarks: latin1', async () => {
     }
   })
 
+  test('encodeLatin1 coherence', (t) => {
+    for (const [name, f, skip] of encodeLatin1) {
+      if (skip) continue
+      for (let i = 0; i < bufs.length; i++) t.assert.deepEqual(f(latin[i]), bufs[i], name)
+    }
+  })
+
   test('encodeLatin1', { timeout }, async () => {
     for (const [name, f, skip] of encodeLatin1) {
-      await benchmark(`encodeLatin1: ${name}`, { skip, args: latinStrings }, f)
+      await benchmark(`encodeLatin1: ${name}`, { skip, args: latin }, f)
+    }
+  })
+
+  test('encodeAscii coherence', (t) => {
+    for (const [name, f, skip] of encodeAscii) {
+      if (skip) continue
+      for (let i = 0; i < asciiBufs.length; i++) {
+        t.assert.deepEqual(f(asciiStrings[i]), asciiBufs[i], name)
+      }
     }
   })
 
