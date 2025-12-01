@@ -1,6 +1,6 @@
 import { assertUint8, assertEmptyRest } from './assert.js'
 import { typedView } from './array.js'
-import * as ascii from './fallback/ascii.js'
+import { decodeLatin1, encodeLatin1 } from './fallback/latin1.js'
 import * as js from './fallback/base64.js'
 
 // See https://datatracker.ietf.org/doc/html/rfc4648
@@ -40,7 +40,7 @@ export function toBase64(x, { padding = true } = {}) {
   assertUint8(x)
   if (haveWeb(x)) return padding ? x.toBase64() : x.toBase64({ omitPadding: !padding }) // Modern, optionless is slightly faster
   if (haveNativeBuffer) return maybeUnpad(toBuffer(x).toString('base64'), padding) // Older Node.js
-  if (shouldUseBtoa) return maybeUnpad(btoa(ascii.decode(x)), padding)
+  if (shouldUseBtoa) return maybeUnpad(btoa(decodeLatin1(x)), padding)
   return js.toBase64(x, false, padding) // Fallback
 }
 
@@ -49,7 +49,7 @@ export function toBase64url(x, { padding = false } = {}) {
   assertUint8(x)
   if (haveWeb(x)) return x.toBase64({ alphabet: 'base64url', omitPadding: !padding }) // Modern
   if (haveNativeBuffer) return maybePad(toBuffer(x).toString('base64url'), padding) // Older Node.js
-  if (shouldUseBtoa) return maybeUnpad(toUrl(btoa(ascii.decode(x))), padding)
+  if (shouldUseBtoa) return maybeUnpad(toUrl(btoa(decodeLatin1(x))), padding)
   return js.toBase64(x, true, padding) // Fallback
 }
 
@@ -154,7 +154,7 @@ if (Uint8Array.fromBase64) {
       }
 
       try {
-        arr = ascii.encodeLatin1(atob(str))
+        arr = encodeLatin1(atob(str))
       } catch {
         throw new SyntaxError(E_CHAR) // convert atob errors
       }

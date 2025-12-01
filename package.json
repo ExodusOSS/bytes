@@ -39,7 +39,7 @@
   "type": "module",
   "files": [
     "/fallback/_utils.js",
-    "/fallback/ascii.js",
+    "/fallback/latin1.js",
     "/fallback/base32.js",
     "/fallback/base64.js",
     "/fallback/hex.js",

@@ -1,7 +1,7 @@
 import { assertUint8 } from './assert.js'
 import { typedView } from './array.js'
 import * as js from './fallback/utf8.js'
-import * as ascii from './fallback/ascii.js'
+import { asciiPrefix, decodeLatin1 } from './fallback/latin1.js'
 
 const { Buffer, TextEncoder, TextDecoder, decodeURIComponent, escape } = globalThis // Buffer is optional
 const haveNativeBuffer = Buffer && !Buffer.TYPED_ARRAY_SUPPORT
@@ -58,12 +58,12 @@ function decode(arr, loose = false) {
   // No reason to use native Buffer: it's not faster than TextDecoder, needs rechecks in non-loose mode, and Node.js has TextDecoder
 
   // Fast path for ASCII prefix, this is faster than all alternatives below
-  const prefix = ascii.decode(arr, 0, ascii.asciiPrefix(arr))
+  const prefix = decodeLatin1(arr, 0, asciiPrefix(arr))
   if (prefix.length === arr.length) return prefix
 
   // This codepath gives a ~3x perf boost on Hermes
   if (shouldUseEscapePath && escape && decodeURIComponent) {
-    const o = escape(ascii.decode(arr, prefix.length, arr.length))
+    const o = escape(decodeLatin1(arr, prefix.length, arr.length))
     try {
       return prefix + decodeURIComponent(o) // Latin1 to utf8
     } catch {

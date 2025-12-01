@@ -1,6 +1,6 @@
 import { assertUint8 } from '../assert.js'
 import { nativeDecoder, nativeEncoder } from './_utils.js'
-import { encodeAscii } from './ascii.js'
+import { encodeAscii } from './latin1.js'
 
 let hexArray // array of 256 bytes converted to two-char hex strings
 let hexCodes // hexArray converted to u16 code pairs

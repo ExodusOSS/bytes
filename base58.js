@@ -1,7 +1,7 @@
 import { typedView } from './array.js'
 import { assertUint8 } from './assert.js'
 import { nativeDecoder, nativeEncoder } from './fallback/_utils.js'
-import { encodeAscii } from './fallback/ascii.js'
+import { encodeAscii } from './fallback/latin1.js'
 
 const alphabet = [...'123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz']
 const codes = new Uint8Array(alphabet.map((x) => x.charCodeAt(0)))

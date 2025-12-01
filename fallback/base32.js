@@ -1,6 +1,6 @@
 import { assertUint8 } from '../assert.js'
 import { nativeEncoder, nativeDecoder } from './_utils.js'
-import { encodeAscii } from './ascii.js'
+import { encodeAscii } from './latin1.js'
 
 // See https://datatracker.ietf.org/doc/html/rfc4648
 
