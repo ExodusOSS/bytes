@@ -126,8 +126,9 @@ export function toBase64(arr, isURL, padding) {
 
 // TODO: can this be optimized? This only affects non-Hermes barebone engines though
 const mapSize = nativeEncoder ? 128 : 65_536 // we have to store 64 KiB map or recheck everything if we can't decode to byte array
-const _AA = 0x4141 // 'AA' string in hex, the only allowed char pair to generate 12 zero bits
-const _zz = 0x7a7a // 'zz' string in hex, max allowed char pair
+const _min = 0x2b_2b // '++' string in hex, minimal allowed
+const _AAm = 0x41_41 - _min // 'AA' string in hex, the only allowed char pair to generate 12 zero bits, mapped
+const _zz = 0x7a_7a // 'zz' string in hex, max allowed char pair, mapped
 
 export function fromBase64(str, isURL) {
   let inputLength = str.length
@@ -156,14 +157,14 @@ export function fromBase64(str, isURL) {
 
   if (nativeEncoder) {
     if (!helpers.fromMap16) {
-      helpers.fromMap16 = new Uint16Array(_zz + 1) // Warning: 64 KiB
+      helpers.fromMap16 = new Uint16Array(_zz - _min + 1) // Warning: 40 KiB
       const u8 = new Uint8Array(2)
       const u16 = new Uint16Array(u8.buffer, u8.byteOffset, 1) // for endianess-agnostic transform
       alphabet.forEach((c0, i0) => {
         u8[0] = c0.charCodeAt(0) // FIXME, we should avoid calling charCodeAt in a loop
         alphabet.forEach((c1, i1) => {
           u8[1] = c1.charCodeAt(0)
-          helpers.fromMap16[u16[0]] = (i0 << 6) | i1
+          helpers.fromMap16[u16[0] - _min] = (i0 << 6) | i1
         })
       })
     }
@@ -175,16 +176,16 @@ export function fromBase64(str, isURL) {
 
     // Optional fast loop
     for (const mainLength16_2 = mainLength16 - 2; i < mainLength16_2; ) {
-      const c01 = codes16[i]
-      const c23 = codes16[i + 1]
-      const c45 = codes16[i + 2]
-      const c67 = codes16[i + 3]
+      const c01 = codes16[i]-_min
+      const c23 = codes16[i + 1]-_min
+      const c45 = codes16[i + 2]-_min
+      const c67 = codes16[i + 3]-_min
       const x01 = m16[c01]
       const x23 = m16[c23]
       const x45 = m16[c45]
       const x67 = m16[c67]
-      if (!x01 && c01 !== _AA || !x23 && c23 !== _AA) throw new SyntaxError(E_CHAR)
-      if (!x45 && c45 !== _AA || !x67 && c67 !== _AA) throw new SyntaxError(E_CHAR)
+      if (!x01 && c01 !== _AAm || !x23 && c23 !== _AAm) throw new SyntaxError(E_CHAR)
+      if (!x45 && c45 !== _AAm || !x67 && c67 !== _AAm) throw new SyntaxError(E_CHAR)
       arr[at] = x01 >> 4
       arr[at + 1] = ((x01 & 0xf) << 4) | (x23 >> 8)
       arr[at + 2] = x23 & 0xff
@@ -196,11 +197,11 @@ export function fromBase64(str, isURL) {
     }
 
    for (; i < mainLength16; i += 2) {
-      const c01 = codes16[i]
-      const c23 = codes16[i + 1]
+      const c01 = codes16[i]-_min
+      const c23 = codes16[i + 1]-_min
       const x01 = m16[c01]
       const x23 = m16[c23]
-      if (!x01 && c01 !== _AA || !x23 && c23 !== _AA) throw new SyntaxError(E_CHAR)
+      if (!x01 && c01 !== _AAm || !x23 && c23 !== _AAm) throw new SyntaxError(E_CHAR)
       arr[at] = x01 >> 4
       arr[at + 1] = ((x01 & 0xf) << 4) | (x23 >> 8)
       arr[at + 2] = x23 & 0xff
