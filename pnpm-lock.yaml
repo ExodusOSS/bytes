@@ -26,8 +26,8 @@ importers:
         specifier: ^1.0.0
         version: 1.0.0(prettier@3.6.2)
       '@exodus/test':
-        specifier: ^1.0.0-rc.107
-        version: 1.0.0-rc.107(electron@36.5.0)
+        specifier: ^1.0.0-rc.108
+        version: 1.0.0-rc.108(electron@36.5.0)
       '@noble/hashes':
         specifier: ^2.0.1
         version: 2.0.1
@@ -423,16 +423,16 @@ packages:
   '@exodus/replay@1.0.0-rc.9':
     resolution: {integrity: sha512-16nwUaYRg00/50MF+RDlEqymBQIq6xUEfskCbOmXqqbzylZDErfMHN1ApNWB3yxeFVZaHRSpA49e9mOQ10y0dg==, tarball: https://registry.npmjs.org/@exodus/replay/-/replay-1.0.0-rc.9.tgz}
 
-  '@exodus/test-bundler@1.0.0-rc.8':
-    resolution: {integrity: sha512-wzdvp2J3pRmrYrcGXnt7Hy+Z4CSAzbY5Bjs73Uo0u3E3Dnlan3m4NJQDPUtYZLDlLsiYy3/CjDN7tNIObIf0Yw==, tarball: https://registry.npmjs.org/@exodus/test-bundler/-/test-bundler-1.0.0-rc.8.tgz}
+  '@exodus/test-bundler@1.0.0-rc.9':
+    resolution: {integrity: sha512-IhgJ5TaMvEWRJLW7NAiKgg8DkCW4YcCWrGRlnVjR9YT9watr80Ncovj/Q0Xuvkl0V3dF+gfxv0+SvBdCAkJaNA==, tarball: https://registry.npmjs.org/@exodus/test-bundler/-/test-bundler-1.0.0-rc.9.tgz}
     peerDependencies:
       crypto-browserify: ^3.12.0
     peerDependenciesMeta:
       crypto-browserify:
         optional: true
 
-  '@exodus/test@1.0.0-rc.107':
-    resolution: {integrity: sha512-D/1XIc2S+ra8+BAvdVZJMaTxo6V+J/pfJh0fkdRSs6eIve8+UJ0Eje6uCNmxwqtqpmted2FN8TwvQs8C8+M1iQ==, tarball: https://registry.npmjs.org/@exodus/test/-/test-1.0.0-rc.107.tgz}
+  '@exodus/test@1.0.0-rc.108':
+    resolution: {integrity: sha512-8MYoHSQIp/nWMC5k0KtgJtu9tqgBudoCNmcvWLKzQojmZyTFiu4sIarAlAqfqYSHk+j/qFhNaCqx4PlWFc1DMw==, tarball: https://registry.npmjs.org/@exodus/test/-/test-1.0.0-rc.108.tgz}
     engines: {node: ^20.18.0 || >=22.6.0}
     hasBin: true
     peerDependencies:
@@ -2961,7 +2961,7 @@ snapshots:
       '@babel/types': 7.28.4
       '@jridgewell/remapping': 2.3.5
       convert-source-map: 2.0.0
-      debug: 4.4.1
+      debug: 4.4.3
       gensync: 1.0.0-beta.2
       json5: 2.2.3
       semver: 6.3.1
@@ -3092,7 +3092,7 @@ snapshots:
       '@babel/parser': 7.28.4
       '@babel/template': 7.27.2
       '@babel/types': 7.28.4
-      debug: 4.4.1
+      debug: 4.4.3
     transitivePeerDependencies:
       - supports-color
     optional: true
@@ -3325,7 +3325,7 @@ snapshots:
   '@exodus/replay@1.0.0-rc.9':
     optional: true
 
-  '@exodus/test-bundler@1.0.0-rc.8':
+  '@exodus/test-bundler@1.0.0-rc.9':
     dependencies:
       '@ungap/url-search-params': 0.2.2
       assert: 2.1.0
@@ -3349,11 +3349,11 @@ snapshots:
       - supports-color
     optional: true
 
-  '@exodus/test@1.0.0-rc.107(electron@36.5.0)':
+  '@exodus/test@1.0.0-rc.108(electron@36.5.0)':
     optionalDependencies:
       '@chalker/queue': 1.0.1
       '@exodus/replay': 1.0.0-rc.9
-      '@exodus/test-bundler': 1.0.0-rc.8
+      '@exodus/test-bundler': 1.0.0-rc.9
       electron: 36.5.0
       expect: 30.2.0
       fast-glob: 3.3.3
