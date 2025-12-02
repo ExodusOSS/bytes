@@ -53,10 +53,11 @@ export function decodeLatin1(arr, start = 0, stop = arr.length) {
   return String.fromCharCode.apply(String, sliced)
 }
 
-export const encodeLatin1 = globalThis.HermesInternal
-  ? (str) => {
+/* eslint-disable @exodus/mutable/no-param-reassign-prop-only */
+
+export const encodeCharcodes = globalThis.HermesInternal
+  ? (str, arr) => {
       const length = str.length
-      const arr = new Uint8Array(length)
       if (length > 64) {
         const at = str.charCodeAt.bind(str) // faster on strings from ~64 chars on Hermes, but can be 10x slower on e.g. JSC
         for (let i = 0; i < length; i++) arr[i] = at(i)
@@ -66,13 +67,16 @@ export const encodeLatin1 = globalThis.HermesInternal
 
       return arr
     }
-  : (str) => {
+  : (str, arr) => {
       const length = str.length
-      const arr = new Uint8Array(length)
       // Can be optimized with unrolling, but this is not used on non-Hermes atm
       for (let i = 0; i < length; i++) arr[i] = str.charCodeAt(i)
       return arr
     }
+
+/* eslint-enable @exodus/mutable/no-param-reassign-prop-only */
+
+export const encodeLatin1 = (str) => encodeCharcodes(str, new Uint8Array(str.length))
 
 // Expects nativeEncoder to be present
 export const encodeAscii = globalThis.HermesInternal
