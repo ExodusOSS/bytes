@@ -12,15 +12,32 @@ const { isWellFormed } = String.prototype
 
 const { E_STRICT, E_STRICT_UNICODE } = js
 
-// Unlike utf8, operates on Uint16Arrays
+// Unlike utf8, operates on Uint16Arrays by default
+
+function swapEndianness(u8) {
+  // Assume even number of bytes
+  const last = u8.length - 1
+  for (let i = 0; i < last; i += 2) {
+    const x0 = u8[i]
+    u8[i] = u8[i + 1] // eslint-disable-line @exodus/mutable/no-param-reassign-prop-only
+    u8[i + 1] = x0 // eslint-disable-line @exodus/mutable/no-param-reassign-prop-only
+  }
+}
+
+function assertFormat(format) {
+  if (format !== 'uint16' && format !== 'uint8-le' && format !== 'uint8-be') {
+    throw new TypeError('Unknown format')
+  }
+}
 
 function encode(str, loose = false, format = 'uint16') {
   if (typeof str !== 'string') throw new TypeError('Input is not a string')
-  if (format !== 'uint16') throw new TypeError('utf16fromString can only return Uint16Array')
+  assertFormat(format)
 
   let arr
-  if (haveNativeBuffer && isLE) {
-    const u8 = Buffer.from(str, enc)
+  if (haveNativeBuffer) {
+    const u8 = Buffer.from(str, 'utf-16le')
+    if (!isLE) swapEndianness(u8) // TODO: avoid doing this twice
     arr = new Uint16Array(u8.buffer, u8.byteOffset, u8.byteLength / 2)
   } else {
     arr = js.encode(str)
@@ -36,11 +53,30 @@ function encode(str, loose = false, format = 'uint16') {
     }
   }
 
+  if (format === 'uint8-le' || format === 'uint8-be') {
+    const u8 = new Uint8Array(arr.buffer, arr.byteOffset, arr.byteLength)
+    const needLE = format === 'uint8-le'
+    if (isLE !== needLE) swapEndianness(u8) // TODO: avoid doing this twice
+    return u8
+  }
+
   return arr
 }
 
 function decode(arr, loose = false, format = 'uint16') {
-  if (format !== 'uint16') throw new TypeError('utf16toString can only accept Uint16Array')
+  assertFormat(format)
+  if (format === 'uint8-le' || format === 'uint8-be') {
+    if (!(arr instanceof Uint8Array)) throw new TypeError('Expected an Uint8Array')
+    if (arr.byteLength % 2 !== 0) throw new TypeError('Expected even number of bytes')
+    const gotLE = format === 'uint8-le'
+    if (isLE !== gotLE) {
+      arr = Uint8Array.from(arr) // TODO: avoid mutating input in a more effective way
+      swapEndianness(arr) // TODO: avoid doing this on native decoder
+    }
+
+    arr = new Uint16Array(arr.buffer, arr.byteOffset, arr.byteLength / 2)
+  }
+
   if (!(arr instanceof Uint16Array)) throw new TypeError('Expected an Uint16Array')
   if (haveDecoder) return loose ? decoderLoose.decode(arr) : decoderFatal.decode(arr) // Node.js and browsers
   // No reason to use native Buffer: it's not faster than TextDecoder, needs rechecks in non-loose mode, and Node.js has TextDecoder
