@@ -3,23 +3,14 @@ import { decodeLatin1 } from './latin1.js'
 export const E_STRICT = 'Input is not well-formed utf16'
 export const E_STRICT_UNICODE = 'Input is not well-formed Unicode'
 
-export function swapEndiannessInPlace(u8) {
+export function swapEndianness(u8, inPlace = false) {
   // Assume even number of bytes
   const last = u8.length - 1
+  const res = inPlace ? u8 : new Uint8Array(u8.length)
   for (let i = 0; i < last; i += 2) {
     const x0 = u8[i]
-    u8[i] = u8[i + 1] // eslint-disable-line @exodus/mutable/no-param-reassign-prop-only
-    u8[i + 1] = x0 // eslint-disable-line @exodus/mutable/no-param-reassign-prop-only
-  }
-}
-
-export function swapEndianness(u8) {
-  // Assume even number of bytes
-  const last = u8.length - 1
-  const res = new Uint8Array(u8.length)
-  for (let i = 0; i < last; i += 2) {
     res[i] = u8[i + 1]
-    res[i + 1] = u8[i]
+    res[i + 1] = x0
   }
 
   return res
