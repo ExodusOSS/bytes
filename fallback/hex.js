@@ -35,18 +35,18 @@ function toHexPartAddition(arr, start, end) {
 function toHexPartTemplates(arr, start, end) {
   let o = ''
   let i = start
-  const ha = hexArray
+  const h = hexArray
   // Unrolled loop is faster
   for (const last7 = end - 7; i < last7; i += 8) {
-    const a = arr[i]
-    const b = arr[i + 1]
-    const c = arr[i + 2]
-    const d = arr[i + 3]
-    const e = arr[i + 4]
-    const f = arr[i + 5]
-    const g = arr[i + 6]
-    const h = arr[i + 7]
-    o += `${ha[a]}${ha[b]}${ha[c]}${ha[d]}${ha[e]}${ha[f]}${ha[g]}${ha[h]}`
+    const x0 = arr[i]
+    const x1 = arr[i + 1]
+    const x2 = arr[i + 2]
+    const x3 = arr[i + 3]
+    const x4 = arr[i + 4]
+    const x5 = arr[i + 5]
+    const x6 = arr[i + 6]
+    const x7 = arr[i + 7]
+    o += `${h[x0]}${h[x1]}${h[x2]}${h[x3]}${h[x4]}${h[x5]}${h[x6]}${h[x7]}`
   }
 
   while (i < end) o += hexArray[arr[i++]]
