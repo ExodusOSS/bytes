@@ -5,11 +5,24 @@ export const E_STRICT_UNICODE = 'Input is not well-formed Unicode'
 
 export function swapEndianness(u8, inPlace = false) {
   // Assume even number of bytes
-  const last = u8.length - 1
   const res = inPlace ? u8 : new Uint8Array(u8.length)
-  for (let i = 0; i < last; i += 2) {
+
+  let i = 0
+  for (const last3 = u8.length - 3; i < last3; i += 4) {
     const x0 = u8[i]
-    res[i] = u8[i + 1]
+    const x1 = u8[i + 1]
+    const x2 = u8[i + 2]
+    const x3 = u8[i + 3]
+    res[i] = x1
+    res[i + 1] = x0
+    res[i + 2] = x3
+    res[i + 3] = x2
+  }
+
+  for (const last = u8.length - 1; i < last; i += 2) {
+    const x0 = u8[i]
+    const x1 = u8[i + 1]
+    res[i] = x1
     res[i + 1] = x0
   }
 
