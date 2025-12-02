@@ -104,7 +104,7 @@ export function toBase58(arr) {
     while (carry) {
       const c = carry
       carry = Math.floor(c / 58)
-      res[i++] = c - carry * 58
+      res.push(c - carry * 58)
     }
   }
 
