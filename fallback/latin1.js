@@ -32,6 +32,7 @@ export function asciiPrefix(arr) {
   return length
 }
 
+// Capable of decoding Uint16Array to UTF-16 as well as Uint8Array to Latin-1
 export function decodeLatin1(arr, start = 0, stop = arr.length) {
   start |= 0
   stop |= 0

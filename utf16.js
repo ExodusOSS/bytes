@@ -39,7 +39,8 @@ function encode(str, loose = false, format = 'uint16') {
   return arr
 }
 
-function decode(arr, loose = false) {
+function decode(arr, loose = false, format = 'uint16') {
+  if (format !== 'uint16') throw new TypeError('utf16toString can only accept Uint16Array')
   if (!(arr instanceof Uint16Array)) throw new TypeError('Expected an Uint16Array')
   if (haveDecoder) return loose ? decoderLoose.decode(arr) : decoderFatal.decode(arr) // Node.js and browsers
   // No reason to use native Buffer: it's not faster than TextDecoder, needs rechecks in non-loose mode, and Node.js has TextDecoder
@@ -58,7 +59,8 @@ function decode(arr, loose = false) {
   return str
 }
 
+// TODO: support uint8-be and uint8-le
 export const utf16fromString = (str, format = 'uint16') => encode(str, false, format)
 export const utf16fromStringLoose = (str, format = 'uint16') => encode(str, true, format)
-export const utf16toString = (arr) => decode(arr, false)
-export const utf16toStringLoose = (arr) => decode(arr, true)
+export const utf16toString = (arr, format = 'uint16') => decode(arr, false, format)
+export const utf16toStringLoose = (arr, format = 'uint16') => decode(arr, true, format)
