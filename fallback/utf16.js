@@ -3,6 +3,16 @@ import { decodeLatin1 } from './latin1.js'
 export const E_STRICT = 'Input is not well-formed utf16'
 export const E_STRICT_UNICODE = 'Input is not well-formed Unicode'
 
+export function swapEndianness(u8) {
+  // Assume even number of bytes
+  const last = u8.length - 1
+  for (let i = 0; i < last; i += 2) {
+    const x0 = u8[i]
+    u8[i] = u8[i + 1] // eslint-disable-line @exodus/mutable/no-param-reassign-prop-only
+    u8[i + 1] = x0 // eslint-disable-line @exodus/mutable/no-param-reassign-prop-only
+  }
+}
+
 // it's capable of decoding Uint16Array to UTF-16 as well
 export const decode = (arr) => decodeLatin1(arr, 0, arr.length)
 
