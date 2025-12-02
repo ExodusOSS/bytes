@@ -81,7 +81,7 @@ function decode(arr, loose = false, format = 'uint16') {
   if (!loose) {
     if (isWellFormed) {
       if (!isWellFormed.call(str)) throw new SyntaxError(E_STRICT)
-    } else if (arr.includes(0xff_fd)) {
+    } else if (str.includes('\uFFFD')) {
       // TODO: optimize
       const arr2 = encode(str, true)
       if (arr2.some((x, i) => x !== arr[i])) throw new SyntaxError(E_STRICT)
