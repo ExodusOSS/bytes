@@ -59,7 +59,7 @@ describe('encodeLatin1', { skip: !nativeEncoder }, () => {
     }
   })
 
-  test('coherence (Buffer)', { skip: !globalThis.Buffer || Buffer.TYPED_ARRAY_SUPPORT }, (t) => {
+  test('coherence (Buffer)', { skip: !globalThis.Buffer }, (t) => {
     for (const { uint8, latin1 } of pool) {
       t.assert.deepEqual(Buffer.from(latin1, 'latin1'), uint8)
     }
@@ -79,7 +79,7 @@ describe('decodeLatin1', { skip: !nativeEncoder }, () => {
     }
   })
 
-  test('coherence (Buffer)', { skip: !globalThis.Buffer || Buffer.TYPED_ARRAY_SUPPORT }, (t) => {
+  test('coherence (Buffer)', { skip: !globalThis.Buffer }, (t) => {
     for (const { uint8, latin1 } of pool) {
       t.assert.strictEqual(Buffer.from(uint8).toString('latin1'), latin1)
     }
