@@ -68,9 +68,23 @@ function decode(arr, loose = false, format = 'uint16') {
   }
 
   if (!(arr instanceof Uint16Array)) throw new TypeError('Expected an Uint16Array')
-  if (haveDecoder) return loose ? decoderLoose.decode(arr) : decoderFatal.decode(arr) // Node.js and browsers
-  // No reason to use native Buffer: it's not faster than TextDecoder, needs rechecks in non-loose mode, and Node.js has TextDecoder
-  const str = js.decode(arr)
+  if (haveDecoder && !haveNativeBuffer) {
+    // We skip this on Node.js, as utf16 TextDecoder is somewhy significantly slower than Buffer there
+    return loose ? decoderLoose.decode(arr) : decoderFatal.decode(arr) // browsers
+  }
+
+  let str
+  if (haveNativeBuffer) {
+    let buf = Buffer.from(arr.buffer, arr.byteOffset, arr.byteLength)
+    if (!isLE) {
+      buf = Buffer.from(buf) // TODO: avoid mutating input in a more effective way
+      js.swapEndianness(buf) // TODO: avoid doing this more than once
+    }
+
+    str = buf.toString('utf-16le')
+  } else {
+    str = js.decode(arr)
+  }
 
   if (!loose) {
     if (isWellFormed) {
