@@ -27,7 +27,7 @@ function encode(str, loose = false, format = 'uint16') {
   let arr
   if (haveNativeBuffer) {
     const u8 = Buffer.from(str, 'utf-16le')
-    if (!isLE) js.swapEndianness(u8) // TODO: avoid doing this twice
+    if (!isLE) js.swapEndiannessInPlace(u8) // TODO: avoid doing this twice
     arr = new Uint16Array(u8.buffer, u8.byteOffset, u8.byteLength / 2)
   } else {
     arr = js.encode(str)
@@ -46,7 +46,7 @@ function encode(str, loose = false, format = 'uint16') {
   if (format === 'uint8-le' || format === 'uint8-be') {
     const u8 = new Uint8Array(arr.buffer, arr.byteOffset, arr.byteLength)
     const needLE = format === 'uint8-le'
-    if (isLE !== needLE) js.swapEndianness(u8) // TODO: avoid doing this twice
+    if (isLE !== needLE) js.swapEndiannessInPlace(u8) // TODO: avoid doing this twice
     return u8
   }
 
@@ -59,11 +59,7 @@ function decode(arr, loose = false, format = 'uint16') {
     if (!(arr instanceof Uint8Array)) throw new TypeError('Expected an Uint8Array')
     if (arr.byteLength % 2 !== 0) throw new TypeError('Expected even number of bytes')
     const gotLE = format === 'uint8-le'
-    if (isLE !== gotLE) {
-      arr = Uint8Array.from(arr) // TODO: avoid mutating input in a more effective way
-      js.swapEndianness(arr) // TODO: avoid doing this on native decoder
-    }
-
+    if (isLE !== gotLE) arr = js.swapEndianness(arr) // TODO: avoid doing this on native decoder
     arr = new Uint16Array(arr.buffer, arr.byteOffset, arr.byteLength / 2)
   }
 
@@ -75,13 +71,9 @@ function decode(arr, loose = false, format = 'uint16') {
 
   let str
   if (haveNativeBuffer) {
-    let buf = Buffer.from(arr.buffer, arr.byteOffset, arr.byteLength)
-    if (!isLE) {
-      buf = Buffer.from(buf) // TODO: avoid mutating input in a more effective way
-      js.swapEndianness(buf) // TODO: avoid doing this more than once
-    }
-
-    str = buf.toString('utf-16le')
+    let u8 = new Uint8Array(arr.buffer, arr.byteOffset, arr.byteLength)
+    if (!isLE) u8 = js.swapEndianness(u8) // TODO: avoid doing this more than once
+    str = Buffer.from(u8.buffer, u8.byteOffset, u8.byteLength).toString('utf-16le')
   } else {
     str = js.decode(arr)
   }

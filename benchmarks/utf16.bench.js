@@ -31,11 +31,7 @@ const textDecoderBE_JSLoose = new js.TextDecoder('utf-16be')
 const replacementChar = String.fromCodePoint(0xff_fd) // We don't expect much of these in real usage, and rng will spawn a lot of those, so strip
 const strings = bufsRaw.map((x) => utf8toStringLoose(x).replaceAll(replacementChar, '∀')) // loose, but we want that here
 const u8le = strings.map((x) => toUint8(Buffer.from(x, 'utf16le')))
-const u8be = u8le.map((x) => {
-  const y = Uint8Array.from(x)
-  fallback.swapEndianness(y)
-  return y
-})
+const u8be = u8le.map((x) => fallback.swapEndianness(x))
 const isLE = new Uint8Array(Uint16Array.of(258).buffer)[0] === 2
 const u16 = (isLE ? u8le : u8be).map((x) => toUint16(x))
 
