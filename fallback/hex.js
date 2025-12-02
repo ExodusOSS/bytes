@@ -76,9 +76,9 @@ export function toHex(arr) {
       }
     }
 
-    const pairs = new Uint16Array(length)
-    for (let i = 0; i < length; i++) pairs[i] = hexCodes[arr[i]]
-    return nativeDecoder.decode(new Uint8Array(pairs.buffer, pairs.byteOffset, pairs.byteLength))
+    const oa = new Uint16Array(length)
+    for (let i = 0; i < length; i++) oa[i] = hexCodes[arr[i]]
+    return nativeDecoder.decode(oa)
   }
 
   if (length > 30_000) {
