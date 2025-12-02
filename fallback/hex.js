@@ -77,7 +77,20 @@ export function toHex(arr) {
     }
 
     const oa = new Uint16Array(length)
-    for (let i = 0; i < length; i++) oa[i] = hexCodes[arr[i]]
+    let i = 0
+    for (const last3 = arr.length - 3; ; i += 4) {
+      if (i >= last3) break // loop is fast enough for moving this here to be useful on JSC
+      const x0 = arr[i]
+      const x1 = arr[i + 1]
+      const x2 = arr[i + 2]
+      const x3 = arr[i + 3]
+      oa[i] = hexCodes[x0]
+      oa[i + 1] = hexCodes[x1]
+      oa[i + 2] = hexCodes[x2]
+      oa[i + 3] = hexCodes[x3]
+    }
+
+    for (; i < length; i++) oa[i] = hexCodes[arr[i]]
     return nativeDecoder.decode(oa)
   }
 
