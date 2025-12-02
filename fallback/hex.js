@@ -11,53 +11,51 @@ const allowed = '0123456789ABCDEFabcdef'
 
 export const E_HEX = 'Input is not a hex string'
 
-function toHexPartAddition(arr, start, end) {
+function toHexPartAddition(a, start, end) {
   let o = ''
   let i = start
-  const last3 = end - 3
-  // Unrolled loop is faster
-  while (i < last3) {
-    const a = arr[i++]
-    const b = arr[i++]
-    const c = arr[i++]
-    const d = arr[i++]
-    o += hexArray[a]
-    o += hexArray[b]
-    o += hexArray[c]
-    o += hexArray[d]
+  const h = hexArray
+  for (const last3 = end - 3; i < last3; i += 4) {
+    const x0 = a[i]
+    const x1 = a[i + 1]
+    const x2 = a[i + 2]
+    const x3 = a[i + 3]
+    o += h[x0]
+    o += h[x1]
+    o += h[x2]
+    o += h[x3]
   }
 
-  while (i < end) o += hexArray[arr[i++]]
+  while (i < end) o += h[a[i++]]
   return o
 }
 
 // Optimiziation for Hermes which is the main user of fallback
-function toHexPartTemplates(arr, start, end) {
+function toHexPartTemplates(a, start, end) {
   let o = ''
   let i = start
   const h = hexArray
-  // Unrolled loop is faster
   for (const last15 = end - 15; i < last15; i += 16) {
-    const x0 = arr[i]
-    const x1 = arr[i + 1]
-    const x2 = arr[i + 2]
-    const x3 = arr[i + 3]
-    const x4 = arr[i + 4]
-    const x5 = arr[i + 5]
-    const x6 = arr[i + 6]
-    const x7 = arr[i + 7]
-    const x8 = arr[i + 8]
-    const x9 = arr[i + 9]
-    const x10 = arr[i + 10]
-    const x11 = arr[i + 11]
-    const x12 = arr[i + 12]
-    const x13 = arr[i + 13]
-    const x14 = arr[i + 14]
-    const x15 = arr[i + 15]
+    const x0 = a[i]
+    const x1 = a[i + 1]
+    const x2 = a[i + 2]
+    const x3 = a[i + 3]
+    const x4 = a[i + 4]
+    const x5 = a[i + 5]
+    const x6 = a[i + 6]
+    const x7 = a[i + 7]
+    const x8 = a[i + 8]
+    const x9 = a[i + 9]
+    const x10 = a[i + 10]
+    const x11 = a[i + 11]
+    const x12 = a[i + 12]
+    const x13 = a[i + 13]
+    const x14 = a[i + 14]
+    const x15 = a[i + 15]
     o += `${h[x0]}${h[x1]}${h[x2]}${h[x3]}${h[x4]}${h[x5]}${h[x6]}${h[x7]}${h[x8]}${h[x9]}${h[x10]}${h[x11]}${h[x12]}${h[x13]}${h[x14]}${h[x15]}`
   }
 
-  while (i < end) o += hexArray[arr[i++]]
+  while (i < end) o += h[a[i++]]
   return o
 }
 
