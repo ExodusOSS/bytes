@@ -49,12 +49,37 @@ export function toBase64(arr, isURL, padding) {
   // This whole loop can be commented out, the algorithm won't change, it's just an optimization of the next loop
   if (nativeDecoder) {
     const oa = new Uint16Array(fullChunks * 2)
-    for (let j = 0; i < fullChunksBytes; i += 3) {
+    let j = 0
+    for (const last = arr.length - 11; i < last; i += 12, j += 8) {
+      const x0 = arr[i]
+      const x1 = arr[i + 1]
+      const x2 = arr[i + 2]
+      const x3 = arr[i + 3]
+      const x4 = arr[i + 4]
+      const x5 = arr[i + 5]
+      const x6 = arr[i + 6]
+      const x7 = arr[i + 7]
+      const x8 = arr[i + 8]
+      const x9 = arr[i + 9]
+      const x10 = arr[i + 10]
+      const x11 = arr[i + 11]
+      oa[j] = codepairs[(x0 << 4) | (x1 >> 4)]
+      oa[j + 1] = codepairs[((x1 & 0x0f) << 8) | x2]
+      oa[j + 2] = codepairs[(x3 << 4) | (x4 >> 4)]
+      oa[j + 3] = codepairs[((x4 & 0x0f) << 8) | x5]
+      oa[j + 4] = codepairs[(x6 << 4) | (x7 >> 4)]
+      oa[j + 5] = codepairs[((x7 & 0x0f) << 8) | x8]
+      oa[j + 6] = codepairs[(x9 << 4) | (x10 >> 4)]
+      oa[j + 7] = codepairs[((x10 & 0x0f) << 8) | x11]
+    }
+
+    // i < last here is equivalent to i < fullChunksBytes
+    for (const last = arr.length - 2; i < last; i += 3, j += 2) {
       const a = arr[i]
       const b = arr[i + 1]
       const c = arr[i + 2]
-      oa[j++] = codepairs[(a << 4) | (b >> 4)]
-      oa[j++] = codepairs[((b & 0x0f) << 8) | c]
+      oa[j] = codepairs[(a << 4) | (b >> 4)]
+      oa[j + 1] = codepairs[((b & 0x0f) << 8) | c]
     }
 
     o = nativeDecoder.decode(oa)
