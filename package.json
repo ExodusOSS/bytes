@@ -1,6 +1,6 @@
 {
   "name": "@exodus/bytes",
-  "version": "1.0.0-rc.5",
+  "version": "1.0.0-rc.6",
   "description": "Various operations on Uint8Array data",
   "scripts": {
     "lint": "eslint .",
