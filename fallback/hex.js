@@ -37,7 +37,7 @@ function toHexPartTemplates(arr, start, end) {
   let i = start
   const h = hexArray
   // Unrolled loop is faster
-  for (const last7 = end - 7; i < last7; i += 8) {
+  for (const last15 = end - 15; i < last15; i += 16) {
     const x0 = arr[i]
     const x1 = arr[i + 1]
     const x2 = arr[i + 2]
@@ -46,7 +46,15 @@ function toHexPartTemplates(arr, start, end) {
     const x5 = arr[i + 5]
     const x6 = arr[i + 6]
     const x7 = arr[i + 7]
-    o += `${h[x0]}${h[x1]}${h[x2]}${h[x3]}${h[x4]}${h[x5]}${h[x6]}${h[x7]}`
+    const x8 = arr[i + 8]
+    const x9 = arr[i + 9]
+    const x10 = arr[i + 10]
+    const x11 = arr[i + 11]
+    const x12 = arr[i + 12]
+    const x13 = arr[i + 13]
+    const x14 = arr[i + 14]
+    const x15 = arr[i + 15]
+    o += `${h[x0]}${h[x1]}${h[x2]}${h[x3]}${h[x4]}${h[x5]}${h[x6]}${h[x7]}${h[x8]}${h[x9]}${h[x10]}${h[x11]}${h[x12]}${h[x13]}${h[x14]}${h[x15]}`
   }
 
   while (i < end) o += hexArray[arr[i++]]
