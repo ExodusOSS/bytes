@@ -1,4 +1,4 @@
-import { asciiPrefix, encodeAscii } from '../fallback/latin1.js'
+import { asciiPrefix, decodeLatin1, encodeLatin1, encodeAscii } from '../fallback/latin1.js'
 import { nativeEncoder } from '../fallback/_utils.js'
 import { describe, test } from 'node:test'
 
@@ -19,10 +19,11 @@ for (let i = 0; i < 5; i++) {
 const pool = raw.map((uint8) => {
   const asciiBytes = uint8.map((x) => x & 0x7f)
   const asciiString = Buffer.from(asciiBytes).toString()
+  const latin1 = [...uint8].map((x) => String.fromCharCode(x)).join('')
   const isAscii = uint8.every((x) => x < 0x80)
   // uint8 -> string mapping could be corrupted by Buffer doing invalid conversion! isAscii is still correct for it though
   const string = Buffer.from(uint8).toString()
-  return { uint8, asciiBytes, asciiString, isAscii, string }
+  return { uint8, asciiBytes, asciiString, latin1, isAscii, string }
 })
 
 describe('asciiPrefix', () => {
@@ -47,6 +48,46 @@ describe('asciiPrefix', () => {
         bytes[pos] |= 0x80
         t.assert.strictEqual(asciiPrefix(bytes), pos)
       }
+    }
+  })
+})
+
+describe('encodeLatin1', { skip: !nativeEncoder }, () => {
+  test('ascii', (t) => {
+    for (const { asciiBytes, asciiString } of pool) {
+      t.assert.deepStrictEqual(encodeLatin1(asciiString), asciiBytes)
+    }
+  })
+
+  test('coherence (Buffer)', { skip: !globalThis.Buffer || Buffer.TYPED_ARRAY_SUPPORT }, (t) => {
+    for (const { uint8, latin1 } of pool) {
+      t.assert.deepEqual(Buffer.from(latin1, 'latin1'), uint8)
+    }
+  })
+
+  test('latin1', (t) => {
+    for (const { uint8, latin1 } of pool) {
+      t.assert.deepStrictEqual(encodeLatin1(latin1), uint8, latin1)
+    }
+  })
+})
+
+describe('decodeLatin1', { skip: !nativeEncoder }, () => {
+  test('ascii', (t) => {
+    for (const { asciiBytes, asciiString } of pool) {
+      t.assert.strictEqual(decodeLatin1(asciiBytes), asciiString)
+    }
+  })
+
+  test('coherence (Buffer)', { skip: !globalThis.Buffer || Buffer.TYPED_ARRAY_SUPPORT }, (t) => {
+    for (const { uint8, latin1 } of pool) {
+      t.assert.strictEqual(Buffer.from(uint8).toString('latin1'), latin1)
+    }
+  })
+
+  test('latin1', (t) => {
+    for (const { uint8, latin1 } of pool) {
+      t.assert.strictEqual(decodeLatin1(uint8), latin1, latin1)
     }
   })
 })
