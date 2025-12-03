@@ -38,6 +38,16 @@ const u16 = (isLE ? u8le : u8be).map((x) => toUint16(x))
 const countCoherence = 100
 const timeout = 20_000
 
+const columns = [
+  '@exodus/bytes/utf16',
+  '@exodus/bytes/utf16, loose',
+  isNative(TextDecoder) ? 'TextDecoder' : 'text-encoding',
+  isNative(TextDecoder) ? 'TextDecoder (loose)' : 'text-encoding (loose)',
+  'Buffer',
+  '@ethersproject/strings',
+  'String.fromCharCode',
+]
+
 describe('benchmarks: utf16', async () => {
   // [n, impl, skip]
   const utf16toString16 = [
@@ -98,6 +108,8 @@ describe('benchmarks: utf16', async () => {
     for (const [n, f, skip] of utf16toString16) {
       res.add(n, await benchmark(`utf16toString, uint16: ${n}`, { skip, args: u16 }, f))
     }
+
+    res.print(columns)
   })
 
   test('utf16toString coherence, uint8-le', (t) => {
@@ -113,6 +125,8 @@ describe('benchmarks: utf16', async () => {
     for (const [n, f, skip] of utf16toStringLE) {
       res.add(n, await benchmark(`utf16toString, uint8-le: ${n}`, { skip, args: u8le }, f))
     }
+
+    res.print(columns)
   })
 
   test('utf16toString coherence, uint8-be', (t) => {
@@ -128,6 +142,8 @@ describe('benchmarks: utf16', async () => {
     for (const [n, f, skip] of utf16toStringBE) {
       res.add(n, await benchmark(`utf16toString, uint8-be: ${n}`, { skip, args: u8be }, f))
     }
+
+    res.print(columns)
   })
 
   test('utf16fromString coherence, uint16', (t) => {
@@ -143,6 +159,8 @@ describe('benchmarks: utf16', async () => {
     for (const [n, f, skip] of utf16fromString16) {
       res.add(n, await benchmark(`utf16fromString, uint16: ${n}`, { skip, args: strings }, f))
     }
+
+    res.print(columns)
   })
 
   test('utf16fromString coherence, uint8-le', (t) => {
@@ -158,6 +176,8 @@ describe('benchmarks: utf16', async () => {
     for (const [n, f, skip] of utf16fromStringLE) {
       res.add(n, await benchmark(`utf16fromString, uint8-le: ${n}`, { skip, args: strings }, f))
     }
+
+    res.print(columns)
   })
 
   test('utf16fromString coherence, uint8-be', (t) => {
@@ -173,5 +193,7 @@ describe('benchmarks: utf16', async () => {
     for (const [n, f, skip] of utf16fromStringBE) {
       res.add(n, await benchmark(`utf16fromString, uint8-be: ${n}`, { skip, args: strings }, f))
     }
+
+    res.print(columns)
   })
 })
