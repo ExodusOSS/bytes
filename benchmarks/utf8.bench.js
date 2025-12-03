@@ -3,6 +3,7 @@ import * as fallback from '../fallback/utf8.js'
 import { benchmark } from '@exodus/test/benchmark' // eslint-disable-line @exodus/import/no-unresolved
 import buffer from 'buffer/index.js'
 import { describe, test } from 'node:test'
+import iconv from 'iconv-lite'
 import js from 'text-encoding'
 import * as ethers from '@ethersproject/strings'
 
@@ -35,6 +36,7 @@ const columnsTo = [
   'Buffer',
   textDecoder ? 'TextDecoder' : 'text-encoding',
   textDecoderLoose ? 'TextDecoder (loose)' : 'text-encoding (loose)',
+  'iconv-lite',
   '@ethersproject/strings',
   'Buffer.from',
 ]
@@ -44,6 +46,7 @@ const columnsFrom = [
   '@exodus/bytes/utf8, loose',
   'Buffer',
   textEncoder ? 'TextEncoder' : 'text-encoding',
+  'iconv-lite',
   '@ethersproject/strings',
 ]
 
@@ -61,6 +64,7 @@ describe('benchmarks: utf8', async () => {
     ['Buffer.from', (x) => Buffer.from(x).toString('utf8')],
     ['buffer/Buffer', (x) => toBuffer(x, buffer.Buffer).toString('utf8'), bufferIsPolyfilled],
     ['buffer/Buffer.from', (x) => buffer.Buffer.from(x).toString('utf8'), bufferIsPolyfilled],
+    ['iconv-lite', (x) => iconv.decode(x, 'utf8', { stripBOM: false })],
     ['@ethersproject/strings', (x) => ethers.toUtf8String(x)],
   ]
 
@@ -73,6 +77,7 @@ describe('benchmarks: utf8', async () => {
     ['text-encoding', (x) => textEncoderJS.encode(x)],
     ['Buffer', (x) => Buffer.from(x, 'utf8')],
     ['buffer/Buffer', (x) => buffer.Buffer.from(x, 'utf8'), bufferIsPolyfilled],
+    ['iconv-lite', (x) => iconv.encode(x, 'utf8')],
     ['@ethersproject/strings', (x) => ethers.toUtf8Bytes(x)],
   ]
 

@@ -4,6 +4,7 @@ import * as fallback from '../fallback/utf16.js'
 import { benchmark } from '@exodus/test/benchmark' // eslint-disable-line @exodus/import/no-unresolved
 import buffer from 'buffer/index.js'
 import { describe, test } from 'node:test'
+import iconv from 'iconv-lite'
 import js from 'text-encoding'
 
 import { bufs as bufsRaw } from './utils/random.js'
@@ -44,6 +45,7 @@ const columns = [
   isNative(TextDecoder) ? 'TextDecoder' : 'text-encoding',
   isNative(TextDecoder) ? 'TextDecoder (loose)' : 'text-encoding (loose)',
   'Buffer',
+  'iconv-lite',
   '@ethersproject/strings',
   'String.fromCharCode',
 ]
@@ -66,6 +68,7 @@ describe('benchmarks: utf16', async () => {
     ['TextDecoder (loose)', (x) => textDecoderLE_Loose.decode(x), !textDecoderLE_Loose],
     ['text-encoding', (x) => textDecoderLE_JS.decode(x)],
     ['text-encoding (loose)', (x) => textDecoderLE_JSLoose.decode(x)],
+    ['iconv-lite', (x) => iconv.decode(x, 'utf-16le', { stripBOM: false })],
   ]
 
   const utf16toStringBE = [
@@ -81,6 +84,7 @@ describe('benchmarks: utf16', async () => {
     ['TextDecoder (loose)', (x) => textDecoderBE_Loose.decode(x), !textDecoderBE_Loose],
     ['text-encoding', (x) => textDecoderBE_JS.decode(x)],
     ['text-encoding (loose)', (x) => textDecoderBE_JSLoose.decode(x)],
+    ['iconv-lite', (x) => iconv.decode(x, 'utf-16be', { stripBOM: false })],
   ]
 
   const utf16fromString16 = [
@@ -94,6 +98,7 @@ describe('benchmarks: utf16', async () => {
     ['@exodus/bytes/utf16, loose', (x) => exodus.utf16fromStringLoose(x, 'uint8-le')],
     ['Buffer', (x) => Buffer.from(x, 'utf16le')],
     ['buffer/Buffer', (x) => buffer.Buffer.from(x, 'utf16le'), bufferIsPolyfilled],
+    ['iconv-lite', (x) => iconv.encode(x, 'utf-16le', { addBOM: false })],
   ]
 
   const utf16fromStringBE = [
@@ -101,6 +106,7 @@ describe('benchmarks: utf16', async () => {
     ['@exodus/bytes/utf16, loose', (x) => exodus.utf16fromStringLoose(x, 'uint8-be')],
     ['Buffer', (x) => Buffer.from(x, 'utf16le').swap16()],
     ['buffer/Buffer', (x) => buffer.Buffer.from(x, 'utf16le').swap16(), bufferIsPolyfilled],
+    ['iconv-lite', (x) => iconv.encode(x, 'utf-16be', { addBOM: false })],
   ]
 
   test('utf16toString coherence, uint16', (t) => {
