@@ -1,6 +1,6 @@
 import { assertUint8, assertEmptyRest } from './assert.js'
 import { typedView } from './array.js'
-import { isHermes } from './fallback/_utils.js'
+import { isHermes, skipWeb } from './fallback/_utils.js'
 import { decodeLatin1, encodeLatin1 } from './fallback/latin1.js'
 import * as js from './fallback/base64.js'
 
@@ -35,7 +35,7 @@ function maybePad(res, padding) {
 
 const toUrl = (x) => x.replaceAll('+', '-').replaceAll('/', '_')
 const fromUrl = (x) => x.replaceAll('-', '+').replaceAll('_', '/')
-const haveWeb = (x) => web64 && x.toBase64 === web64
+const haveWeb = (x) => !skipWeb && web64 && x.toBase64 === web64
 
 export function toBase64(x, { padding = true } = {}) {
   assertUint8(x)
@@ -112,7 +112,7 @@ function noWhitespaceSeen(str, arr) {
 }
 
 let fromBase64impl
-if (Uint8Array.fromBase64) {
+if (!skipWeb && Uint8Array.fromBase64) {
   // NOTICE: this is actually slower than our JS impl in older JavaScriptCore and (slightly) in SpiderMonkey, but faster on V8 and new JavaScriptCore
   fromBase64impl = (str, isBase64url, padding) => {
     const alphabet = isBase64url ? 'base64url' : 'base64'

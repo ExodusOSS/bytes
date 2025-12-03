@@ -52,7 +52,7 @@ describe('benchmarks: hex', async () => {
 
   for (const f of reset) f()
 
-  const strings = bufs.map((x) => exodus.toHex(x))
+  const strings = bufs.map((x) => (x.toHex ? x.toHex() : exodus.toHex(x)))
 
   // [name, impl, skip, removeNative]
   const toHex = [

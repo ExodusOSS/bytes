@@ -13,4 +13,25 @@ const nativeDecoderLatin1 = isNative(TextDecoder)
   ? new TextDecoder('latin1', { ignoreBOM: true })
   : null
 
-export { nativeEncoder, nativeDecoder, nativeDecoderLatin1, nativeBuffer, isHermes }
+// Block Firefox < 146 specifically from using native hex/base64, as it's very slow there
+// Refs: https://bugzilla.mozilla.org/show_bug.cgi?id=1994067 (and linked issues), fixed in 146
+// Before that, all versions of Firefox >= 133 are slow
+// TODO: this could be removed when < 146 usage diminishes (note ESR)
+// We do not worry about false-negatives here but worry about false-positives!
+function shouldSkipBuiltins() {
+  const g = globalThis
+  // First, attempt to exclude as many things as we can using trivial checks, just in case, and to not hit ua
+  if (haveNativeBuffer || isHermes || !g.window || g.chrome || !g.navigator) return false
+  try {
+    // This was fixed specifically in Firefox 146. Other engines except Hermes (already returned) get this right
+    new WeakSet().add(Symbol()) // eslint-disable-line symbol-description
+    return false
+  } catch {}
+
+  if (!('onmozfullscreenerror' in g)) return false // Firefox has it (might remove in the future, but we don't care)
+  return /firefox/i.test(g.navigator.userAgent || '') // as simple as we can
+}
+
+const skipWeb = shouldSkipBuiltins()
+
+export { nativeEncoder, nativeDecoder, nativeDecoderLatin1, nativeBuffer, isHermes, skipWeb }

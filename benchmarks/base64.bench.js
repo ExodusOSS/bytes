@@ -77,7 +77,7 @@ describe('benchmarks: base64', async () => {
 
   for (const f of reset) f()
 
-  const strings = bufs.map((x) => exodus.toBase64(x))
+  const strings = bufs.map((x) => (x.toBase64 ? x.toBase64() : exodus.toBase64(x)))
 
   // [name, impl, skip, removeNative]
   const toBase64 = [
