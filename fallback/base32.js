@@ -1,5 +1,5 @@
 import { assertUint8 } from '../assert.js'
-import { nativeEncoder, nativeDecoder } from './_utils.js'
+import { nativeEncoder, nativeDecoder, isHermes } from './_utils.js'
 import { encodeAscii, decodeAscii } from './latin1.js'
 
 // See https://datatracker.ietf.org/doc/html/rfc4648
@@ -14,7 +14,7 @@ export const E_PADDING = 'Invalid base32 padding'
 export const E_LENGTH = 'Invalid base32 length'
 export const E_LAST = 'Invalid last chunk'
 
-const useTemplates = Boolean(globalThis.HermesInternal) // Faster on Hermes and JSC, but we use it only on Hermes
+const useTemplates = isHermes // Faster on Hermes and JSC, but we use it only on Hermes
 
 // We construct output by concatenating chars, this seems to be fine enough on modern JS engines
 export function toBase32(arr, isBase32Hex, padding) {

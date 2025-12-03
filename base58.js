@@ -1,6 +1,6 @@
 import { typedView } from './array.js'
 import { assertUint8 } from './assert.js'
-import { nativeDecoder, nativeEncoder } from './fallback/_utils.js'
+import { nativeDecoder, nativeEncoder, isHermes } from './fallback/_utils.js'
 import { encodeAscii, decodeAscii } from './fallback/latin1.js'
 
 const alphabet = [...'123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz']
@@ -20,7 +20,7 @@ let fromMap
 
 const E_CHAR = 'Invalid character in base58 input'
 
-const shouldUseBigIntFrom = Boolean(globalThis.HermesInternal) // faster only on Hermes, numbers path beats it on normal engines
+const shouldUseBigIntFrom = isHermes // faster only on Hermes, numbers path beats it on normal engines
 
 export function toBase58(arr) {
   assertUint8(arr)

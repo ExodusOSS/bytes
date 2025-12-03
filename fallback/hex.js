@@ -1,5 +1,5 @@
 import { assertUint8 } from '../assert.js'
-import { nativeDecoder, nativeEncoder } from './_utils.js'
+import { nativeDecoder, nativeEncoder, isHermes } from './_utils.js'
 import { encodeAscii, decodeAscii } from './latin1.js'
 
 let hexArray // array of 256 bytes converted to two-char hex strings
@@ -61,7 +61,7 @@ function toHexPartTemplates(a, start, end) {
 
 // Using templates is significantly faster in Hermes and JSC
 // It's harder to detect JSC and not important anyway as it has native impl, so we detect only Hermes
-const toHexPart = globalThis.HermesInternal ? toHexPartTemplates : toHexPartAddition
+const toHexPart = isHermes ? toHexPartTemplates : toHexPartAddition
 
 export function toHex(arr) {
   assertUint8(arr)

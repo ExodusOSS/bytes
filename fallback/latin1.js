@@ -1,4 +1,10 @@
-import { nativeEncoder, nativeDecoder, nativeDecoderLatin1, nativeBuffer } from './_utils.js'
+import {
+  nativeEncoder,
+  nativeDecoder,
+  nativeDecoderLatin1,
+  nativeBuffer,
+  isHermes,
+} from './_utils.js'
 
 // See http://stackoverflow.com/a/22747272/680742, which says that lowest limit is in Chrome, with 0xffff args
 // On Hermes, actual max is 0x20_000 minus current stack depth, 1/16 of that should be safe
@@ -67,7 +73,7 @@ export const decodeAscii = nativeBuffer
 
 /* eslint-disable @exodus/mutable/no-param-reassign-prop-only */
 
-export const encodeCharcodes = globalThis.HermesInternal
+export const encodeCharcodes = isHermes
   ? (str, arr) => {
       const length = str.length
       if (length > 64) {
@@ -91,7 +97,7 @@ export const encodeCharcodes = globalThis.HermesInternal
 export const encodeLatin1 = (str) => encodeCharcodes(str, new Uint8Array(str.length))
 
 // Expects nativeEncoder to be present
-export const encodeAscii = globalThis.HermesInternal
+export const encodeAscii = isHermes
   ? (str, ERR) => {
       // Much faster in Hermes
       const codes = new Uint8Array(str.length + 4) // overshoot by a full utf8 char

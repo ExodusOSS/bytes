@@ -1,7 +1,8 @@
 import { assertUint8 } from './assert.js'
 import { typedView } from './array.js'
-import * as js from './fallback/utf8.js'
+import { isHermes } from './fallback/_utils.js'
 import { asciiPrefix, decodeLatin1 } from './fallback/latin1.js'
+import * as js from './fallback/utf8.js'
 
 const { Buffer, TextEncoder, TextDecoder, decodeURIComponent, escape } = globalThis // Buffer is optional
 const haveNativeBuffer = Buffer && !Buffer.TYPED_ARRAY_SUPPORT
@@ -16,7 +17,7 @@ const { isWellFormed } = String.prototype
 
 const { E_STRICT, E_STRICT_UNICODE } = js
 
-const shouldUseEscapePath = Boolean(globalThis.HermesInternal) // faster only on Hermes, js path beats it on normal engines
+const shouldUseEscapePath = isHermes // faster only on Hermes, js path beats it on normal engines
 
 function deLoose(str, loose, res) {
   if (loose || str.length === res.length) return res // length is equal only for ascii, which is automatically fine

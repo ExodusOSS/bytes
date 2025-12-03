@@ -1,5 +1,6 @@
 import { assertUint8, assertEmptyRest } from './assert.js'
 import { typedView } from './array.js'
+import { isHermes } from './fallback/_utils.js'
 import { decodeLatin1, encodeLatin1 } from './fallback/latin1.js'
 import * as js from './fallback/base64.js'
 
@@ -15,8 +16,8 @@ const { toBase64: web64 } = Uint8Array.prototype // Modern engines have this
 const { E_CHAR, E_PADDING, E_LENGTH, E_LAST } = js
 
 // faster only on Hermes (and a little in old Chrome), js path beats it on normal engines
-const shouldUseBtoa = btoa && Boolean(globalThis.HermesInternal)
-const shouldUseAtob = atob && Boolean(globalThis.HermesInternal)
+const shouldUseBtoa = btoa && isHermes
+const shouldUseAtob = atob && isHermes
 
 // For native Buffer codepaths only
 const isBuffer = (x) => x.constructor === Buffer && Buffer.isBuffer(x)
