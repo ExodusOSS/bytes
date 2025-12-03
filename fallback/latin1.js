@@ -1,4 +1,4 @@
-import { nativeEncoder } from './_utils.js'
+import { nativeEncoder, nativeBuffer } from './_utils.js'
 
 // See http://stackoverflow.com/a/22747272/680742, which says that lowest limit is in Chrome, with 0xffff args
 // On Hermes, actual max is 0x20_000 minus current stack depth, 1/16 of that should be safe
@@ -87,8 +87,15 @@ export const encodeAscii = globalThis.HermesInternal
       if (info.read !== str.length || info.written !== str.length) throw new SyntaxError(ERR) // non-ascii
       return codes.subarray(0, str.length)
     }
-  : (str, ERR) => {
-      const codes = nativeEncoder.encode(str)
-      if (codes.length !== str.length) throw new SyntaxError(ERR) // non-ascii
-      return codes
-    }
+  : nativeBuffer
+    ? (str, ERR) => {
+        // TextEncoder is slow on Node.js 24 / 25 (was ok on 22)
+        const codes = nativeBuffer.from(str, 'utf8') // ascii/latin1 coerces, we need to check
+        if (codes.length !== str.length) throw new SyntaxError(ERR) // non-ascii
+        return new Uint8Array(codes.buffer, codes.byteOffset, codes.byteLength)
+      }
+    : (str, ERR) => {
+        const codes = nativeEncoder.encode(str)
+        if (codes.length !== str.length) throw new SyntaxError(ERR) // non-ascii
+        return codes
+      }

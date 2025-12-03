@@ -47,6 +47,9 @@ describe('benchmarks: latin1', async () => {
   // [name, impl, skip]
   const encodeAscii = [
     ['./fallback/latin1', (x) => latin1.encodeAscii(x, 'ERR'), !textEncoder],
+    ['Buffer (ascii)', (x) => Buffer.from(x, 'ascii')],
+    ['Buffer (latin1)', (x) => Buffer.from(x, 'latin1')],
+    ['Buffer (utf8)', (x) => Buffer.from(x, 'utf8')],
     ['TextEncoder', (x) => textEncoder.encode(x), !textEncoder],
   ]
 
