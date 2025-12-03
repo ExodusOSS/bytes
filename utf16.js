@@ -62,6 +62,13 @@ function encode(str, loose = false, format = 'uint16') {
     throw new TypeError('Unknown format')
   }
 
+  const u16needed = !loose && !isWellFormed
+  if (!u16needed && ((isLE && format === 'uint8-be') || (!isLE && format === 'uint8-le'))) {
+    const u16s = js.encodeSwapped(str)
+    if (!loose) assertNotLoose(str, null, E_STRICT_UNICODE)
+    return to8(u16s)
+  }
+
   const u16 = js.encode(str)
   if (!loose) assertNotLoose(str, u16, E_STRICT_UNICODE)
 
