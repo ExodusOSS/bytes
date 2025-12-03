@@ -65,6 +65,10 @@
       "node": "./hex.node.js",
       "default": "./hex.js"
     },
+    "./utf16.js": {
+      "node": "./utf16.node.js",
+      "default": "./utf16.js"
+    },
     "./utf8.js": {
       "node": "./utf8.node.js",
       "default": "./utf8.js"

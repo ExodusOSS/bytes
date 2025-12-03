@@ -1,5 +1,5 @@
 import { utf8toStringLoose } from '@exodus/bytes/utf8.js'
-import * as exodus from '../utf16.js'
+import * as exodus from '@exodus/bytes/utf16.js'
 import * as fallback from '../fallback/utf16.js'
 import { benchmark } from '@exodus/test/benchmark' // eslint-disable-line @exodus/import/no-unresolved
 import buffer from 'buffer/index.js'
