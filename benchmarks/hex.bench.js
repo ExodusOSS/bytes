@@ -35,8 +35,7 @@ const timeout = 30_000
 describe('benchmarks: hex', async () => {
   let hextremeJS // Fallback without Uint8Array.fromHex, Uint8Array#toHex
   let scureJS // Fallback without Uint8Array.fromHex, Uint8Array#toHex
-  let exodusA // Fallback without Uint8Array.fromHex, Uint8Array#toHex
-  let exodusB // Fallback without native Buffer
+  let exodusJS // Fallback without Uint8Array.fromHex, Uint8Array#toHex, and native Buffer
 
   const toHexNative = Uint8Array.prototype.toHex
   const fromHexNative = Uint8Array.fromHex
@@ -46,15 +45,9 @@ describe('benchmarks: hex', async () => {
     reset.push(() => (Uint8Array.fromHex = fromHexNative))
     Uint8Array.prototype.toHex = undefined // eslint-disable-line no-extend-native
     reset.push(() => (Uint8Array.prototype.toHex = toHexNative)) // eslint-disable-line no-extend-native
-    exodusA = await import('../hex.js?a') // eslint-disable-line @exodus/import/no-unresolved
+    exodusJS = await import('../hex.js?a') // eslint-disable-line @exodus/import/no-unresolved
     scureJS = (await import('../node_modules/@scure/base/lib/esm/index.js?a')).hex // eslint-disable-line @exodus/import/no-unresolved, unicorn/no-await-expression-member
     hextremeJS = await import('../node_modules/hextreme/index.mjs?a') // eslint-disable-line @exodus/import/no-unresolved, unicorn/no-await-expression-member
-  }
-
-  if (!Buffer.TYPED_ARRAY_SUPPORT) {
-    Buffer.TYPED_ARRAY_SUPPORT = true
-    reset.push(() => delete Buffer.TYPED_ARRAY_SUPPORT)
-    exodusB = await import('../hex.js?b') // eslint-disable-line @exodus/import/no-unresolved
   }
 
   for (const f of reset) f()
@@ -64,8 +57,7 @@ describe('benchmarks: hex', async () => {
   // [name, impl, skip, removeNative]
   const toHex = [
     ['@exodus/bytes/hex', (x) => exodus.toHex(x)],
-    ['@exodus/bytes/hex, no native', (x) => exodusA.toHex(x), !exodusA],
-    ['@exodus/bytes/hex, no Buffer', (x) => exodusB.toHex(x), !exodusB],
+    ['@exodus/bytes/hex, no native', (x) => exodusJS.toHex(x), !exodusJS],
     ['fallback', (x) => fallback.toHex(x)],
     ['Buffer', (x) => toBuffer(x, Buffer).toString('hex')],
     ['Buffer.from', (x) => Buffer.from(x).toString('hex')],
@@ -81,8 +73,7 @@ describe('benchmarks: hex', async () => {
   // [name, impl, skip, removeNative]
   const fromHex = [
     ['@exodus/bytes/hex', (x) => exodus.fromHex(x)],
-    ['@exodus/bytes/hex, no native', (x) => exodusA.fromHex(x), !exodusA],
-    ['@exodus/bytes/hex, no Buffer', (x) => exodusB.fromHex(x), !exodusB],
+    ['@exodus/bytes/hex, no native', (x) => exodusJS.fromHex(x), !exodusJS],
     ['fallback', (x) => fallback.fromHex(x)],
     ['Buffer', (x) => Buffer.from(x, 'hex')],
     ['buffer/Buffer', (x) => buffer.Buffer.from(x, 'hex'), bufferIsPolyfilled],

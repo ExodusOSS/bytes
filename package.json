@@ -50,6 +50,7 @@
     "/base58.js",
     "/base58check.js",
     "/base64.js",
+    "/hex.node.js",
     "/hex.js",
     "/utf8.node.js",
     "/utf8.js"
@@ -60,7 +61,10 @@
     "./base58.js": "./base58.js",
     "./base58check.js": "./base58check.js",
     "./base64.js": "./base64.js",
-    "./hex.js": "./hex.js",
+    "./hex.js": {
+      "node": "./hex.node.js",
+      "default": "./hex.js"
+    },
     "./utf8.js": {
       "node": "./utf8.node.js",
       "default": "./utf8.js"
