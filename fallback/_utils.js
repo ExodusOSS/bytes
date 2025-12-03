@@ -26,10 +26,13 @@ function shouldSkipBuiltins() {
     // This was fixed specifically in Firefox 146. Other engines except Hermes (already returned) get this right
     new WeakSet().add(Symbol()) // eslint-disable-line symbol-description
     return false
-  } catch {}
+  } catch {
+    // In catch and not after in case if something too smart optimizes out code in try. False-negative is acceptable in that case
+    if (!('onmozfullscreenerror' in g)) return false // Firefox has it (might remove in the future, but we don't care)
+    return /firefox/i.test(g.navigator.userAgent || '') // as simple as we can
+  }
 
-  if (!('onmozfullscreenerror' in g)) return false // Firefox has it (might remove in the future, but we don't care)
-  return /firefox/i.test(g.navigator.userAgent || '') // as simple as we can
+  return false // eslint-disable-line no-unreachable
 }
 
 const skipWeb = shouldSkipBuiltins()
