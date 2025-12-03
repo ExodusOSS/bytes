@@ -31,7 +31,7 @@ const textDecoderBE_JSLoose = new js.TextDecoder('utf-16be')
 const replacementChar = String.fromCodePoint(0xff_fd) // We don't expect much of these in real usage, and rng will spawn a lot of those, so strip
 const strings = bufsRaw.map((x) => utf8toStringLoose(x).replaceAll(replacementChar, '∀')) // loose, but we want that here
 const u8le = strings.map((x) => toUint8(Buffer.from(x, 'utf16le')))
-const u8be = u8le.map((x) => fallback.swapEndianness(x))
+const u8be = u8le.map((x) => toUint8(Buffer.from(x).swap16()))
 const isLE = new Uint8Array(Uint16Array.of(258).buffer)[0] === 2
 const u16 = (isLE ? u8le : u8be).map((x) => toUint16(x))
 
@@ -71,6 +71,12 @@ describe('benchmarks: utf16', async () => {
   const utf16toStringBE = [
     ['@exodus/bytes/utf16', (x) => exodus.utf16toString(x, 'uint8-be')],
     ['@exodus/bytes/utf16, loose', (x) => exodus.utf16toStringLoose(x, 'uint8-be')],
+    ['Buffer', (x) => Buffer.from(x).swap16().toString('utf16le')],
+    [
+      'buffer/Buffer',
+      (x) => buffer.Buffer.from(x).swap16().toString('utf16le'),
+      bufferIsPolyfilled,
+    ],
     ['TextDecoder', (x) => textDecoderBE.decode(x), !textDecoderBE],
     ['TextDecoder (loose)', (x) => textDecoderBE_Loose.decode(x), !textDecoderBE_Loose],
     ['text-encoding', (x) => textDecoderBE_JS.decode(x)],
@@ -93,6 +99,8 @@ describe('benchmarks: utf16', async () => {
   const utf16fromStringBE = [
     ['@exodus/bytes/utf16', (x) => exodus.utf16fromString(x, 'uint8-be')],
     ['@exodus/bytes/utf16, loose', (x) => exodus.utf16fromStringLoose(x, 'uint8-be')],
+    ['Buffer', (x) => Buffer.from(x, 'utf16le').swap16()],
+    ['buffer/Buffer', (x) => buffer.Buffer.from(x, 'utf16le').swap16(), bufferIsPolyfilled],
   ]
 
   test('utf16toString coherence, uint16', (t) => {

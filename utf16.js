@@ -19,11 +19,43 @@ const { E_STRICT, E_STRICT_UNICODE } = js
 const to8 = (a) => new Uint8Array(a.buffer, a.byteOffset, a.byteLength)
 const to16 = (a) => new Uint16Array(a.buffer, a.byteOffset, a.byteLength / 2) // Requires checked length and alignment!
 
+function swapEndianness(u8, inPlace = false) {
+  if (haveNativeBuffer) {
+    const buf = inPlace ? Buffer.from(u8.buffer, u8.byteOffset, u8.byteLength) : Buffer.from(u8)
+    buf.swap16()
+    return to8(buf)
+  }
+
+  // Assume even number of bytes
+  const res = inPlace ? u8 : new Uint8Array(u8.length)
+
+  let i = 0
+  for (const last3 = u8.length - 3; i < last3; i += 4) {
+    const x0 = u8[i]
+    const x1 = u8[i + 1]
+    const x2 = u8[i + 2]
+    const x3 = u8[i + 3]
+    res[i] = x1
+    res[i + 1] = x0
+    res[i + 2] = x3
+    res[i + 3] = x2
+  }
+
+  for (const last = u8.length - 1; i < last; i += 2) {
+    const x0 = u8[i]
+    const x1 = u8[i + 1]
+    res[i] = x1
+    res[i + 1] = x0
+  }
+
+  return res
+}
+
 function restoreU16(u8le, u8be, inPlace = false) {
   if (isLE && u8le) return to16(u8le.byteOffset % 2 === 0 ? u8le : Uint8Array.from(u8le))
   if (!isLE && u8be) return to16(u8be.byteOffset % 2 === 0 ? u8be : Uint8Array.from(u8be))
   const u8 = u8le || u8be
-  return to16(js.swapEndianness(u8, inPlace && u8.byteOffset % 2 === 0))
+  return to16(swapEndianness(u8, inPlace && u8.byteOffset % 2 === 0))
 }
 
 function encode(str, loose = false, format = 'uint16') {
@@ -46,7 +78,7 @@ function encode(str, loose = false, format = 'uint16') {
       if (!isWellFormed.call(str)) throw new SyntaxError(E_STRICT_UNICODE)
     } else {
       if (!u16) {
-        if (!u8be && !isLE) u8be = js.swapEndianness(u8le) // TODO: could be in place in some cases
+        if (!u8be && !isLE) u8be = swapEndianness(u8le) // TODO: could be in place in some cases
         u16 = restoreU16(u8le, u8be)
       }
 
@@ -58,8 +90,8 @@ function encode(str, loose = false, format = 'uint16') {
     }
   }
 
-  if (format === 'uint8-le') return u8le || js.swapEndianness(u8be, true)
-  if (format === 'uint8-be') return u8be || js.swapEndianness(u8le, true)
+  if (format === 'uint8-le') return u8le || swapEndianness(u8be, true)
+  if (format === 'uint8-be') return u8be || swapEndianness(u8le, true)
   if (format === 'uint16') return u16 || restoreU16(u8le, u8be, true)
   throw new Error('Unreachable')
 }
@@ -97,16 +129,15 @@ function compare(a, b) {
 }
 
 function decodeFrom(u16, u8le, u8be, loose = false) {
-  // We skip this on Node.js, as utf16 TextDecoder is somewhy significantly slower than Buffer there
-  const ignoreDecoder = haveNativeBuffer && u8le
-  if (haveDecoder && !ignoreDecoder) {
+  // We skip this on Node.js, as TextDecoder is somewhy significantly slower than Buffer there
+  if (haveDecoder && !haveNativeBuffer) {
     if (u8le) return loose ? decoderLooseLE.decode(u8le) : decoderFatalLE.decode(u8le)
     if (u8be) return loose ? decoderLooseBE.decode(u8be) : decoderFatalBE.decode(u8be)
   }
 
   let str
   if (haveNativeBuffer) {
-    if (!u8le) u8le = js.swapEndianness(u8be)
+    if (!u8le) u8le = swapEndianness(u8be)
     str = Buffer.from(u8le.buffer, u8le.byteOffset, u8le.byteLength).toString('utf-16le')
   } else {
     if (!u16) u16 = restoreU16(u8le, u8be)
