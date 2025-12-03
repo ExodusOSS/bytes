@@ -34,7 +34,6 @@ function maybePad(res, padding) {
 }
 
 const toUrl = (x) => x.replaceAll('+', '-').replaceAll('/', '_')
-const fromUrl = (x) => x.replaceAll('-', '+').replaceAll('_', '/')
 const haveWeb = (x) => !skipWeb && web64 && x.toBase64 === web64
 
 export function toBase64(x, { padding = true } = {}) {
@@ -138,40 +137,40 @@ if (!skipWeb && Uint8Array.fromBase64) {
     if (!noWhitespaceSeen(str, arr)) throw new SyntaxError(E_CHAR)
     return arr
   }
-} else {
+} else if (haveNativeBuffer) {
+  fromBase64impl = (str, isBase64url, padding) => {
+    const arr = Buffer.from(str, 'base64')
+    // Rechecking by re-encoding is cheaper than regexes on Node.js
+    const r = isBase64url ? maybeUnpad(str, padding === false) : maybePad(str, padding !== true)
+    if (r !== arr.toString(isBase64url ? 'base64url' : 'base64')) throw new SyntaxError(E_PADDING)
+    return arr // fully checked
+  }
+} else if (shouldUseAtob) {
+  // atob is faster than manual parsing on Hermes
   fromBase64impl = (str, isBase64url, padding) => {
     let arr
-    if (haveNativeBuffer) {
-      arr = Buffer.from(str, 'base64')
-      // Rechecking is cheaper than regexes on Node.js
-      const r = isBase64url ? maybeUnpad(str, padding === false) : maybePad(str, padding !== true)
-      if (r !== arr.toString(isBase64url ? 'base64url' : 'base64')) throw new SyntaxError(E_PADDING)
-    } else if (shouldUseAtob) {
-      // atob is faster than manual parsing on Hermes
-      if (isBase64url) {
-        if (/[\t\n\f\r +/]/.test(str)) throw new SyntaxError(E_CHAR) // atob verifies other invalid input
-        str = fromUrl(str)
-      }
-
-      try {
-        arr = encodeLatin1(atob(str))
-      } catch {
-        throw new SyntaxError(E_CHAR) // convert atob errors
-      }
-
-      if (!isBase64url && !noWhitespaceSeen(str, arr)) throw new SyntaxError(E_CHAR) // base64url checks input above
-    } else {
-      return js.fromBase64(str, isBase64url) // early return to skip last chunk verification, it's already validated in js
+    if (isBase64url) {
+      if (/[\t\n\f\r +/]/.test(str)) throw new SyntaxError(E_CHAR) // atob verifies other invalid input
+      str = str.replaceAll('-', '+').replaceAll('_', '/') // from url to normal
     }
+
+    try {
+      arr = encodeLatin1(atob(str))
+    } catch {
+      throw new SyntaxError(E_CHAR) // convert atob errors
+    }
+
+    if (!isBase64url && !noWhitespaceSeen(str, arr)) throw new SyntaxError(E_CHAR) // base64url checks input above
 
     if (arr.length % 3 !== 0) {
       // Check last chunk to be strict if it was incomplete
-      const expected = toBase64(arr.subarray(-(arr.length % 3)))
+      const expected = toBase64(arr.subarray(-(arr.length % 3))) // str is normalized to non-url already
       const end = str.length % 4 === 0 ? str.slice(-4) : str.slice(-(str.length % 4)).padEnd(4, '=')
-      const actual = isBase64url ? fromUrl(end) : end
-      if (expected !== actual) throw new SyntaxError(E_LAST)
+      if (expected !== end) throw new SyntaxError(E_LAST)
     }
 
     return arr
   }
+} else {
+  fromBase64impl = (str, isBase64url, padding) => js.fromBase64(str, isBase64url) // validated in js
 }
