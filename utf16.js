@@ -48,32 +48,22 @@ function swapEndianness(u8, inPlace = false) {
   return res
 }
 
-function assertNotLoose(str, u16, ERR) {
-  if (isWellFormed) {
-    if (!isWellFormed.call(str)) throw new SyntaxError(ERR)
-  } else {
-    throw new Error('Unsupported') // TODO
-  }
-}
-
 function encode(str, loose = false, format = 'uint16') {
   if (typeof str !== 'string') throw new TypeError('Input is not a string')
   if (format !== 'uint16' && format !== 'uint8-le' && format !== 'uint8-be') {
     throw new TypeError('Unknown format')
   }
 
-  const u16needed = !loose && !isWellFormed
-  if (!u16needed && ((isLE && format === 'uint8-be') || (!isLE && format === 'uint8-le'))) {
-    const u16s = js.encodeSwapped(str)
-    if (!loose) assertNotLoose(str, null, E_STRICT_UNICODE)
-    return to8(u16s)
-  }
+  const shouldSwap = (isLE && format === 'uint8-be') || (!isLE && format === 'uint8-le')
 
-  const u16 = js.encode(str)
-  if (!loose) assertNotLoose(str, u16, E_STRICT_UNICODE)
+  // On v8 and SpiderMonkey, check via isWellFormed is faster than js
+  // On JSC, check during loop is faster than isWellFormed
+  // If isWellFormed is available, we skip check during decoding and recheck after
+  // If isWellFormed is unavailable, we check in js during decoding
+  const u16 = js.encode(str, loose || isWellFormed, shouldSwap)
+  if (!loose && isWellFormed && !isWellFormed.call(str)) throw new SyntaxError(E_STRICT_UNICODE)
 
-  if (format === 'uint8-le') return isLE ? to8(u16) : swapEndianness(to8(u16), true)
-  if (format === 'uint8-be') return isLE ? swapEndianness(to8(u16), true) : to8(u16)
+  if (format === 'uint8-le' || format === 'uint8-be') return to8(u16) // Already swapped
   if (format === 'uint16') return u16
   throw new Error('Unreachable')
 }
@@ -102,8 +92,9 @@ function decode(input, loose = false, format = 'uint16') {
       throw new TypeError('Unknown format')
   }
 
+  if (!loose && !isWellFormed && !js.isWellFormed(u16)) throw new SyntaxError(E_STRICT)
   const str = js.decode(u16)
-  if (!loose) assertNotLoose(str, u16, E_STRICT)
+  if (!loose && isWellFormed && !isWellFormed.call(str)) throw new SyntaxError(E_STRICT)
 
   return str
 }
