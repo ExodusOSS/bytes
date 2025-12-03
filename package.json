@@ -51,6 +51,7 @@
     "/base58check.js",
     "/base64.js",
     "/hex.js",
+    "/utf8.node.js",
     "/utf8.js"
   ],
   "exports": {
@@ -60,7 +61,10 @@
     "./base58check.js": "./base58check.js",
     "./base64.js": "./base64.js",
     "./hex.js": "./hex.js",
-    "./utf8.js": "./utf8.js"
+    "./utf8.js": {
+      "node": "./utf8.node.js",
+      "default": "./utf8.js"
+    }
   },
   "peerDependencies": {
     "@exodus/crypto": "^1.0.0-rc.4"
