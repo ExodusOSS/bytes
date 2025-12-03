@@ -1,4 +1,4 @@
-import { nativeEncoder, nativeBuffer } from './_utils.js'
+import { nativeEncoder, nativeDecoder, nativeBuffer } from './_utils.js'
 
 // See http://stackoverflow.com/a/22747272/680742, which says that lowest limit is in Chrome, with 0xffff args
 // On Hermes, actual max is 0x20_000 minus current stack depth, 1/16 of that should be safe
@@ -51,6 +51,19 @@ export function decodeLatin1(arr, start = 0, stop = arr.length) {
 
   const sliced = start === 0 && stop === arr.length ? arr : arr.subarray(start, stop)
   return String.fromCharCode.apply(String, sliced)
+}
+
+// Does not check input, uses best available method
+// Building an array for this is only faster than proper string concatenation when TextDecoder or native Buffer are available
+export function decodeAscii(a) {
+  if (nativeBuffer && a.byteLength >= 0x3_00) {
+    // Faster on Node.js as we know that output is ascii, but only for long enough data
+    // Also, .latin1Slice is faster than .asciiSlice
+    return nativeBuffer.from(a.buffer, a.byteOffset, a.byteLength).latin1Slice(0, a.byteLength)
+  }
+
+  if (nativeDecoder) return nativeDecoder.decode(a)
+  return decodeLatin1(new Uint8Array(a.buffer, a.byteOffset, a.byteLength))
 }
 
 /* eslint-disable @exodus/mutable/no-param-reassign-prop-only */

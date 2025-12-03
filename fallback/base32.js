@@ -1,6 +1,6 @@
 import { assertUint8 } from '../assert.js'
 import { nativeEncoder, nativeDecoder } from './_utils.js'
-import { encodeAscii } from './latin1.js'
+import { encodeAscii, decodeAscii } from './latin1.js'
 
 // See https://datatracker.ietf.org/doc/html/rfc4648
 
@@ -68,7 +68,7 @@ export function toBase32(arr, isBase32Hex, padding) {
       j += 4
     }
 
-    o = nativeDecoder.decode(oa)
+    o = decodeAscii(oa)
   } else if (useTemplates) {
     // Templates are faster only on Hermes and JSC. Browsers have TextDecoder anyway
     for (; i < fullChunksBytes; i += 5) {
