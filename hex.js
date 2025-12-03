@@ -13,8 +13,8 @@ export function toHex(arr) {
   if (arr.length === 0) return ''
   if (webHex && arr.toHex === webHex) return arr.toHex()
   if (!haveNativeBuffer) return js.toHex(arr)
-  if (arr.constructor === Buffer && Buffer.isBuffer(arr)) return arr.toString('hex')
-  return Buffer.from(arr.buffer, arr.byteOffset, arr.byteLength).toString('hex')
+  if (arr.constructor === Buffer && Buffer.isBuffer(arr)) return arr.hexSlice(0, arr.byteLength)
+  return Buffer.from(arr.buffer, arr.byteOffset, arr.byteLength).hexSlice(0, arr.byteLength)
 }
 
 // Unlike Buffer.from(), throws on invalid input

@@ -120,7 +120,7 @@ function decode(input, loose = false, format = 'uint16') {
   let str
   if (haveNativeBuffer) {
     if (!u8le) u8le = swapEndianness(u8be)
-    str = Buffer.from(u8le.buffer, u8le.byteOffset, u8le.byteLength).toString('utf-16le')
+    str = Buffer.from(u8le.buffer, u8le.byteOffset, u8le.byteLength).ucs2Slice(0, u8le.byteLength)
   } else {
     if (!u16) u16 = restoreU16(u8le, u8be)
     str = js.decode(u16)

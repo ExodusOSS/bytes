@@ -39,7 +39,7 @@ const haveWeb = (x) => web64 && x.toBase64 === web64
 export function toBase64(x, { padding = true } = {}) {
   assertUint8(x)
   if (haveWeb(x)) return padding ? x.toBase64() : x.toBase64({ omitPadding: !padding }) // Modern, optionless is slightly faster
-  if (haveNativeBuffer) return maybeUnpad(toBuffer(x).toString('base64'), padding) // Older Node.js
+  if (haveNativeBuffer) return maybeUnpad(toBuffer(x).base64Slice(0, x.byteLength), padding) // Older Node.js
   if (shouldUseBtoa) return maybeUnpad(btoa(decodeLatin1(x)), padding)
   return js.toBase64(x, false, padding) // Fallback
 }
@@ -48,7 +48,7 @@ export function toBase64(x, { padding = true } = {}) {
 export function toBase64url(x, { padding = false } = {}) {
   assertUint8(x)
   if (haveWeb(x)) return x.toBase64({ alphabet: 'base64url', omitPadding: !padding }) // Modern
-  if (haveNativeBuffer) return maybePad(toBuffer(x).toString('base64url'), padding) // Older Node.js
+  if (haveNativeBuffer) return maybePad(toBuffer(x).base64urlSlice(0, x.byteLength), padding) // Older Node.js
   if (shouldUseBtoa) return maybeUnpad(toUrl(btoa(decodeLatin1(x))), padding)
   return js.toBase64(x, true, padding) // Fallback
 }
