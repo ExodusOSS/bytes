@@ -7,7 +7,7 @@ import { describe, test } from 'node:test'
 import iconv from 'iconv-lite'
 import js from 'text-encoding'
 
-import { bufs as bufsRaw } from './utils/random.js'
+import { bufs as bufsRaw0 } from './utils/random.js'
 import { Table } from './utils/table.js'
 
 if (!globalThis.Buffer) globalThis.Buffer = buffer.Buffer
@@ -17,6 +17,10 @@ const toUint8 = (x) => new Uint8Array(x.buffer, x.byteOffset, x.byteLength)
 const toUint16 = (x) => new Uint16Array(x.buffer, x.byteOffset, x.byteLength / 2)
 
 /* eslint-disable camelcase */
+
+const ascii = false
+const bufsRaw = ascii ? bufsRaw0.map((x) => x.map((c) => (c >= 0x80 ? c - 0x80 : c))) : bufsRaw0
+if (ascii) console.warn('Warning: ASCII mode')
 
 const isNative = (x) => x && (!bufferIsPolyfilled || `${x}`.includes('[native code]')) // we consider Node.js TextDecoder/TextEncoder native
 const { TextDecoder } = globalThis
