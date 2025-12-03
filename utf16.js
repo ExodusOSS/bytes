@@ -98,7 +98,8 @@ function compare(a, b) {
 
 function decodeFrom(u16, u8le, u8be, loose = false) {
   // We skip this on Node.js, as utf16 TextDecoder is somewhy significantly slower than Buffer there
-  if (haveDecoder && !haveNativeBuffer) {
+  const ignoreDecoder = haveNativeBuffer && u8le
+  if (haveDecoder && !ignoreDecoder) {
     if (u8le) return loose ? decoderLooseLE.decode(u8le) : decoderFatalLE.decode(u8le)
     if (u8be) return loose ? decoderLooseBE.decode(u8be) : decoderFatalBE.decode(u8be)
   }
