@@ -1,6 +1,6 @@
 import { assertUint8 } from '../assert.js'
 import { nativeEncoder, nativeDecoder } from './_utils.js'
-import { encodeAscii } from './latin1.js'
+import { encodeAscii, decodeAscii } from './latin1.js'
 
 // See https://datatracker.ietf.org/doc/html/rfc4648
 
@@ -82,7 +82,7 @@ export function toBase64(arr, isURL, padding) {
       oa[j + 1] = codepairs[((b & 0x0f) << 8) | c]
     }
 
-    o = nativeDecoder.decode(oa)
+    o = decodeAscii(oa)
   } else {
     // This can be optimized by ~25% with templates on Hermes, but this codepath is not called on Hermes, it uses btoa
     // Check git history for templates version

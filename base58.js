@@ -1,7 +1,7 @@
 import { typedView } from './array.js'
 import { assertUint8 } from './assert.js'
 import { nativeDecoder, nativeEncoder } from './fallback/_utils.js'
-import { encodeAscii } from './fallback/latin1.js'
+import { encodeAscii, decodeAscii } from './fallback/latin1.js'
 
 const alphabet = [...'123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz']
 const codes = new Uint8Array(alphabet.map((x) => x.charCodeAt(0)))
@@ -112,7 +112,7 @@ export function toBase58(arr) {
     const oa = new Uint8Array(res.length)
     let j = 0
     for (let i = res.length - 1; i >= 0; i--) oa[j++] = codes[res[i]]
-    return ZERO.repeat(zeros) + nativeDecoder.decode(oa)
+    return ZERO.repeat(zeros) + decodeAscii(oa)
   }
 
   let out = ''
