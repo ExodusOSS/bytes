@@ -77,16 +77,7 @@ function encode(str, loose = false, format = 'uint16') {
     if (isWellFormed) {
       if (!isWellFormed.call(str)) throw new SyntaxError(E_STRICT_UNICODE)
     } else {
-      if (!u16) {
-        if (!u8be && !isLE) u8be = swapEndianness(u8le) // TODO: could be in place in some cases
-        u16 = restoreU16(u8le, u8be)
-      }
-
-      if (u16.includes(0xff_fd)) {
-        // TODO: optimize
-        const str2 = decodeFrom(u16, u8le, u8be, true)
-        if (str2 !== str) throw new SyntaxError(E_STRICT_UNICODE)
-      }
+      throw new Error('Unsupported') // TODO
     }
   }
 
@@ -120,15 +111,6 @@ function decode(input, loose = false, format = 'uint16') {
       throw new TypeError('Unknown format')
   }
 
-  return decodeFrom(u16, u8le, u8be, loose)
-}
-
-function compare(a, b) {
-  if (a.BYTES_PER_ELEMENT !== b.BYTES_PER_ELEMENT) throw new Error('Unsupported') // FIXME when exporting
-  return a.length === b.length && a.every((x, i) => x === b[i]) // TODO: optimize
-}
-
-function decodeFrom(u16, u8le, u8be, loose = false) {
   // We skip this on Node.js, as TextDecoder is somewhy significantly slower than Buffer there
   if (haveDecoder && !haveNativeBuffer) {
     if (u8le) return loose ? decoderLooseLE.decode(u8le) : decoderFatalLE.decode(u8le)
@@ -147,17 +129,8 @@ function decodeFrom(u16, u8le, u8be, loose = false) {
   if (!loose) {
     if (isWellFormed) {
       if (!isWellFormed.call(str)) throw new SyntaxError(E_STRICT)
-    } else if (str.includes('\uFFFD')) {
-      // TODO: optimize
-      if (haveNativeBuffer) {
-        // Native is u8le, we already have it
-        const r = encode(str, true, 'uint8-le')
-        if (!compare(r, u8le)) throw new SyntaxError(E_STRICT)
-      } else {
-        // Native is u16, we already have it
-        const r = encode(str, true, 'uint16')
-        if (!compare(r, u16)) throw new SyntaxError(E_STRICT)
-      }
+    } else {
+      throw new Error('Unsupported') // TODO
     }
   }
 
