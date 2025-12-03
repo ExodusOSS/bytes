@@ -18,10 +18,10 @@ function encode(str, loose = false) {
 
 function decode(arr, loose = false) {
   assertUint8(arr)
-  if (!loose && isAscii(arr)) {
+  if (isAscii(arr)) {
     // On non-ascii strings, this loses ~10% * [relative position of the first non-ascii byte] (up to 10% total)
-    // On ascii strings, this wins ~30% on loose = false and ~10% on loose = true
-    return Buffer.from(arr.buffer, arr.byteOffset, arr.byteLength).asciiSlice(0, arr.byteLength)
+    // On ascii strings, this wins 1.5x on loose = false and 1.3x on loose = true
+    return Buffer.from(arr.buffer, arr.byteOffset, arr.byteLength).latin1Slice(0, arr.byteLength) // .latin1Slice is faster than .asciiSlice
   }
 
   return loose ? decoderLoose.decode(arr) : decoderFatal.decode(arr)
