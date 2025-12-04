@@ -2,11 +2,12 @@
 
 import { fromHex as hexToBytes } from '@exodus/bytes/hex.js'
 import { makeBase58check } from '@exodus/bytes/base58check.js'
-import { hash, hashSync } from '@exodus/crypto/hash'
+import { hash, hashSync } from '@exodus/crypto/hash' // eslint-disable-line @exodus/import/no-deprecated
 import { test } from 'node:test'
 
-const blake256x2 = async (x) => hash('blake256', await hash('blake256', x, 'uint8'), 'uint8')
+// eslint-disable-next-line @exodus/import/no-deprecated
 const blake256x2sync = (x) => hashSync('blake256', hashSync('blake256', x, 'uint8'), 'uint8')
+const blake256x2 = async (x) => hash('blake256', await hash('blake256', x, 'uint8'), 'uint8')
 const bs58check = makeBase58check(blake256x2, blake256x2sync)
 
 test('custom checksum function (blake256x2)', async (t) => {

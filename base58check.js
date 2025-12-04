@@ -1,7 +1,7 @@
 import { typedView } from './array.js'
 import { assertUint8 } from './assert.js'
 import { toBase58, fromBase58 } from './base58.js'
-import { hashSync } from '@exodus/crypto/hash'
+import { hashSync } from '@exodus/crypto/hash' // eslint-disable-line @exodus/import/no-deprecated
 
 // Note: while API is async, we use hashSync for now until we improve webcrypto perf for hash256
 // Inputs to base58 are typically very small, and that makes a difference
@@ -56,6 +56,7 @@ export const makeBase58check = (hashAlgo, hashAlgoSync) => {
   }
 }
 
+// eslint-disable-next-line @exodus/import/no-deprecated
 const hash256sync = (x) => hashSync('sha256', hashSync('sha256', x, 'uint8'), 'uint8')
 const hash256 = hash256sync // See note at the top
 const {
