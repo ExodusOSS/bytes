@@ -11,9 +11,23 @@ const { isWellFormed } = String.prototype
 
 function encode(str, loose = false) {
   if (typeof str !== 'string') throw new TypeError('Input is not a string')
-  const res = Buffer.from(str)
-  if (loose || str.length === res.length || isWellFormed.call(str)) return res // length is equal only for ascii, which is automatically fine
-  throw new TypeError(E_STRICT_UNICODE)
+  const strLength = str.length
+  let res
+  if (strLength > 1024) {
+    // Faster for large strings
+    const byteLength = Buffer.byteLength(str)
+    res = Buffer.allocUnsafe(byteLength)
+    const ascii = byteLength === strLength
+    const written = ascii ? res.latin1Write(str) : res.utf8Write(str)
+    if (written !== byteLength) throw new Error('Failed to write all bytes') // safeguard just in case
+    if (ascii || loose) return res // no further checks needed
+  } else {
+    res = Buffer.from(str)
+    if (res.length === strLength || loose) return res
+  }
+
+  if (!isWellFormed.call(str)) throw new TypeError(E_STRICT_UNICODE)
+  return res
 }
 
 function decode(arr, loose = false) {
