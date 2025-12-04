@@ -47,8 +47,7 @@ function deLoose(str, loose, res) {
 
 function encode(str, loose = false) {
   if (typeof str !== 'string') throw new TypeError('Input is not a string')
-  if (haveNativeBuffer) return deLoose(str, loose, Buffer.from(str)) // faster on ascii on Node.js
-  if (nativeEncoder) return deLoose(str, loose, nativeEncoder.encode(str)) // Node.js, browsers, and Hermes
+  if (nativeEncoder) return deLoose(str, loose, nativeEncoder.encode(str))
   // No reason to use unescape + encodeURIComponent: it's slower than JS on normal engines, and modern Hermes already has TextEncoder
   return js.encode(str, loose)
 }
@@ -56,7 +55,6 @@ function encode(str, loose = false) {
 function decode(arr, loose = false) {
   assertUint8(arr)
   if (haveDecoder) return loose ? decoderLoose.decode(arr) : decoderFatal.decode(arr) // Node.js and browsers
-  // No reason to use native Buffer: it's not faster than TextDecoder, needs rechecks in non-loose mode, and Node.js has TextDecoder
 
   // Fast path for ASCII prefix, this is faster than all alternatives below
   const prefix = decodeLatin1(arr, 0, asciiPrefix(arr))
