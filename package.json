@@ -84,7 +84,7 @@
   },
   "devDependencies": {
     "@ethersproject/strings": "^5.8.0",
-    "@exodus/crypto": "1.0.0-rc.29",
+    "@exodus/crypto": "^1.0.0-rc.30",
     "@exodus/eslint-config": "^5.24.0",
     "@exodus/prettier": "^1.0.0",
     "@exodus/test": "^1.0.0-rc.108",
