@@ -47,6 +47,7 @@ function deLoose(str, loose, res) {
 
 function encode(str, loose = false) {
   if (typeof str !== 'string') throw new TypeError('Input is not a string')
+  if (str.length === 0) return new Uint8Array() // faster than Uint8Array.of
   if (nativeEncoder) return deLoose(str, loose, nativeEncoder.encode(str))
   // No reason to use unescape + encodeURIComponent: it's slower than JS on normal engines, and modern Hermes already has TextEncoder
   return js.encode(str, loose)
@@ -54,6 +55,7 @@ function encode(str, loose = false) {
 
 function decode(arr, loose = false) {
   assertUint8(arr)
+  if (arr.byteLength === 0) return ''
   if (haveDecoder) return loose ? decoderLoose.decode(arr) : decoderFatal.decode(arr) // Node.js and browsers
 
   // Fast path for ASCII prefix, this is faster than all alternatives below

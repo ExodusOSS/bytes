@@ -12,8 +12,9 @@ const { isWellFormed } = String.prototype
 function encode(str, loose = false) {
   if (typeof str !== 'string') throw new TypeError('Input is not a string')
   const strLength = str.length
+  if (strLength === 0) return new Uint8Array() // faster than Uint8Array.of
   let res
-  if (strLength > 1024) {
+  if (strLength > 0x4_00) {
     // Faster for large strings
     const byteLength = Buffer.byteLength(str)
     res = Buffer.allocUnsafe(byteLength)
@@ -32,9 +33,12 @@ function encode(str, loose = false) {
 
 function decode(arr, loose = false) {
   assertUint8(arr)
-  if (isAscii(arr)) {
+  const byteLength = arr.byteLength
+  if (byteLength === 0) return ''
+  if (byteLength > 0x6_00 && isAscii(arr)) {
     // On non-ascii strings, this loses ~10% * [relative position of the first non-ascii byte] (up to 10% total)
     // On ascii strings, this wins 1.5x on loose = false and 1.3x on loose = true
+    // Only makes sense for large enough strings
     return Buffer.from(arr.buffer, arr.byteOffset, arr.byteLength).latin1Slice(0, arr.byteLength) // .latin1Slice is faster than .asciiSlice
   }
 
