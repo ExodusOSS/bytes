@@ -15,11 +15,11 @@ const bufferIsPolyfilled = Buffer === buffer.Buffer
 const toBuffer = (x, B) => B.from(x.buffer, x.byteOffset, x.byteLength)
 
 const replacementChar = String.fromCodePoint(0xff_fd) // We don't expect much of these in real usage, and rng will spawn a lot of those, so strip
-const strings = bufsRaw.map((x) => Buffer.from(x).toString().replaceAll(replacementChar, '∀')) // loose, but we want that here
+const strings = bufsRaw.map((x) => toBuffer(x, Buffer).toString().replaceAll(replacementChar, '∀')) // loose, but we want that here
 const bufs = strings.map((x) => exodus.utf8fromString(x))
 
 const asciiBufs = bufsRaw.map((x) => x.map((c) => (c >= 0x80 ? c - 0x80 : c)))
-const asciiStrings = asciiBufs.map((x) => Buffer.from(x).toString())
+const asciiStrings = asciiBufs.map((x) => toBuffer(x, Buffer).toString())
 
 const isNative = (x) => x && (!bufferIsPolyfilled || `${x}`.includes('[native code]')) // we consider Node.js TextDecoder/TextEncoder native
 const { TextEncoder, TextDecoder } = globalThis
