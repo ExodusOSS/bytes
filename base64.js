@@ -141,8 +141,9 @@ if (!skipWeb && Uint8Array.fromBase64) {
   fromBase64impl = (str, isBase64url, padding) => {
     const arr = Buffer.from(str, 'base64')
     // Rechecking by re-encoding is cheaper than regexes on Node.js
-    const r = isBase64url ? maybeUnpad(str, padding === false) : maybePad(str, padding !== true)
-    if (r !== arr.toString(isBase64url ? 'base64url' : 'base64')) throw new SyntaxError(E_PADDING)
+    const got = isBase64url ? maybeUnpad(str, padding === false) : maybePad(str, padding !== true)
+    const valid = isBase64url ? arr.base64urlSlice(0, arr.length) : arr.base64Slice(0, arr.length)
+    if (got !== valid) throw new SyntaxError(E_PADDING)
     return arr // fully checked
   }
 } else if (shouldUseAtob) {
