@@ -61,6 +61,7 @@
     "./base58.js": "./base58.js",
     "./base58check.js": "./base58check.js",
     "./base64.js": "./base64.js",
+    "./bech32.js": "./bech32.js",
     "./hex.js": {
       "node": "./hex.node.js",
       "default": "./hex.js"
@@ -96,6 +97,7 @@
     "base-x": "^5.0.1",
     "base32.js": "^0.1.0",
     "base64-js": "^1.5.1",
+    "bech32": "^2.0.0",
     "bs58": "^6.0.0",
     "bs58check": "^4.0.0",
     "bstring": "^0.3.9",

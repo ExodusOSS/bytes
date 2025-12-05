@@ -11,6 +11,7 @@ module.exports = {
             devDependencies: ['**/{tests,benchmarks}/**/*', '**/*.{test,bench}.*', '**/*.d.ts'],
           },
         ],
+        'one-var': 'off',
         'unicorn/no-for-loop': 'off',
         'unicorn/no-new-array': 'off',
         'unicorn/prefer-code-point': 'off',
