@@ -6,7 +6,7 @@ import { describe, test } from 'node:test'
 
 import { Table } from './utils/table.js'
 
-const columns = ['@exodus/bytes/bech32', 'bech32', 'scure.bech32']
+const columns = ['@exodus/bytes/bech32', 'scure.bech32', 'bech32']
 
 // Shorter than in ./util, 20-50 bytes
 const seed = crypto.getRandomValues(new Uint8Array(50))
