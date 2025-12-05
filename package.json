@@ -53,7 +53,8 @@
     "/hex.node.js",
     "/hex.js",
     "/utf8.node.js",
-    "/utf8.js"
+    "/utf8.js",
+    "/wif.js"
   ],
   "exports": {
     "./array.js": "./array.js",
@@ -73,7 +74,8 @@
     "./utf8.js": {
       "node": "./utf8.node.js",
       "default": "./utf8.js"
-    }
+    },
+    "./wif.js": "./wif.js"
   },
   "peerDependencies": {
     "@exodus/crypto": "^1.0.0-rc.4"

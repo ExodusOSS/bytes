@@ -20,6 +20,8 @@ Performs proper input validation
 
 ### `@exodus/bytes/base58check.js`
 
+### `@exodus/bytes/wif.js`
+
 ## License
 
 [MIT](./LICENSE)
