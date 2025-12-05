@@ -3,8 +3,7 @@ export class Table {
 
   add(name, row) {
     if (!row) return
-    const { mean } = row
-    this.#data.set(name, Math.round(1e9 / Number(mean)).toLocaleString())
+    this.#data.set(name, Math.round(row.rps).toLocaleString())
   }
 
   print(columns) {
