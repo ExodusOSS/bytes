@@ -5,6 +5,7 @@ import { benchmark } from '@exodus/test/benchmark' // eslint-disable-line @exodu
 import { hex as scure } from '@scure/base'
 import buffer from 'buffer/index.js'
 import * as hextreme from 'hextreme'
+import * as uint8arraytools from 'uint8array-tools'
 import { describe, test } from 'node:test'
 
 import { bufs } from './utils/random.js'
@@ -16,6 +17,7 @@ const columns = [
   'Buffer',
   '@stablelib',
   'hextreme',
+  'uint8array-tools',
   'Buffer.from',
 ]
 const columnsOld = [
@@ -24,6 +26,7 @@ const columnsOld = [
   'Buffer',
   '@stablelib',
   'hextreme, no native',
+  'uint8array-tools',
   'Buffer.from',
 ]
 
@@ -68,6 +71,7 @@ describe('benchmarks: hex', async () => {
     ['@stablelib', (x) => stablelib.encode(x, true)],
     ['hextreme', (x) => hextreme.toHex(x)],
     ['hextreme, no native', (x) => hextremeJS.toHex(x), !hextremeJS, true], // uses TextDecoder
+    ['uint8array-tools', (x) => uint8arraytools.toHex(x)],
   ]
 
   // [name, impl, skip, removeNative]
@@ -82,6 +86,7 @@ describe('benchmarks: hex', async () => {
     ['@stablelib', (x) => stablelib.decode(x)],
     ['hextreme', (x) => hextreme.fromHex(x)],
     ['hextreme, no native', (x) => hextremeJS.fromHex(x), !hextremeJS, true], // uses TextEncoder
+    ['uint8array-tools', (x) => uint8arraytools.fromHex(x)],
   ]
 
   test('toHex coherence', (t) => {

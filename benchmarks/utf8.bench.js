@@ -6,6 +6,7 @@ import { describe, test } from 'node:test'
 import iconv from 'iconv-lite'
 import js from 'text-encoding'
 import * as ethers from '@ethersproject/strings'
+import * as uint8arraytools from 'uint8array-tools'
 
 import { bufs as bufsRaw } from './utils/random.js'
 import { Table } from './utils/table.js'
@@ -38,6 +39,7 @@ const columnsTo = [
   textDecoderLoose ? 'TextDecoder (loose)' : 'text-encoding (loose)',
   'iconv-lite',
   '@ethersproject/strings',
+  'uint8array-tools',
   'Buffer.from',
 ]
 
@@ -48,6 +50,7 @@ const columnsFrom = [
   textEncoder ? 'TextEncoder' : 'text-encoding',
   'iconv-lite',
   '@ethersproject/strings',
+  'uint8array-tools',
 ]
 
 describe('benchmarks: utf8', async () => {
@@ -66,6 +69,7 @@ describe('benchmarks: utf8', async () => {
     ['buffer/Buffer.from', (x) => buffer.Buffer.from(x).toString('utf8'), bufferIsPolyfilled],
     ['iconv-lite', (x) => iconv.decode(x, 'utf8', { stripBOM: false })],
     ['@ethersproject/strings', (x) => ethers.toUtf8String(x)],
+    ['uint8array-tools', (x) => uint8arraytools.toUtf8(x)],
   ]
 
   // [name, impl, skip]
@@ -79,6 +83,7 @@ describe('benchmarks: utf8', async () => {
     ['buffer/Buffer', (x) => buffer.Buffer.from(x, 'utf8'), bufferIsPolyfilled],
     ['iconv-lite', (x) => iconv.encode(x, 'utf8')],
     ['@ethersproject/strings', (x) => ethers.toUtf8Bytes(x)],
+    ['uint8array-tools', (x) => uint8arraytools.fromUtf8(x)],
   ]
 
   test('utf8toString coherence', (t) => {

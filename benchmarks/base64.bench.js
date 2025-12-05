@@ -8,6 +8,7 @@ import fastBase64Decode from 'fast-base64-decode'
 import fastBase64Encode from 'fast-base64-encode'
 import buffer from 'buffer/index.js'
 import * as hextreme from 'hextreme'
+import * as uint8arraytools from 'uint8array-tools'
 import { describe, test } from 'node:test'
 
 import { bufs } from './utils/random.js'
@@ -23,6 +24,7 @@ const columns = [
   'fast-base64-encode',
   'hextreme',
   'Buffer.from',
+  'uint8array-tools',
 ]
 const columnsOld = [
   '@exodus/bytes/base64, no native',
@@ -34,6 +36,7 @@ const columnsOld = [
   'fast-base64-encode',
   'hextreme, no native',
   'Buffer.from',
+  'uint8array-tools',
 ]
 
 if (!globalThis.Buffer) globalThis.Buffer = buffer.Buffer
@@ -97,6 +100,7 @@ describe('benchmarks: base64', async () => {
     ['@stablelib', (x) => stablelib.encode(x)],
     ['hextreme', (x) => hextreme.toBase64(x)],
     ['hextreme, no native', (x) => hextremeJS.toBase64(x), !hextremeJS, true], // uses TextDecoder
+    ['uint8array-tools', (x) => uint8arraytools.toBase64(x)],
   ]
 
   // [name, impl, skip, removeNative]
@@ -125,6 +129,7 @@ describe('benchmarks: base64', async () => {
     ['@stablelib', (x) => stablelib.decode(x)],
     ['hextreme', (x) => hextreme.fromBase64(x)],
     ['hextreme, no native', (x) => hextremeJS.fromBase64(x), !hextremeJS, true], // uses TextEncoder
+    ['uint8array-tools', (x) => uint8arraytools.fromBase64(x)],
   ]
 
   test('toBase64 coherence', (t) => {

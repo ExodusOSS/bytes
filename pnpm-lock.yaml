@@ -97,6 +97,9 @@ importers:
       typescript:
         specifier: ^5.9.3
         version: 5.9.3
+      uint8array-tools:
+        specifier: ^0.0.9
+        version: 0.0.9
 
 packages:
 
@@ -2821,6 +2824,10 @@ packages:
     resolution: {integrity: sha512-jl1vZzPDinLr9eUt3J/t7V6FgNEw9QjvBPdysz9KfQDD41fQrC2Y4vKQdiaUpFT4bXlb1RHhLpp8wtm6M5TgSw==, tarball: https://registry.npmjs.org/typescript/-/typescript-5.9.3.tgz}
     engines: {node: '>=14.17'}
     hasBin: true
+
+  uint8array-tools@0.0.9:
+    resolution: {integrity: sha512-9vqDWmoSXOoi+K14zNaf6LBV51Q8MayF0/IiQs3GlygIKUYtog603e6virExkjjFosfJUBI4LhbQK1iq8IG11A==, tarball: https://registry.npmjs.org/uint8array-tools/-/uint8array-tools-0.0.9.tgz}
+    engines: {node: '>=14.0.0'}
 
   unbox-primitive@1.1.0:
     resolution: {integrity: sha512-nWJ91DjeOkej/TA8pXQ3myruKpKEYgqvpw9lz4OPHj/NWFNluYrjbz9j01CJ8yKQd2g4jFoOkINCTW2I5LEEyw==, tarball: https://registry.npmjs.org/unbox-primitive/-/unbox-primitive-1.1.0.tgz}
@@ -6116,6 +6123,8 @@ snapshots:
   typedarray@0.0.6: {}
 
   typescript@5.9.3: {}
+
+  uint8array-tools@0.0.9: {}
 
   unbox-primitive@1.1.0:
     dependencies:
