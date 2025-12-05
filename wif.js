@@ -1,9 +1,4 @@
-import {
-  toBase58check,
-  fromBase58check,
-  toBase58checkSync,
-  fromBase58checkSync,
-} from './base58check.js'
+import { toBase58checkSync, fromBase58checkSync } from './base58check.js'
 import { assertUint8 } from './assert.js'
 
 // Mostly matches npmjs.com/wif, but with extra checks + using our base58check
@@ -35,8 +30,13 @@ function to({ version: v, privateKey, compressed }) {
   return out
 }
 
-export const fromWifString = async (string, version) => from(await fromBase58check(string), version)
-export const fromWifStringSync = (string, version) => from(fromBase58checkSync(string), version)
+// Async performance is worse here, so expose the same internal methods as sync for now
+// ./base58check is sync internally anyway for now, so doesn't matter until that is changed
 
-export const toWifString = async (wif) => toBase58check(to(wif))
+export const fromWifStringSync = (string, version) => from(fromBase58checkSync(string), version)
+// export const fromWifString = async (string, version) => from(await fromBase58check(string), version)
+export const fromWifString = async (string, version) => from(fromBase58checkSync(string), version)
+
 export const toWifStringSync = (wif) => toBase58checkSync(to(wif))
+// export const toWifString = async (wif) => toBase58check(to(wif))
+export const toWifString = async (wif) => toBase58checkSync(to(wif))
