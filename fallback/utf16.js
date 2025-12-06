@@ -8,7 +8,7 @@ const replacementCodepointSwapped = 0xfd_ff
 
 export const decode = (u16, loose = false, checked = false) => {
   if (checked || isWellFormed(u16)) return decodeLatin1(u16, 0, u16.length) // it's capable of decoding Uint16Array to UTF-16 as well
-  if (!loose) throw new SyntaxError(E_STRICT)
+  if (!loose) throw new TypeError(E_STRICT)
   return decodeLatin1(toWellFormed(Uint16Array.from(u16)), 0, u16.length) // cloned for replacement
 }
 
@@ -45,12 +45,12 @@ function encodeUnchecked(str, arr, loose = false) {
     if (code >= 0xd8_00 && code < 0xe0_00) {
       // An unexpected trail or a lead at the very end of input
       if (code > 0xdb_ff || i + 1 >= length) {
-        if (!loose) throw new SyntaxError(E_STRICT_UNICODE)
+        if (!loose) throw new TypeError(E_STRICT_UNICODE)
         arr[i] = replacementCodepoint
       } else {
         const next = str.charCodeAt(i + 1) // Process valid pairs immediately
         if (next < 0xdc_00 || next >= 0xe0_00) {
-          if (!loose) throw new SyntaxError(E_STRICT_UNICODE)
+          if (!loose) throw new TypeError(E_STRICT_UNICODE)
           arr[i] = replacementCodepoint
         } else {
           i++ // consume next
@@ -72,12 +72,12 @@ function encodeUncheckedSwapped(str, arr, loose = false) {
     if (code >= 0xd8_00 && code < 0xe0_00) {
       // An unexpected trail or a lead at the very end of input
       if (code > 0xdb_ff || i + 1 >= length) {
-        if (!loose) throw new SyntaxError(E_STRICT_UNICODE)
+        if (!loose) throw new TypeError(E_STRICT_UNICODE)
         arr[i] = replacementCodepointSwapped
       } else {
         const next = str.charCodeAt(i + 1) // Process valid pairs immediately
         if (next < 0xdc_00 || next >= 0xe0_00) {
-          if (!loose) throw new SyntaxError(E_STRICT_UNICODE)
+          if (!loose) throw new TypeError(E_STRICT_UNICODE)
           arr[i] = replacementCodepointSwapped
         } else {
           i++ // consume next

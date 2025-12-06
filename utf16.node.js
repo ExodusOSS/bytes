@@ -15,7 +15,7 @@ function encode(str, loose = false, format = 'uint16') {
   }
 
   if (!isWellFormed.call(str)) {
-    if (!loose) throw new SyntaxError(E_STRICT_UNICODE)
+    if (!loose) throw new TypeError(E_STRICT_UNICODE)
     str = nativeDecoder.decode(Buffer.from(str)) // well, let's fix up (Buffer doesn't do this with utf16 encoding)
   }
 
@@ -51,7 +51,7 @@ function decode(input, loose = false, format = 'uint16') {
 
   const str = ble.ucs2Slice(0, ble.byteLength)
   if (isWellFormed.call(str)) return str
-  if (!loose) throw new SyntaxError(E_STRICT)
+  if (!loose) throw new TypeError(E_STRICT)
   return nativeDecoder.decode(Buffer.from(str)) // fixup (see above)
 }
 

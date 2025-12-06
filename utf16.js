@@ -61,7 +61,7 @@ function encode(str, loose = false, format = 'uint16') {
   // On JSC, check during loop is faster than isWellFormed
   // If isWellFormed is available, we skip check during decoding and recheck after
   // If isWellFormed is unavailable, we check in js during decoding
-  if (!loose && isWellFormed && !isWellFormed.call(str)) throw new SyntaxError(E_STRICT_UNICODE)
+  if (!loose && isWellFormed && !isWellFormed.call(str)) throw new TypeError(E_STRICT_UNICODE)
   const u16 = js.encode(str, loose, !loose && isWellFormed, shouldSwap)
 
   if (format === 'uint8-le' || format === 'uint8-be') return to8(u16) // Already swapped
@@ -94,7 +94,7 @@ function decode(input, loose = false, format = 'uint16') {
   }
 
   const str = js.decode(u16, loose, !loose && isWellFormed)
-  if (!loose && isWellFormed && !isWellFormed.call(str)) throw new SyntaxError(E_STRICT)
+  if (!loose && isWellFormed && !isWellFormed.call(str)) throw new TypeError(E_STRICT)
 
   return str
 }
