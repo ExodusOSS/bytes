@@ -100,6 +100,9 @@ importers:
       uint8array-tools:
         specifier: ^0.0.9
         version: 0.0.9
+      wif:
+        specifier: ^5.0.0
+        version: 5.0.0
 
 packages:
 
@@ -2913,6 +2916,9 @@ packages:
   widest-line@2.0.1:
     resolution: {integrity: sha512-Ba5m9/Fa4Xt9eb2ELXt77JxVDV8w7qQrH0zS/TWSJdLyAwQjWoOzpzj5lwVftDz6n/EOu3tNACS84v509qwnJA==, tarball: https://registry.npmjs.org/widest-line/-/widest-line-2.0.1.tgz}
     engines: {node: '>=4'}
+
+  wif@5.0.0:
+    resolution: {integrity: sha512-iFzrC/9ne740qFbNjTZ2FciSRJlHIXoxqk/Y5EnE08QOXu1WjJyCCswwDTYbohAOEnlCtLaAAQBhyaLRFh2hMA==, tarball: https://registry.npmjs.org/wif/-/wif-5.0.0.tgz}
 
   word-wrap@1.2.5:
     resolution: {integrity: sha512-BN22B5eaMMI9UMtjrGd5g5eCYPpCPDUy0FJXbYsaT5zYxjFOckS53SQDE3pWkVoWpHXVb3BrYcEN4Twa55B5cA==, tarball: https://registry.npmjs.org/word-wrap/-/word-wrap-1.2.5.tgz}
@@ -6254,6 +6260,10 @@ snapshots:
   widest-line@2.0.1:
     dependencies:
       string-width: 2.1.1
+
+  wif@5.0.0:
+    dependencies:
+      bs58check: 4.0.0
 
   word-wrap@1.2.5: {}
 
