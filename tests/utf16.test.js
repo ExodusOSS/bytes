@@ -1,4 +1,5 @@
 import * as utf16 from '@exodus/bytes/utf16.js'
+import { randomValues } from '@exodus/crypto/randomBytes'
 import * as js from '../fallback/utf16.js'
 import { describe, test } from 'node:test'
 
@@ -9,6 +10,8 @@ const orphans = [
   { invalid: [0x61, 0x62, 0xdf_ff, 0x77, 0x78], replaced: [0x61, 0x62, 0xff_fd, 0x77, 0x78] },
   { invalid: [0xdf_ff, 0xd8_00], replaced: [0xff_fd, 0xff_fd] },
 ]
+
+const seed = randomValues(5 * 1024)
 
 describe('utf16toString', () => {
   describe('invalid input', () => {
@@ -68,6 +71,30 @@ describe('utf16toString', () => {
           t.assert.strictEqual(res, String.fromCharCode(...replaced) + suffixString)
         }
       }
+    }
+  })
+
+  test('loose mode matches fallback on random data', (t) => {
+    const seed1 = seed.slice(1, -1)
+    const seed2 = seed.slice(2, -2)
+    const seed3 = seed.slice(3, -3)
+    for (const u16 of [
+      new Uint16Array(0),
+      new Uint16Array(256),
+      new Uint16Array(256).fill(1),
+      new Uint16Array(256).fill(42),
+      new Uint16Array(256).fill(255),
+      new Uint16Array(256).fill(0xd0_00),
+      new Uint16Array(256).fill(0xdf_ff),
+      new Uint16Array(256).fill(0xff_ff),
+      new Uint16Array(seed.buffer, seed.byteOffset, seed.byteLength / 2),
+      new Uint16Array(seed1.buffer, seed1.byteOffset, seed1.byteLength / 2),
+      new Uint16Array(seed2.buffer, seed2.byteOffset, seed2.byteLength / 2),
+      new Uint16Array(seed3.buffer, seed3.byteOffset, seed3.byteLength / 2),
+      Uint16Array.from(seed),
+      Uint16Array.from(seed1),
+    ]) {
+      t.assert.strictEqual(utf16.utf16toStringLoose(u16), js.decode(u16, true))
     }
   })
 })

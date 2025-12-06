@@ -1,7 +1,15 @@
-import { utf8toString, utf8toStringLoose, utf8fromString, utf8fromStringLoose } from '../utf8.js'
+import {
+  utf8toString,
+  utf8toStringLoose,
+  utf8fromString,
+  utf8fromStringLoose,
+} from '@exodus/bytes/utf8.js'
 import * as js from '../fallback/utf8.js'
 import { fromHex } from '@exodus/bytes/hex.js'
+import { randomValues } from '@exodus/crypto/randomBytes'
 import { describe, test } from 'node:test'
+
+const seed = randomValues(5 * 1024)
 
 // invalid bytes -> string
 const nonUtf8 = [
@@ -67,6 +75,22 @@ describe('utf8toString', () => {
         t.assert.strictEqual(res.length, charcodes.length + s)
         t.assert.strictEqual(res, String.fromCharCode(...charcodes) + suffixString)
       }
+    }
+  })
+
+  test('loose mode matches fallback on random data', (t) => {
+    for (const u8 of [
+      new Uint8Array(0),
+      new Uint8Array(256),
+      new Uint8Array(256).fill(1),
+      new Uint8Array(256).fill(42),
+      new Uint8Array(256).fill(0xd0),
+      new Uint8Array(256).fill(255),
+      seed.subarray(1, -1),
+      seed.subarray(2, -2),
+      seed.subarray(3, -3),
+    ]) {
+      t.assert.strictEqual(utf8toStringLoose(u8), js.decode(u8, true))
     }
   })
 })
