@@ -16,6 +16,7 @@ globalThis.assert_equals = assert.strictEqual
 globalThis.format_value = (x) => JSON.stringify(x)
 globalThis.assert_true = (x, ...r) => assert.strictEqual(x, true, ...r)
 globalThis.assert_false = (x, ...r) => assert.strictEqual(x, false, ...r)
+globalThis.assert_not_equals = (a, b, ...r) => assert.notEqual(a, b, ...r)
 globalThis.assert_throws_js = (e, f, m) => assert.throws(f, e, m)
 globalThis.assert_throws_dom = (e, f, m) => assert.throws(f, Error, m) // we don't care about exact dom errors
 globalThis.assert_array_equals = (a, b) => {

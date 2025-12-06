@@ -1,6 +1,7 @@
 import { describe } from 'node:test'
 import { loadDir } from './loader.cjs'
 import { utf8fromStringLoose, utf8toString, utf8toStringLoose } from '@exodus/bytes/utf8.js'
+import { utf16toString, utf16toStringLoose } from '@exodus/bytes/utf16.js'
 import { toBase64, fromBase64 } from '@exodus/bytes/base64.js'
 
 /* eslint-disable unicorn/text-encoding-identifier-case */
@@ -17,6 +18,7 @@ globalThis.TextEncoder = class {
 }
 
 // Not a proper impl, not getters, etc
+const isLE = new Uint8Array(Uint16Array.of(258).buffer)[0] === 2
 globalThis.TextDecoder = class {
   constructor(label = 'utf-8', { fatal = false, ignoreBOM = false } = {}) {
     this.encoding = label
@@ -25,13 +27,39 @@ globalThis.TextDecoder = class {
   }
 
   decode(input = Uint8Array.of(), { stream = false } = {}) {
-    if (this.encoding !== 'utf-8' || stream) throw new Error('Unsupported')
+    if (stream) throw new Error('Unsupported')
     if (input instanceof ArrayBuffer) input = new Uint8Array(input)
     if (input instanceof DataView) {
       input = new Uint8Array(input.buffer, input.byteOffset, input.byteLength)
     }
 
-    const res = this.fatal ? utf8toString(input) : utf8toStringLoose(input)
+    let res
+    if (this.encoding === 'utf-8') {
+      res = this.fatal ? utf8toString(input) : utf8toStringLoose(input)
+    } else if (this.encoding === 'utf-16le' || (this.encoding === 'utf-16' && isLE)) {
+      if (!this.fatal && input.byteLength % 2 !== 0) {
+        const tmp = new Uint8Array(input.byteLength + 1)
+        tmp.set(input)
+        tmp[tmp.length - 1] = 0xff
+        tmp[tmp.length - 2] = 0xfd
+        input = tmp
+      }
+
+      res = this.fatal ? utf16toString(input, 'uint8-le') : utf16toStringLoose(input, 'uint8-le')
+    } else if (this.encoding === 'utf-16be' || (this.encoding === 'utf-16' && !isLE)) {
+      if (!this.fatal && input.byteLength % 2 !== 0) {
+        const tmp = new Uint8Array(input.byteLength + 1)
+        tmp.set(input)
+        tmp[tmp.length - 1] = 0xfd
+        tmp[tmp.length - 2] = 0xff
+        input = tmp
+      }
+
+      res = this.fatal ? utf16toString(input, 'uint8-be') : utf16toStringLoose(input, 'uint8-be')
+    } else {
+      throw new Error('Unsupported')
+    }
+
     return !this.ignoreBOM && res.codePointAt(0) === 65_279 ? res.slice(1) : res
   }
 }
@@ -79,6 +107,7 @@ fs.readFileSync(path.join(__dirname, 'fixtures/encoding/api-surrogates-utf8.any.
 fs.readFileSync(path.join(__dirname, 'fixtures/encoding/textdecoder-byte-order-marks.any.js'))
 fs.readFileSync(path.join(__dirname, 'fixtures/encoding/textdecoder-fatal.any.js'))
 fs.readFileSync(path.join(__dirname, 'fixtures/encoding/textdecoder-ignorebom.any.js'))
+fs.readFileSync(path.join(__dirname, 'fixtures/encoding/textdecoder-utf16-surrogates.any.js'))
 fs.readFileSync(path.join(__dirname, 'fixtures/encoding/textencoder-utf16-surrogates.any.js'))
 fs.readFileSync(path.join(__dirname, 'fixtures/html/webappapis/atob/base64.any.js'))
 */

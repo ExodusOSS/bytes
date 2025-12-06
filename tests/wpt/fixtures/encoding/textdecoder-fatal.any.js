@@ -44,10 +44,8 @@ var bad = [
     { encoding: 'utf-8', input: [0xED, 0xB0, 0x80], name: 'trail surrogate' },
     { encoding: 'utf-8', input: [0xED, 0xA0, 0x80, 0xED, 0xB0, 0x80], name: 'surrogate pair' },
 
-    /*
     { encoding: 'utf-16le', input: [0x00], name: 'truncated code unit' },
     // Mismatched UTF-16 surrogates are exercised in utf16-surrogates.html
-    */
 
     // FIXME: Add legacy encoding cases
 ];

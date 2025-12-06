@@ -34,7 +34,6 @@ test(function() {
   assert_equals(new TextDecoder(encoding).decode(new Uint8Array(bytes).buffer), string);
 }, 'Encode/decode round trip: utf-8');
 
-/*
 testDecodeSample(
   'utf-16le',
   sample,
@@ -52,4 +51,3 @@ testDecodeSample(
   sample,
   [0x7A, 0x00, 0xA2, 0x00, 0x34, 0x6C, 0x34, 0xD8, 0x1E, 0xDD, 0xFF, 0xF8, 0xFF, 0xDB, 0xFD, 0xDF, 0xFE, 0xFF]
 );
-*/
