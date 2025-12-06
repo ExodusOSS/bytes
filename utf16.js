@@ -61,8 +61,8 @@ function encode(str, loose = false, format = 'uint16') {
   // On JSC, check during loop is faster than isWellFormed
   // If isWellFormed is available, we skip check during decoding and recheck after
   // If isWellFormed is unavailable, we check in js during decoding
-  const u16 = js.encode(str, loose || isWellFormed, shouldSwap)
   if (!loose && isWellFormed && !isWellFormed.call(str)) throw new SyntaxError(E_STRICT_UNICODE)
+  const u16 = js.encode(str, loose, !loose && isWellFormed, shouldSwap)
 
   if (format === 'uint8-le' || format === 'uint8-be') return to8(u16) // Already swapped
   if (format === 'uint16') return u16
@@ -93,7 +93,7 @@ function decode(input, loose = false, format = 'uint16') {
       throw new TypeError('Unknown format')
   }
 
-  const str = js.decode(u16, loose || isWellFormed)
+  const str = js.decode(u16, loose, !loose && isWellFormed)
   if (!loose && isWellFormed && !isWellFormed.call(str)) throw new SyntaxError(E_STRICT)
 
   return str
@@ -103,10 +103,3 @@ export const utf16fromString = (str, format = 'uint16') => encode(str, false, fo
 export const utf16fromStringLoose = (str, format = 'uint16') => encode(str, true, format)
 export const utf16toString = (arr, format = 'uint16') => decode(arr, false, format)
 export const utf16toStringLoose = (arr, format = 'uint16') => decode(arr, true, format)
-
-/*
-Currently not shipped, fails on this (across engines):
-
-console.log(utf16fromStringLoose(String.fromCharCode(0xd8_00, 0xd8_00)))
-console.log(utf16fromStringLoose(utf16toStringLoose(utf16fromStringLoose(String.fromCharCode(0xd8_00, 0xd8_00)))))
-*/

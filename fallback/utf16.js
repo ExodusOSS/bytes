@@ -3,22 +3,28 @@ import { decodeLatin1, encodeCharcodes } from './latin1.js'
 export const E_STRICT = 'Input is not well-formed utf16'
 export const E_STRICT_UNICODE = 'Input is not well-formed Unicode'
 
-export const decode = (u16, loose = false) => {
-  if (!loose && !isWellFormed(u16)) throw new SyntaxError(E_STRICT)
-  return decodeLatin1(u16, 0, u16.length) // it's capable of decoding Uint16Array to UTF-16 as well
+const replacementCodepoint = 0xff_fd
+const replacementCodepointSwapped = 0xfd_ff
+
+export const decode = (u16, loose = false, checked = false) => {
+  if (checked || isWellFormed(u16)) return decodeLatin1(u16, 0, u16.length) // it's capable of decoding Uint16Array to UTF-16 as well
+  if (!loose) throw new SyntaxError(E_STRICT)
+  return decodeLatin1(toWellFormed(Uint16Array.from(u16)), 0, u16.length) // cloned for replacement
 }
 
-export function encode(str, loose = false, swapped = false) {
+export function encode(str, loose = false, checked = false, swapped = false) {
   const arr = new Uint16Array(str.length)
-  if (loose && !swapped) return encodeCharcodes(str, arr) // Same as encodeLatin1, but with Uint16Array
-  if (loose && swapped) return encodeSwappedLoose(str, arr)
+  if (checked) return swapped ? encodeSwappedChecked(str, arr) : encodeChecked(str, arr)
+  if (loose) return swapped ? encodeSwappedReplacement(str, arr) : encodeReplacement(str, arr)
   return swapped ? encodeSwappedFatal(str, arr) : encodeFatal(str, arr)
 }
 
 // Splitting paths into small functions helps (at least on SpiderMonkey)
 /* eslint-disable @exodus/mutable/no-param-reassign-prop-only */
 
-function encodeSwappedLoose(str, arr) {
+const encodeChecked = (str, arr) => encodeCharcodes(str, arr) // Same as encodeLatin1, but with Uint16Array
+
+function encodeSwappedChecked(str, arr) {
   // TODO: faster path for Hermes? See encodeCharcodes
   const length = str.length
   for (let i = 0; i < length; i++) {
@@ -30,6 +36,56 @@ function encodeSwappedLoose(str, arr) {
 }
 
 // lead: d800 - dbff, trail: dc00 - dfff
+
+function encodeReplacement(str, arr) {
+  // TODO: faster path for Hermes? See encodeCharcodes
+  const length = str.length
+  for (let i = 0; i < length; i++) {
+    const code = str.charCodeAt(i)
+    arr[i] = code
+    if (code >= 0xd8_00 && code < 0xe0_00) {
+      // An unexpected trail or a lead at the very end of input
+      if (code > 0xdb_ff || i + 1 >= length) {
+        arr[i] = replacementCodepoint
+      } else {
+        const next = str.charCodeAt(i + 1) // Process valid pairs immediately
+        if (next < 0xdc_00 || next >= 0xe0_00) {
+          arr[i] = replacementCodepoint
+        } else {
+          i++ // consume next
+          arr[i] = next
+        }
+      }
+    }
+  }
+
+  return arr
+}
+
+function encodeSwappedReplacement(str, arr) {
+  // TODO: faster path for Hermes? See encodeCharcodes
+  const length = str.length
+  for (let i = 0; i < length; i++) {
+    const code = str.charCodeAt(i)
+    arr[i] = ((code & 0xff) << 8) | (code >> 8)
+    if (code >= 0xd8_00 && code < 0xe0_00) {
+      // An unexpected trail or a lead at the very end of input
+      if (code > 0xdb_ff || i + 1 >= length) {
+        arr[i] = replacementCodepointSwapped
+      } else {
+        const next = str.charCodeAt(i + 1) // Process valid pairs immediately
+        if (next < 0xdc_00 || next >= 0xe0_00) {
+          arr[i] = replacementCodepointSwapped
+        } else {
+          i++ // consume next
+          arr[i] = ((next & 0xff) << 8) | (next >> 8)
+        }
+      }
+    }
+  }
+
+  return arr
+}
 
 function encodeSwappedFatal(str, arr) {
   const length = str.length
@@ -65,6 +121,28 @@ function encodeFatal(str, arr) {
   }
 
   return arr
+}
+
+function toWellFormed(u16) {
+  const length = u16.length
+  for (let i = 0; i < length; i++) {
+    const code = u16[i]
+    if (code >= 0xd8_00 && code < 0xe0_00) {
+      // An unexpected trail or a lead at the very end of input
+      if (code > 0xdb_ff || i + 1 >= length) {
+        u16[i] = replacementCodepoint
+      } else {
+        const next = u16[i + 1] // Process valid pairs immediately
+        if (next < 0xdc_00 || next >= 0xe0_00) {
+          u16[i] = replacementCodepoint
+        } else {
+          i++ // consume next
+        }
+      }
+    }
+  }
+
+  return u16
 }
 
 export function isWellFormed(u16) {
