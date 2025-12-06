@@ -43,6 +43,7 @@ const columnsTo = [
   'iconv-lite',
   '@ethersproject/strings',
   'uint8array-tools',
+  'decode-utf8',
   'Buffer.from',
 ]
 
@@ -54,6 +55,7 @@ const columnsFrom = [
   'iconv-lite',
   '@ethersproject/strings',
   'uint8array-tools',
+  'encode-utf8',
 ]
 
 describe('benchmarks: utf8', async () => {
