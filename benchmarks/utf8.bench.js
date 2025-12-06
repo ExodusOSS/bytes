@@ -97,7 +97,8 @@ describe('benchmarks: utf8', async () => {
     for (let i = 0; i < 100; i++) {
       for (const [name, f, skip] of utf8toString) {
         if (!skip) t.assert.deepEqual(f(asciiBufs[i]), asciiStrings[i], name)
-        if (name.startsWith('buffer/') || (name.includes('Buffer') && bufferIsPolyfilled)) continue // https://npmjs.com/buffer is broken
+        // We only supply well-formed data, so replacement is not tested
+        // if (name.startsWith('buffer/') || (name.includes('Buffer') && bufferIsPolyfilled)) continue // https://npmjs.com/buffer is broken
         if (!skip) t.assert.deepEqual(f(bufs[i]), strings[i], name)
       }
     }
@@ -125,7 +126,8 @@ describe('benchmarks: utf8', async () => {
     for (let i = 0; i < 100; i++) {
       for (const [name, f, skip] of utf8fromString) {
         if (!skip) t.assert.deepEqual(f(asciiStrings[i]), asciiBufs[i], name)
-        if (name.startsWith('buffer/') || (name.includes('Buffer') && bufferIsPolyfilled)) continue // https://npmjs.com/buffer is broken
+        // We only supply well-formed data, so replacement is not tested
+        // if (name.startsWith('buffer/') || (name.includes('Buffer') && bufferIsPolyfilled)) continue // https://npmjs.com/buffer is broken
         if (!skip) t.assert.deepEqual(f(strings[i]), bufs[i], name)
       }
     }
