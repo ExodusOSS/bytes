@@ -134,7 +134,7 @@ export function fromBase58(str, format = 'uint8') {
     for (let i = 0; i < 58; i++) fromMap[alphabet[i].charCodeAt(0)] = i
   }
 
-  const size = zeros + (((length - zeros) * 3 + 1) >> 2) // 3/4 rounded up, larger than ~0.73 coef to fit everything
+  const size = zeros + (((length - zeros + 1) * 3) >> 2) // 3/4 rounded up, larger than ~0.73 coef to fit everything
   const res = new Uint8Array(size)
   let at = size // where is the first significant byte written
 
