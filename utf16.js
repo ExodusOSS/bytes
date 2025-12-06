@@ -20,11 +20,12 @@ const { E_STRICT, E_STRICT_UNICODE } = js
 
 const to8 = (a) => new Uint8Array(a.buffer, a.byteOffset, a.byteLength)
 const to16 = (a) => new Uint16Array(a.buffer, a.byteOffset, a.byteLength / 2) // Requires checked length and alignment!
-const to16input = (x) => to16(x.byteOffset % 2 === 0 ? x : Uint8Array.from(x)) // Requires checked length
 
-function swapEndianness(u8, inPlace = false) {
+function to16input(u8, le) {
   // Assume even number of bytes
-  const res = inPlace ? u8 : new Uint8Array(u8.length)
+  if (le === isLE) return to16(u8.byteOffset % 2 === 0 ? u8 : Uint8Array.from(u8))
+
+  const res = new Uint8Array(u8.length)
 
   let i = 0
   for (const last3 = u8.length - 3; i < last3; i += 4) {
@@ -45,7 +46,7 @@ function swapEndianness(u8, inPlace = false) {
     res[i + 1] = x0
   }
 
-  return res
+  return to16(res)
 }
 
 function encode(str, loose = false, format = 'uint16') {
@@ -80,13 +81,13 @@ function decode(input, loose = false, format = 'uint16') {
       if (!(input instanceof Uint8Array)) throw new TypeError('Expected an Uint8Array')
       if (input.byteLength % 2 !== 0) throw new TypeError('Expected even number of bytes')
       if (haveDecoder) return loose ? decoderLooseLE.decode(input) : decoderFatalLE.decode(input)
-      u16 = isLE ? to16input(input) : to16(swapEndianness(input, false))
+      u16 = to16input(input, true)
       break
     case 'uint8-be':
       if (!(input instanceof Uint8Array)) throw new TypeError('Expected an Uint8Array')
       if (input.byteLength % 2 !== 0) throw new TypeError('Expected even number of bytes')
       if (haveDecoder) return loose ? decoderLooseBE.decode(input) : decoderFatalBE.decode(input)
-      u16 = isLE ? to16(swapEndianness(input, false)) : to16input(input)
+      u16 = to16input(input, false)
       break
     default:
       throw new TypeError('Unknown format')
