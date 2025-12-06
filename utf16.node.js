@@ -1,3 +1,4 @@
+import { nativeDecoder } from './fallback/_utils.js'
 import { E_STRICT, E_STRICT_UNICODE } from './fallback/utf16.js'
 
 if (Buffer.TYPED_ARRAY_SUPPORT) throw new Error('Unexpected Buffer polyfill')
@@ -13,7 +14,10 @@ function encode(str, loose = false, format = 'uint16') {
     throw new TypeError('Unknown format')
   }
 
-  if (!loose && !isWellFormed.call(str)) throw new SyntaxError(E_STRICT_UNICODE)
+  if (!isWellFormed.call(str)) {
+    if (!loose) throw new SyntaxError(E_STRICT_UNICODE)
+    str = nativeDecoder.decode(Buffer.from(str)) // well, let's fix up (Buffer doesn't do this with utf16 encoding)
+  }
 
   const ble = Buffer.from(str, 'utf-16le')
 
@@ -46,9 +50,9 @@ function decode(input, loose = false, format = 'uint16') {
   }
 
   const str = ble.ucs2Slice(0, ble.byteLength)
-
-  if (loose || isWellFormed.call(str)) return str
-  throw new SyntaxError(E_STRICT)
+  if (isWellFormed.call(str)) return str
+  if (!loose) throw new SyntaxError(E_STRICT)
+  return nativeDecoder.decode(Buffer.from(str)) // fixup (see above)
 }
 
 export const utf16fromString = (str, format = 'uint16') => encode(str, false, format)

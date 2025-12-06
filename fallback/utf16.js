@@ -90,7 +90,7 @@ function encodeUncheckedSwapped(str, arr, loose = false) {
   return arr
 }
 
-function toWellFormed(u16) {
+export function toWellFormed(u16) {
   const length = u16.length
   for (let i = 0; i < length; i++) {
     const code = u16[i]
