@@ -214,4 +214,8 @@ describe('benchmarks: utf16', async () => {
 
     res.print(columns)
   })
+
+  test('fallback.isWellFormed', { timeout }, async () => {
+    await benchmark('fallback.isWellFormed', { args: u16 }, fallback.isWellFormed)
+  })
 })
