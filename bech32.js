@@ -25,16 +25,48 @@ for (let i = 0; i < alphabet.length; i++) {
 
 // checksum size is 30 bits, 0x3f_ff_ff_ff
 // The good thing about the checksum is that it's linear over every bit
-// TODO: can we perhaps precalculate more?
-const poly = new Uint32Array(32) // just precache all possible ones, it's only 1 KiB
-const p = (x) => ((x & 0x1_ff_ff_ff) << 5) ^ poly[x >> 25]
+const poly0 = new Uint32Array(32) // just precache all possible ones, it's only 1 KiB
+const p = (x) => ((x & 0x1_ff_ff_ff) << 5) ^ poly0[x >> 25]
 for (let i = 0; i < 32; i++) {
-  poly[i] =
+  poly0[i] =
     (i & 0b0_0001 ? 0x3b_6a_57_b2 : 0) ^
     (i & 0b0_0010 ? 0x26_50_8e_6d : 0) ^
     (i & 0b0_0100 ? 0x1e_a1_19_fa : 0) ^
     (i & 0b0_1000 ? 0x3d_42_33_dd : 0) ^
     (i & 0b1_0000 ? 0x2a_14_62_b3 : 0)
+}
+
+// 5 KiB more for faster p6
+const poly1 = new Uint32Array(32)
+const poly2 = new Uint32Array(32)
+const poly3 = new Uint32Array(32)
+const poly4 = new Uint32Array(32)
+const poly5 = new Uint32Array(32)
+for (let i = 0; i < 32; i++) {
+  // poly0[i] === p(p(p(p(p(p(i))))))
+  poly1[i] = p(poly0[i]) // aka p(p(p(p(p(p(i << 5))))))
+  poly2[i] = p(poly1[i]) // aka p(p(p(p(p(p(i << 10))))))
+  poly3[i] = p(poly2[i]) // aka p(p(p(p(p(p(i << 15))))))
+  poly4[i] = p(poly3[i]) // aka p(p(p(p(p(p(i << 20))))))
+  poly5[i] = p(poly4[i]) // aka p(p(p(p(p(p(i << 25))))))
+}
+
+function p6(x) {
+  // Same as: return p(p(p(p(p(p(x))))))
+  const x0 = x & 0x1f
+  const x1 = (x >> 5) & 0x1f
+  const x2 = (x >> 10) & 0x1f
+  const x3 = (x >> 15) & 0x1f
+  const x4 = (x >> 20) & 0x1f
+  const x5 = (x >> 25) & 0x1f
+  return poly0[x0] ^ poly1[x1] ^ poly2[x2] ^ poly3[x3] ^ poly4[x4] ^ poly5[x5]
+}
+
+// x is 30-bit, x0-x5 are 5-bit
+// Here, lookups are independent of x0-x5
+function p6x(x, x0, x1, x2, x3, x4, x5) {
+  // Same as: return p(p(p(p(p(p(x) ^ x0) ^ x1) ^ x2) ^ x3) ^ x4) ^ x5
+  return x5 ^ (x4 << 5) ^ (x3 << 10) ^ (x2 << 15) ^ (x1 << 20) ^ (x0 << 25) ^ p6(x)
 }
 
 const prefixCache = new Map() // Cache 10 of them
@@ -88,7 +120,7 @@ function toBech32enc(prefix, bytes, limit, encoding) {
     const x5 = (b3 >> 2) & 0x1f
     const x6 = ((b3 << 3) & 0x1f) | (b4 >> 5)
     const x7 = b4 & 0x1f
-    chk = p(p(p(p(p(p(p(p(chk) ^ x0) ^ x1) ^ x2) ^ x3) ^ x4) ^ x5) ^ x6) ^ x7
+    chk = x7 ^ p(x6 ^ p(p6x(chk, x0, x1, x2, x3, x4, x5)))
     out[j] = x2c[x0]
     out[j + 1] = x2c[x1]
     out[j + 2] = x2c[x2]
@@ -120,7 +152,7 @@ function toBech32enc(prefix, bytes, limit, encoding) {
     out[j++] = x2c[x]
   }
 
-  chk = p(p(p(p(p(p(chk)))))) ^ encoding
+  chk = encoding ^ p6(chk)
   out[j++] = x2c[(chk >> 25) & 0x1f]
   out[j++] = x2c[(chk >> 20) & 0x1f]
   out[j++] = x2c[(chk >> 15) & 0x1f]
@@ -163,7 +195,7 @@ function fromBech32enc(str, limit, encoding) {
     const c0 = c[i], c1 = c[i + 1], c2 = c[i + 2], c3 = c[i + 3], c4 = c[i + 4], c5 = c[i + 5], c6 = c[i + 6], c7 = c[i + 7] // prettier-ignore
     const x0 = c2x[c0], x1 = c2x[c1], x2 = c2x[c2], x3 = c2x[c3], x4 = c2x[c4], x5 = c2x[c5], x6 = c2x[c6], x7 = c2x[c7] // prettier-ignore
     if (x0 < 0 || x1 < 0 || x2 < 0 || x3 < 0 || x4 < 0 || x5 < 0 || x6 < 0 || x7 < 0) throw new SyntaxError(E_CHARACTER) // prettier-ignore
-    chk = p(p(p(p(p(p(p(p(chk) ^ x0) ^ x1) ^ x2) ^ x3) ^ x4) ^ x5) ^ x6) ^ x7
+    chk = x7 ^ p(x6 ^ p(p6x(chk, x0, x1, x2, x3, x4, x5)))
     bytes[j] = (x0 << 3) | (x1 >> 2)
     bytes[j + 1] = (((x1 << 6) | (x2 << 1)) & 0xff) | (x3 >> 4)
     bytes[j + 2] = ((x3 << 4) & 0xff) | (x4 >> 1)
@@ -189,7 +221,7 @@ function fromBech32enc(str, limit, encoding) {
     const c0 = c[i], c1 = c[i + 1], c2 = c[i + 2], c3 = c[i + 3], c4 = c[i + 4], c5 = c[i + 5] // prettier-ignore
     const x0 = c2x[c0], x1 = c2x[c1], x2 = c2x[c2], x3 = c2x[c3], x4 = c2x[c4], x5 = c2x[c5] // prettier-ignore
     if (x0 < 0 || x1 < 0 || x2 < 0 || x3 < 0 || x4 < 0 || x5 < 0) throw new SyntaxError(E_CHARACTER)
-    chk = p(p(p(p(p(p(chk) ^ x0) ^ x1) ^ x2) ^ x3) ^ x4) ^ x5
+    chk = p6x(chk, x0, x1, x2, x3, x4, x5)
   }
 
   if (chk !== encoding) throw new Error(E_CHECKSUM)
