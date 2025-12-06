@@ -36,12 +36,14 @@ for (let i = 0; i < 32; i++) {
     (i & 0b1_0000 ? 0x2a_14_62_b3 : 0)
 }
 
-// 5 KiB more for faster p6
+// 7 KiB more for faster p6/p8
 const poly1 = new Uint32Array(32)
 const poly2 = new Uint32Array(32)
 const poly3 = new Uint32Array(32)
 const poly4 = new Uint32Array(32)
 const poly5 = new Uint32Array(32)
+const poly6 = new Uint32Array(32)
+const poly7 = new Uint32Array(32)
 for (let i = 0; i < 32; i++) {
   // poly0[i] === p(p(p(p(p(p(i))))))
   poly1[i] = p(poly0[i]) // aka p(p(p(p(p(p(i << 5))))))
@@ -49,6 +51,8 @@ for (let i = 0; i < 32; i++) {
   poly3[i] = p(poly2[i]) // aka p(p(p(p(p(p(i << 15))))))
   poly4[i] = p(poly3[i]) // aka p(p(p(p(p(p(i << 20))))))
   poly5[i] = p(poly4[i]) // aka p(p(p(p(p(p(i << 25))))))
+  poly6[i] = p(poly5[i])
+  poly7[i] = p(poly6[i])
 }
 
 function p6(x) {
@@ -60,6 +64,17 @@ function p6(x) {
   const x4 = (x >> 20) & 0x1f
   const x5 = (x >> 25) & 0x1f
   return poly0[x0] ^ poly1[x1] ^ poly2[x2] ^ poly3[x3] ^ poly4[x4] ^ poly5[x5]
+}
+
+function p8(x) {
+  // Same as: return p(p(p(p(p(p(p(p(x))))))))
+  const x0 = x & 0x1f
+  const x1 = (x >> 5) & 0x1f
+  const x2 = (x >> 10) & 0x1f
+  const x3 = (x >> 15) & 0x1f
+  const x4 = (x >> 20) & 0x1f
+  const x5 = (x >> 25) & 0x1f
+  return poly2[x0] ^ poly3[x1] ^ poly4[x2] ^ poly5[x3] ^ poly6[x4] ^ poly7[x5]
 }
 
 // p(p(p(p(p(p(chk) ^ x0) ^ x1) ^ x2) ^ x3) ^ x4) ^ x5 === p6(chk) ^ merge(x0, x1, x2, x3, x4, x5)
@@ -116,7 +131,7 @@ function toBech32enc(prefix, bytes, limit, encoding) {
     const x5 = (b3 >> 2) & 0x1f
     const x6 = ((b3 << 3) & 0x1f) | (b4 >> 5)
     const x7 = b4 & 0x1f
-    chk = x7 ^ p(x6 ^ p(merge(x0, x1, x2, x3, x4, x5) ^ p6(chk)))
+    chk = merge(x2, x3, x4, x5, x6, x7) ^ poly0[x1] ^ poly1[x0] ^ p8(chk)
     out[j] = x2c[x0]
     out[j + 1] = x2c[x1]
     out[j + 2] = x2c[x2]
@@ -191,7 +206,7 @@ function fromBech32enc(str, limit, encoding) {
     const c0 = c[i], c1 = c[i + 1], c2 = c[i + 2], c3 = c[i + 3], c4 = c[i + 4], c5 = c[i + 5], c6 = c[i + 6], c7 = c[i + 7] // prettier-ignore
     const x0 = c2x[c0], x1 = c2x[c1], x2 = c2x[c2], x3 = c2x[c3], x4 = c2x[c4], x5 = c2x[c5], x6 = c2x[c6], x7 = c2x[c7] // prettier-ignore
     if (x0 < 0 || x1 < 0 || x2 < 0 || x3 < 0 || x4 < 0 || x5 < 0 || x6 < 0 || x7 < 0) throw new SyntaxError(E_CHARACTER) // prettier-ignore
-    chk = x7 ^ p(x6 ^ p(merge(x0, x1, x2, x3, x4, x5) ^ p6(chk)))
+    chk = merge(x2, x3, x4, x5, x6, x7) ^ poly0[x1] ^ poly1[x0] ^ p8(chk)
     bytes[j] = (x0 << 3) | (x1 >> 2)
     bytes[j + 1] = (((x1 << 6) | (x2 << 1)) & 0xff) | (x3 >> 4)
     bytes[j + 2] = ((x3 << 4) & 0xff) | (x4 >> 1)
