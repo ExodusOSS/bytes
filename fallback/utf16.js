@@ -14,9 +14,8 @@ export const decode = (u16, loose = false, checked = false) => {
 
 export function encode(str, loose = false, checked = false, swapped = false) {
   const arr = new Uint16Array(str.length)
-  if (checked) return swapped ? encodeSwappedChecked(str, arr) : encodeChecked(str, arr)
-  if (loose) return swapped ? encodeSwappedReplacement(str, arr) : encodeReplacement(str, arr)
-  return swapped ? encodeSwappedFatal(str, arr) : encodeFatal(str, arr)
+  if (checked) return swapped ? encodeCheckedSwapped(str, arr) : encodeChecked(str, arr)
+  return swapped ? encodeUncheckedSwapped(str, arr, loose) : encodeUnchecked(str, arr, loose)
 }
 
 // Splitting paths into small functions helps (at least on SpiderMonkey)
@@ -24,7 +23,7 @@ export function encode(str, loose = false, checked = false, swapped = false) {
 
 const encodeChecked = (str, arr) => encodeCharcodes(str, arr) // Same as encodeLatin1, but with Uint16Array
 
-function encodeSwappedChecked(str, arr) {
+function encodeCheckedSwapped(str, arr) {
   // TODO: faster path for Hermes? See encodeCharcodes
   const length = str.length
   for (let i = 0; i < length; i++) {
@@ -37,7 +36,7 @@ function encodeSwappedChecked(str, arr) {
 
 // lead: d800 - dbff, trail: dc00 - dfff
 
-function encodeReplacement(str, arr) {
+function encodeUnchecked(str, arr, loose = false) {
   // TODO: faster path for Hermes? See encodeCharcodes
   const length = str.length
   for (let i = 0; i < length; i++) {
@@ -46,10 +45,12 @@ function encodeReplacement(str, arr) {
     if (code >= 0xd8_00 && code < 0xe0_00) {
       // An unexpected trail or a lead at the very end of input
       if (code > 0xdb_ff || i + 1 >= length) {
+        if (!loose) throw new SyntaxError(E_STRICT_UNICODE)
         arr[i] = replacementCodepoint
       } else {
         const next = str.charCodeAt(i + 1) // Process valid pairs immediately
         if (next < 0xdc_00 || next >= 0xe0_00) {
+          if (!loose) throw new SyntaxError(E_STRICT_UNICODE)
           arr[i] = replacementCodepoint
         } else {
           i++ // consume next
@@ -62,7 +63,7 @@ function encodeReplacement(str, arr) {
   return arr
 }
 
-function encodeSwappedReplacement(str, arr) {
+function encodeUncheckedSwapped(str, arr, loose = false) {
   // TODO: faster path for Hermes? See encodeCharcodes
   const length = str.length
   for (let i = 0; i < length; i++) {
@@ -71,52 +72,18 @@ function encodeSwappedReplacement(str, arr) {
     if (code >= 0xd8_00 && code < 0xe0_00) {
       // An unexpected trail or a lead at the very end of input
       if (code > 0xdb_ff || i + 1 >= length) {
+        if (!loose) throw new SyntaxError(E_STRICT_UNICODE)
         arr[i] = replacementCodepointSwapped
       } else {
         const next = str.charCodeAt(i + 1) // Process valid pairs immediately
         if (next < 0xdc_00 || next >= 0xe0_00) {
+          if (!loose) throw new SyntaxError(E_STRICT_UNICODE)
           arr[i] = replacementCodepointSwapped
         } else {
           i++ // consume next
           arr[i] = ((next & 0xff) << 8) | (next >> 8)
         }
       }
-    }
-  }
-
-  return arr
-}
-
-function encodeSwappedFatal(str, arr) {
-  const length = str.length
-  for (let i = 0; i < length; i++) {
-    const code = str.charCodeAt(i)
-    arr[i] = ((code & 0xff) << 8) | (code >> 8)
-    if (code >= 0xd8_00 && code < 0xe0_00) {
-      // An unexpected trail or a lead at the very end of input
-      if (code > 0xdb_ff || i + 1 >= length) throw new SyntaxError(E_STRICT_UNICODE)
-      i++ // consume next
-      const next = str.charCodeAt(i) // Process valid pairs immediately
-      if (next < 0xdc_00 || next >= 0xe0_00) throw new SyntaxError(E_STRICT_UNICODE)
-      arr[i] = ((next & 0xff) << 8) | (next >> 8)
-    }
-  }
-
-  return arr
-}
-
-function encodeFatal(str, arr) {
-  const length = str.length
-  for (let i = 0; i < length; i++) {
-    const code = str.charCodeAt(i)
-    arr[i] = code
-    if (code >= 0xd8_00 && code < 0xe0_00) {
-      // An unexpected trail or a lead at the very end of input
-      if (code > 0xdb_ff || i + 1 >= length) throw new SyntaxError(E_STRICT_UNICODE)
-      i++ // consume next
-      const next = str.charCodeAt(i) // Process valid pairs immediately
-      if (next < 0xdc_00 || next >= 0xe0_00) throw new SyntaxError(E_STRICT_UNICODE)
-      arr[i] = next
     }
   }
 
