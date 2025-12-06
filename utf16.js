@@ -103,3 +103,10 @@ export const utf16fromString = (str, format = 'uint16') => encode(str, false, fo
 export const utf16fromStringLoose = (str, format = 'uint16') => encode(str, true, format)
 export const utf16toString = (arr, format = 'uint16') => decode(arr, false, format)
 export const utf16toStringLoose = (arr, format = 'uint16') => decode(arr, true, format)
+
+/*
+Currently not shipped, fails on this (across engines):
+
+console.log(utf16fromStringLoose(String.fromCharCode(0xd8_00, 0xd8_00)))
+console.log(utf16fromStringLoose(utf16toStringLoose(utf16fromStringLoose(String.fromCharCode(0xd8_00, 0xd8_00)))))
+*/
