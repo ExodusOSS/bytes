@@ -31,7 +31,6 @@ test('sizes roundtrip, static data', (t) => {
 
 test('toBase58 matches bs58, random data', (t) => {
   const seed = randomValues(260)
-  // more samples for small sizes
 
   // more samples for small sizes
   for (let size = 1; size < 100; size++) {
