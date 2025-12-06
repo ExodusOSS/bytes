@@ -7,6 +7,9 @@ import iconv from 'iconv-lite'
 import js from 'text-encoding'
 import * as ethers from '@ethersproject/strings'
 import * as uint8arraytools from 'uint8array-tools'
+import encodeutf8 from 'encode-utf8'
+import decodeutf8 from 'decode-utf8'
+// import utf8js from 'utf8'
 
 import { bufs as bufsRaw } from './utils/random.js'
 import { Table } from './utils/table.js'
@@ -70,6 +73,8 @@ describe('benchmarks: utf8', async () => {
     ['iconv-lite', (x) => iconv.decode(x, 'utf8', { stripBOM: false })],
     ['@ethersproject/strings', (x) => ethers.toUtf8String(x)],
     ['uint8array-tools', (x) => uint8arraytools.toUtf8(x)],
+    ['decode-utf8', (x) => decodeutf8(x)],
+    // ['utf8.js', (x) => utf8js.decode(String.fromCharCode.apply(String, x))], // needs extra steps for uint8arr
   ]
 
   // [name, impl, skip]
@@ -84,6 +89,8 @@ describe('benchmarks: utf8', async () => {
     ['iconv-lite', (x) => iconv.encode(x, 'utf8')],
     ['@ethersproject/strings', (x) => ethers.toUtf8Bytes(x)],
     ['uint8array-tools', (x) => uint8arraytools.fromUtf8(x)],
+    ['encode-utf8', (x) => new Uint8Array(encodeutf8(x))],
+    // ['utf8.js', (x) => utf8js.encode(x)], // return type differs
   ]
 
   test('utf8toString coherence', (t) => {
