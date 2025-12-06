@@ -3,8 +3,10 @@ import { decodeLatin1, encodeCharcodes } from './latin1.js'
 export const E_STRICT = 'Input is not well-formed utf16'
 export const E_STRICT_UNICODE = 'Input is not well-formed Unicode'
 
-// it's capable of decoding Uint16Array to UTF-16 as well
-export const decode = (arr) => decodeLatin1(arr, 0, arr.length)
+export const decode = (u16, loose = false) => {
+  if (!loose && !isWellFormed(u16)) throw new SyntaxError(E_STRICT)
+  return decodeLatin1(u16, 0, u16.length) // it's capable of decoding Uint16Array to UTF-16 as well
+}
 
 export function encode(str, loose = false, swapped = false) {
   const arr = new Uint16Array(str.length)

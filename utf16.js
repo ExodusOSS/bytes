@@ -93,8 +93,7 @@ function decode(input, loose = false, format = 'uint16') {
       throw new TypeError('Unknown format')
   }
 
-  if (!loose && !isWellFormed && !js.isWellFormed(u16)) throw new SyntaxError(E_STRICT)
-  const str = js.decode(u16)
+  const str = js.decode(u16, loose || isWellFormed)
   if (!loose && isWellFormed && !isWellFormed.call(str)) throw new SyntaxError(E_STRICT)
 
   return str
