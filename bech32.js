@@ -62,12 +62,8 @@ function p6(x) {
   return poly0[x0] ^ poly1[x1] ^ poly2[x2] ^ poly3[x3] ^ poly4[x4] ^ poly5[x5]
 }
 
-// x is 30-bit, x0-x5 are 5-bit
-// Here, lookups are independent of x0-x5
-function p6x(x, x0, x1, x2, x3, x4, x5) {
-  // Same as: return p(p(p(p(p(p(x) ^ x0) ^ x1) ^ x2) ^ x3) ^ x4) ^ x5
-  return x5 ^ (x4 << 5) ^ (x3 << 10) ^ (x2 << 15) ^ (x1 << 20) ^ (x0 << 25) ^ p6(x)
-}
+// p(p(p(p(p(p(chk) ^ x0) ^ x1) ^ x2) ^ x3) ^ x4) ^ x5 === p6(chk) ^ merge(x0, x1, x2, x3, x4, x5)
+const merge = (a, b, c, d, e, f) => f ^ (e << 5) ^ (d << 10) ^ (c << 15) ^ (b << 20) ^ (a << 25)
 
 const prefixCache = new Map() // Cache 10 of them
 
@@ -120,7 +116,7 @@ function toBech32enc(prefix, bytes, limit, encoding) {
     const x5 = (b3 >> 2) & 0x1f
     const x6 = ((b3 << 3) & 0x1f) | (b4 >> 5)
     const x7 = b4 & 0x1f
-    chk = x7 ^ p(x6 ^ p(p6x(chk, x0, x1, x2, x3, x4, x5)))
+    chk = x7 ^ p(x6 ^ p(merge(x0, x1, x2, x3, x4, x5) ^ p6(chk)))
     out[j] = x2c[x0]
     out[j + 1] = x2c[x1]
     out[j + 2] = x2c[x2]
@@ -195,7 +191,7 @@ function fromBech32enc(str, limit, encoding) {
     const c0 = c[i], c1 = c[i + 1], c2 = c[i + 2], c3 = c[i + 3], c4 = c[i + 4], c5 = c[i + 5], c6 = c[i + 6], c7 = c[i + 7] // prettier-ignore
     const x0 = c2x[c0], x1 = c2x[c1], x2 = c2x[c2], x3 = c2x[c3], x4 = c2x[c4], x5 = c2x[c5], x6 = c2x[c6], x7 = c2x[c7] // prettier-ignore
     if (x0 < 0 || x1 < 0 || x2 < 0 || x3 < 0 || x4 < 0 || x5 < 0 || x6 < 0 || x7 < 0) throw new SyntaxError(E_CHARACTER) // prettier-ignore
-    chk = x7 ^ p(x6 ^ p(p6x(chk, x0, x1, x2, x3, x4, x5)))
+    chk = x7 ^ p(x6 ^ p(merge(x0, x1, x2, x3, x4, x5) ^ p6(chk)))
     bytes[j] = (x0 << 3) | (x1 >> 2)
     bytes[j + 1] = (((x1 << 6) | (x2 << 1)) & 0xff) | (x3 >> 4)
     bytes[j + 2] = ((x3 << 4) & 0xff) | (x4 >> 1)
@@ -216,16 +212,16 @@ function fromBech32enc(str, limit, encoding) {
     }
   }
 
+  if (bits >= 5 || (value << (8 - bits)) & 0xff) throw new Error(E_PADDING)
+
   // Checksum
   {
     const c0 = c[i], c1 = c[i + 1], c2 = c[i + 2], c3 = c[i + 3], c4 = c[i + 4], c5 = c[i + 5] // prettier-ignore
     const x0 = c2x[c0], x1 = c2x[c1], x2 = c2x[c2], x3 = c2x[c3], x4 = c2x[c4], x5 = c2x[c5] // prettier-ignore
     if (x0 < 0 || x1 < 0 || x2 < 0 || x3 < 0 || x4 < 0 || x5 < 0) throw new SyntaxError(E_CHARACTER)
-    chk = p6x(chk, x0, x1, x2, x3, x4, x5)
+    if ((merge(x0, x1, x2, x3, x4, x5) ^ p6(chk)) !== encoding) throw new Error(E_CHECKSUM)
   }
 
-  if (chk !== encoding) throw new Error(E_CHECKSUM)
-  if (bits >= 5 || (value << (8 - bits)) & 0xff) throw new Error(E_PADDING)
   return { prefix, bytes }
 }
 
