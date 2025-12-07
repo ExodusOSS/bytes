@@ -10,26 +10,6 @@ import { fromHex } from '@exodus/bytes/hex.js'
 import { randomValues } from '@exodus/crypto/randomBytes'
 import { describe, test } from 'node:test'
 
-const seed = randomValues(5 * 1024)
-const pool = [
-  new Uint8Array(0),
-  new Uint8Array(1),
-  new Uint8Array(256),
-  new Uint8Array(256).fill(1),
-  new Uint8Array(256).fill(42),
-  new Uint8Array(256).fill(0xd0),
-  new Uint8Array(256).fill(255),
-  seed.subarray(1, -1),
-  seed.subarray(2, -2),
-  seed.subarray(3, -3),
-]
-
-for (let i = 0; i < 500; i++) {
-  pool.push(seed.subarray(Math.floor(Math.random() * seed.length)).map((x, j) => x + i * j))
-}
-
-const poolAscii = pool.map((u8) => u8.map((x) => x & 0x7f))
-
 // invalid bytes -> string
 const nonUtf8 = [
   { bytes: [0, 254, 255], charcodes: [0, 0xff_fd, 0xff_fd] },
@@ -45,6 +25,30 @@ const orphans = [
   { charcodes: [0x61, 0x62, 0xdf_ff, 0x77, 0x78], hex: '6162efbfbd7778' },
   { charcodes: [0xdf_ff, 0xd8_00], hex: 'efbfbdefbfbd' },
 ]
+
+const seed = randomValues(5 * 1024)
+const pool = [
+  new Uint8Array(0),
+  new Uint8Array(1),
+  new Uint8Array(256),
+  new Uint8Array(256).fill(1),
+  new Uint8Array(256).fill(42),
+  new Uint8Array(256).fill(0xd0),
+  new Uint8Array(256).fill(255),
+  Uint8Array.of(0xef, 0xbb, 0xbf), // BOM
+  seed.subarray(1, -1),
+  seed.subarray(2, -2),
+  seed.subarray(3, -3),
+]
+
+for (let i = 0; i < 500; i++) {
+  pool.push(seed.subarray(Math.floor(Math.random() * seed.length)).map((x, j) => x + i * j))
+}
+
+for (const { bytes } of nonUtf8) pool.push(Uint8Array.from(bytes))
+for (const { hex } of orphans) pool.push(fromHex(hex))
+
+const poolAscii = pool.map((u8) => u8.map((x) => x & 0x7f))
 
 const { TextDecoder, TextEncoder } = globalThis
 
@@ -139,9 +143,10 @@ describe('random data', () => {
   const strings = []
   const stringsAscii = []
   const restored = []
+  const ignoreBOM = true
 
   test('utf8toStringLoose', (t) => {
-    const textDecoder = nativeDecoder ? new TextDecoder() : null // polyfilled might be wrong
+    const textDecoder = nativeDecoder ? new TextDecoder('utf8', { ignoreBOM }) : null // polyfilled might be wrong
     const NativeBuffer = globalThis.Buffer && !globalThis.Buffer.TYPED_ARRAY_SUPPORT ? Buffer : null
     for (const u8 of pool) {
       const str = utf8toStringLoose(u8)
@@ -153,7 +158,7 @@ describe('random data', () => {
   })
 
   test('utf8toString (ascii)', (t) => {
-    const textDecoder = TextDecoder ? new TextDecoder('utf8', { fatal: true }) : null
+    const textDecoder = nativeDecoder ? new TextDecoder('utf8', { fatal: true, ignoreBOM }) : null
     for (const u8 of poolAscii) {
       const str = utf8toString(u8)
       t.assert.strictEqual(str, utf8toStringLoose(u8))
@@ -166,7 +171,7 @@ describe('random data', () => {
   })
 
   test('utf8toString', (t) => {
-    const textDecoder = TextDecoder ? new TextDecoder('utf8', { fatal: true }) : null
+    const textDecoder = nativeDecoder ? new TextDecoder('utf8', { fatal: true, ignoreBOM }) : null
     t.assert.strictEqual(strings.length, pool.length)
     for (let i = 0; i < pool.length; i++) {
       const u8 = pool[i]
@@ -222,7 +227,7 @@ describe('random data', () => {
   })
 
   test('utf8toString / utf8toStringLoose', (t) => {
-    const textDecoder = TextDecoder ? new TextDecoder('utf8', { fatal: true }) : null
+    const textDecoder = nativeDecoder ? new TextDecoder('utf8', { fatal: true, ignoreBOM }) : null
     t.assert.strictEqual(strings.length, pool.length)
     for (let i = 0; i < pool.length; i++) {
       const str = strings[i]
