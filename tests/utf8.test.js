@@ -4,12 +4,31 @@ import {
   utf8fromString,
   utf8fromStringLoose,
 } from '@exodus/bytes/utf8.js'
+import { nativeDecoder } from '../fallback/_utils.js'
 import * as js from '../fallback/utf8.js'
 import { fromHex } from '@exodus/bytes/hex.js'
 import { randomValues } from '@exodus/crypto/randomBytes'
 import { describe, test } from 'node:test'
 
 const seed = randomValues(5 * 1024)
+const pool = [
+  new Uint8Array(0),
+  new Uint8Array(1),
+  new Uint8Array(256),
+  new Uint8Array(256).fill(1),
+  new Uint8Array(256).fill(42),
+  new Uint8Array(256).fill(0xd0),
+  new Uint8Array(256).fill(255),
+  seed.subarray(1, -1),
+  seed.subarray(2, -2),
+  seed.subarray(3, -3),
+]
+
+for (let i = 0; i < 500; i++) {
+  pool.push(seed.subarray(Math.floor(Math.random() * seed.length)).map((x, j) => x + i * j))
+}
+
+const poolAscii = pool.map((u8) => u8.map((x) => x & 0x7f))
 
 // invalid bytes -> string
 const nonUtf8 = [
@@ -27,6 +46,8 @@ const orphans = [
   { charcodes: [0xdf_ff, 0xd8_00], hex: 'efbfbdefbfbd' },
 ]
 
+const { TextDecoder, TextEncoder } = globalThis
+
 describe('utf8toString', () => {
   describe('invalid input', () => {
     for (const method of [utf8toString, utf8toStringLoose]) {
@@ -39,58 +60,46 @@ describe('utf8toString', () => {
   })
 
   test('non-utf8 bytes throw in utf8toString', (t) => {
-    for (const { bytes } of nonUtf8) {
-      t.assert.throws(() => utf8toString(Uint8Array.of(...bytes)))
+    for (const method of [utf8toString, (x) => js.decode(x, false)]) {
+      for (const { bytes } of nonUtf8) {
+        t.assert.throws(() => method(Uint8Array.of(...bytes)))
 
-      for (let p = 0; p < 130; p++) {
-        const prefixBytes = new Uint8Array(p).fill(0x20)
-        t.assert.throws(() => utf8toString(Uint8Array.of(...prefixBytes, ...bytes)))
-      }
+        for (let p = 0; p < 130; p++) {
+          const prefixBytes = new Uint8Array(p).fill(0x20)
+          t.assert.throws(() => method(Uint8Array.of(...prefixBytes, ...bytes)))
+        }
 
-      for (let s = 0; s < 130; s++) {
-        const suffixBytes = new Uint8Array(s).fill(0x20)
-        t.assert.throws(() => utf8toString(Uint8Array.of(...bytes, ...suffixBytes)))
+        for (let s = 0; s < 130; s++) {
+          const suffixBytes = new Uint8Array(s).fill(0x20)
+          t.assert.throws(() => method(Uint8Array.of(...bytes, ...suffixBytes)))
+        }
       }
     }
   })
 
   test('non-utf8 bytes get replaced in utf8toStringLoose', (t) => {
-    for (const { bytes, charcodes } of nonUtf8) {
-      const res = utf8toStringLoose(Uint8Array.of(...bytes))
-      t.assert.strictEqual(res.length, charcodes.length)
-      t.assert.strictEqual(res, String.fromCharCode(...charcodes))
+    for (const method of [utf8toStringLoose, (x) => js.decode(x, true)]) {
+      for (const { bytes, charcodes } of nonUtf8) {
+        const res = method(Uint8Array.of(...bytes))
+        t.assert.strictEqual(res.length, charcodes.length)
+        t.assert.strictEqual(res, String.fromCharCode(...charcodes))
 
-      for (let p = 0; p < 130; p++) {
-        const prefixBytes = new Uint8Array(p).fill(0x20)
-        const prefixString = ' '.repeat(p)
-        const res = utf8toStringLoose(Uint8Array.of(...prefixBytes, ...bytes))
-        t.assert.strictEqual(res.length, p + charcodes.length)
-        t.assert.strictEqual(res, prefixString + String.fromCharCode(...charcodes))
+        for (let p = 0; p < 130; p++) {
+          const prefixBytes = new Uint8Array(p).fill(0x20)
+          const prefixString = ' '.repeat(p)
+          const res = method(Uint8Array.of(...prefixBytes, ...bytes))
+          t.assert.strictEqual(res.length, p + charcodes.length)
+          t.assert.strictEqual(res, prefixString + String.fromCharCode(...charcodes))
+        }
+
+        for (let s = 0; s < 130; s++) {
+          const suffixBytes = new Uint8Array(s).fill(0x20)
+          const suffixString = ' '.repeat(s)
+          const res = method(Uint8Array.of(...bytes, ...suffixBytes))
+          t.assert.strictEqual(res.length, charcodes.length + s)
+          t.assert.strictEqual(res, String.fromCharCode(...charcodes) + suffixString)
+        }
       }
-
-      for (let s = 0; s < 130; s++) {
-        const suffixBytes = new Uint8Array(s).fill(0x20)
-        const suffixString = ' '.repeat(s)
-        const res = utf8toStringLoose(Uint8Array.of(...bytes, ...suffixBytes))
-        t.assert.strictEqual(res.length, charcodes.length + s)
-        t.assert.strictEqual(res, String.fromCharCode(...charcodes) + suffixString)
-      }
-    }
-  })
-
-  test('loose mode matches fallback on random data', (t) => {
-    for (const u8 of [
-      new Uint8Array(0),
-      new Uint8Array(256),
-      new Uint8Array(256).fill(1),
-      new Uint8Array(256).fill(42),
-      new Uint8Array(256).fill(0xd0),
-      new Uint8Array(256).fill(255),
-      seed.subarray(1, -1),
-      seed.subarray(2, -2),
-      seed.subarray(3, -3),
-    ]) {
-      t.assert.strictEqual(utf8toStringLoose(u8), js.decode(u8, true))
     }
   })
 })
@@ -110,44 +119,120 @@ describe('utf8fromString', () => {
   })
 
   test('orphans throw in utf8fromString', (t) => {
-    for (const { charcodes } of orphans) {
-      t.assert.throws(() => utf8fromString(String.fromCharCode(...charcodes)))
+    for (const method of [utf8fromString, (s) => js.encode(s, false)]) {
+      for (const { charcodes } of orphans) {
+        t.assert.throws(() => method(String.fromCharCode(...charcodes)))
+      }
     }
   })
 
   test('orphans get replaced in utf8fromStringLoose', (t) => {
-    for (const { charcodes, hex } of orphans) {
-      t.assert.deepStrictEqual(utf8fromStringLoose(String.fromCharCode(...charcodes)), fromHex(hex))
+    for (const method of [utf8fromStringLoose, (s) => js.encode(s, true)]) {
+      for (const { charcodes, hex } of orphans) {
+        t.assert.deepStrictEqual(method(String.fromCharCode(...charcodes)), fromHex(hex))
+      }
     }
   })
 })
 
-describe('fallback.decode', () => {
-  test('non-utf8 bytes throw in fallback', (t) => {
-    for (const { bytes } of nonUtf8) {
-      t.assert.throws(() => js.decode(Uint8Array.of(...bytes)))
+describe('random data', () => {
+  const strings = []
+  const stringsAscii = []
+  const restored = []
+
+  test('utf8toStringLoose', (t) => {
+    const textDecoder = nativeDecoder ? new TextDecoder() : null // polyfilled might be wrong
+    const NativeBuffer = globalThis.Buffer && !globalThis.Buffer.TYPED_ARRAY_SUPPORT ? Buffer : null
+    for (const u8 of pool) {
+      const str = utf8toStringLoose(u8)
+      t.assert.strictEqual(str, js.decode(u8, true))
+      if (textDecoder) t.assert.strictEqual(str, textDecoder.decode(u8))
+      if (NativeBuffer) t.assert.strictEqual(str, NativeBuffer.from(u8).toString())
+      strings.push(str)
     }
   })
 
-  test('non-utf8 bytes get replaced in loose fallback', (t) => {
-    for (const { bytes, charcodes } of nonUtf8) {
-      const res = js.decode(Uint8Array.of(...bytes), true)
-      t.assert.strictEqual(res.length, charcodes.length)
-      t.assert.strictEqual(res, String.fromCharCode(...charcodes))
-    }
-  })
-})
-
-describe('fallback.encode', () => {
-  test('orphans throw in fallback', (t) => {
-    for (const { charcodes } of orphans) {
-      t.assert.throws(() => js.encode(String.fromCharCode(...charcodes)))
+  test('utf8toString (ascii)', (t) => {
+    const textDecoder = TextDecoder ? new TextDecoder('utf8', { fatal: true }) : null
+    for (const u8 of poolAscii) {
+      const str = utf8toString(u8)
+      t.assert.strictEqual(str, utf8toStringLoose(u8))
+      t.assert.strictEqual(str, js.decode(u8, false))
+      t.assert.strictEqual(str, js.decode(u8, true))
+      if (textDecoder) t.assert.strictEqual(str, textDecoder.decode(u8))
+      if (globalThis.Buffer) t.assert.strictEqual(str, Buffer.from(u8).toString())
+      stringsAscii.push(str)
     }
   })
 
-  test('orphans get replaced in loose fallback', (t) => {
-    for (const { charcodes, hex } of orphans) {
-      t.assert.deepStrictEqual(js.encode(String.fromCharCode(...charcodes), true), fromHex(hex))
+  test('utf8toString', (t) => {
+    const textDecoder = TextDecoder ? new TextDecoder('utf8', { fatal: true }) : null
+    t.assert.strictEqual(strings.length, pool.length)
+    for (let i = 0; i < pool.length; i++) {
+      const u8 = pool[i]
+      let str
+      try {
+        str = utf8toString(u8)
+      } catch (e) {
+        if (!(e instanceof TypeError)) throw new Error('Unexpected error')
+      }
+
+      if (str === undefined) {
+        t.assert.throws(() => js.decode(u8, false))
+        if (textDecoder) t.assert.throws(() => textDecoder.decode(u8))
+      } else {
+        t.assert.strictEqual(str, strings[i])
+        t.assert.strictEqual(str, utf8toStringLoose(u8))
+        t.assert.strictEqual(str, js.decode(u8, false))
+        t.assert.strictEqual(str, js.decode(u8, true))
+        if (textDecoder) t.assert.strictEqual(str, textDecoder.decode(u8))
+        if (globalThis.Buffer) t.assert.strictEqual(str, Buffer.from(u8).toString())
+      }
+    }
+  })
+
+  test('utf8fromString (ascii)', (t) => {
+    const textEncoder = TextEncoder ? new TextEncoder() : null
+    t.assert.strictEqual(stringsAscii.length, poolAscii.length)
+    for (let i = 0; i < poolAscii.length; i++) {
+      const u8 = poolAscii[i]
+      const str = stringsAscii[i]
+      t.assert.deepStrictEqual(u8, utf8fromString(str))
+      t.assert.deepStrictEqual(u8, utf8fromStringLoose(str))
+      t.assert.deepStrictEqual(u8, js.encode(str, false))
+      t.assert.deepStrictEqual(u8, js.encode(str, true))
+      t.assert.deepStrictEqual(u8, textEncoder.encode(str))
+      if (globalThis.Buffer) t.assert.deepEqual(u8, Buffer.from(str))
+    }
+  })
+
+  test('utf8fromString / utf8fromStringLoose', (t) => {
+    const textEncoder = TextEncoder ? new TextEncoder() : null
+    t.assert.strictEqual(strings.length, pool.length)
+    for (let i = 0; i < pool.length; i++) {
+      const str = strings[i]
+      const u8 = utf8fromString(str)
+      t.assert.deepStrictEqual(u8, utf8fromStringLoose(str))
+      t.assert.deepStrictEqual(u8, js.encode(str, false))
+      t.assert.deepStrictEqual(u8, js.encode(str, true))
+      t.assert.deepStrictEqual(u8, textEncoder.encode(str))
+      if (globalThis.Buffer) t.assert.deepEqual(u8, Buffer.from(str))
+      restored.push(u8)
+    }
+  })
+
+  test('utf8toString / utf8toStringLoose', (t) => {
+    const textDecoder = TextDecoder ? new TextDecoder('utf8', { fatal: true }) : null
+    t.assert.strictEqual(strings.length, pool.length)
+    for (let i = 0; i < pool.length; i++) {
+      const str = strings[i]
+      const u8 = restored[i]
+      t.assert.strictEqual(str, utf8toString(u8))
+      t.assert.strictEqual(str, utf8toStringLoose(u8))
+      t.assert.strictEqual(str, js.decode(u8, false))
+      t.assert.strictEqual(str, js.decode(u8, true))
+      if (textDecoder) t.assert.strictEqual(str, textDecoder.decode(u8))
+      if (globalThis.Buffer) t.assert.strictEqual(str, Buffer.from(u8).toString())
     }
   })
 })
