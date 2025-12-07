@@ -9,16 +9,21 @@ const map = [
   0x02_dc, 0x21_22, 0x01_61, 0x20_3a, 0x01_53, 0x00_9d, 0x01_7e, 0x01_78, // 0x98 - 0x9F
 ]
 
+export function mapped(arr, start = 0) {
+  const out = Uint16Array.from(start === 0 ? arr : arr.subarray(start)) // copy to modify in-place, also those are 16-bit now
+  const end = out.length
+  for (let i = 0; i < end; i++) {
+    const c = out[i]
+    if ((c & 0b1110_0000) === 0b1000_0000) out[i] = map[c & 0x7f] // 3 high bytes must match for 0x80-0x9f range
+  }
+
+  return out
+}
+
 export function decode(arr) {
   const prefix = decodeLatin1(arr, 0, asciiPrefix(arr))
   if (prefix.length === arr.length) return prefix
 
-  const tail = Uint16Array.from(arr.subarray(prefix.length)) // copy to modify in-place, also those are 16-bit now
-  const end = tail.length
-  for (let i = 0; i < end; i++) {
-    const c = tail[i]
-    if ((c & 0b1110_0000) === 0b1000_0000) tail[i] = map[c & 0x7f] // 3 high bytes must match for 0x80-0x9f range
-  }
-
+  const tail = mapped(arr, prefix.length)
   return prefix + decodeLatin1(tail, 0, tail.length) // decodeLatin1 is actually capable of decoding 16-bit codepoints
 }
