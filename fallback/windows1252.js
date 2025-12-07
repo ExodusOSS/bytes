@@ -12,10 +12,18 @@ const map = [
 
 function mappedCopy(arr, start = 0) {
   const out = Uint16Array.from(start === 0 ? arr : arr.subarray(start)) // copy to modify in-place, also those are 16-bit now
-  const end = out.length
-  for (let i = 0; i < end; i++) {
+  let i = 0
+  for (const end3 = out.length - 3; i < end3; i += 4) {
+    const c0 = out[i], c1 = out[i + 1], c2 = out[i + 2], c3 = out[i + 3] // prettier-ignore
+    if ((c0 & 0xe0) === 0x80) out[i] = map[c0 & 0x7f]
+    if ((c1 & 0xe0) === 0x80) out[i + 1] = map[c1 & 0x7f]
+    if ((c2 & 0xe0) === 0x80) out[i + 2] = map[c2 & 0x7f]
+    if ((c3 & 0xe0) === 0x80) out[i + 3] = map[c3 & 0x7f]
+  }
+
+  for (const end = out.length; i < end; i++) {
     const c = out[i]
-    if ((c & 0b1110_0000) === 0b1000_0000) out[i] = map[c & 0x7f] // 3 high bytes must match for 0x80-0x9f range
+    if ((c & 0xe0) === 0x80) out[i] = map[c & 0x7f] // 3 high bytes must match for 0x80-0x9f range
   }
 
   return out
@@ -24,10 +32,19 @@ function mappedCopy(arr, start = 0) {
 // Faster in Hermes
 function mappedZero(arr, start = 0) {
   const out = new Uint16Array(arr.length - start)
-  const length = out.length
-  for (let i = 0, j = start; i < length; i++, j++) {
+  let i = 0
+  let j = start
+  for (const end3 = out.length - 3; i < end3; i += 4, j += 4) {
+    const c0 = arr[j], c1 = arr[j + 1], c2 = arr[j + 2], c3 = arr[j + 3] // prettier-ignore
+    out[i] = (c0 & 0xe0) === 0x80 ? map[c0 & 0x7f] : c0
+    out[i + 1] = (c1 & 0xe0) === 0x80 ? map[c1 & 0x7f] : c1
+    out[i + 2] = (c2 & 0xe0) === 0x80 ? map[c2 & 0x7f] : c2
+    out[i + 3] = (c3 & 0xe0) === 0x80 ? map[c3 & 0x7f] : c3
+  }
+
+  for (const end = out.length; i < end; i++, j++) {
     const c = arr[j]
-    out[i] = (c & 0b1110_0000) === 0b1000_0000 ? map[c & 0x7f] : c // 3 high bytes must match for 0x80-0x9f range
+    out[i] = (c & 0xe0) === 0x80 ? map[c & 0x7f] : c // 3 high bytes must match for 0x80-0x9f range
   }
 
   return out
