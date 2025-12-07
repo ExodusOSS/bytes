@@ -5,6 +5,7 @@ if (Buffer.TYPED_ARRAY_SUPPORT) throw new Error('Unexpected Buffer polyfill')
 
 const isLE = new Uint8Array(Uint16Array.of(258).buffer)[0] === 2
 const { isWellFormed } = String.prototype
+const to8 = (a) => new Uint8Array(a.buffer, a.byteOffset, a.byteLength)
 
 // Unlike utf8, operates on Uint16Arrays by default
 
@@ -21,8 +22,8 @@ function encode(str, loose = false, format = 'uint16') {
 
   const ble = Buffer.from(str, 'utf-16le')
 
-  if (format === 'uint8-le') return ble
-  if (format === 'uint8-be') return ble.swap16()
+  if (format === 'uint8-le') return to8(ble)
+  if (format === 'uint8-be') return to8(ble.swap16())
   if (format === 'uint16') {
     const b = ble.byteOffset % 2 === 0 ? ble : Buffer.from(ble) // it should be already aligned, but just in case
     if (!isLE) b.swap16()
