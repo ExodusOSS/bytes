@@ -206,7 +206,7 @@ describe('random data', () => {
       t.assert.deepStrictEqual(u8, utf8fromStringLoose(str))
       t.assert.deepStrictEqual(u8, js.encode(str, false))
       t.assert.deepStrictEqual(u8, js.encode(str, true))
-      t.assert.deepStrictEqual(u8, textEncoder.encode(str))
+      if (textEncoder) t.assert.deepStrictEqual(u8, textEncoder.encode(str))
       if (globalThis.Buffer) t.assert.deepEqual(u8, Buffer.from(str))
     }
   })
@@ -220,7 +220,7 @@ describe('random data', () => {
       t.assert.deepStrictEqual(u8, utf8fromStringLoose(str))
       t.assert.deepStrictEqual(u8, js.encode(str, false))
       t.assert.deepStrictEqual(u8, js.encode(str, true))
-      t.assert.deepStrictEqual(u8, textEncoder.encode(str))
+      if (textEncoder) t.assert.deepStrictEqual(u8, textEncoder.encode(str))
       if (globalThis.Buffer) t.assert.deepEqual(u8, Buffer.from(str))
       restored.push(u8)
     }
