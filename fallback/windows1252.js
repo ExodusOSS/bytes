@@ -1,4 +1,5 @@
 import { asciiPrefix, decodeLatin1 } from './latin1.js'
+import { isHermes } from './_utils.js'
 
 // 0x80-0x9f is the Windows1252 byte range that maps differently from Latin1 / Unicode subset
 // prettier-ignore
@@ -9,7 +10,7 @@ const map = [
   0x02_dc, 0x21_22, 0x01_61, 0x20_3a, 0x01_53, 0x00_9d, 0x01_7e, 0x01_78, // 0x98 - 0x9F
 ]
 
-export function mapped(arr, start = 0) {
+function mappedCopy(arr, start = 0) {
   const out = Uint16Array.from(start === 0 ? arr : arr.subarray(start)) // copy to modify in-place, also those are 16-bit now
   const end = out.length
   for (let i = 0; i < end; i++) {
@@ -19,6 +20,20 @@ export function mapped(arr, start = 0) {
 
   return out
 }
+
+// Faster in Hermes
+function mappedZero(arr, start = 0) {
+  const out = new Uint16Array(arr.length - start)
+  const length = out.length
+  for (let i = 0, j = start; i < length; i++, j++) {
+    const c = arr[j]
+    out[i] = (c & 0b1110_0000) === 0b1000_0000 ? map[c & 0x7f] : c // 3 high bytes must match for 0x80-0x9f range
+  }
+
+  return out
+}
+
+export const mapped = isHermes ? mappedZero : mappedCopy
 
 export function decode(arr) {
   const prefix = decodeLatin1(arr, 0, asciiPrefix(arr))
