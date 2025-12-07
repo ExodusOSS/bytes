@@ -12,6 +12,30 @@ const orphans = [
 ]
 
 const seed = randomValues(5 * 1024)
+const seed1 = seed.slice(1, -1)
+const seed2 = seed.slice(2, -2)
+const seed3 = seed.slice(3, -3)
+const pool = [
+  new Uint16Array(0),
+  new Uint16Array(2),
+  new Uint16Array(256),
+  new Uint16Array(256).fill(1),
+  new Uint16Array(256).fill(42),
+  new Uint16Array(256).fill(255),
+  new Uint16Array(256).fill(0xd0_00),
+  new Uint16Array(256).fill(0xdf_ff),
+  new Uint16Array(256).fill(0xff_ff),
+  new Uint16Array(seed.buffer, seed.byteOffset, seed.byteLength / 2),
+  new Uint16Array(seed1.buffer, seed1.byteOffset, seed1.byteLength / 2),
+  new Uint16Array(seed2.buffer, seed2.byteOffset, seed2.byteLength / 2),
+  new Uint16Array(seed3.buffer, seed3.byteOffset, seed3.byteLength / 2),
+]
+
+for (let i = 0; i < 500; i++) {
+  const offset = Math.floor((Math.random() * seed.length) / 2) * 2
+  const u8 = seed.subarray(offset).map((x, j) => x + i * j)
+  pool.push(new Uint16Array(u8.buffer, u8.byteOffset, u8.byteLength / 2))
+}
 
 describe('utf16toString', () => {
   describe('invalid input', () => {
@@ -73,30 +97,6 @@ describe('utf16toString', () => {
       }
     }
   })
-
-  test('loose mode matches fallback on random data', (t) => {
-    const seed1 = seed.slice(1, -1)
-    const seed2 = seed.slice(2, -2)
-    const seed3 = seed.slice(3, -3)
-    for (const u16 of [
-      new Uint16Array(0),
-      new Uint16Array(256),
-      new Uint16Array(256).fill(1),
-      new Uint16Array(256).fill(42),
-      new Uint16Array(256).fill(255),
-      new Uint16Array(256).fill(0xd0_00),
-      new Uint16Array(256).fill(0xdf_ff),
-      new Uint16Array(256).fill(0xff_ff),
-      new Uint16Array(seed.buffer, seed.byteOffset, seed.byteLength / 2),
-      new Uint16Array(seed1.buffer, seed1.byteOffset, seed1.byteLength / 2),
-      new Uint16Array(seed2.buffer, seed2.byteOffset, seed2.byteLength / 2),
-      new Uint16Array(seed3.buffer, seed3.byteOffset, seed3.byteLength / 2),
-      Uint16Array.from(seed),
-      Uint16Array.from(seed1),
-    ]) {
-      t.assert.strictEqual(utf16.utf16toStringLoose(u16), js.decode(u16, true))
-    }
-  })
 })
 
 describe('utf16fromString', () => {
@@ -127,6 +127,15 @@ describe('utf16fromString', () => {
         const input = String.fromCharCode(...invalid)
         t.assert.deepStrictEqual(utf16fromStringLoose(input), Uint16Array.from(replaced))
       }
+    }
+  })
+})
+
+describe('random data', () => {
+  test('utf16toStringLoose', (t) => {
+    for (const u16 of pool) {
+      const str = utf16.utf16toStringLoose(u16)
+      t.assert.strictEqual(str, js.decode(u16, true))
     }
   })
 })
