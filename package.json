@@ -76,7 +76,11 @@
       "node": "./utf8.node.js",
       "default": "./utf8.js"
     },
-    "./wif.js": "./wif.js"
+    "./wif.js": "./wif.js",
+    "./windows1252.js": {
+      "node": "./windows1252.node.js",
+      "default": "./windows1252.js"
+    }
   },
   "peerDependencies": {
     "@exodus/crypto": "^1.0.0-rc.4"
