@@ -7,12 +7,14 @@
 
 import { utf16toString, utf16toStringLoose } from '@exodus/bytes/utf16.js'
 import { utf8fromStringLoose, utf8toString, utf8toStringLoose } from '@exodus/bytes/utf8.js'
-import { windows1252toString } from '@exodus/bytes/single-byte.js'
+import { createDecoder } from '@exodus/bytes/single-byte.js'
 
 const Utf8 = 'utf-8'
 const Utf16LE = 'utf-16le'
 const Utf16BE = 'utf-16be'
 const Win1252 = 'windows-1252'
+
+const E_OPTIONS = 'The "options" argument must be of type object'
 
 // https://encoding.spec.whatwg.org/#names-and-labels
 // prettier-ignore
@@ -51,68 +53,82 @@ const fromSource = (x) => {
   throw new TypeError('Argument must be a SharedArrayBuffer, ArrayBuffer or ArrayBufferView')
 }
 
-export function TextEncoder() {
-  define(this, 'encoding', 'utf-8')
-}
-
-TextEncoder.prototype.encode = function (str = '') {
-  const res = utf8fromStringLoose(str)
-  return res.byteOffset === 0 ? res : res.slice(0) // Ensure 0-offset. TODO: do we need this?
-}
-
-// npmjs.com/text-encoding polyfill doesn't support this at all
-TextEncoder.prototype.encodeInto = function (str, target) {
-  if (!(target instanceof Uint8Array)) throw new TypeError('Second argument must be an Uint8Array')
-  const u8 = utf8fromStringLoose(str)
-  if (target.length < u8.length) throw new RangeError('Truncation not supported') // TODO
-  target.set(u8) // TODO: perf
-  return { read: str.length, written: u8.length }
-}
-
-export function TextDecoder(encoding = Utf8, options = {}) {
-  if (typeof options !== 'object') throw new TypeError('"options" argument must be of type object')
-  const { fatal = false, ignoreBOM = false, stream = false } = options
-  if (stream !== false) throw new TypeError('Option "stream" is not supported')
-
-  define(this, 'encoding', normalizeEncoding(encoding))
-  define(this, 'fatal', fatal)
-  define(this, 'ignoreBOM', ignoreBOM)
-}
-
-// TODO: test behavior on BOM for LE/BE
-TextDecoder.prototype.decode = function (input, { stream = false } = {}) {
-  if (stream) throw new TypeError('Option "stream" is not supported')
-  if (input === undefined) return ''
-  let u = fromSource(input)
-  let suffix = ''
-  if (this.encoding === 'utf-8') {
-    if (!this.ignoreBOM && u.byteLength >= 3 && u[0] === 0xef && u[1] === 0xbb && u[2] === 0xbf) {
-      u = u.subarray(3)
-    }
-
-    return this.fatal ? utf8toString(u) : utf8toStringLoose(u)
+export class TextEncoder {
+  constructor() {
+    define(this, 'encoding', 'utf-8')
   }
 
-  if (this.encoding === 'utf-16le') {
-    if (!this.ignoreBOM && u.byteLength >= 2 && u[0] === 0xff && u[1] === 0xfe) u = u.subarray(2)
-    if (!this.fatal && u.byteLength % 2 !== 0) {
-      u = u.subarray(0, -1)
-      suffix = replacementChar
-    }
-
-    return (this.fatal ? utf16toString(u, 'uint8-le') : utf16toStringLoose(u, 'uint8-le')) + suffix
+  encode(str = '') {
+    const res = utf8fromStringLoose(str)
+    return res.byteOffset === 0 ? res : res.slice(0) // Ensure 0-offset. TODO: do we need this?
   }
 
-  if (this.encoding === 'utf-16be') {
-    if (!this.ignoreBOM && u.byteLength >= 2 && u[0] === 0xfe && u[1] === 0xff) u = u.subarray(2)
-    if (!this.fatal && u.byteLength % 2 !== 0) {
-      u = u.subarray(0, -1)
-      suffix = replacementChar
-    }
+  // npmjs.com/text-encoding polyfill doesn't support this at all
+  encodeInto(str, target) {
+    if (!(target instanceof Uint8Array)) throw new TypeError('Target must be an Uint8Array')
+    const u8 = utf8fromStringLoose(str)
+    if (target.length < u8.length) throw new RangeError('Truncation not supported') // TODO
+    target.set(u8) // TODO: perf
+    return { read: str.length, written: u8.length }
+  }
+}
 
-    return (this.fatal ? utf16toString(u, 'uint8-be') : utf16toStringLoose(u, 'uint8-be')) + suffix
+export class TextDecoder {
+  #decode
+
+  constructor(encoding = Utf8, options = {}) {
+    if (typeof options !== 'object') throw new TypeError(E_OPTIONS)
+    const { fatal = false, ignoreBOM = false, stream = false } = options
+    if (stream !== false) throw new TypeError('Option "stream" is not supported')
+
+    define(this, 'encoding', normalizeEncoding(encoding))
+    define(this, 'fatal', fatal)
+    define(this, 'ignoreBOM', ignoreBOM)
   }
 
-  if (this.encoding === 'windows-1252') return windows1252toString(u) // no BOM possible
-  throw new RangeError('Unsupported encoding')
+  // TODO: test behavior on BOM for LE/BE
+  decode(input, options = {}) {
+    if (typeof options !== 'object') throw new TypeError(E_OPTIONS)
+    const { stream = false } = options
+    if (stream) throw new TypeError('Option "stream" is not supported')
+    if (input === undefined) return ''
+    let u = fromSource(input)
+
+    if (this.encoding === 'utf-8') {
+      if (!this.ignoreBOM && u.byteLength >= 3 && u[0] === 0xef && u[1] === 0xbb && u[2] === 0xbf) {
+        u = u.subarray(3)
+      }
+
+      return this.fatal ? utf8toString(u) : utf8toStringLoose(u)
+    }
+
+    if (this.encoding === 'utf-16le') {
+      let suffix = ''
+      if (!this.ignoreBOM && u.byteLength >= 2 && u[0] === 0xff && u[1] === 0xfe) u = u.subarray(2)
+      if (!this.fatal && u.byteLength % 2 !== 0) {
+        u = u.subarray(0, -1)
+        suffix = replacementChar
+      }
+
+      return (
+        (this.fatal ? utf16toString(u, 'uint8-le') : utf16toStringLoose(u, 'uint8-le')) + suffix
+      )
+    }
+
+    if (this.encoding === 'utf-16be') {
+      let suffix = ''
+      if (!this.ignoreBOM && u.byteLength >= 2 && u[0] === 0xfe && u[1] === 0xff) u = u.subarray(2)
+      if (!this.fatal && u.byteLength % 2 !== 0) {
+        u = u.subarray(0, -1)
+        suffix = replacementChar
+      }
+
+      return (
+        (this.fatal ? utf16toString(u, 'uint8-be') : utf16toStringLoose(u, 'uint8-be')) + suffix
+      )
+    }
+
+    if (!this.#decode) this.#decode = createDecoder(this.encoding) // single-byte
+    return this.#decode(u, !this.fatal) // no BOM possible
+  }
 }
