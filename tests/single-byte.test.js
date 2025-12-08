@@ -2,6 +2,7 @@ import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { test, describe } from 'node:test'
 import { createDecoder } from '@exodus/bytes/single-byte.js'
+import { encodingDecoder } from '../fallback/single-byte.js'
 import encodingsObject from '../fallback/single-byte.encodings.js'
 
 const encodings = Object.keys(encodingsObject)
@@ -20,6 +21,39 @@ describe('single-byte encodings are supersets of ascii', () => {
 
         t.assert.strictEqual(str.length, 1, i)
         t.assert.strictEqual(str.codePointAt(0), i, i)
+      }
+    })
+  }
+})
+
+describe('single-byte encodings match fallback', () => {
+  for (const encoding of encodings) {
+    test(encoding, (t) => {
+      const decoder = createDecoder(encoding)
+      const fallback = encodingDecoder(encoding)
+      for (let i = 0; i < 256; i++) {
+        const u8 = Uint8Array.of(i)
+        let found = false
+        let str
+        try {
+          str = decoder(u8)
+          found = true
+        } catch {}
+
+        if (found) {
+          t.assert.strictEqual(str.length, 1)
+          t.assert.notEqual(str, '\uFFFD')
+          t.assert.strictEqual(decoder(u8, true), str)
+          t.assert.strictEqual(fallback(u8), str)
+          t.assert.strictEqual(fallback(u8, true), str)
+        } else {
+          t.assert.ok(i >= 128)
+          t.assert.throws(() => fallback(u8))
+          str = decoder(u8, true)
+          t.assert.strictEqual(str.length, 1)
+          t.assert.strictEqual(str, '\uFFFD')
+          t.assert.strictEqual(fallback(u8, true), str)
+        }
       }
     })
   }
