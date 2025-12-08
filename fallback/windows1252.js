@@ -1,5 +1,5 @@
 import { asciiPrefix, decodeLatin1 } from './latin1.js'
-import { isHermes } from './_utils.js'
+import { decode2string } from './_utils.js'
 
 // 0x80-0x9f is the Windows1252 byte range that maps differently from Latin1 / Unicode subset
 // prettier-ignore
@@ -10,7 +10,8 @@ const map = Uint16Array.of(
   0x02_dc, 0x21_22, 0x01_61, 0x20_3a, 0x01_53, 0x00_9d, 0x01_7e, 0x01_78, // 0x98 - 0x9F
 )
 
-function mappedCopy(arr, start = 0) {
+export function mapped(arr, start = 0) {
+  // Avoiding .from and filling zero-initialized arr manually is faster on Hermes, but we avoid this codepath on Hermes completely
   const out = Uint16Array.from(start === 0 ? arr : arr.subarray(start)) // copy to modify in-place, also those are 16-bit now
   let i = 0
   for (const end3 = out.length - 3; i < end3; i += 4) {
@@ -29,33 +30,17 @@ function mappedCopy(arr, start = 0) {
   return out
 }
 
-// Faster in Hermes
-function mappedZero(arr, start = 0) {
-  const out = new Uint16Array(arr.length - start)
-  let i = 0
-  let j = start
-  for (const end3 = out.length - 3; i < end3; i += 4, j += 4) {
-    const c0 = arr[j], c1 = arr[j + 1], c2 = arr[j + 2], c3 = arr[j + 3] // prettier-ignore
-    out[i] = (c0 & 0xe0) === 0x80 ? map[c0 & 0x7f] : c0
-    out[i + 1] = (c1 & 0xe0) === 0x80 ? map[c1 & 0x7f] : c1
-    out[i + 2] = (c2 & 0xe0) === 0x80 ? map[c2 & 0x7f] : c2
-    out[i + 3] = (c3 & 0xe0) === 0x80 ? map[c3 & 0x7f] : c3
-  }
-
-  for (const end = out.length; i < end; i++, j++) {
-    const c = arr[j]
-    out[i] = (c & 0xe0) === 0x80 ? map[c & 0x7f] : c // 3 high bytes must match for 0x80-0x9f range
-  }
-
-  return out
-}
-
-export const mapped = isHermes ? mappedZero : mappedCopy
-
+let mapStrings
 export function decode(arr) {
   const prefix = decodeLatin1(arr, 0, asciiPrefix(arr))
   if (prefix.length === arr.length) return prefix
 
-  const tail = mapped(arr, prefix.length)
-  return prefix + decodeLatin1(tail, 0, tail.length) // decodeLatin1 is actually capable of decoding 16-bit codepoints
+  if (!mapStrings) {
+    mapStrings = []
+    for (let c = 0; c < 256; c++) {
+      mapStrings.push(String.fromCharCode((c & 0xe0) === 0x80 ? map[c & 0x7f] : c))
+    }
+  }
+
+  return prefix + decode2string(arr, prefix.length, arr.length, mapStrings)
 }
