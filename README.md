@@ -6,7 +6,7 @@
 
 Performs proper input validation, ensures no garbage-in-garbage-out
 
-Tested on Node.js, Deno, Bun, browsers, Hermes, and barebone engines in CI [(how?)](https://github.com/ExodusMovement/test#exodustest)
+Tested on Node.js, Deno, Bun, browsers, Hermes, QuickJS and barebone engines in CI [(how?)](https://github.com/ExodusMovement/test#exodustest)
 
 ## Fast
 
