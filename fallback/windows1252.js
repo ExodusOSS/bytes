@@ -12,22 +12,22 @@ const map = Uint16Array.of(
 
 export function mapped(arr, start = 0) {
   // Avoiding .from and filling zero-initialized arr manually is faster on Hermes, but we avoid this codepath on Hermes completely
-  const out = Uint16Array.from(start === 0 ? arr : arr.subarray(start)) // copy to modify in-place, also those are 16-bit now
+  const o = Uint16Array.from(start === 0 ? arr : arr.subarray(start)) // copy to modify in-place, also those are 16-bit now
   let i = 0
-  for (const end3 = out.length - 3; i < end3; i += 4) {
-    const c0 = out[i], c1 = out[i + 1], c2 = out[i + 2], c3 = out[i + 3] // prettier-ignore
-    if ((c0 & 0xe0) === 0x80) out[i] = map[c0 & 0x7f]
-    if ((c1 & 0xe0) === 0x80) out[i + 1] = map[c1 & 0x7f]
-    if ((c2 & 0xe0) === 0x80) out[i + 2] = map[c2 & 0x7f]
-    if ((c3 & 0xe0) === 0x80) out[i + 3] = map[c3 & 0x7f]
+  for (const end3 = o.length - 3; i < end3; i += 4) {
+    const c0 = o[i], c1 = o[i + 1], c2 = o[i + 2], c3 = o[i + 3] // prettier-ignore
+    if ((c0 & 0xe0) === 0x80) o[i] = map[c0 & 0x7f]
+    if ((c1 & 0xe0) === 0x80) o[i + 1] = map[c1 & 0x7f]
+    if ((c2 & 0xe0) === 0x80) o[i + 2] = map[c2 & 0x7f]
+    if ((c3 & 0xe0) === 0x80) o[i + 3] = map[c3 & 0x7f]
   }
 
-  for (const end = out.length; i < end; i++) {
-    const c = out[i]
-    if ((c & 0xe0) === 0x80) out[i] = map[c & 0x7f] // 3 high bytes must match for 0x80-0x9f range
+  for (const end = o.length; i < end; i++) {
+    const c = o[i]
+    if ((c & 0xe0) === 0x80) o[i] = map[c & 0x7f] // 3 high bytes must match for 0x80-0x9f range
   }
 
-  return out
+  return o
 }
 
 let mapStrings
