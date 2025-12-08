@@ -71,9 +71,7 @@ export class TextDecoder {
 
   constructor(encoding = 'utf-8', options = {}) {
     if (typeof options !== 'object') throw new TypeError(E_OPTIONS)
-    const { fatal = false, ignoreBOM = false, stream = false } = options
-    if (stream !== false) throw new TypeError('Option "stream" is not supported')
-
+    const { fatal = false, ignoreBOM = false } = options
     define(this, 'encoding', normalizeEncoding(encoding))
     define(this, 'fatal', fatal)
     define(this, 'ignoreBOM', ignoreBOM)
