@@ -18,7 +18,6 @@ globalThis.TextEncoder = class {
 }
 
 // Not a proper impl, not getters, etc
-const isLE = new Uint8Array(Uint16Array.of(258).buffer)[0] === 2
 globalThis.TextDecoder = class {
   constructor(label = 'utf-8', { fatal = false, ignoreBOM = false } = {}) {
     this.encoding = label
@@ -34,9 +33,10 @@ globalThis.TextDecoder = class {
     }
 
     let res
+    // eslint-disable-next-line unicorn/prefer-switch
     if (this.encoding === 'utf-8') {
       res = this.fatal ? utf8toString(input) : utf8toStringLoose(input)
-    } else if (this.encoding === 'utf-16le' || (this.encoding === 'utf-16' && isLE)) {
+    } else if (this.encoding === 'utf-16le' || this.encoding === 'utf-16') {
       if (!this.fatal && input.byteLength % 2 !== 0) {
         const tmp = new Uint8Array(input.byteLength + 1)
         tmp.set(input)
@@ -46,7 +46,7 @@ globalThis.TextDecoder = class {
       }
 
       res = this.fatal ? utf16toString(input, 'uint8-le') : utf16toStringLoose(input, 'uint8-le')
-    } else if (this.encoding === 'utf-16be' || (this.encoding === 'utf-16' && !isLE)) {
+    } else if (this.encoding === 'utf-16be') {
       if (!this.fatal && input.byteLength % 2 !== 0) {
         const tmp = new Uint8Array(input.byteLength + 1)
         tmp.set(input)

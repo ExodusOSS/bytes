@@ -43,9 +43,10 @@ globalThis.TextDecoder = class {
     }
 
     let res
+    // eslint-disable-next-line unicorn/prefer-switch
     if (this.encoding === 'utf-8') {
       res = utf8.decode(input, !this.fatal)
-    } else if (this.encoding === 'utf-16le' || (this.encoding === 'utf-16' && isLE)) {
+    } else if (this.encoding === 'utf-16le' || this.encoding === 'utf-16') {
       if (!this.fatal && input.byteLength % 2 !== 0) {
         const tmp = new Uint8Array(input.byteLength + 1)
         tmp.set(input)
@@ -60,7 +61,7 @@ globalThis.TextDecoder = class {
       if (input.byteLength % 2 !== 0) throw new TypeError('Expected even number of bytes')
       const u16 = new Uint16Array(input.buffer, input.byteOffset, input.byteLength / 2)
       res = utf16.decode(u16, !this.fatal)
-    } else if (this.encoding === 'utf-16be' || (this.encoding === 'utf-16' && !isLE)) {
+    } else if (this.encoding === 'utf-16be') {
       if (!this.fatal && input.byteLength % 2 !== 0) {
         const tmp = new Uint8Array(input.byteLength + 1)
         tmp.set(input)
