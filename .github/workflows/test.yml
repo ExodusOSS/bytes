@@ -32,7 +32,7 @@ jobs:
 
     strategy:
       matrix:
-        engine: [hermes, v8, javascriptcore, spidermonkey]
+        engine: [hermes, v8, javascriptcore, spidermonkey, quickjs]
 
     steps:
       - uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29
