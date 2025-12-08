@@ -66,8 +66,12 @@ export class TextEncoder {
   }
 }
 
+// Only supported ones, the rest will fall through anyway
+const multibyte = new Set(['utf-8', 'utf-16le', 'utf-16be'])
+
 export class TextDecoder {
   #decode
+  #multibyte
 
   constructor(encoding = 'utf-8', options = {}) {
     if (typeof options !== 'object') throw new TypeError(E_OPTIONS)
@@ -75,13 +79,14 @@ export class TextDecoder {
     define(this, 'encoding', normalizeEncoding(encoding))
     define(this, 'fatal', fatal)
     define(this, 'ignoreBOM', ignoreBOM)
+    this.#multibyte = multibyte.has(this.encoding)
   }
 
   // TODO: test behavior on BOM for LE/BE
   decode(input, options = {}) {
     if (typeof options !== 'object') throw new TypeError(E_OPTIONS)
     const { stream = false } = options
-    if (stream) throw new TypeError('Option "stream" is not supported')
+    if (stream && this.#multibyte) throw new TypeError('Option "stream" is not supported')
     if (input === undefined) return ''
     let u = fromSource(input)
 
