@@ -26,7 +26,7 @@ export function createDecoder(encoding) {
 
     // Node.js TextDecoder is broken, so we can't use it. It's also slow anyway
 
-    const prefix = decodeLatin1(arr, 0, asciiPrefix(arr))
+    const prefix = toBuf(arr).latin1Slice(0, asciiPrefix(arr)) // .latin1Slice is faster than .asciiSlice
     if (prefix.length === arr.length) return prefix
 
     const b = mapper(arr, prefix.length)
