@@ -4,6 +4,7 @@ import { E_STRICT, E_STRICT_UNICODE } from './fallback/utf16.js'
 if (Buffer.TYPED_ARRAY_SUPPORT) throw new Error('Unexpected Buffer polyfill')
 
 const isLE = new Uint8Array(Uint16Array.of(258).buffer)[0] === 2
+const isDeno = Boolean(globalThis.Deno)
 const { isWellFormed } = String.prototype
 const to8 = (a) => new Uint8Array(a.buffer, a.byteOffset, a.byteLength)
 
@@ -37,7 +38,7 @@ const swapped = (x, swap) =>
   swap ? Buffer.from(x).swap16() : Buffer.from(x.buffer, x.byteOffset, x.byteLength)
 
 // We skip TextDecoder on Node.js, as it's is somewhy significantly slower than Buffer for utf16
-function decode(input, loose = false, format = 'uint16') {
+function decodeNode(input, loose = false, format = 'uint16') {
   let ble
   if (format === 'uint16') {
     if (!(input instanceof Uint16Array)) throw new TypeError('Expected an Uint16Array')
@@ -55,6 +56,24 @@ function decode(input, loose = false, format = 'uint16') {
   if (!loose) throw new TypeError(E_STRICT)
   return nativeDecoder.decode(Buffer.from(str)) // fixup (see above)
 }
+
+function decodeDecoder(input, loose = false, format = 'uint16') {
+  let encoding
+  if (format === 'uint16') {
+    if (!(input instanceof Uint16Array)) throw new TypeError('Expected an Uint16Array')
+    encoding = isLE ? 'utf-16le' : 'utf-16be'
+  } else if (format === 'uint8-le' || format === 'uint8-be') {
+    if (!(input instanceof Uint8Array)) throw new TypeError('Expected an Uint8Array')
+    if (input.byteLength % 2 !== 0) throw new TypeError('Expected even number of bytes')
+    encoding = format === 'uint8-le' ? 'utf-16le' : 'utf-16be'
+  } else {
+    throw new TypeError('Unknown format')
+  }
+
+  return new TextDecoder(encoding, { fatal: !loose }).decode(input) // TODO: cache decoder?
+}
+
+const decode = isDeno ? decodeDecoder : decodeNode
 
 export const utf16fromString = (str, format = 'uint16') => encode(str, false, format)
 export const utf16fromStringLoose = (str, format = 'uint16') => encode(str, true, format)
