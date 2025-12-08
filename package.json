@@ -10,6 +10,8 @@
     "test:spidermonkey": "exodus-test --engine=spidermonkey:bundle",
     "test:hermes": "exodus-test --engine=hermes:bundle",
     "test:quickjs": "exodus-test --engine=quickjs:bundle",
+    "test:deno": "exodus-test --engine=deno:pure",
+    "test:bun": "exodus-test --engine=bun:pure",
     "test:electron:bundle": "exodus-test --engine=electron:bundle",
     "test:electron:as-node": "exodus-test --engine=electron-as-node:test",
     "test:chrome:puppeteer": "exodus-test --engine=chrome:puppeteer",

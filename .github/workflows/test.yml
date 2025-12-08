@@ -106,3 +106,45 @@ jobs:
       - run: pnpm i --frozen-lockfile
       - run: node --run test:electron:as-node
       - run: xvfb-run node --run test:electron:bundle
+
+  bun:
+    runs-on: ubuntu-22.04
+    name: 'Test on Bun'
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29
+      - uses: pnpm/action-setup@a7487c7e89a18df4991f7f222e4898a00d66ddda
+        with:
+          run_install: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version-file: '.nvmrc'
+          cache: pnpm
+          registry-url: 'https://registry.npmjs.org'
+      - uses: oven-sh/setup-bun@735343b667d3e6f658f44d0eca948eb6282f2b76
+      - run: pnpm i --frozen-lockfile
+      - run: node --run test:bun
+
+  deno:
+    runs-on: ubuntu-22.04
+    name: 'Test on Deno ${{ matrix.deno-version }}'
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        deno-version: ['v2.x']
+    steps:
+      - uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29
+      - uses: pnpm/action-setup@a7487c7e89a18df4991f7f222e4898a00d66ddda
+        with:
+          run_install: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version-file: '.nvmrc'
+          cache: pnpm
+          registry-url: 'https://registry.npmjs.org'
+      - uses: denoland/setup-deno@909cc5acb0fdd60627fb858598759246509fa755
+        with:
+          deno-version: ${{ matrix.deno-version }}
+      - run: pnpm i --frozen-lockfile
+      - run: node --run test:deno
