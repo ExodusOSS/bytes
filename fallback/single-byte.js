@@ -2,11 +2,15 @@ import { asciiPrefix, decodeLatin1 } from './latin1.js'
 import { decode2string } from './_utils.js'
 
 const encodings = {
-  windows1252: '€\x81‚ƒ„…†‡ˆ‰Š‹Œ\x8DŽ\x8F\x90‘’“”•–—˜™š›œ\x9DžŸ',
+  'windows-1252': '€\x81‚ƒ„…†‡ˆ‰Š‹Œ\x8DŽ\x8F\x90‘’“”•–—˜™š›œ\x9DžŸ',
+}
+
+export const assertEncoding = (encoding) => {
+  if (!Object.hasOwn(encodings, encoding)) throw new RangeError('Invalid encoding')
 }
 
 function getEncoding(encoding) {
-  if (!Object.hasOwn(encodings, encoding)) throw new RangeError('Invalid encoding')
+  assertEncoding(encoding)
   return encodings[encoding].split('')
 }
 

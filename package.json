@@ -68,6 +68,10 @@
       "node": "./hex.node.js",
       "default": "./hex.js"
     },
+    "./single-byte.js": {
+      "node": "./single-byte.node.js",
+      "default": "./single-byte.js"
+    },
     "./text-encoding.js": "./text-encoding.js",
     "./utf16.js": {
       "node": "./utf16.node.js",
@@ -77,11 +81,7 @@
       "node": "./utf8.node.js",
       "default": "./utf8.js"
     },
-    "./wif.js": "./wif.js",
-    "./windows1252.js": {
-      "node": "./windows1252.node.js",
-      "default": "./windows1252.js"
-    }
+    "./wif.js": "./wif.js"
   },
   "peerDependencies": {
     "@exodus/crypto": "^1.0.0-rc.4"

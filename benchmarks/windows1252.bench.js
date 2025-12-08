@@ -1,5 +1,5 @@
-import * as exodus from '@exodus/bytes/windows1252.js'
-import { encodingDecoder } from '../fallback/single-byte-encoding.js'
+import * as exodus from '@exodus/bytes/single-byte.js'
+import { encodingDecoder } from '../fallback/single-byte.js'
 import { benchmark } from '@exodus/test/benchmark' // eslint-disable-line @exodus/import/no-unresolved
 import buffer from 'buffer/index.js'
 import { describe, test } from 'node:test'
@@ -20,7 +20,7 @@ const isNative = (x) => x && (!bufferIsPolyfilled || `${x}`.includes('[native co
 const { TextDecoder } = globalThis
 const textDecoder = isNative(TextDecoder) ? new TextDecoder('windows-1252', { fatal: true }) : null
 const textDecoderJS = new js.TextDecoder('windows-1252', { fatal: true })
-const fallback = encodingDecoder('windows1252')
+const fallback = encodingDecoder('windows-1252')
 
 const columns = [
   '@exodus/bytes/windows1252',

@@ -7,7 +7,7 @@
 
 import { utf16toString, utf16toStringLoose } from '@exodus/bytes/utf16.js'
 import { utf8fromStringLoose, utf8toString, utf8toStringLoose } from '@exodus/bytes/utf8.js'
-import { windows1252toString } from '@exodus/bytes/windows1252.js'
+import { windows1252toString } from '@exodus/bytes/single-byte.js'
 
 const Utf8 = 'utf-8'
 const Utf16LE = 'utf-16le'
