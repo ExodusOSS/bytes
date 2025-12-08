@@ -35,7 +35,9 @@ describe('small', () => {
 })
 
 const skipLarge =
-  process.env.EXODUS_TEST_PLATFORM === 'quickjs' || process.env.EXODUS_TEST_PLATFORM === 'xs'
+  process.env.EXODUS_TEST_PLATFORM === 'quickjs' ||
+  process.env.EXODUS_TEST_PLATFORM === 'xs' ||
+  process.env.EXODUS_TEST_PLATFORM === 'engine262'
 describe('large', { skip: skipLarge }, async () => {
   const gzipped = readFileSync(path.join(import.meta.dirname, 'data.json.gz'))
   const dataLarge = JSON.parse(utf8toString(await gunzip(gzipped)))
