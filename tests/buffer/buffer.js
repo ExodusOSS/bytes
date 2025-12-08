@@ -2,8 +2,6 @@ import { fromBase64any, toBase64 } from '@exodus/bytes/base64.js' // eslint-disa
 import { fromHex, toHex } from '@exodus/bytes/hex.js' // eslint-disable-line @exodus/import/no-unresolved
 import { utf8fromStringLoose, utf8toStringLoose } from '@exodus/bytes/utf8.js' // eslint-disable-line @exodus/import/no-unresolved
 
-/* eslint-disable unicorn/text-encoding-identifier-case */
-
 // Warning: this implementation is just for testing, not universal
 
 const toString = function (enc = 'utf8') {

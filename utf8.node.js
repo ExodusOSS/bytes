@@ -5,8 +5,8 @@ import { isAscii } from 'node:buffer'
 
 if (Buffer.TYPED_ARRAY_SUPPORT) throw new Error('Unexpected Buffer polyfill')
 
-const decoderFatal = new TextDecoder('utf8', { ignoreBOM: true, fatal: true })
-const decoderLoose = new TextDecoder('utf8', { ignoreBOM: true })
+const decoderFatal = new TextDecoder('utf-8', { ignoreBOM: true, fatal: true })
+const decoderLoose = new TextDecoder('utf-8', { ignoreBOM: true })
 const { isWellFormed } = String.prototype
 const isDeno = Boolean(globalThis.Deno)
 

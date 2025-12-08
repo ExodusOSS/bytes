@@ -1,6 +1,6 @@
 // See https://encoding.spec.whatwg.org/#names-and-labels
 
-/* eslint-disable @exodus/export-default/named, unicorn/text-encoding-identifier-case */
+/* eslint-disable @exodus/export-default/named */
 // prettier-ignore
 export default {
   'utf-8': ['unicode-1-1-utf-8', 'unicode11utf8', 'unicode20utf8', 'utf8', 'x-unicode20utf8'],

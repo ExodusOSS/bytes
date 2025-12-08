@@ -17,6 +17,7 @@ module.exports = {
         'unicorn/prefer-code-point': 'off',
         'unicorn/prefer-math-trunc': 'off',
         'unicorn/prefer-spread': 'off',
+        'unicorn/text-encoding-identifier-case': 'off',
       },
     },
     {

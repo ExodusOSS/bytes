@@ -11,8 +11,8 @@ const haveDecoder = isNative(TextDecoder)
 const nativeEncoder = isNative(TextEncoder) ? new TextEncoder() : null
 // ignoreBOM: true means that BOM will be left as-is, i.e. will be present in the output
 // We don't want to strip anything unexpectedly
-const decoderFatal = haveDecoder ? new TextDecoder('utf8', { ignoreBOM: true, fatal: true }) : null
-const decoderLoose = haveDecoder ? new TextDecoder('utf8', { ignoreBOM: true }) : null
+const decoderFatal = haveDecoder ? new TextDecoder('utf-8', { ignoreBOM: true, fatal: true }) : null
+const decoderLoose = haveDecoder ? new TextDecoder('utf-8', { ignoreBOM: true }) : null
 const { isWellFormed } = String.prototype
 
 const { E_STRICT, E_STRICT_UNICODE } = js
