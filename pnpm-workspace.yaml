@@ -13,5 +13,6 @@ overrides:
   '@exodus/test>c8': '-'
   '@exodus/test>tsx': '-'
   '@exodus/test-bundler>flow-remove-types': '-'
+  '@exodus/crypto>@exodus/bytes': 'file:.'
 
 preferWorkspacePackages: true
