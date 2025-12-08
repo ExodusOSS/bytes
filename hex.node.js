@@ -5,6 +5,7 @@ import { E_HEX } from './fallback/hex.js'
 if (Buffer.TYPED_ARRAY_SUPPORT) throw new Error('Unexpected Buffer polyfill')
 
 const { toHex: webHex } = Uint8Array.prototype // Modern engines have this
+const denoBug = Buffer.from('ag', 'hex').length > 0
 
 export function toHex(arr) {
   assertUint8(arr)
@@ -20,6 +21,7 @@ export const fromHex = Uint8Array.fromHex
   : (str, format = 'uint8') => {
       if (typeof str !== 'string') throw new TypeError('Input is not a string')
       if (str.length % 2 !== 0) throw new SyntaxError(E_HEX)
+      if (denoBug && /[^\dA-Fa-f]/.test(str)) throw new SyntaxError(E_HEX)
       const buf = Buffer.from(str, 'hex') // will stop on first non-hex character, so we can just validate length
       if (buf.length * 2 !== str.length) throw new SyntaxError(E_HEX)
       return typedView(buf, format)
