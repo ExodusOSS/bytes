@@ -45,5 +45,7 @@ const table = JSON.stringify(encodings, undefined, 2)
     if (c <= 0xff_ff) return `\\u${c.toString(16).padStart(4, '0').toUpperCase()}`
     throw new Error('Unexpected')
   })
+  .replaceAll(/(\\uFFFD){2,}/g, (x) => `" + "\\uFFFD".repeat(${x.length / 6}) + "`)
+  .replaceAll(') + ""', ')')
 
 console.log(table)
