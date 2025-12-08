@@ -6,6 +6,8 @@ import {
   isHermes,
 } from './_utils.js'
 
+const isDeno = Boolean(globalThis.Deno)
+
 // See http://stackoverflow.com/a/22747272/680742, which says that lowest limit is in Chrome, with 0xffff args
 // On Hermes, actual max is 0x20_000 minus current stack depth, 1/16 of that should be safe
 const maxFunctionArgs = 0x20_00
@@ -64,7 +66,7 @@ export function decodeLatin1(arr, start = 0, stop = arr.length) {
 export const decodeAscii = nativeBuffer
   ? (a) =>
       // Buffer is faster on Node.js (but only for long enough data), if we know that output is ascii
-      a.byteLength >= 0x3_00
+      a.byteLength >= 0x3_00 && !isDeno
         ? nativeBuffer.from(a.buffer, a.byteOffset, a.byteLength).latin1Slice(0, a.byteLength) // .latin1Slice is faster than .asciiSlice
         : nativeDecoder.decode(a) // On Node.js, utf8 decoder is faster than latin1
   : nativeDecoderLatin1
