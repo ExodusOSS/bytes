@@ -11,7 +11,7 @@ export function createDecoder(encoding) {
   return (arr) => {
     assertUint8(arr)
     if (arr.byteLength === 0) return ''
-    if (isAscii(arr)) toBuf(arr).latin1Slice(0, arr.byteLength) // .latin1Slice is faster than .asciiSlice
+    if (isAscii(arr)) return toBuf(arr).latin1Slice(0, arr.byteLength) // .latin1Slice is faster than .asciiSlice
 
     // Node.js TextDecoder is broken, so we can't use it. It's also slow anyway
 
