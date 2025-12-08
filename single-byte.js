@@ -1,5 +1,5 @@
 import { assertUint8 } from './assert.js'
-import { nativeDecoder } from './fallback/_utils.js'
+import { canDecoders } from './fallback/_utils.js'
 import { assertEncoding, encodingDecoder } from './fallback/single-byte.js'
 
 const { TextDecoder } = globalThis
@@ -8,7 +8,7 @@ export function createDecoder(encoding) {
   assertEncoding(encoding)
 
   // iso-8859-16 is somehow broken in WebKit, at least on CI
-  if (nativeDecoder && encoding !== 'iso-8859-16') {
+  if (canDecoders && encoding !== 'iso-8859-16') {
     const decoder = new TextDecoder(encoding)
     const decoderFatal = new TextDecoder(encoding, { fatal: true })
     return (arr, loose = false) => {

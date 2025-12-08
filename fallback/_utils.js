@@ -11,9 +11,16 @@ export const isHermes = Boolean(globalThis.HermesInternal)
 // Actually windows-1252, compatible with ascii and latin1 decoding
 // Beware that on non-latin1, i.e. on windows-1252, this is broken in ~all Node.js versions released
 // in 2025 due to a regression, so we call it Latin1 as it's usable only for that
-export const nativeDecoderLatin1 = isNative(TextDecoder)
-  ? new TextDecoder('latin1', { ignoreBOM: true })
-  : null
+let nativeDecoderLatin1impl = null
+if (isNative(TextDecoder)) {
+  // Not all barebone engines with TextDecoder support something except utf-8, detect
+  try {
+    nativeDecoderLatin1impl = new TextDecoder('latin1', { ignoreBOM: true })
+  } catch {}
+}
+
+export const nativeDecoderLatin1 = nativeDecoderLatin1impl
+export const canDecoders = Boolean(nativeDecoderLatin1impl)
 
 // Block Firefox < 146 specifically from using native hex/base64, as it's very slow there
 // Refs: https://bugzilla.mozilla.org/show_bug.cgi?id=1994067 (and linked issues), fixed in 146

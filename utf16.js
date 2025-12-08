@@ -1,4 +1,5 @@
 import * as js from './fallback/utf16.js'
+import { canDecoders } from './fallback/_utils.js'
 
 const { Buffer, TextDecoder } = globalThis // Buffer is optional
 const haveNativeBuffer = Buffer && !Buffer.TYPED_ARRAY_SUPPORT
@@ -6,10 +7,10 @@ const isNative = (x) => x && (haveNativeBuffer || `${x}`.includes('[native code]
 const haveDecoder = isNative(TextDecoder)
 const isLE = new Uint8Array(Uint16Array.of(258).buffer)[0] === 2
 const ignoreBOM = true
-const decoderFatalLE = haveDecoder ? new TextDecoder('utf-16le', { ignoreBOM, fatal: true }) : null
-const decoderLooseLE = haveDecoder ? new TextDecoder('utf-16le', { ignoreBOM }) : null
-const decoderFatalBE = haveDecoder ? new TextDecoder('utf-16be', { ignoreBOM, fatal: true }) : null
-const decoderLooseBE = haveDecoder ? new TextDecoder('utf-16be', { ignoreBOM }) : null
+const decoderFatalLE = canDecoders ? new TextDecoder('utf-16le', { ignoreBOM, fatal: true }) : null
+const decoderLooseLE = canDecoders ? new TextDecoder('utf-16le', { ignoreBOM }) : null
+const decoderFatalBE = canDecoders ? new TextDecoder('utf-16be', { ignoreBOM, fatal: true }) : null
+const decoderLooseBE = canDecoders ? new TextDecoder('utf-16be', { ignoreBOM }) : null
 const decoderFatal16 = isLE ? decoderFatalLE : decoderFatalBE
 const decoderLoose16 = isLE ? decoderLooseLE : decoderFatalBE
 const { isWellFormed } = String.prototype
