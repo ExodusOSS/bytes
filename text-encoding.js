@@ -8,36 +8,29 @@
 import { utf16toString, utf16toStringLoose } from '@exodus/bytes/utf16.js'
 import { utf8fromStringLoose, utf8toString, utf8toStringLoose } from '@exodus/bytes/utf8.js'
 import { createDecoder } from '@exodus/bytes/single-byte.js'
-
-const Utf8 = 'utf-8'
-const Utf16LE = 'utf-16le'
-const Utf16BE = 'utf-16be'
-const Win1252 = 'windows-1252'
+import labels from './fallback/text-encoding.labels.js'
 
 const E_OPTIONS = 'The "options" argument must be of type object'
-
-// https://encoding.spec.whatwg.org/#names-and-labels
-// prettier-ignore
-const Utf8alias = new Set(['utf8', 'unicode-1-1-utf-8', 'unicode11utf8', 'unicode20utf8', 'x-unicode20utf8'])
-// prettier-ignore
-const Utf16LEalias = new Set(['utf-16', 'ucs-2', 'unicode', 'unicodefeff', 'iso-10646-ucs-2', 'csunicode']) // there is no 'utf16'
-const Utf16BEalias = new Set(['unicodefffe'])
-// prettier-ignore
-const Win1252alias = new Set([
-  'ascii', 'latin1', 'l1', 'us-ascii', 'ansi_x3.4-1968', 'cp1252', 'cp819', 'csisolatin1', 'ibm819',
-  'iso-8859-1', 'iso-ir-100', 'iso8859-1', 'iso88591', 'iso_8859-1', 'iso_8859-1:1987', 'x-cp1252'
-])
-
 const replacementChar = '\uFFFD'
 
+let labelsMap
 const normalizeEncoding = (encoding) => {
   const lower = `${encoding}`.trim().toLowerCase()
-  if (Utf8 === lower || Utf16LE === lower || Utf16BE === lower || Win1252 === lower) return lower // fast path
-  if (Utf8alias.has(lower)) return Utf8
-  if (Utf16LEalias.has(lower)) return Utf16LE
-  if (Utf16BEalias.has(lower)) return Utf16BE
-  if (Win1252alias.has(lower)) return Win1252
-  throw new RangeError('Only utf-8, utf-16le, utf-16be and windows-1252/latin1/ascii are supported')
+  // fast path
+  if (lower === 'utf-8' || lower === 'utf8') return 'utf-8'
+  if (lower === 'windows-1252' || lower === 'ascii' || lower === 'latin1') return 'windows-1252'
+  // Full map
+  if (Object.hasOwn(labels, lower)) return lower
+  if (!labelsMap) {
+    labelsMap = new Map()
+    for (const [label, aliases] of Object.entries(labels)) {
+      for (const alias of aliases) labelsMap.set(alias, label)
+    }
+  }
+
+  const mapped = labelsMap.get(lower)
+  if (mapped && mapped !== 'replacement') return mapped
+  throw new RangeError('Unknown encoding')
 }
 
 const define = (obj, key, value) => Object.defineProperty(obj, key, { value, writable: false })
@@ -76,7 +69,7 @@ export class TextEncoder {
 export class TextDecoder {
   #decode
 
-  constructor(encoding = Utf8, options = {}) {
+  constructor(encoding = 'utf-8', options = {}) {
     if (typeof options !== 'object') throw new TypeError(E_OPTIONS)
     const { fatal = false, ignoreBOM = false, stream = false } = options
     if (stream !== false) throw new TypeError('Option "stream" is not supported')

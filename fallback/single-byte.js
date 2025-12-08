@@ -5,7 +5,7 @@ import { decode2string } from './_utils.js'
 export const E_STRICT = 'Input is not well-formed for this encoding'
 
 export const assertEncoding = (encoding) => {
-  if (!Object.hasOwn(encodings, encoding)) throw new RangeError('Invalid encoding')
+  if (!Object.hasOwn(encodings, encoding)) throw new RangeError('Unsupported encoding')
 }
 
 function getEncoding(encoding) {
