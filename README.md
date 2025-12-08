@@ -47,13 +47,15 @@ See [Performance](./Performance.md) for more info
 
 Create a decoder for a supported one-byte `encoding`.
 
-Returns a function that decodes bytes to a string.
+Returns a function `decode(arr, loose = false)` that decodes bytes to a string.
 
 ##### `windows1252toString(arr)`
 
 Decode `windows-1252` bytes to a string.
 
 Also supports `ascii` and `latin-1` as those are strict subsets of `windows-1252`.
+
+There is no loose variant for this encoding, all bytes can be decoded.
 
 Same as `windows1252toString = createDecoder('windows-1252')`.
 

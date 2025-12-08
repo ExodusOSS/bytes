@@ -1,25 +1,25 @@
 import { assertUint8 } from './assert.js'
 import { isAscii } from 'node:buffer'
 import { asciiPrefix, decodeLatin1 } from './fallback/latin1.js'
-import { encodingMapper, encodingDecoder } from './fallback/single-byte.js'
+import { encodingMapper, encodingDecoder, E_STRICT } from './fallback/single-byte.js'
 
 const isLE = new Uint8Array(Uint16Array.of(258).buffer)[0] === 2
 const isDeno = Boolean(globalThis.Deno)
 const toBuf = (x) => Buffer.from(x.buffer, x.byteOffset, x.byteLength)
 
 export function createDecoder(encoding) {
-  const mapper = encodingMapper(encoding) // asserts
   if (isDeno) {
-    const jsDecoder = encodingDecoder(encoding)
-    return (arr) => {
+    const jsDecoder = encodingDecoder(encoding) // asserts
+    return (arr, loose = false) => {
       assertUint8(arr)
       if (arr.byteLength === 0) return ''
       if (isAscii(arr)) return toBuf(arr).toString()
-      return jsDecoder(arr) // somewhy faster on Deno anyway, TODO: optimize?
+      return jsDecoder(arr, loose) // somewhy faster on Deno anyway, TODO: optimize?
     }
   }
 
-  return (arr) => {
+  const { incomplete, mapper } = encodingMapper(encoding) // asserts
+  return (arr, loose = false) => {
     assertUint8(arr)
     if (arr.byteLength === 0) return ''
     if (isAscii(arr)) return toBuf(arr).latin1Slice(0, arr.byteLength) // .latin1Slice is faster than .asciiSlice
@@ -30,7 +30,9 @@ export function createDecoder(encoding) {
     if (prefix.length === arr.length) return prefix
 
     const b = mapper(arr, prefix.length)
-    return prefix + (isLE ? toBuf(b).ucs2Slice(0, b.byteLength) : decodeLatin1(b, 0, b.length)) // decodeLatin1 is actually capable of decoding 16-bit codepoints
+    const suffix = isLE ? toBuf(b).ucs2Slice(0, b.byteLength) : decodeLatin1(b, 0, b.length) // decodeLatin1 is actually capable of decoding 16-bit codepoints
+    if (!loose && incomplete && suffix.includes('\uFFFD')) throw new SyntaxError(E_STRICT)
+    return prefix + suffix
   }
 }
 

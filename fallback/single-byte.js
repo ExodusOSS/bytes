@@ -1,9 +1,8 @@
 import { asciiPrefix, decodeLatin1 } from './latin1.js'
+import encodings from './single-byte.encodings.js'
 import { decode2string } from './_utils.js'
 
-const encodings = {
-  'windows-1252': '€\x81‚ƒ„…†‡ˆ‰Š‹Œ\x8DŽ\x8F\x90‘’“”•–—˜™š›œ\x9DžŸ',
-}
+export const E_STRICT = 'Input is not well-formed for this encoding'
 
 export const assertEncoding = (encoding) => {
   if (!Object.hasOwn(encodings, encoding)) throw new RangeError('Invalid encoding')
@@ -11,7 +10,7 @@ export const assertEncoding = (encoding) => {
 
 function getEncoding(encoding) {
   assertEncoding(encoding)
-  return encodings[encoding].split('')
+  return encodings[encoding]
 }
 
 const mappers = new Map()
@@ -23,11 +22,13 @@ export function encodingMapper(encoding) {
   const cached = mappers.get(encoding)
   if (cached) return cached
 
+  const incomplete = getEncoding(encoding).includes('\uFFFD')
   let map
   const mapper = (arr, start = 0) => {
     if (!map) {
       map = Uint16Array.from({ length: 256 }, (_, i) => i) // Unicode subset
-      map.set(Uint16Array.from(getEncoding(encoding).map((x) => x.charCodeAt(0))), 128)
+      const strings = getEncoding(encoding).split('')
+      map.set(Uint16Array.from(strings.map((x) => x.charCodeAt(0))), 128)
     }
 
     const o = Uint16Array.from(start === 0 ? arr : arr.subarray(start)) // copy to modify in-place, also those are 16-bit now
@@ -43,8 +44,8 @@ export function encodingMapper(encoding) {
     return o
   }
 
-  mappers.set(encoding, mapper)
-  return mapper
+  mappers.set(encoding, { mapper, incomplete })
+  return { mapper, incomplete }
 }
 
 export function encodingDecoder(encoding) {
@@ -52,16 +53,19 @@ export function encodingDecoder(encoding) {
   if (cached) return cached
 
   let strings
-  const decoder = (arr) => {
+  const incomplete = getEncoding(encoding).includes('\uFFFD')
+  const decoder = (arr, loose = false) => {
     if (!strings) {
-      const part = getEncoding(encoding)
+      const part = getEncoding(encoding).split('')
       strings = Array.from({ length: 128 }, (_, i) => String.fromCharCode(i)).concat(part)
       while (strings.length < 256) strings.push(String.fromCharCode(strings.length))
     }
 
     const prefix = decodeLatin1(arr, 0, asciiPrefix(arr))
     if (prefix.length === arr.length) return prefix
-    return prefix + decode2string(arr, prefix.length, arr.length, strings)
+    const suffix = decode2string(arr, prefix.length, arr.length, strings)
+    if (!loose && incomplete && suffix.includes('\uFFFD')) throw new SyntaxError(E_STRICT)
+    return prefix + suffix
   }
 
   decoders.set(encoding, decoder)
