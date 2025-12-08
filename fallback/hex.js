@@ -1,5 +1,5 @@
 import { assertUint8 } from '../assert.js'
-import { nativeDecoder, nativeEncoder, isHermes } from './_utils.js'
+import { nativeDecoder, nativeEncoder, decode2string } from './_utils.js'
 import { encodeAscii, decodeAscii } from './latin1.js'
 
 let hexArray // array of 256 bytes converted to two-char hex strings
@@ -10,58 +10,6 @@ const _ff = 0x66_66 // 'ff' string in hex, max allowed char pair (larger than 'F
 const allowed = '0123456789ABCDEFabcdef'
 
 export const E_HEX = 'Input is not a hex string'
-
-function toHexPartAddition(a, start, end) {
-  let o = ''
-  let i = start
-  const h = hexArray
-  for (const last3 = end - 3; i < last3; i += 4) {
-    const x0 = a[i]
-    const x1 = a[i + 1]
-    const x2 = a[i + 2]
-    const x3 = a[i + 3]
-    o += h[x0]
-    o += h[x1]
-    o += h[x2]
-    o += h[x3]
-  }
-
-  while (i < end) o += h[a[i++]]
-  return o
-}
-
-// Optimiziation for Hermes which is the main user of fallback
-function toHexPartTemplates(a, start, end) {
-  let o = ''
-  let i = start
-  const h = hexArray
-  for (const last15 = end - 15; i < last15; i += 16) {
-    const x0 = a[i]
-    const x1 = a[i + 1]
-    const x2 = a[i + 2]
-    const x3 = a[i + 3]
-    const x4 = a[i + 4]
-    const x5 = a[i + 5]
-    const x6 = a[i + 6]
-    const x7 = a[i + 7]
-    const x8 = a[i + 8]
-    const x9 = a[i + 9]
-    const x10 = a[i + 10]
-    const x11 = a[i + 11]
-    const x12 = a[i + 12]
-    const x13 = a[i + 13]
-    const x14 = a[i + 14]
-    const x15 = a[i + 15]
-    o += `${h[x0]}${h[x1]}${h[x2]}${h[x3]}${h[x4]}${h[x5]}${h[x6]}${h[x7]}${h[x8]}${h[x9]}${h[x10]}${h[x11]}${h[x12]}${h[x13]}${h[x14]}${h[x15]}`
-  }
-
-  while (i < end) o += h[a[i++]]
-  return o
-}
-
-// Using templates is significantly faster in Hermes and JSC
-// It's harder to detect JSC and not important anyway as it has native impl, so we detect only Hermes
-const toHexPart = isHermes ? toHexPartTemplates : toHexPartAddition
 
 export function toHex(arr) {
   assertUint8(arr)
@@ -100,23 +48,7 @@ export function toHex(arr) {
     return decodeAscii(oa)
   }
 
-  if (length > 30_000) {
-    // Limit concatenation to avoid excessive GC
-    // Thresholds checked on Hermes
-    const concat = []
-    for (let i = 0; i < length; ) {
-      const step = i + 500
-      const end = step > length ? length : step
-      concat.push(toHexPart(arr, i, end))
-      i = end
-    }
-
-    const res = concat.join('')
-    concat.length = 0
-    return res
-  }
-
-  return toHexPart(arr, 0, length)
+  return decode2string(arr, 0, length, hexArray)
 }
 
 export function fromHex(str) {

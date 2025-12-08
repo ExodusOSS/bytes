@@ -38,3 +38,70 @@ function shouldSkipBuiltins() {
 }
 
 export const skipWeb = shouldSkipBuiltins()
+
+function decodePartAddition(a, start, end, m) {
+  let o = ''
+  let i = start
+  for (const last3 = end - 3; i < last3; i += 4) {
+    const x0 = a[i]
+    const x1 = a[i + 1]
+    const x2 = a[i + 2]
+    const x3 = a[i + 3]
+    o += m[x0]
+    o += m[x1]
+    o += m[x2]
+    o += m[x3]
+  }
+
+  while (i < end) o += m[a[i++]]
+  return o
+}
+
+// Decoding with templates is faster on Hermes
+function decodePartTemplates(a, start, end, m) {
+  let o = ''
+  let i = start
+  for (const last15 = end - 15; i < last15; i += 16) {
+    const x0 = a[i]
+    const x1 = a[i + 1]
+    const x2 = a[i + 2]
+    const x3 = a[i + 3]
+    const x4 = a[i + 4]
+    const x5 = a[i + 5]
+    const x6 = a[i + 6]
+    const x7 = a[i + 7]
+    const x8 = a[i + 8]
+    const x9 = a[i + 9]
+    const x10 = a[i + 10]
+    const x11 = a[i + 11]
+    const x12 = a[i + 12]
+    const x13 = a[i + 13]
+    const x14 = a[i + 14]
+    const x15 = a[i + 15]
+    o += `${m[x0]}${m[x1]}${m[x2]}${m[x3]}${m[x4]}${m[x5]}${m[x6]}${m[x7]}${m[x8]}${m[x9]}${m[x10]}${m[x11]}${m[x12]}${m[x13]}${m[x14]}${m[x15]}`
+  }
+
+  while (i < end) o += m[a[i++]]
+  return o
+}
+
+const decodePart = isHermes ? decodePartTemplates : decodePartAddition
+export function decode2string(arr, start, end, m) {
+  if (start - end > 30_000) {
+    // Limit concatenation to avoid excessive GC
+    // Thresholds checked on Hermes for toHex
+    const concat = []
+    for (let i = start; i < end; ) {
+      const step = i + 500
+      const iNext = step > end ? end : step
+      concat.push(decodePart(arr, i, iNext, m))
+      i = iNext
+    }
+
+    const res = concat.join('')
+    concat.length = 0
+    return res
+  }
+
+  return decodePart(arr, start, end, m)
+}
