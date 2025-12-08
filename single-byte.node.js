@@ -1,10 +1,9 @@
 import { assertUint8 } from './assert.js'
 import { isAscii } from 'node:buffer'
+import { isDeno, isLE } from './fallback/_utils.js'
 import { asciiPrefix, decodeLatin1 } from './fallback/latin1.js'
 import { encodingMapper, encodingDecoder, E_STRICT } from './fallback/single-byte.js'
 
-const isLE = new Uint8Array(Uint16Array.of(258).buffer)[0] === 2
-const isDeno = Boolean(globalThis.Deno)
 const toBuf = (x) => Buffer.from(x.buffer, x.byteOffset, x.byteLength)
 
 export function createDecoder(encoding) {

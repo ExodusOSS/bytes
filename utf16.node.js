@@ -1,10 +1,8 @@
-import { nativeDecoder } from './fallback/_utils.js'
+import { nativeDecoder, isDeno, isLE } from './fallback/_utils.js'
 import { E_STRICT, E_STRICT_UNICODE } from './fallback/utf16.js'
 
 if (Buffer.TYPED_ARRAY_SUPPORT) throw new Error('Unexpected Buffer polyfill')
 
-const isLE = new Uint8Array(Uint16Array.of(258).buffer)[0] === 2
-const isDeno = Boolean(globalThis.Deno)
 const { isWellFormed } = String.prototype
 const to8 = (a) => new Uint8Array(a.buffer, a.byteOffset, a.byteLength)
 

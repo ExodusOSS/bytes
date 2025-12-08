@@ -7,6 +7,8 @@ export const nativeDecoder = isNative(TextDecoder)
   : null
 export const nativeBuffer = haveNativeBuffer ? Buffer : null
 export const isHermes = Boolean(globalThis.HermesInternal)
+export const isDeno = Boolean(globalThis.Deno)
+export const isLE = new Uint8Array(Uint16Array.of(258).buffer)[0] === 2
 
 // Actually windows-1252, compatible with ascii and latin1 decoding
 // Beware that on non-latin1, i.e. on windows-1252, this is broken in ~all Node.js versions released

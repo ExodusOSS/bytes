@@ -1,11 +1,7 @@
 import * as js from './fallback/utf16.js'
-import { canDecoders } from './fallback/_utils.js'
+import { canDecoders, isLE } from './fallback/_utils.js'
 
-const { Buffer, TextDecoder } = globalThis // Buffer is optional
-const haveNativeBuffer = Buffer && !Buffer.TYPED_ARRAY_SUPPORT
-const isNative = (x) => x && (haveNativeBuffer || `${x}`.includes('[native code]')) // we consider Node.js TextDecoder/TextEncoder native
-const haveDecoder = isNative(TextDecoder)
-const isLE = new Uint8Array(Uint16Array.of(258).buffer)[0] === 2
+const { TextDecoder } = globalThis // Buffer is optional
 const ignoreBOM = true
 const decoderFatalLE = canDecoders ? new TextDecoder('utf-16le', { ignoreBOM, fatal: true }) : null
 const decoderLooseLE = canDecoders ? new TextDecoder('utf-16le', { ignoreBOM }) : null
@@ -75,19 +71,19 @@ function decode(input, loose = false, format = 'uint16') {
   switch (format) {
     case 'uint16':
       if (!(input instanceof Uint16Array)) throw new TypeError('Expected an Uint16Array')
-      if (haveDecoder) return loose ? decoderLoose16.decode(input) : decoderFatal16.decode(input)
+      if (canDecoders) return loose ? decoderLoose16.decode(input) : decoderFatal16.decode(input)
       u16 = input
       break
     case 'uint8-le':
       if (!(input instanceof Uint8Array)) throw new TypeError('Expected an Uint8Array')
       if (input.byteLength % 2 !== 0) throw new TypeError('Expected even number of bytes')
-      if (haveDecoder) return loose ? decoderLooseLE.decode(input) : decoderFatalLE.decode(input)
+      if (canDecoders) return loose ? decoderLooseLE.decode(input) : decoderFatalLE.decode(input)
       u16 = to16input(input, true)
       break
     case 'uint8-be':
       if (!(input instanceof Uint8Array)) throw new TypeError('Expected an Uint8Array')
       if (input.byteLength % 2 !== 0) throw new TypeError('Expected even number of bytes')
-      if (haveDecoder) return loose ? decoderLooseBE.decode(input) : decoderFatalBE.decode(input)
+      if (canDecoders) return loose ? decoderLooseBE.decode(input) : decoderFatalBE.decode(input)
       u16 = to16input(input, false)
       break
     default:

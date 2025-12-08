@@ -4,9 +4,8 @@ import {
   nativeDecoderLatin1,
   nativeBuffer,
   isHermes,
+  isDeno,
 } from './_utils.js'
-
-const isDeno = Boolean(globalThis.Deno)
 
 // See http://stackoverflow.com/a/22747272/680742, which says that lowest limit is in Chrome, with 0xffff args
 // On Hermes, actual max is 0x20_000 minus current stack depth, 1/16 of that should be safe

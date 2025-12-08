@@ -1,18 +1,16 @@
 import { assertUint8 } from './assert.js'
 import { typedView } from './array.js'
-import { isHermes } from './fallback/_utils.js'
+import { isHermes, nativeDecoder, nativeEncoder } from './fallback/_utils.js'
 import { asciiPrefix, decodeLatin1 } from './fallback/latin1.js'
 import * as js from './fallback/utf8.js'
 
-const { Buffer, TextEncoder, TextDecoder, decodeURIComponent, escape } = globalThis // Buffer is optional
-const haveNativeBuffer = Buffer && !Buffer.TYPED_ARRAY_SUPPORT
-const isNative = (x) => x && (haveNativeBuffer || `${x}`.includes('[native code]')) // we consider Node.js TextDecoder/TextEncoder native
-const haveDecoder = isNative(TextDecoder)
-const nativeEncoder = isNative(TextEncoder) ? new TextEncoder() : null
+const { TextDecoder, decodeURIComponent, escape } = globalThis // Buffer is optional
 // ignoreBOM: true means that BOM will be left as-is, i.e. will be present in the output
 // We don't want to strip anything unexpectedly
-const decoderFatal = haveDecoder ? new TextDecoder('utf-8', { ignoreBOM: true, fatal: true }) : null
-const decoderLoose = haveDecoder ? new TextDecoder('utf-8', { ignoreBOM: true }) : null
+const decoderLoose = nativeDecoder
+const decoderFatal = nativeDecoder
+  ? new TextDecoder('utf-8', { ignoreBOM: true, fatal: true })
+  : null
 const { isWellFormed } = String.prototype
 
 const { E_STRICT, E_STRICT_UNICODE } = js
@@ -56,7 +54,7 @@ function encode(str, loose = false) {
 function decode(arr, loose = false) {
   assertUint8(arr)
   if (arr.byteLength === 0) return ''
-  if (haveDecoder) return loose ? decoderLoose.decode(arr) : decoderFatal.decode(arr) // Node.js and browsers
+  if (nativeDecoder) return loose ? decoderLoose.decode(arr) : decoderFatal.decode(arr) // Node.js and browsers
 
   // Fast path for ASCII prefix, this is faster than all alternatives below
   const prefix = decodeLatin1(arr, 0, asciiPrefix(arr))
