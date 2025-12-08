@@ -55,7 +55,9 @@ fs.readFileSync(path.join(__dirname, 'fixtures/encoding/api-surrogates-utf8.any.
 fs.readFileSync(path.join(__dirname, 'fixtures/encoding/textdecoder-byte-order-marks.any.js'))
 fs.readFileSync(path.join(__dirname, 'fixtures/encoding/textdecoder-fatal.any.js'))
 fs.readFileSync(path.join(__dirname, 'fixtures/encoding/textdecoder-ignorebom.any.js'))
+fs.readFileSync(path.join(__dirname, 'fixtures/encoding/textdecoder-labels.any.js'))
 fs.readFileSync(path.join(__dirname, 'fixtures/encoding/textdecoder-utf16-surrogates.any.js'))
+fs.readFileSync(path.join(__dirname, 'fixtures/encoding/textencoder-constructor-non-utf.any.js'))
 fs.readFileSync(path.join(__dirname, 'fixtures/encoding/textencoder-utf16-surrogates.any.js'))
 fs.readFileSync(path.join(__dirname, 'fixtures/html/webappapis/atob/base64.any.js'))
 */

@@ -25,6 +25,7 @@ globalThis.assert_array_equals = (a, b) => {
 }
 
 globalThis.createBuffer = (type, length, opts) => new ArrayBuffer(length, opts) // we don't bother with SharedArrayBuffer in WPT tests
+globalThis.encodings_table = require('../fixtures/encodings/encodings.json')
 
 function loadDir(dirName) {
   const dir = path.join(__dirname, 'fixtures', dirName)
