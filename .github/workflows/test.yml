@@ -148,3 +148,20 @@ jobs:
           deno-version: ${{ matrix.deno-version }}
       - run: pnpm i --frozen-lockfile
       - run: node --run test:deno
+
+  windows:
+    runs-on: windows-latest
+    name: 'Windows with Node.js ${{ matrix.node-version }}'
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: [20.19.0, 20.x, 22.13.0, 22.x, 24.x, 25.x]
+    steps:
+      - uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29
+      - uses: pnpm/action-setup@a7487c7e89a18df4991f7f222e4898a00d66ddda
+        with:
+          run_install: false
+      - run: pnpm env use -g ${{ matrix.node-version }}
+      - run: pnpm i --frozen-lockfile
+      - run: pnpm run test
