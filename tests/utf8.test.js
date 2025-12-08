@@ -242,8 +242,7 @@ describe('random data', () => {
   })
 })
 
-// Deno can fail with OOM on CI
-test('large strings', { skip: globalThis.Deno }, (t) => {
+test('large strings', (t) => {
   const s = 'abcde01234'.repeat(12e6) // 120e6 total
   // e.g. npmjs.com/buffer fails on this
   t.assert.strictEqual(s, utf8toString(utf8fromString(s)))
