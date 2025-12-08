@@ -1,6 +1,8 @@
 const { Buffer, TextEncoder, TextDecoder } = globalThis
 const haveNativeBuffer = Buffer && !Buffer.TYPED_ARRAY_SUPPORT
-const isNative = (x) => x && (haveNativeBuffer || `${x}`.includes('[native code]')) // we consider Node.js TextDecoder/TextEncoder native
+let isNative = (x) => x && (haveNativeBuffer || `${x}`.includes('[native code]')) // we consider Node.js TextDecoder/TextEncoder native
+if (!haveNativeBuffer && isNative(() => {})) isNative = () => false // e.g. XS, we don't want false positives
+
 export const nativeEncoder = isNative(TextEncoder) ? new TextEncoder() : null
 export const nativeDecoder = isNative(TextDecoder)
   ? new TextDecoder('utf-8', { ignoreBOM: true })
