@@ -34,7 +34,8 @@ describe('small', () => {
   test('utf8fromString', (t) => testFromString(t, dataSmall))
 })
 
-describe('large', async () => {
+const skipLarge = process.env.EXODUS_TEST_PLATFORM === 'quickjs'
+describe('large', { skip: skipLarge }, async () => {
   const gzipped = readFileSync(path.join(import.meta.dirname, 'data.json.gz'))
   const dataLarge = JSON.parse(utf8toString(await gunzip(gzipped)))
   for (const entry of dataLarge) entry.bytes = encodeLatin1(entry.encoded)

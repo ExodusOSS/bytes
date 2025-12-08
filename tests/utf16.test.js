@@ -263,7 +263,8 @@ describe('random data', () => {
   })
 })
 
-test('large strings', (t) => {
+const skipLarge = process.env.EXODUS_TEST_PLATFORM === 'quickjs'
+test('large strings', { skip: skipLarge }, (t) => {
   const s = 'abcde01234'.repeat(12e6) // 120e6 total
   // e.g. npmjs.com/buffer fails on this
   t.assert.strictEqual(s, utf16.utf16toString(utf16.utf16fromString(s)))
