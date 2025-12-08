@@ -11,6 +11,7 @@
     "test:hermes": "exodus-test --engine=hermes:bundle",
     "test:quickjs": "exodus-test --engine=quickjs:bundle",
     "test:xs": "exodus-test --engine=xs:bundle",
+    "test:engine262": "exodus-test --engine=engine262:bundle",
     "test:deno": "exodus-test --engine=deno:pure",
     "test:bun": "exodus-test --engine=bun:pure",
     "test:electron:bundle": "exodus-test --engine=electron:bundle",
