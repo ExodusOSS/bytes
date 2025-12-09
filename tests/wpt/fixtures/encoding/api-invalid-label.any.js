@@ -22,8 +22,11 @@ setup(function() {
   });
 });
 
+// Rewritten due to subsetTest being spammy
+test(function() {
 tests.forEach(function(input) {
-  subsetTest(test, function() {
-    assert_throws_js(RangeError, function() { new TextDecoder(input); });
-  }, 'Invalid label ' + format_value(input) + ' should be rejected by TextDecoder.');
+  // subsetTest(test, function() {
+    assert_throws_js(RangeError, function() { new TextDecoder(input); }
+  , 'Invalid label ' + format_value(input) + ' should be rejected by TextDecoder.');
 });
+}, 'All invalid labels')
