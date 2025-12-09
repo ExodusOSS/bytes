@@ -48,47 +48,6 @@ const fromSource = (x) => {
   throw new TypeError('Argument must be a SharedArrayBuffer, ArrayBuffer or ArrayBufferView')
 }
 
-export class TextEncoder {
-  constructor() {
-    define(this, 'encoding', 'utf-8')
-  }
-
-  encode(str = '') {
-    const res = utf8fromStringLoose(str)
-    return res.byteOffset === 0 ? res : res.slice(0) // Ensure 0-offset. TODO: do we need this?
-  }
-
-  encodeInto(str, target) {
-    if (!(target instanceof Uint8Array)) throw new TypeError('Target must be an Uint8Array')
-    if (target.buffer.detached) return { read: 0, written: 0 } // Until https://github.com/whatwg/encoding/issues/324 is resolved
-
-    let u8 = utf8fromStringLoose(str) // TODO: perf?
-    let read
-    if (target.length >= u8.length) {
-      read = str.length
-    } else if (u8.length === str.length) {
-      if (u8.length > target.length) u8 = u8.subarray(0, target.length) // ascii can be truncated
-      read = u8.length
-    } else {
-      u8 = u8.subarray(0, target.length)
-      const unfinished = unfinishedBytes(u8, 'utf-8')
-      if (unfinished > 0) u8 = u8.subarray(0, u8.length - unfinished)
-
-      // We can do this because loose str -> u8 -> str preserves length, unlike loose u8 -> str -> u8
-      // Each unpaired surrogate (1 charcode) is replaced with a single charcode
-      read = utf8toStringLoose(u8).length // FIXME: Converting back is very inefficient
-    }
-
-    try {
-      target.set(u8)
-    } catch {
-      return { read: 0, written: 0 } // see above, likely detached but no .detached property support
-    }
-
-    return { read, written: u8.length }
-  }
-}
-
 // Only supported ones, the rest will fall through anyway
 const multibyte = new Set(['utf-8', 'utf-16le', 'utf-16be'])
 
@@ -183,5 +142,46 @@ export class TextDecoder {
     }
 
     throw new Error('Unreachable')
+  }
+}
+
+export class TextEncoder {
+  constructor() {
+    define(this, 'encoding', 'utf-8')
+  }
+
+  encode(str = '') {
+    const res = utf8fromStringLoose(str)
+    return res.byteOffset === 0 ? res : res.slice(0) // Ensure 0-offset. TODO: do we need this?
+  }
+
+  encodeInto(str, target) {
+    if (!(target instanceof Uint8Array)) throw new TypeError('Target must be an Uint8Array')
+    if (target.buffer.detached) return { read: 0, written: 0 } // Until https://github.com/whatwg/encoding/issues/324 is resolved
+
+    let u8 = utf8fromStringLoose(str) // TODO: perf?
+    let read
+    if (target.length >= u8.length) {
+      read = str.length
+    } else if (u8.length === str.length) {
+      if (u8.length > target.length) u8 = u8.subarray(0, target.length) // ascii can be truncated
+      read = u8.length
+    } else {
+      u8 = u8.subarray(0, target.length)
+      const unfinished = unfinishedBytes(u8, 'utf-8')
+      if (unfinished > 0) u8 = u8.subarray(0, u8.length - unfinished)
+
+      // We can do this because loose str -> u8 -> str preserves length, unlike loose u8 -> str -> u8
+      // Each unpaired surrogate (1 charcode) is replaced with a single charcode
+      read = utf8toStringLoose(u8).length // FIXME: Converting back is very inefficient
+    }
+
+    try {
+      target.set(u8)
+    } catch {
+      return { read: 0, written: 0 } // see above, likely detached but no .detached property support
+    }
+
+    return { read, written: u8.length }
   }
 }
