@@ -79,6 +79,10 @@ export class TextDecoder {
     this.#canBOM = this.#multibyte && !this.ignoreBOM
   }
 
+  get [Symbol.toStringTag]() {
+    return 'TextDecoder'
+  }
+
   // TODO: test behavior on BOM for LE/BE
   decode(input, options = {}) {
     if (typeof options !== 'object') throw new TypeError(E_OPTIONS)
@@ -147,6 +151,10 @@ export class TextDecoder {
 export class TextEncoder {
   constructor() {
     define(this, 'encoding', 'utf-8')
+  }
+
+  get [Symbol.toStringTag]() {
+    return 'TextEncoder'
   }
 
   encode(str = '') {
