@@ -29,14 +29,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ExodusMovement/bytes.git"
+    "url": "git+https://github.com/ExodusOSS/bytes.git"
   },
   "author": "Exodus Movement, Inc.",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/ExodusMovement/bytes/issues"
+    "url": "https://github.com/ExodusOSS/bytes/issues"
   },
-  "homepage": "https://github.com/ExodusMovement/bytes#readme",
+  "homepage": "https://github.com/ExodusOSS/bytes#readme",
   "engines": {
     "node": "^20.19.0 || >=22.13.0"
   },
