@@ -59,11 +59,12 @@ export class TextEncoder {
   // npmjs.com/text-encoding polyfill doesn't support this at all
   encodeInto(str, target) {
     if (!(target instanceof Uint8Array)) throw new TypeError('Target must be an Uint8Array')
-    const u8 = utf8fromStringLoose(str) // TODO: perf?
+    let u8 = utf8fromStringLoose(str) // TODO: perf?
     if (u8.length === str.length) {
       // ascii
-      target.set(u8.subarray(0, target.byteLength))
-      return { read: target.byteLength, written: target.byteLength }
+      if (u8.length > target.length) u8 = u8.subarray(0, target.length)
+      target.set(u8)
+      return { read: u8.length, written: u8.length }
     }
 
     if (target.length < u8.length) throw new RangeError('Truncation not supported') // TODO
