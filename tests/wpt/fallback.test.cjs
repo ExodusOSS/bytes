@@ -13,6 +13,8 @@ const { loadDir } = require('./loader.cjs')
 const base64 = require('../../fallback/base64.js')
 const { TextEncoder, TextDecoder } = require('@exodus/bytes/text-encoding.js')
 
+if (!TextDecoder || !TextEncoder) throw new Error('No TextDecoder / TextEncoder')
+
 globalThis.TextEncoder = TextEncoder
 globalThis.TextDecoder = TextDecoder
 
