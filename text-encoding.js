@@ -15,13 +15,13 @@ const E_OPTIONS = 'The "options" argument must be of type object'
 const replacementChar = '\uFFFD'
 
 let labelsMap
-const normalizeEncoding = (encoding) => {
-  let low = `${encoding}`.toLowerCase()
-  if (low !== low.trim()) low = low.replace(/^[\t\n\f\r ]+/, '').replace(/[\t\n\f\r ]+$/, '') // only ASCII whitespace
+const normalizeEncoding = (enc) => {
   // fast path
-  if (low === 'utf-8' || low === 'utf8') return 'utf-8'
-  if (low === 'windows-1252' || low === 'ascii' || low === 'latin1') return 'windows-1252'
-  // Full map
+  if (enc === 'utf-8' || enc === 'utf8') return 'utf-8'
+  if (enc === 'windows-1252' || enc === 'ascii' || enc === 'latin1') return 'windows-1252'
+  // full map
+  let low = `${enc}`.toLowerCase()
+  if (low !== low.trim()) low = low.replace(/^[\t\n\f\r ]+/, '').replace(/[\t\n\f\r ]+$/, '') // only ASCII whitespace
   if (Object.hasOwn(labels, low)) return low
   if (!labelsMap) {
     labelsMap = new Map()
