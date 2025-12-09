@@ -30,6 +30,7 @@ describe('single-byte encodings match fallback', () => {
   for (const encoding of encodings) {
     test(encoding, (t) => {
       const decoder = createDecoder(encoding)
+      const decoderLoose = createDecoder(encoding, true)
       const fallback = encodingDecoder(encoding)
       for (let i = 0; i < 256; i++) {
         const u8 = Uint8Array.of(i)
@@ -43,13 +44,13 @@ describe('single-byte encodings match fallback', () => {
         if (found) {
           t.assert.strictEqual(str.length, 1)
           t.assert.notEqual(str, '\uFFFD')
-          t.assert.strictEqual(decoder(u8, true), str)
+          t.assert.strictEqual(decoderLoose(u8), str)
           t.assert.strictEqual(fallback(u8), str)
           t.assert.strictEqual(fallback(u8, true), str)
         } else {
           t.assert.ok(i >= 128)
           t.assert.throws(() => fallback(u8))
-          str = decoder(u8, true)
+          str = decoderLoose(u8)
           t.assert.strictEqual(str.length, 1)
           t.assert.strictEqual(str, '\uFFFD')
           t.assert.strictEqual(fallback(u8, true), str)
@@ -63,6 +64,7 @@ describe('single-byte encodings index', () => {
   for (const encoding of encodings) {
     test(encoding, (t) => {
       const decoder = createDecoder(encoding)
+      const decoderLoose = createDecoder(encoding, true)
       const text = readFileSync(
         join(import.meta.dirname, 'fixtures/encodings/single-byte', `index-${encoding}.txt`),
         'utf8'
@@ -98,11 +100,11 @@ describe('single-byte encodings index', () => {
 
           t.assert.strictEqual(str.length, 1, row.description)
           t.assert.strictEqual(str.codePointAt(0), row.code, row.description)
-          t.assert.strictEqual(str, decoder(Uint8Array.of(byte), true))
+          t.assert.strictEqual(str, decoderLoose(Uint8Array.of(byte)))
         } else {
           t.assert.throws(() => decoder(Uint8Array.of(byte)))
           try {
-            str = decoder(Uint8Array.of(byte), true)
+            str = decoderLoose(Uint8Array.of(byte))
           } catch (cause) {
             throw new Error(`Error decoding unmapped ${byte} in ${encoding}`, { cause })
           }

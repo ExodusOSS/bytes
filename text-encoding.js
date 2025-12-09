@@ -51,16 +51,15 @@ const fromSource = (x) => {
 // Only supported ones, the rest will fall through anyway
 const multibyte = new Set(['utf-8', 'utf-16le', 'utf-16be'])
 
-function createDecoder(encoding, fatal) {
-  if (encoding === 'utf-8') return fatal ? utf8toString : utf8toStringLoose // likely
+function createDecoder(encoding, loose) {
+  if (encoding === 'utf-8') return loose ? utf8toStringLoose : utf8toString // likely
   switch (encoding) {
     case 'utf-16le':
-      return fatal ? (u) => utf16toString(u, 'uint8-le') : (u) => utf16toStringLoose(u, 'uint8-le')
+      return loose ? (u) => utf16toStringLoose(u, 'uint8-le') : (u) => utf16toString(u, 'uint8-le')
     case 'utf-16be':
-      return fatal ? (u) => utf16toString(u, 'uint8-be') : (u) => utf16toStringLoose(u, 'uint8-be')
+      return loose ? (u) => utf16toStringLoose(u, 'uint8-be') : (u) => utf16toString(u, 'uint8-be')
     default: {
-      const decode = createDecoderSingleByte(encoding)
-      return fatal ? (u) => decode(u, false) : (u) => decode(u, true)
+      return createDecoderSingleByte(encoding, loose)
     }
   }
 }
@@ -123,7 +122,7 @@ export class TextDecoder {
       }
     }
 
-    if (!this.#decode) this.#decode = createDecoder(this.encoding, this.fatal)
+    if (!this.#decode) this.#decode = createDecoder(this.encoding, !this.fatal)
     const res = this.#decode(u) + suffix
     if (res.length > 0 && stream) this.#canBOM = false
 

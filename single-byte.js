@@ -4,7 +4,7 @@ import { assertEncoding, encodingDecoder } from './fallback/single-byte.js'
 
 const { TextDecoder } = globalThis
 
-export function createDecoder(encoding) {
+export function createDecoder(encoding, loose = false) {
   if (encoding === 'iso-8859-8-i') encoding = 'iso-8859-8'
   assertEncoding(encoding)
 
@@ -12,18 +12,17 @@ export function createDecoder(encoding) {
   if (canDecoders && encoding !== 'iso-8859-16') {
     // In try, as not all encodings might be implemented in all engines which have native TextDecoder
     try {
-      const decoder = new TextDecoder(encoding)
-      const decoderFatal = new TextDecoder(encoding, { fatal: true })
-      return (arr, loose = false) => {
+      const decoder = new TextDecoder(encoding, { fatal: !loose })
+      return (arr) => {
         assertUint8(arr)
         if (arr.byteLength === 0) return ''
-        return (loose ? decoder : decoderFatal).decode(arr)
+        return decoder.decode(arr)
       }
     } catch {}
   }
 
   const jsDecoder = encodingDecoder(encoding)
-  return (arr, loose) => {
+  return (arr) => {
     assertUint8(arr)
     if (arr.byteLength === 0) return ''
     return jsDecoder(arr, loose)

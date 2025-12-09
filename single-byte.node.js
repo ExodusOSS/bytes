@@ -6,11 +6,11 @@ import { encodingMapper, encodingDecoder, E_STRICT } from './fallback/single-byt
 
 const toBuf = (x) => Buffer.from(x.buffer, x.byteOffset, x.byteLength)
 
-export function createDecoder(encoding) {
+export function createDecoder(encoding, loose = false) {
   if (encoding === 'iso-8859-8-i') encoding = 'iso-8859-8'
   if (isDeno) {
     const jsDecoder = encodingDecoder(encoding) // asserts
-    return (arr, loose = false) => {
+    return (arr) => {
       assertUint8(arr)
       if (arr.byteLength === 0) return ''
       if (isAscii(arr)) return toBuf(arr).toString()
@@ -19,7 +19,7 @@ export function createDecoder(encoding) {
   }
 
   const { incomplete, mapper } = encodingMapper(encoding) // asserts
-  return (arr, loose = false) => {
+  return (arr) => {
     assertUint8(arr)
     if (arr.byteLength === 0) return ''
     if (isAscii(arr)) return toBuf(arr).latin1Slice(0, arr.byteLength) // .latin1Slice is faster than .asciiSlice

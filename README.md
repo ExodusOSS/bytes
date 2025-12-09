@@ -43,11 +43,11 @@ See [Performance](./Performance.md) for more info
 
 ### `@exodus/bytes/single-byte.js`
 
-##### `createDecoder(encoding)`
+##### `createDecoder(encoding, loose = false)`
 
 Create a decoder for a supported one-byte `encoding`.
 
-Returns a function `decode(arr, loose = false)` that decodes bytes to a string.
+Returns a function `decode(arr)` that decodes bytes to a string.
 
 ##### `windows1252toString(arr)`
 
