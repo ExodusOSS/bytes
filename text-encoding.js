@@ -16,12 +16,13 @@ const replacementChar = '\uFFFD'
 
 let labelsMap
 const normalizeEncoding = (encoding) => {
-  const lower = `${encoding}`.trim().toLowerCase()
+  let low = `${encoding}`.toLowerCase()
+  if (low !== low.trim()) low = low.replace(/^[\t\n\f\r ]+/, '').replace(/[\t\n\f\r ]+$/, '') // only ASCII whitespace
   // fast path
-  if (lower === 'utf-8' || lower === 'utf8') return 'utf-8'
-  if (lower === 'windows-1252' || lower === 'ascii' || lower === 'latin1') return 'windows-1252'
+  if (low === 'utf-8' || low === 'utf8') return 'utf-8'
+  if (low === 'windows-1252' || low === 'ascii' || low === 'latin1') return 'windows-1252'
   // Full map
-  if (Object.hasOwn(labels, lower)) return lower
+  if (Object.hasOwn(labels, low)) return low
   if (!labelsMap) {
     labelsMap = new Map()
     for (const [label, aliases] of Object.entries(labels)) {
@@ -29,7 +30,7 @@ const normalizeEncoding = (encoding) => {
     }
   }
 
-  const mapped = labelsMap.get(lower)
+  const mapped = labelsMap.get(low)
   if (mapped && mapped !== 'replacement') return mapped
   throw new RangeError('Unknown encoding')
 }

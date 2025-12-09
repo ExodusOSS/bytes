@@ -45,6 +45,7 @@ describe('Web Platform Tests', () => {
 // List of files so that bundler can locate all these
 /* @preserve
 fs.readFileSync(path.join(__dirname, 'fixtures/encoding/api-basics.any.js'))
+fs.readFileSync(path.join(__dirname, 'fixtures/encoding/api-invalid-label.any.js'))
 fs.readFileSync(path.join(__dirname, 'fixtures/encoding/api-surrogates-utf8.any.js'))
 fs.readFileSync(path.join(__dirname, 'fixtures/encoding/encodeInto.any.js'))
 fs.readFileSync(path.join(__dirname, 'fixtures/encoding/textdecoder-byte-order-marks.any.js'))
