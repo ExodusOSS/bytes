@@ -2,7 +2,7 @@ import { gunzip } from '@exodus/crypto/compress'
 import { readFileSync } from 'node:fs'
 import path from 'node:path'
 import { describe, test } from 'node:test'
-import { encodeLatin1 } from '../../fallback/latin1.js'
+import { encodeLatin1 } from '../../../fallback/latin1.js'
 import {
   utf8toString,
   utf8toStringLoose,

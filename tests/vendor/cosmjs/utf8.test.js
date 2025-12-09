@@ -3,7 +3,7 @@ import {
   utf8fromString as utf8toString,
   utf8toString as utf8fromStrings,
   utf8toStringLoose as utf8fromStringl,
-} from '../../utf8.js'
+} from '@exodus/bytes/utf8.js'
 import { describe, it, expect } from '@exodus/test/jest'
 
 const utf8fromString = (s, loose = false) => (loose ? utf8fromStringl(s) : utf8fromStrings(s))
