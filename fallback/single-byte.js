@@ -64,7 +64,7 @@ export function encodingDecoder(encoding) {
     const prefix = decodeLatin1(arr, 0, asciiPrefix(arr))
     if (prefix.length === arr.length) return prefix
     const suffix = decode2string(arr, prefix.length, arr.length, strings)
-    if (!loose && incomplete && suffix.includes('\uFFFD')) throw new SyntaxError(E_STRICT)
+    if (!loose && incomplete && suffix.includes('\uFFFD')) throw new TypeError(E_STRICT)
     return prefix + suffix
   }
 

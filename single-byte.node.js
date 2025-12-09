@@ -31,7 +31,7 @@ export function createDecoder(encoding) {
 
     const b = mapper(arr, prefix.length)
     const suffix = isLE ? toBuf(b).ucs2Slice(0, b.byteLength) : decodeLatin1(b, 0, b.length) // decodeLatin1 is actually capable of decoding 16-bit codepoints
-    if (!loose && incomplete && suffix.includes('\uFFFD')) throw new SyntaxError(E_STRICT)
+    if (!loose && incomplete && suffix.includes('\uFFFD')) throw new TypeError(E_STRICT)
     return prefix + suffix
   }
 }
