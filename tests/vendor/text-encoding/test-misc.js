@@ -24,6 +24,7 @@ var ASCII_SUPERSETS = THE_ENCODING.concat(LEGACY_ENCODINGS)
 
 // Miscellaneous tests
 
+/*
 test(function() {
   assert_false(/\[native code\]/.test(String(TextDecoder)),
                'Native implementation present - polyfill not tested.');
@@ -33,6 +34,7 @@ test(function() {
   assert_false(/\[native code\]/.test(String(TextEncoder)),
                'Native implementation present - polyfill not tested.');
 }, 'TextEncoder Polyfill (will fail if natively supported)');
+*/
 
 test(function() {
   assert_true('encoding' in new TextEncoder());
