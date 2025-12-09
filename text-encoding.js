@@ -8,6 +8,7 @@
 import { utf16toString, utf16toStringLoose } from '@exodus/bytes/utf16.js'
 import { utf8fromStringLoose, utf8toString, utf8toStringLoose } from '@exodus/bytes/utf8.js'
 import { createDecoder as createDecoderSingleByte } from '@exodus/bytes/single-byte.js'
+import { multibyteSupported, multibyteDecoder } from './fallback/multi-byte.js'
 import labels from './fallback/text-encoding.labels.js'
 import { unfinishedBytes } from './fallback/text-encoding.util.js'
 
@@ -48,24 +49,18 @@ const fromSource = (x) => {
   throw new TypeError('Argument must be a SharedArrayBuffer, ArrayBuffer or ArrayBufferView')
 }
 
-function createDecoder(encoding, loose) {
+function unicodeDecoder(encoding, loose) {
   if (encoding === 'utf-8') return loose ? utf8toStringLoose : utf8toString // likely
-  switch (encoding) {
-    case 'utf-16le':
-      return loose ? (u) => utf16toStringLoose(u, 'uint8-le') : (u) => utf16toString(u, 'uint8-le')
-    case 'utf-16be':
-      return loose ? (u) => utf16toStringLoose(u, 'uint8-be') : (u) => utf16toString(u, 'uint8-be')
-    default: {
-      return createDecoderSingleByte(encoding, loose)
-    }
-  }
+  const form = encoding === 'utf-16le' ? 'uint8-le' : 'uint8-be'
+  return loose ? (u) => utf16toStringLoose(u, form) : (u) => utf16toString(u, form)
 }
 
 export class TextDecoder {
   #decode
+  #unicode
   #multibyte
   #chunk
-  #canBOM = true
+  #canBOM
 
   constructor(encoding = 'utf-8', options = {}) {
     if (typeof options !== 'object') throw new TypeError(E_OPTIONS)
@@ -73,9 +68,9 @@ export class TextDecoder {
     define(this, 'encoding', enc)
     define(this, 'fatal', Boolean(options.fatal))
     define(this, 'ignoreBOM', Boolean(options.ignoreBOM))
-    const unicode = enc === 'utf-8' || enc === 'utf-16le' || enc === 'utf-16be'
-    this.#multibyte = unicode
-    this.#canBOM = unicode && !this.ignoreBOM
+    this.#unicode = enc === 'utf-8' || enc === 'utf-16le' || enc === 'utf-16be'
+    this.#multibyte = !this.#unicode && enc !== 'windows-1252' && multibyteSupported(enc)
+    this.#canBOM = this.#unicode && !this.ignoreBOM
   }
 
   get [Symbol.toStringTag]() {
@@ -88,49 +83,59 @@ export class TextDecoder {
     const stream = Boolean(options.stream)
     let u = input === undefined ? new Uint8Array() : fromSource(input)
 
-    if (this.#chunk) {
-      // TODO: optimize by decoding into a prefix, this is slow
-      const a = new Uint8Array(u.length + this.#chunk.length)
-      a.set(this.#chunk)
-      a.set(u, this.#chunk.length)
-      u = a
-      this.#chunk = null
-    } else if (u.byteLength === 0) {
-      if (!stream) this.#canBOM = this.#multibyte && !this.ignoreBOM
-      return ''
-    }
+    if (this.#unicode) {
+      if (this.#chunk) {
+        // TODO: optimize by decoding into a prefix, this is slow
+        const a = new Uint8Array(u.length + this.#chunk.length)
+        a.set(this.#chunk)
+        a.set(u, this.#chunk.length)
+        u = a
+        this.#chunk = null
+      } else if (u.byteLength === 0) {
+        if (!stream) this.#canBOM = !this.ignoreBOM
+        return ''
+      }
 
-    // For non-stream utf-8 we don't have to do this as it matches utf8toStringLoose already
-    // For non-stream loose utf-16 we still have to do this as this API supports uneven byteLength unlike utf16toStringLoose
-    let suffix = ''
-    if (this.#multibyte && (stream || (!this.fatal && this.encoding !== 'utf-8'))) {
-      const trail = unfinishedBytes(u, this.encoding)
-      if (trail > 0) {
-        if (stream) {
-          this.#chunk = Uint8Array.from(u.subarray(-trail)) // copy
-        } else {
-          // non-fatal mode as already checked
-          suffix = replacementChar
+      // For non-stream utf-8 we don't have to do this as it matches utf8toStringLoose already
+      // For non-stream loose utf-16 we still have to do this as this API supports uneven byteLength unlike utf16toStringLoose
+      let suffix = ''
+      if (stream || (!this.fatal && this.encoding !== 'utf-8')) {
+        const trail = unfinishedBytes(u, this.encoding)
+        if (trail > 0) {
+          if (stream) {
+            this.#chunk = Uint8Array.from(u.subarray(-trail)) // copy
+          } else {
+            // non-fatal mode as already checked
+            suffix = replacementChar
+          }
+
+          u = u.subarray(0, -trail)
         }
-
-        u = u.subarray(0, -trail)
       }
-    }
 
-    if (this.#canBOM) {
-      const bom = this.#findBom(u)
-      if (bom) {
-        u = u.subarray(bom)
-        if (stream) this.#canBOM = false
+      if (this.#canBOM) {
+        const bom = this.#findBom(u)
+        if (bom) {
+          u = u.subarray(bom)
+          if (stream) this.#canBOM = false
+        }
       }
+
+      if (!this.#decode) this.#decode = unicodeDecoder(this.encoding, !this.fatal)
+      const res = this.#decode(u) + suffix
+      if (res.length > 0 && stream) this.#canBOM = false
+
+      if (!stream) this.#canBOM = !this.ignoreBOM
+      return res
+
+      // eslint-disable-next-line no-else-return
+    } else if (this.#multibyte) {
+      if (!this.#decode) this.#decode = multibyteDecoder(this.encoding, !this.fatal) // can contain state!
+      return this.#decode(u, stream)
+    } else {
+      if (!this.#decode) this.#decode = createDecoderSingleByte(this.encoding, !this.fatal)
+      return this.#decode(u)
     }
-
-    if (!this.#decode) this.#decode = createDecoder(this.encoding, !this.fatal)
-    const res = this.#decode(u) + suffix
-    if (res.length > 0 && stream) this.#canBOM = false
-
-    if (!stream) this.#canBOM = this.#multibyte && !this.ignoreBOM
-    return res
   }
 
   #findBom(u) {
