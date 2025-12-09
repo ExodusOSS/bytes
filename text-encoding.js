@@ -48,9 +48,6 @@ const fromSource = (x) => {
   throw new TypeError('Argument must be a SharedArrayBuffer, ArrayBuffer or ArrayBufferView')
 }
 
-// Only supported ones, the rest will fall through anyway
-const multibyte = new Set(['utf-8', 'utf-16le', 'utf-16be'])
-
 function createDecoder(encoding, loose) {
   if (encoding === 'utf-8') return loose ? utf8toStringLoose : utf8toString // likely
   switch (encoding) {
@@ -72,11 +69,13 @@ export class TextDecoder {
 
   constructor(encoding = 'utf-8', options = {}) {
     if (typeof options !== 'object') throw new TypeError(E_OPTIONS)
-    define(this, 'encoding', normalizeEncoding(encoding))
+    const enc = normalizeEncoding(encoding)
+    define(this, 'encoding', enc)
     define(this, 'fatal', Boolean(options.fatal))
     define(this, 'ignoreBOM', Boolean(options.ignoreBOM))
-    this.#multibyte = multibyte.has(this.encoding)
-    this.#canBOM = this.#multibyte && !this.ignoreBOM
+    const unicode = enc === 'utf-8' || enc === 'utf-16le' || enc === 'utf-16be'
+    this.#multibyte = unicode
+    this.#canBOM = unicode && !this.ignoreBOM
   }
 
   get [Symbol.toStringTag]() {
