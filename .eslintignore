@@ -3,6 +3,7 @@ playground
 wip/
 tests/test262/fixtures/
 tests/wpt/fixtures/
+tests/vendor/deno/
 tests/vendor/text-encoding/test-*.js
 __snapshots__
 __recordings__
