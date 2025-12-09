@@ -158,11 +158,13 @@ export class TextEncoder {
   }
 
   encode(str = '') {
+    if (typeof str !== 'string') str = `${str}`
     const res = utf8fromStringLoose(str)
     return res.byteOffset === 0 ? res : res.slice(0) // Ensure 0-offset. TODO: do we need this?
   }
 
   encodeInto(str, target) {
+    if (typeof str !== 'string') str = `${str}`
     if (!(target instanceof Uint8Array)) throw new TypeError('Target must be an Uint8Array')
     if (target.buffer.detached) return { read: 0, written: 0 } // Until https://github.com/whatwg/encoding/issues/324 is resolved
 

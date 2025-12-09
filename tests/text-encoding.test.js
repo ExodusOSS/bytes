@@ -1,4 +1,4 @@
-import { TextDecoder } from '@exodus/bytes/text-encoding.js'
+import { TextDecoder, TextEncoder } from '@exodus/bytes/text-encoding.js'
 import { test } from 'node:test'
 import unfinishedBytesFixtures from './fixtures/text-encoding.unfinishedBytes.js'
 
@@ -24,5 +24,35 @@ test('Unfinished bytes', (t) => {
       t.assert.strictEqual(a0, '')
       t.assert.strictEqual(b0, ab)
     }
+  }
+})
+
+test('String coercion', (t) => {
+  const encoder = new TextEncoder()
+  const map = [
+    [{}, '[object Object]'],
+    [null, 'null'],
+    [undefined, 'undefined'],
+  ]
+
+  for (const [arg, string] of map) {
+    const length = string.length
+    const a = encoder.encode(string)
+    t.assert.strictEqual(a.length, length)
+
+    const b = encoder.encode(arg)
+    if (arg === undefined) {
+      // undefined is special
+      t.assert.strictEqual(b.length, 0)
+      t.assert.deepStrictEqual(b, Uint8Array.of())
+    } else {
+      const b = encoder.encode(arg)
+      t.assert.strictEqual(b.length, length)
+      t.assert.deepStrictEqual(b, a)
+    }
+
+    const c = new Uint8Array(20)
+    t.assert.deepStrictEqual(encoder.encodeInto(arg, c), { read: length, written: length })
+    t.assert.deepStrictEqual(c.subarray(0, length), a)
   }
 })
