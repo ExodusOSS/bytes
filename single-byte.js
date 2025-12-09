@@ -9,13 +9,16 @@ export function createDecoder(encoding) {
 
   // iso-8859-16 is somehow broken in WebKit, at least on CI
   if (canDecoders && encoding !== 'iso-8859-16') {
-    const decoder = new TextDecoder(encoding)
-    const decoderFatal = new TextDecoder(encoding, { fatal: true })
-    return (arr, loose = false) => {
-      assertUint8(arr)
-      if (arr.byteLength === 0) return ''
-      return (loose ? decoder : decoderFatal).decode(arr)
-    }
+    // In try, as not all encodings might be implemented in all engines which have native TextDecoder
+    try {
+      const decoder = new TextDecoder(encoding)
+      const decoderFatal = new TextDecoder(encoding, { fatal: true })
+      return (arr, loose = false) => {
+        assertUint8(arr)
+        if (arr.byteLength === 0) return ''
+        return (loose ? decoder : decoderFatal).decode(arr)
+      }
+    } catch {}
   }
 
   const jsDecoder = encodingDecoder(encoding)
