@@ -3,13 +3,19 @@ import encodings from './single-byte.encodings.js'
 import { decode2string } from './_utils.js'
 
 export const E_STRICT = 'Input is not well-formed for this encoding'
+const xUserDefined = 'x-user-defined'
 
 export const assertEncoding = (encoding) => {
-  if (!Object.hasOwn(encodings, encoding)) throw new RangeError('Unsupported encoding')
+  if (Object.hasOwn(encodings, encoding) || encoding === xUserDefined) return
+  throw new RangeError('Unsupported encoding')
 }
 
 function getEncoding(encoding) {
   assertEncoding(encoding)
+  if (encoding === xUserDefined) {
+    return Array.from({ length: 128 }, (_, i) => String.fromCharCode(0xf7_80 + i)).join('')
+  }
+
   return encodings[encoding]
 }
 

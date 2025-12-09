@@ -56,3 +56,12 @@ test('String coercion', (t) => {
     t.assert.deepStrictEqual(c.subarray(0, length), a)
   }
 })
+
+// https://encoding.spec.whatwg.org/#x-user-defined-decoder
+test('x-user-defined encoding', (t) => {
+  const decoder = new TextDecoder('x-user-defined')
+  for (let byte = 0; byte < 256; byte++) {
+    const codePoint = byte >= 128 ? 0xf7_80 + byte - 0x80 : byte
+    t.assert.strictEqual(decoder.decode(Uint8Array.of(byte)), String.fromCodePoint(codePoint))
+  }
+})
