@@ -5,6 +5,7 @@ import { assertEncoding, encodingDecoder } from './fallback/single-byte.js'
 const { TextDecoder } = globalThis
 
 export function createDecoder(encoding) {
+  if (encoding === 'iso-8859-8-i') encoding = 'iso-8859-8'
   assertEncoding(encoding)
 
   // iso-8859-16 is somehow broken in WebKit, at least on CI

@@ -7,6 +7,7 @@ import { encodingMapper, encodingDecoder, E_STRICT } from './fallback/single-byt
 const toBuf = (x) => Buffer.from(x.buffer, x.byteOffset, x.byteLength)
 
 export function createDecoder(encoding) {
+  if (encoding === 'iso-8859-8-i') encoding = 'iso-8859-8'
   if (isDeno) {
     const jsDecoder = encodingDecoder(encoding) // asserts
     return (arr, loose = false) => {
