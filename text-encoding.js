@@ -22,7 +22,7 @@ const normalizeEncoding = (enc) => {
   // full map
   let low = `${enc}`.toLowerCase()
   if (low !== low.trim()) low = low.replace(/^[\t\n\f\r ]+/, '').replace(/[\t\n\f\r ]+$/, '') // only ASCII whitespace
-  if (Object.hasOwn(labels, low)) return low
+  if (Object.hasOwn(labels, low) && low !== 'replacement') return low
   if (!labelsMap) {
     labelsMap = new Map()
     for (const [label, aliases] of Object.entries(labels)) {
