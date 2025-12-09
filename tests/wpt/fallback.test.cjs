@@ -52,6 +52,7 @@ describe('Web Platform Tests', () => {
 /* @preserve
 fs.readFileSync(path.join(__dirname, 'fixtures/encoding/api-basics.any.js'))
 fs.readFileSync(path.join(__dirname, 'fixtures/encoding/api-surrogates-utf8.any.js'))
+fs.readFileSync(path.join(__dirname, 'fixtures/encoding/encodeInto.any.js'))
 fs.readFileSync(path.join(__dirname, 'fixtures/encoding/textdecoder-byte-order-marks.any.js'))
 fs.readFileSync(path.join(__dirname, 'fixtures/encoding/textdecoder-fatal.any.js'))
 fs.readFileSync(path.join(__dirname, 'fixtures/encoding/textdecoder-ignorebom.any.js'))

@@ -9,6 +9,7 @@ import { utf16toString, utf16toStringLoose } from '@exodus/bytes/utf16.js'
 import { utf8fromStringLoose, utf8toString, utf8toStringLoose } from '@exodus/bytes/utf8.js'
 import { createDecoder } from '@exodus/bytes/single-byte.js'
 import labels from './fallback/text-encoding.labels.js'
+import { unfinishedBytes } from './fallback/text-encoding.util.js'
 
 const E_OPTIONS = 'The "options" argument must be of type object'
 const replacementChar = '\uFFFD'
@@ -56,20 +57,34 @@ export class TextEncoder {
     return res.byteOffset === 0 ? res : res.slice(0) // Ensure 0-offset. TODO: do we need this?
   }
 
-  // npmjs.com/text-encoding polyfill doesn't support this at all
   encodeInto(str, target) {
     if (!(target instanceof Uint8Array)) throw new TypeError('Target must be an Uint8Array')
+    if (target.buffer.detached) return { read: 0, written: 0 } // Until https://github.com/whatwg/encoding/issues/324 is resolved
+
     let u8 = utf8fromStringLoose(str) // TODO: perf?
-    if (u8.length === str.length) {
-      // ascii
-      if (u8.length > target.length) u8 = u8.subarray(0, target.length)
-      target.set(u8)
-      return { read: u8.length, written: u8.length }
+    let read
+    if (target.length >= u8.length) {
+      read = str.length
+    } else if (u8.length === str.length) {
+      if (u8.length > target.length) u8 = u8.subarray(0, target.length) // ascii can be truncated
+      read = u8.length
+    } else {
+      u8 = u8.subarray(0, target.length)
+      const unfinished = unfinishedBytes(u8, 'utf-8')
+      if (unfinished > 0) u8 = u8.subarray(0, u8.length - unfinished)
+
+      // We can do this because loose str -> u8 -> str preserves length, unlike loose u8 -> str -> u8
+      // Each unpaired surrogate (1 charcode) is replaced with a single charcode
+      read = utf8toStringLoose(u8).length // FIXME: Converting back is very inefficient
     }
 
-    if (target.length < u8.length) throw new RangeError('Truncation not supported') // TODO
-    target.set(u8) // TODO: perf
-    return { read: str.length, written: u8.length }
+    try {
+      target.set(u8)
+    } catch {
+      return { read: 0, written: 0 } // see above, likely detached but no .detached property support
+    }
+
+    return { read, written: u8.length }
   }
 }
 
