@@ -132,7 +132,6 @@ test(function() {
   assert_equals(new TextDecoder('utf-16le').decode(new Uint8Array(utf16le_bom.concat(utf16le))), string);
   assert_equals(new TextDecoder('utf-16be').decode(new Uint8Array(utf16be_bom.concat(utf16be))), string);
 
-  /*
   // matching BOMs split
   var decoder8 = new TextDecoder('utf-8');
   assert_equals(decoder8.decode(new Uint8Array(utf8_bom.slice(0, 1)), {stream: true}), '');
@@ -145,7 +144,6 @@ test(function() {
   var decoder16be = new TextDecoder('utf-16be');
   assert_equals(decoder16be.decode(new Uint8Array(utf16be_bom.slice(0, 1)), {stream: true}), '');
   assert_equals(decoder16be.decode(new Uint8Array(utf16be_bom.slice(1).concat(utf16be))), string);
-  */
 
   // mismatching BOMs
   assert_not_equals(new TextDecoder('utf-8').decode(new Uint8Array(utf16le_bom.concat(utf8))), string);
@@ -175,7 +173,6 @@ test(function() {
   assert_equals(new TextDecoder('iso-8859-1').encoding, 'windows-1252'); // canonical case and name
 }, 'Encoding names');
 
-/*
 test(function() {
   var string = '\x00123ABCabc\x80\xFF\u0100\u1000\uFFFD\uD800\uDC00\uDBFF\uDFFF';
   var cases = [
@@ -215,6 +212,7 @@ test(function() {
   });
 }, 'Streaming Decode');
 
+/*
 test(function() {
   var jis = [0x82, 0xC9, 0x82, 0xD9, 0x82, 0xF1];
   var expected = '\u306B\u307B\u3093'; // Nihon
