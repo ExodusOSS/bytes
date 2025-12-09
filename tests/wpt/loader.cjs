@@ -3,6 +3,8 @@ const fs = require('node:fs')
 const path = require('node:path')
 const { describe, test } = require('node:test')
 
+globalThis.self = globalThis
+
 globalThis.describe = (f, name) => describe(name, f)
 globalThis.test = (f, name) => test(name, f)
 globalThis.subsetTest = (t, ...a) => t(...a)
