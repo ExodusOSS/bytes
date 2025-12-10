@@ -15,6 +15,7 @@ for (const file of readdirSync(import.meta.dirname)) {
     .map((x) => x.split('\t'))
     .map(([istr, codeHex]) => {
       const i = Number(istr)
+      assert.ok(i < 128)
       const code = parseInt(codeHex.slice(2), 16)
       assert.strictEqual(`${i}`, istr)
       assert.strictEqual('0x' + code.toString(16).padStart(4, '0').toUpperCase(), codeHex)

@@ -76,9 +76,11 @@ describe('single-byte encodings index', () => {
         .map((x) => x.split('\t'))
         .map(([istr, codeHex, description]) => {
           const i = Number(istr)
+          t.assert.ok(i < 128)
           const code = parseInt(codeHex.slice(2), 16)
           t.assert.strictEqual(`${i}`, istr)
           t.assert.strictEqual('0x' + code.toString(16).padStart(4, '0').toUpperCase(), codeHex)
+          t.assert.ok(code && code !== 0xff_fd && code <= 0xff_ff) // can't be a replacement char, has to be <= 16-bit
           return [i, { i, code, description }]
         })
 
