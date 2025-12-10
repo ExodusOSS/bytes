@@ -3,7 +3,7 @@ import { join } from 'node:path'
 import assert from 'node:assert/strict'
 
 const nonUTF16 = new Set(['big5']) // non-charcode codepoints + continious, processed separately
-const splitChunks = new Set(['jis0208', 'gb18030']) // pretty-print into chunks, non-continious anyway
+const splitChunks = new Set(['jis0208']) // pretty-print into chunks, non-continious anyway
 
 const reusable = Object.entries({
   $CYR: ['АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ'], // [[1040, 6], "Ё", [1046, 26]],
@@ -14,6 +14,10 @@ const reusable = Object.entries({
     '焄煜煆煇凞燁燾犱犾猤猪獷玽珉珖珣珒琇珵琦琪琩琮瑢璉璟甁畯皂皜皞皛皦益睆劯砡硎硤硺礰礼神祥禔福禛竑竧靖竫箞精絈絜綷綠緖繒罇羡羽茁荢荿菇菶葈蒴蕓蕙蕫﨟薰蘒﨡蠇裵訒訷詹誧誾諟諸諶譓譿賰賴',
     '贒赶﨣軏﨤逸遧郞都鄕鄧釚釗釞釭釮釤釥鈆鈐鈊鈺鉀鈼鉎鉙鉑鈹鉧銧鉷鉸鋧鋗鋙鋐﨧鋕鋠鋓錥錡鋻﨨錞鋿錝錂鍰鍗鎤鏆鏞鏸鐱鑅鑈閒隆﨩隝隯霳霻靃靍靏靑靕顗顥飯飼餧館馞驎髙髜魵魲鮏鮱鮻鰀鵰鵫鶴鸙黑',
   ],
+  $1: ['ΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡ', 'ΣΤΥΦΧΨΩ'], // [[913,17],[931,7]],
+  $2: ['αβγδεζηθικλμνξοπρ', 'στυφχψω'], // [[945,17],[963,7]],
+  $3: ['─│┌┐┘└├┬┤┴┼━┃┏┓┛┗┣┳┫┻╋┠┯┨┷┿┝┰┥┸╂'],
+  $4: ['┒┑┚┙┖┕┎┍┞┟┡┢┦┧┩┪┭┮┱┲┵┶┹┺┽┾╀╁'],
 }).map(([k, v]) => [k, v.join('')])
 
 const encodings = {}
@@ -62,8 +66,6 @@ function conseqStart(str, start) {
   return p - start
 }
 
-const minConseq = 6 // don't collapse too small chunks
-
 for (const [encoding, chars] of Object.entries(encodings)) {
   const list = []
   let str = chars
@@ -89,6 +91,12 @@ for (const [encoding, chars] of Object.entries(encodings)) {
       if (foundReusable) continue
     }
 
+    const lastIsStr =
+      list.length > 0 &&
+      typeof list[list.length - 1] === 'string' &&
+      list[list.length - 1].endsWith('"')
+    let minConseq = lastIsStr ? 5 : 3 // don't collapse too small chunks
+
     {
       const p = conseqStart(str, 0)
       if (p >= minConseq) {
@@ -98,6 +106,8 @@ for (const [encoding, chars] of Object.entries(encodings)) {
         continue
       }
     }
+
+    minConseq = 5
 
     const index = str.indexOf('\uFFFD')
     const is96 = list.length > 0 && list[list.length - 1].length > 80

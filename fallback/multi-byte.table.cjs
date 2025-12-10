@@ -28,8 +28,15 @@ function getTable(id) {
     } else if (x[0] === '$' && Object.hasOwn(indices, x)) {
       // Self-reference to a common chunk. Not deep, there are only strings there
       for (const y of indices[x]) {
-        res.set(utf16fromString(y), pos)
-        pos += y.length
+        if (typeof y === 'number') {
+          pos += y
+        } else if (Array.isArray(y)) {
+          const [first, len] = y
+          for (let i = 0; i < len; i++, pos++) res[pos] = first + i
+        } else {
+          res.set(utf16fromString(y), pos)
+          pos += y.length
+        }
       }
     } else {
       res.set(utf16fromString(x), pos)
