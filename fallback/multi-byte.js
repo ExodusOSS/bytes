@@ -179,19 +179,21 @@ export function multibyteDecoder(enc, loose = false) {
     }
 
     if (!mapper) mapper = mappers[enc]()
-    for (let i = res.length; i < length; i++) {
-      const c = mapper(arr[i])
+    const end = stream ? length : length + 1
+    for (let i = res.length; i < end; i++) {
+      const x = i === length ? EOF : arr[i]
+      const c = mapper(x)
+      if (x === EOF && c === null) break // clean exit
       if (c === -1) continue // consuming
       if (c <= -2) {
         // -2: error, -3: error + restore 1 byte, etc
         res += onErr()
         i += c + 2
+        if (c < -2 && x === EOF) i-- // if we restore something and attempted EOF, we should also restore EOF
       } else {
         res += String.fromCharCode(c) // no decoders return codepoints above 0xFFFF
       }
     }
-
-    if (!stream && mapper(EOF) !== null) res += onErr()
 
     // Chrome and WebKit fail on this, we don't: completely destroy the old decoder instance when finished streaming
     // > If this’s do not flush is false, then set this’s decoder to a new instance of this’s encoding’s decoder,
