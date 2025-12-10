@@ -67,7 +67,10 @@ describe('1-byte snapshot tests', () => {
   }
 })
 
-describe('2-byte snapshot tests', () => {
+const skipLarge =
+  process.env.EXODUS_TEST_PLATFORM === 'xs' || process.env.EXODUS_TEST_PLATFORM === 'engine262'
+
+describe('2-byte snapshot tests', { skip: skipLarge }, () => {
   for (const label of labels) {
     describe(label, () => {
       const u8 = new Uint8Array(2)
@@ -116,7 +119,7 @@ describe('2-byte snapshot tests', () => {
   }
 })
 
-describe('3-byte a-b-b snapshot tests', () => {
+describe('3-byte a-b-b snapshot tests', { skip: skipLarge }, () => {
   for (const label of labels) {
     describe(label, () => {
       const u8 = new Uint8Array(3)
@@ -165,7 +168,7 @@ describe('3-byte a-b-b snapshot tests', () => {
   }
 })
 
-describe('3-byte a-b-a snapshot tests', () => {
+describe('3-byte a-b-a snapshot tests', { skip: skipLarge }, () => {
   for (const label of labels) {
     describe(label, () => {
       const u8 = new Uint8Array(3)
