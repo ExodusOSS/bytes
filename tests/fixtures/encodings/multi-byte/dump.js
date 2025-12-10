@@ -64,12 +64,14 @@ for (const [encoding, chars] of Object.entries(encodings)) {
     }
 
     const index = str.indexOf('\uFFFD')
-    const end = Math.min(96, index === -1 ? str.length : index)
+    const is96 = list.length > 0 && list[0].length > 80
+    const end =
+      index > 96 && index <= 152 && !is96 ? 76 : Math.min(96, index === -1 ? str.length : index)
     const head = str.slice(0, end)
     list.push(
       JSON.stringify(head).replace(/[^\\\w\n\p{N}\p{L}\p{S}\p{P} -]/gu, (x) => {
         const c = x.codePointAt(0)
-        if (c <= 0xff) return `\\x${c.toString(16).padStart(2, '0').toUpperCase()}`
+        // if (c <= 0xff) return `\\x${c.toString(16).padStart(2, '0').toUpperCase()}`
         if (c <= 0xff_ff) return `\\u${c.toString(16).padStart(4, '0').toUpperCase()}`
         throw new Error('Unexpected')
       })
