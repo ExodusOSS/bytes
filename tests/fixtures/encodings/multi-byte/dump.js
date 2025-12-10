@@ -20,6 +20,13 @@ const reusable = Object.entries({
   $4: ['┒┑┚┙┖┕┎┍┞┟┡┢┦┧┩┪┭┮┱┲┵┶┹┺┽┾╀╁'],
 }).map(([k, v]) => [k, v.join('')])
 
+const LINELENGTH = 200
+const visibleLength = (str) => {
+  const u8 = Buffer.from(str, 'utf-16le')
+  const u16 = new Uint16Array(u8.buffer, u8.byteOffset, u8.byteLength / 2)
+  return str.length + (u16.filter((x) => x > 0x80).length * 2) / 3
+}
+
 const encodings = {}
 for (const file of readdirSync(import.meta.dirname)) {
   const match = file.match(/^index-([a-z0-9-]+)\.txt$/u)
@@ -59,6 +66,8 @@ for (const file of readdirSync(import.meta.dirname)) {
   encodings[encoding] = chars.join('')
 }
 
+Object.assign(encodings, Object.fromEntries(reusable))
+
 function conseqStart(str, start) {
   const first = str[start].charCodeAt(0)
   let p = start
@@ -73,13 +82,14 @@ for (const [encoding, chars] of Object.entries(encodings)) {
     if (str[0] === '\uFFFD') {
       let skip = 0
       while (str[skip] === '\uFFFD') skip++
-      list.push(skip)
+      list.push(-skip)
       str = str.slice(skip)
     }
 
     {
       let foundReusable = false
       for (const [name, v] of reusable) {
+        if (name === encoding) continue
         if (str.startsWith(v)) {
           list.push(JSON.stringify(name))
           str = str.slice(v.length)
@@ -95,19 +105,19 @@ for (const [encoding, chars] of Object.entries(encodings)) {
       list.length > 0 &&
       typeof list[list.length - 1] === 'string' &&
       list[list.length - 1].endsWith('"')
-    let minConseq = lastIsStr ? 5 : 3 // don't collapse too small chunks
+    let minConseq = lastIsStr ? 4 : 2 // don't collapse too small chunks
 
     {
       const p = conseqStart(str, 0)
       if (p >= minConseq) {
         const first = str[0].charCodeAt(0)
-        list.push(`[${first},${p}]`)
+        list.push(`${first},${p}`)
         str = str.slice(p)
         continue
       }
     }
 
-    minConseq = 5
+    minConseq = 4
 
     const index = str.indexOf('\uFFFD')
     const is96 = list.length > 0 && list[list.length - 1].length > 80
@@ -116,7 +126,8 @@ for (const [encoding, chars] of Object.entries(encodings)) {
       end = index > 96 && index <= 152 && !is96 ? 76 : Math.min(96, end)
     }
 
-    for (const [, v] of reusable) {
+    for (const [name, v] of reusable) {
+      if (name === encoding) continue
       const idx = str.indexOf(v)
       assert.ok(idx !== 0)
       if (idx > 0 && idx < end) end = idx
@@ -142,12 +153,11 @@ for (const [encoding, chars] of Object.entries(encodings)) {
   }
 
   const list2 = []
-  const LINELENGTH = 130
   let tmp = ''
   for (const x of list) {
     if (tmp.length === 0) {
-      tmp = x
-    } else if (tmp.length + x.length > LINELENGTH - 6) {
+      tmp = '' + x
+    } else if (visibleLength(tmp + x) > LINELENGTH - 6) {
       list2.push(tmp)
       tmp = x
     } else {

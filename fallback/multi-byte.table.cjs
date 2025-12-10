@@ -1,12 +1,35 @@
 const { utf16fromString } = require('@exodus/bytes/utf16.js') // eslint-disable-line @exodus/import/no-unresolved
 
 // This is huge. It's _much_ smaller than https://npmjs.com/text-encoding though
-// Exactly as mapped by the index table, numbers denote holes, arrays denote continious [first, length]
+// Exactly as mapped by the index table, negative numbers denote holes, positive denote continious [first, length]
 // Parts with $ are references to common chunks
 
 let indices
 const sizes = { jis0208: 11_104, 'euc-kr': 23_750, gb18030: 23_940 }
 const tables = new Map()
+
+/* eslint-disable @exodus/mutable/no-param-reassign-prop-only */
+
+function unwrap(res, t, pos) {
+  for (let i = 0; i < t.length; i++) {
+    const x = t[i]
+    if (typeof x === 'number') {
+      if (x < 0) {
+        pos -= x
+      } else {
+        const len = t[++i]
+        for (let k = 0; k < len; k++, pos++) res[pos] = x + k
+      }
+    } else if (x[0] === '$' && Object.hasOwn(indices, x)) {
+      pos = unwrap(res, indices[x], pos) // self-reference using shared chunks
+    } else {
+      res.set(utf16fromString(x), pos)
+      pos += x.length
+    }
+  }
+
+  return pos
+}
 
 function getTable(id) {
   const cached = tables.get(id)
@@ -18,32 +41,7 @@ function getTable(id) {
 
   const res = new Uint16Array(sizes[id])
   res.fill(0xff_fd)
-  let pos = 0
-  for (const x of indices[id]) {
-    if (typeof x === 'number') {
-      pos += x
-    } else if (Array.isArray(x)) {
-      const [first, len] = x
-      for (let i = 0; i < len; i++, pos++) res[pos] = first + i
-    } else if (x[0] === '$' && Object.hasOwn(indices, x)) {
-      // Self-reference to a common chunk. Not deep, there are only strings there
-      for (const y of indices[x]) {
-        if (typeof y === 'number') {
-          pos += y
-        } else if (Array.isArray(y)) {
-          const [first, len] = y
-          for (let i = 0; i < len; i++, pos++) res[pos] = first + i
-        } else {
-          res.set(utf16fromString(y), pos)
-          pos += y.length
-        }
-      }
-    } else {
-      res.set(utf16fromString(x), pos)
-      pos += x.length
-    }
-  }
-
+  unwrap(res, indices[id], 0)
   indices[id] = null // gc
   tables.set(id, res)
   return res
