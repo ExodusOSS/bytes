@@ -1,6 +1,7 @@
 import { TextDecoder, TextEncoder } from '@exodus/bytes/text-encoding.js'
-import { test } from 'node:test'
+import { test, describe } from 'node:test'
 import unfinishedBytesFixtures from './fixtures/text-encoding.unfinishedBytes.js'
+import { labels } from './fixtures/encodings/encodings.cjs'
 
 test('Unfinished bytes', (t) => {
   for (const [encoding, trail, u8] of unfinishedBytesFixtures) {
@@ -65,3 +66,37 @@ test('x-user-defined encoding', (t) => {
     t.assert.strictEqual(decoder.decode(Uint8Array.of(byte)), String.fromCodePoint(codePoint))
   }
 })
+
+describe('encodings are ASCII supersets, except utf-16 and iso-2022-jp', () => {
+  for (const label of labels) {
+    if (label === 'replacement' || label === 'utf-16le' || label === 'utf-16be') continue
+    test(label, (t) => {
+      const loose = new TextDecoder(label)
+      const fatal = new TextDecoder(label, { fatal: true })
+      for (let i = 0; i < 128; i++) {
+        if (label === 'iso-2022-jp' && [0x0e, 0x0f, 0x1b].includes(i)) continue
+        t.assert.strictEqual(loose.decode(Uint8Array.of(i)), String.fromCodePoint(i))
+        t.assert.strictEqual(fatal.decode(Uint8Array.of(i)), String.fromCodePoint(i))
+      }
+    })
+  }
+})
+
+test.skip('euc-kr encoding', (t) => {
+  t.assert.throws(() => new TextDecoder('euc-kr', { fatal: true }).decode(Uint8Array.of(0x80)))
+  t.assert.strictEqual(new TextDecoder('euc-kr').decode(Uint8Array.of(0x80)), '\uFFFD')
+
+  // TODO: more tests
+})
+
+test.skip('big5 encoding', (t) => {
+  t.assert.throws(() => new TextDecoder('big5', { fatal: true }).decode(Uint8Array.of(0x80)))
+  t.assert.strictEqual(new TextDecoder('big5').decode(Uint8Array.of(0x80)), '\uFFFD')
+
+  const loose = new TextDecoder('big5')
+  t.assert.strictEqual(loose.decode(Uint8Array.of(0x83, 0x5c)), String.fromCodePoint(0xff_fd, 0x5c)) // https://github.com/nodejs/node/issues/40091
+
+  // TODO: more tests
+})
+
+// TODO: test more encodings
