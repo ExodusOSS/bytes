@@ -2,11 +2,14 @@ import { readFileSync, readdirSync } from 'node:fs'
 import { join } from 'node:path'
 import assert from 'node:assert/strict'
 
+const nonUTF16 = new Set(['big5']) // non-charcode codepoints + continious, processed separately
+
 const encodings = {}
 for (const file of readdirSync(import.meta.dirname)) {
   const match = file.match(/^index-([a-z0-9-]+)\.txt$/u)
   if (!match) continue
   const encoding = match[1]
+  if (nonUTF16.has(encoding)) continue
   const text = readFileSync(join(import.meta.dirname, file), 'utf8')
   let max = 0
   const rows = text
@@ -20,8 +23,8 @@ for (const file of readdirSync(import.meta.dirname)) {
       const code = parseInt(codeHex.slice(2), 16)
       assert.strictEqual(`${i}`, istr)
       assert.strictEqual('0x' + code.toString(16).padStart(4, '0').toUpperCase(), codeHex)
-      assert.ok(code && code !== 0xff_fd && code <= 0xff_ff) // can't be a replacement char, has to be <= 16-bit
-      assert.ok(code < 0xd8_00 || code >= 0xe0_00) // not a surrogate
+      assert.ok(code && code !== 0xff_fd && code <= 0xff_ff, `${encoding}: ${codeHex}`) // can't be a replacement char, has to be <= 16-bit
+      assert.ok(code < 0xd8_00 || code >= 0xe0_00, `${encoding}: ${codeHex}`) // not a surrogate
       return [i, code]
     })
 
@@ -49,6 +52,15 @@ for (const [encoding, chars] of Object.entries(encodings)) {
       while (str[skip] === '\uFFFD') skip++
       list.push(skip)
       str = str.slice(skip)
+    }
+
+    const first = str[0].charCodeAt(0)
+    let p = 0
+    while (p < str.length && str[p] !== '\uFFFD' && str[p].charCodeAt(0) === first + p) p++
+    if (p >= 7) {
+      list.push(`[${first}, ${p}]`)
+      str = str.slice(p)
+      continue
     }
 
     const index = str.indexOf('\uFFFD')

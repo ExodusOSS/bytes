@@ -18,6 +18,9 @@ function getTable(id) {
   for (const chunk of indices[id]) {
     if (typeof chunk === 'number') {
       pos += chunk
+    } else if (Array.isArray(chunk)) {
+      const [first, len] = chunk
+      for (let i = 0; i < len; i++, pos++) res[pos] = first + i
     } else {
       res.set(utf16fromString(chunk), pos)
       pos += chunk.length
