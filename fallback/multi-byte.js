@@ -138,7 +138,7 @@ const mappers = {
           if (cp !== undefined && cp !== REP) return cp
         }
 
-        return -3 // restore 1 byte
+        return b < 128 ? -3 : -2 // if ASCII, restore 1 byte and error, otherwise just error
       }
 
       if (b <= 0x80) return b
