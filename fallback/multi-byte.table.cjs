@@ -5,7 +5,7 @@ const { utf16fromString } = require('@exodus/bytes/utf16.js') // eslint-disable-
 // Parts with $ are references to common chunks
 
 let indices
-const sizes = { jis0208: 11_104, 'euc-kr': 23_750, gb18030: 23_940 }
+const sizes = { jis0208: 11_104, jis0212: 7211, 'euc-kr': 23_750, gb18030: 23_940 }
 const tables = new Map()
 
 /* eslint-disable @exodus/mutable/no-param-reassign-prop-only */
