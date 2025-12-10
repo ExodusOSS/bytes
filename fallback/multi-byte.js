@@ -13,6 +13,7 @@ export const E_STRICT = 'Input is not well-formed for this encoding'
 // All except iso-2022-jp are ASCII supersets
 // When adding something that is not an ASCII superset, ajust the ASCII fast path
 const EOF = -1
+const REP = 0xff_fd
 const mappers = {
   big5: () => {
     throw new RangeError('Unsupported encoding')
@@ -69,7 +70,7 @@ const mappers = {
           dState = 4
           if (b >= 0x21 && b <= 0x7e) {
             const cp = jis0208[(lead - 0x21) * 94 + b - 0x21]
-            return cp !== undefined && cp !== 0xff_dd ? cp : -2
+            return cp !== undefined && cp !== REP ? cp : -2
           }
 
           return -2
@@ -110,7 +111,7 @@ const mappers = {
 
           out = false
           dState = oState
-          return b === EOF ? -3 : -4
+          return b === EOF ? -3 : -4 // restore 1 or 2 bytes
         }
       }
     }
@@ -134,7 +135,7 @@ const mappers = {
           const p = (l - leadingOffset) * 188 + b - offset
           if (p >= 8836 && p <= 10_715) return 0xe0_00 - 8836 + p // 16-bit
           const cp = jis0208[p]
-          if (cp !== undefined && cp !== 0xff_dd) return cp
+          if (cp !== undefined && cp !== REP) return cp
         }
 
         return -3 // restore 1 byte
