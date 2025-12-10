@@ -44,6 +44,7 @@ describe('multi-byte encodings tables', () => {
           t.assert.strictEqual(`${i}`, istr)
           t.assert.strictEqual('0x' + code.toString(16).padStart(4, '0').toUpperCase(), codeHex)
           t.assert.ok(code && code !== 0xff_fd && code <= 0xff_ff) // can't be a replacement char, has to be <= 16-bit
+          t.assert.ok(code < 0xd8_00 || code >= 0xe0_00) // not a surrogate
           return [i, { i, code, description }]
         })
 
