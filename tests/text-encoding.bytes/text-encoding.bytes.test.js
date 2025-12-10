@@ -6,7 +6,7 @@ import { fromHex } from '@exodus/bytes/hex.js'
 import { test, describe } from 'node:test'
 
 // import { labels } from './fixtures/encodings/encodings.cjs'
-const labels = ['windows-1252', 'utf-8', 'iso-2022-jp', 'shift_jis']
+const labels = ['windows-1252', 'utf-8', 'euc-jp', 'iso-2022-jp', 'shift_jis']
 
 // Try all 1-byte and 2-byte inputs and save the result in a snapshot
 

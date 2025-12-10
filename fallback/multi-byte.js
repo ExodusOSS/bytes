@@ -18,15 +18,58 @@ const mappers = {
   big5: () => {
     throw new RangeError('Unsupported encoding')
   },
-  'euc-jp': () => {
-    throw new RangeError('Unsupported encoding')
-  },
   'euc-kr': () => {
     throw new RangeError('Unsupported encoding')
   },
+  // https://encoding.spec.whatwg.org/#euc-jp-decoder
+  'euc-jp': () => {
+    const jis0208 = getTable('jis0208')
+    const jis0212 = getTable('jis0212')
+    let j12 = false
+    let lead = 0
+    return (b) => {
+      if (b === EOF) {
+        if (!lead) return null
+        lead = 0
+        return -2
+      }
+
+      if (lead === 0x8e && b >= 0xa1 && b <= 0xdf) {
+        lead = 0
+        return 0xfe_c0 + b
+      }
+
+      if (lead === 0x8f && b >= 0xa1 && b <= 0xfe) {
+        j12 = true
+        lead = b
+        return -1
+      }
+
+      if (lead) {
+        let cp
+        if (lead >= 0xa1 && lead <= 0xfe && b >= 0xa1 && b <= 0xfe) {
+          cp = (j12 ? jis0212 : jis0208)[(lead - 0xa1) * 94 + b - 0xa1]
+        }
+
+        lead = 0
+        j12 = false
+        if (cp !== undefined && cp !== REP) return cp
+        return b < 128 ? -3 : -2 // if ASCII, restore 1 byte and error, otherwise just error
+      }
+
+      if (b < 128) return b
+      if (b === 0x8e || b === 0x8f || (b >= 0xa1 && b <= 0xfe)) {
+        lead = b
+        return -1
+      }
+
+      return -2
+    }
+  },
+  // https://encoding.spec.whatwg.org/#iso-2022-jp-decoder
+  // Per-letter of the spec, don't shortcut on state changes on EOF. Some code is regrouped but preserving the logic
   'iso-2022-jp': () => {
     const jis0208 = getTable('jis0208')
-    // Per-letter of the spec, don't shortcut on state changes on EOF
     let dState = 1
     let oState = 1
     let lead = 0
@@ -116,6 +159,7 @@ const mappers = {
       }
     }
   },
+  // https://encoding.spec.whatwg.org/#shift_jis-decoder
   shift_jis: () => {
     const jis0208 = getTable('jis0208')
     let lead = 0
