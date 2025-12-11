@@ -80,7 +80,7 @@ describe('2-byte snapshot tests', { skip: skipLarge }, () => {
               const loose = new TextDecoder(label)
               const fatal = new TextDecoder(label, { fatal: true })
               const a = loose.decode(u8)
-              t.assert.ok(a.length > 0, 1, `Bytes: ${i}, ${j}`)
+              t.assert.ok(a.length > 0, `Bytes: ${i}, ${j}`)
               let b
               let ok = false
               try {
@@ -129,7 +129,7 @@ describe('3-byte a-b-b snapshot tests', { skip: skipLarge }, () => {
               const loose = new TextDecoder(label)
               const fatal = new TextDecoder(label, { fatal: true })
               const a = loose.decode(u8)
-              t.assert.ok(a.length > 0, 1, `Bytes: ${i}, ${j}, ${j}`)
+              t.assert.ok(a.length > 0, `Bytes: ${i}, ${j}, ${j}`)
               let b
               let ok = false
               try {
@@ -178,7 +178,7 @@ describe('3-byte a-b-a snapshot tests', { skip: skipLarge }, () => {
               const loose = new TextDecoder(label)
               const fatal = new TextDecoder(label, { fatal: true })
               const a = loose.decode(u8)
-              t.assert.ok(a.length > 0, 1, `Bytes: ${i}, ${j}, ${j}`)
+              t.assert.ok(a.length > 0, `Bytes: ${i}, ${j}, ${j}`)
               let b
               let ok = false
               try {
@@ -227,7 +227,7 @@ describe('3-byte a-a-b snapshot tests', { skip: skipLarge }, () => {
               const loose = new TextDecoder(label)
               const fatal = new TextDecoder(label, { fatal: true })
               const a = loose.decode(u8)
-              t.assert.ok(a.length > 0, 1, `Bytes: ${i}, ${j}, ${j}`)
+              t.assert.ok(a.length > 0, `Bytes: ${i}, ${j}, ${j}`)
               let b
               let ok = false
               try {

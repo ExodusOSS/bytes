@@ -5,7 +5,7 @@ import { decode, labelToName } from 'whatwg-encoding'
 export function TextDecoder(label, { fatal = false } = {}) {
   return {
     decode(u8) {
-      const text = decode(u8, labelToName(label))
+      const text = decode(u8, labelToName(label) || label)
       if (fatal && text.includes('\uFFFD')) throw new TypeError('Non-mapped data in input')
       return text
     },
