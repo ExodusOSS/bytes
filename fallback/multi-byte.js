@@ -15,9 +15,6 @@ export const E_STRICT = 'Input is not well-formed for this encoding'
 const EOF = -1
 const REP = 0xff_fd
 const mappers = {
-  big5: () => {
-    throw new RangeError('Unsupported encoding')
-  },
   // https://encoding.spec.whatwg.org/#euc-kr-decoder
   'euc-kr': () => {
     const euc = getTable('euc-kr')
@@ -268,9 +265,10 @@ const mappers = {
   },
 }
 
-export const multibyteSupported = (enc) => Object.hasOwn(mappers, enc)
+export const multibyteSupported = (enc) => Object.hasOwn(mappers, enc) || enc === 'big5'
 
 export function multibyteDecoder(enc, loose = false) {
+  if (enc === 'big5') return big5decoder(loose)
   if (!Object.hasOwn(mappers, enc)) throw new RangeError('Unsupported encoding')
   const onErr = loose
     ? () => '\uFFFD'
@@ -310,6 +308,62 @@ export function multibyteDecoder(enc, loose = false) {
     // > If this’s do not flush is false, then set this’s decoder to a new instance of this’s encoding’s decoder,
     // > Set this’s do not flush to options["stream"]
     if (!stream) mapper = null
+
+    return res
+  }
+}
+
+// The only decoder which returns multiple codepoints per byte, also has non-charcode codepoints
+// We store that as strings
+function big5decoder(loose) {
+  const onErr = loose
+    ? () => '\uFFFD'
+    : () => {
+        throw new Error(E_STRICT)
+      }
+
+  // Input is assumed to be typechecked already
+  let lead = 0
+  let big5
+  return (arr, stream = false) => {
+    let res = ''
+    const length = arr.length
+    if (!lead) {
+      res = decodeLatin1(arr, 0, asciiPrefix(arr))
+      if (res.length === arr.length) return res // ascii
+    }
+
+    if (!big5) big5 = getTable('big5')
+    const end = stream ? length : length + 1
+    for (let i = res.length; i < end; i++) {
+      const b = i === length ? EOF : arr[i]
+      if (b === EOF) {
+        if (lead === 0) break // clean exit
+        lead = 0
+        res += onErr()
+      } else if (lead) {
+        let cp
+        if ((b >= 0x40 && b <= 0x7e) || (b >= 0xa1 && b !== 0xff)) {
+          cp = big5[(lead - 0x81) * 157 + b - (b < 0x7f ? 0x40 : 0x62)]
+        }
+
+        lead = 0
+        if (cp) {
+          res += cp // strings
+        } else {
+          res += onErr()
+          if (b < 128) i--
+        }
+      } else if (b < 128) {
+        res += String.fromCharCode(b)
+      } else if (b < 0x81 || b === 0xff) {
+        res += onErr()
+      } else {
+        lead = b
+      }
+    }
+
+    if (!stream) lead = 0 // same as cleaning up mapper in common
 
     return res
   }

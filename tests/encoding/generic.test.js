@@ -142,7 +142,7 @@ test('euc-kr encoding', (t) => {
   // TODO: more tests
 })
 
-test.skip('big5 encoding', (t) => {
+test('big5 encoding', (t) => {
   t.assert.throws(() => new TextDecoder('big5', { fatal: true }).decode(Uint8Array.of(0x80)))
   t.assert.strictEqual(new TextDecoder('big5').decode(Uint8Array.of(0x80)), '\uFFFD')
 

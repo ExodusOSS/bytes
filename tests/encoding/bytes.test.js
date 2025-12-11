@@ -5,10 +5,10 @@ import { toBase64 } from '@exodus/bytes/base64.js'
 import { fromHex } from '@exodus/bytes/hex.js'
 import { test, describe } from 'node:test'
 import { fromBits, fromBase4 } from './_utils.js'
+import { legacyMultiByte } from '../fixtures/encodings/encodings.cjs'
 
-// import { labels } from './fixtures/encodings/encodings.cjs'
-// Also test most common single-byte decoder (windows-1252) on multi-byte input
-const labels = ['windows-1252', 'utf-8', 'euc-kr', 'euc-jp', 'iso-2022-jp', 'shift_jis', 'gb18030']
+// Also test utf-8 and the most common single-byte decoder (windows-1252) on multi-byte input
+const labels = ['windows-1252', 'utf-8', ...legacyMultiByte]
 
 // Try all 1-byte and 2-byte inputs and save the result in a snapshot
 
@@ -38,7 +38,8 @@ describe('1-byte snapshot tests', () => {
             } catch {}
 
             if (ok) t.assert.strictEqual(a, b, `Byte: ${i}`)
-            const hex = [...a].map((c) => c.codePointAt(0).toString(16).padStart(4, '0')).join('')
+            const w = label === 'big5' ? 6 : 4
+            const hex = [...a].map((c) => c.codePointAt(0).toString(16).padStart(w, '0')).join('')
             flags.push(ok ? 1 : 0)
             out.push(hex)
           }
@@ -89,7 +90,8 @@ describe('2-byte snapshot tests', { skip: skipLarge }, () => {
               } catch {}
 
               if (ok) t.assert.strictEqual(a, b, `Bytes: ${i}, ${j}`)
-              const hex = [...a].map((c) => c.codePointAt(0).toString(16).padStart(4, '0')).join('')
+              const w = label === 'big5' ? 6 : 4
+              const hex = [...a].map((c) => c.codePointAt(0).toString(16).padStart(w, '0')).join('')
               flags.push(ok ? 1 : 0)
               lengths.push(a.length)
               out.push(hex)
@@ -138,7 +140,8 @@ describe('3-byte a-b-b snapshot tests', { skip: skipLarge }, () => {
               } catch {}
 
               if (ok) t.assert.strictEqual(a, b, `Bytes: ${i}, ${j}, ${j}`)
-              const hex = [...a].map((c) => c.codePointAt(0).toString(16).padStart(4, '0')).join('')
+              const w = label === 'big5' ? 6 : 4
+              const hex = [...a].map((c) => c.codePointAt(0).toString(16).padStart(w, '0')).join('')
               flags.push(ok ? 1 : 0)
               lengths.push(a.length)
               out.push(hex)
@@ -187,7 +190,8 @@ describe('3-byte a-b-a snapshot tests', { skip: skipLarge }, () => {
               } catch {}
 
               if (ok) t.assert.strictEqual(a, b, `Bytes: ${i}, ${j}, ${j}`)
-              const hex = [...a].map((c) => c.codePointAt(0).toString(16).padStart(4, '0')).join('')
+              const w = label === 'big5' ? 6 : 4
+              const hex = [...a].map((c) => c.codePointAt(0).toString(16).padStart(w, '0')).join('')
               flags.push(ok ? 1 : 0)
               lengths.push(a.length)
               out.push(hex)
@@ -236,7 +240,8 @@ describe('3-byte a-a-b snapshot tests', { skip: skipLarge }, () => {
               } catch {}
 
               if (ok) t.assert.strictEqual(a, b, `Bytes: ${i}, ${j}, ${j}`)
-              const hex = [...a].map((c) => c.codePointAt(0).toString(16).padStart(4, '0')).join('')
+              const w = label === 'big5' ? 6 : 4
+              const hex = [...a].map((c) => c.codePointAt(0).toString(16).padStart(w, '0')).join('')
               flags.push(ok ? 1 : 0)
               lengths.push(a.length)
               out.push(hex)

@@ -16,7 +16,6 @@ describe('legacy multi-byte encodings snapshot tests', { skip: skipLarge }, () =
   for (const local of [true, false]) {
     describe(local ? 'Fresh instance' : 'Reuse instance', () => {
       for (const label of legacyMultiByte) {
-        if (label === 'big5') continue // FIXME
         let loose, fatal
 
         test(label, (t) => {
@@ -46,7 +45,8 @@ describe('legacy multi-byte encodings snapshot tests', { skip: skipLarge }, () =
             }
 
             if (ok) t.assert.strictEqual(a, b, `Bytes: ${toHex(u8)}`)
-            const hex = [...a].map((c) => c.codePointAt(0).toString(16).padStart(4, '0')).join('')
+            const w = label === 'big5' ? 6 : 4
+            const hex = [...a].map((c) => c.codePointAt(0).toString(16).padStart(w, '0')).join('')
             flags.push(ok ? 1 : 0)
             lengths.push(a.length)
             out.push(hex)
