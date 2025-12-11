@@ -68,7 +68,7 @@ function decodeDecoder(input, loose = false, format = 'uint16') {
     throw new TypeError('Unknown format')
   }
 
-  return new TextDecoder(encoding, { fatal: !loose }).decode(input) // TODO: cache decoder?
+  return new TextDecoder(encoding, { ignoreBOM: true, fatal: !loose }).decode(input) // TODO: cache decoder?
 }
 
 const decode = isDeno ? decodeDecoder : decodeNode
