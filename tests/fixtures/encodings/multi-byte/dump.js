@@ -1,8 +1,10 @@
 import { readFileSync, readdirSync } from 'node:fs'
+import { toBase64 } from '@exodus/bytes/base64.js' // eslint-disable-line @exodus/import/no-unresolved
+import { utf16fromString } from '@exodus/bytes/utf16.js' // eslint-disable-line @exodus/import/no-unresolved
 import { join } from 'node:path'
 import assert from 'node:assert/strict'
 
-const splitChunks = new Set(['jis0208', 'jis0212', 'big5']) // pretty-print into chunks, non-continious anyway
+// const splitChunks = new Set(['jis0208', 'jis0212', 'big5']) // pretty-print into chunks, non-continious anyway
 
 const reusable = Object.entries({
   $C: ['АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ'], // [[1040, 6], "Ё", [1046, 26]],
@@ -125,7 +127,7 @@ for (const [encoding, chars] of Object.entries(encodings)) {
       list.length > 0 &&
       typeof list[list.length - 1] === 'string' &&
       list[list.length - 1].endsWith('"')
-    let minConseq = lastIsStr ? 4 : 2 // don't collapse too small chunks
+    let minConseq = lastIsStr ? 3 : 2 // don't collapse too small chunks
 
     let strsplit = [...str]
     {
@@ -140,14 +142,14 @@ for (const [encoding, chars] of Object.entries(encodings)) {
       }
     }
 
-    minConseq = 4
+    minConseq = 3
 
     const index = strsplit.indexOf('\uFFFD')
-    const is96 = list.length > 0 && list[list.length - 1].length > 80
+    // const is96 = list.length > 0 && list[list.length - 1].length > 80
     let end = index === -1 ? strsplit.length : index
-    if (splitChunks.has(encoding)) {
-      end = index > 96 && index <= 152 && !is96 ? 76 : Math.min(96, end)
-    }
+    // if (splitChunks.has(encoding)) {
+    //   end = index > 96 && index <= 152 && !is96 ? 76 : Math.min(96, end)
+    // }
 
     for (const [name, v] of reusable) {
       if (name === encoding) continue
@@ -170,14 +172,7 @@ for (const [encoding, chars] of Object.entries(encodings)) {
     const head = strsplit.join('')
     if (strsplit.length > 6) {
       lastconseq = strsplit[strsplit.length - 1].codePointAt(0) + 1
-      list.push(
-        JSON.stringify(head).replace(/[^\\\w\n\p{N}\p{L}\p{S}\p{P} -]/gu, (x) => {
-          const c = x.codePointAt(0)
-          // if (c <= 0xff) return `\\x${c.toString(16).padStart(2, '0').toUpperCase()}`
-          if (c <= 0xff_ff) return `\\u${c.toString(16).padStart(4, '0').toUpperCase()}`
-          throw new Error('Unexpected')
-        })
-      )
+      list.push(`"${toBase64(utf16fromString(head, 'uint8-le'))}"`)
     } else {
       let i = 0
       while (i < strsplit.length) {

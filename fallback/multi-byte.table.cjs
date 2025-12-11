@@ -1,4 +1,5 @@
-const { utf16fromString } = require('@exodus/bytes/utf16.js') // eslint-disable-line @exodus/import/no-unresolved
+const { utf16fromString, utf16toString } = require('@exodus/bytes/utf16.js') // eslint-disable-line @exodus/import/no-unresolved
+const { fromBase64 } = require('@exodus/bytes/base64.js') // eslint-disable-line @exodus/import/no-unresolved
 
 // This is huge. It's _much_ smaller than https://npmjs.com/text-encoding though
 // Exactly as mapped by the index table
@@ -36,13 +37,15 @@ function unwrap(res, t, pos, stringMode = false) {
     } else if (x[0] === '$' && Object.hasOwn(indices, x)) {
       pos = unwrap(res, indices[x], pos, stringMode) // self-reference using shared chunks
     } else if (stringMode) {
-      const xs = [...x] // splits by codepoints
+      const y = utf16toString(fromBase64(x), 'uint8-le') // TODO: avoid double conversions
+      const xs = [...y] // splits by codepoints
       for (let i = 0; i < xs.length; ) res[pos++] = xs[i++]
       code = xs[xs.length - 1].codePointAt(0) + 1
     } else {
-      const xs = utf16fromString(x)
+      const y = utf16toString(fromBase64(x), 'uint8-le') // TODO: avoid double conversions
+      const xs = utf16fromString(y)
       res.set(xs, pos)
-      pos += x.length
+      pos += y.length
       code = xs[xs.length - 1] + 1
     }
   }
