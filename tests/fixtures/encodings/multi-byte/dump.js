@@ -91,7 +91,7 @@ for (const [encoding, chars] of Object.entries(encodings)) {
     if (str[0] === '\uFFFD') {
       let skip = 0
       while (str[skip] === '\uFFFD') skip++
-      list.push(-skip)
+      list.push(`0,${skip}`)
       str = str.slice(skip)
     }
 
@@ -121,7 +121,7 @@ for (const [encoding, chars] of Object.entries(encodings)) {
       const p = conseqStart(strsplit, 0)
       if (p >= minConseq) {
         const first = strsplit[0].codePointAt(0)
-        list.push(`${first},${p}`)
+        list.push(`${p},${first}`)
         strsplit = strsplit.slice(p)
         str = strsplit.join('')
         continue

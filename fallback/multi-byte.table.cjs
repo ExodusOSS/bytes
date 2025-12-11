@@ -1,8 +1,10 @@
 const { utf16fromString } = require('@exodus/bytes/utf16.js') // eslint-disable-line @exodus/import/no-unresolved
 
 // This is huge. It's _much_ smaller than https://npmjs.com/text-encoding though
-// Exactly as mapped by the index table, negative numbers denote holes, positive denote continious [first, length]
-// Parts with $ are references to common chunks
+// Exactly as mapped by the index table
+// 0,x - hole of x empty elements
+// n,c - continious [c, ...] of length n
+// $.. - references to common chunks
 
 let indices
 const sizes = { jis0208: 11_104, jis0212: 7211, 'euc-kr': 23_750, gb18030: 23_940, big5: 19_782 }
@@ -14,14 +16,14 @@ function unwrap(res, t, pos, stringMode = false) {
   for (let i = 0; i < t.length; i++) {
     const x = t[i]
     if (typeof x === 'number') {
-      if (x < 0) {
-        pos -= x
+      if (x === 0) {
+        pos += t[++i]
       } else if (stringMode) {
-        const len = t[++i]
-        for (let k = 0; k < len; k++, pos++) res[pos] = String.fromCodePoint(x + k)
+        const с = t[++i]
+        for (let k = 0; k < x; k++, pos++) res[pos] = String.fromCodePoint(с + k)
       } else {
-        const len = t[++i]
-        for (let k = 0; k < len; k++, pos++) res[pos] = x + k
+        const с = t[++i]
+        for (let k = 0; k < x; k++, pos++) res[pos] = с + k
       }
     } else if (x[0] === '$' && Object.hasOwn(indices, x)) {
       pos = unwrap(res, indices[x], pos, stringMode) // self-reference using shared chunks
