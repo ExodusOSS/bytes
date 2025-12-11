@@ -2,7 +2,7 @@ import { readFileSync, readdirSync } from 'node:fs'
 import { join } from 'node:path'
 import assert from 'node:assert/strict'
 
-const splitChunks = new Set(['jis0208', 'big5']) // pretty-print into chunks, non-continious anyway
+const splitChunks = new Set(['jis0208', 'jis0212', 'big5']) // pretty-print into chunks, non-continious anyway
 
 const reusable = Object.entries({
   $C: ['АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ'], // [[1040, 6], "Ё", [1046, 26]],
@@ -87,6 +87,7 @@ function conseqStart(str, start) {
 for (const [encoding, chars] of Object.entries(encodings)) {
   const list = []
   let str = chars
+  let lastconseq = 0
   while (str.length > 0) {
     if (str[0] === '\uFFFD') {
       let skip = 0
@@ -121,7 +122,8 @@ for (const [encoding, chars] of Object.entries(encodings)) {
       const p = conseqStart(strsplit, 0)
       if (p >= minConseq) {
         const first = strsplit[0].codePointAt(0)
-        list.push(`${p},${first}`)
+        list.push(`${p},${first - lastconseq}`)
+        lastconseq = first + p
         strsplit = strsplit.slice(p)
         str = strsplit.join('')
         continue
@@ -154,15 +156,29 @@ for (const [encoding, chars] of Object.entries(encodings)) {
       }
     }
 
-    const head = strsplit.slice(0, end).join('')
-    list.push(
-      JSON.stringify(head).replace(/[^\\\w\n\p{N}\p{L}\p{S}\p{P} -]/gu, (x) => {
-        const c = x.codePointAt(0)
-        // if (c <= 0xff) return `\\x${c.toString(16).padStart(2, '0').toUpperCase()}`
-        if (c <= 0xff_ff) return `\\u${c.toString(16).padStart(4, '0').toUpperCase()}`
-        throw new Error('Unexpected')
-      })
-    )
+    strsplit = strsplit.slice(0, end)
+    const head = strsplit.join('')
+    if (strsplit.length > 6) {
+      lastconseq = strsplit[strsplit.length - 1].codePointAt(0) + 1
+      list.push(
+        JSON.stringify(head).replace(/[^\\\w\n\p{N}\p{L}\p{S}\p{P} -]/gu, (x) => {
+          const c = x.codePointAt(0)
+          // if (c <= 0xff) return `\\x${c.toString(16).padStart(2, '0').toUpperCase()}`
+          if (c <= 0xff_ff) return `\\u${c.toString(16).padStart(4, '0').toUpperCase()}`
+          throw new Error('Unexpected')
+        })
+      )
+    } else {
+      let i = 0
+      while (i < strsplit.length) {
+        const start = strsplit[i].codePointAt(0)
+        const p = conseqStart(strsplit, i)
+        list.push(`${p},${start - lastconseq}`)
+        lastconseq = start + p
+        i += p
+      }
+    }
+
     str = str.slice(head.length)
   }
 

@@ -13,26 +13,30 @@ const tables = new Map()
 /* eslint-disable @exodus/mutable/no-param-reassign-prop-only */
 
 function unwrap(res, t, pos, stringMode = false) {
+  let code = 0
   for (let i = 0; i < t.length; i++) {
     const x = t[i]
     if (typeof x === 'number') {
       if (x === 0) {
         pos += t[++i]
       } else if (stringMode) {
-        const с = t[++i]
-        for (let k = 0; k < x; k++, pos++) res[pos] = String.fromCodePoint(с + k)
+        code += t[++i]
+        for (let k = 0; k < x; k++, pos++, code++) res[pos] = String.fromCodePoint(code)
       } else {
-        const с = t[++i]
-        for (let k = 0; k < x; k++, pos++) res[pos] = с + k
+        code += t[++i]
+        for (let k = 0; k < x; k++, pos++, code++) res[pos] = code
       }
     } else if (x[0] === '$' && Object.hasOwn(indices, x)) {
       pos = unwrap(res, indices[x], pos, stringMode) // self-reference using shared chunks
     } else if (stringMode) {
       const xs = [...x] // splits by codepoints
       for (let i = 0; i < xs.length; ) res[pos++] = xs[i++]
+      code = xs[xs.length - 1].codePointAt(0) + 1
     } else {
-      res.set(utf16fromString(x), pos)
+      const xs = utf16fromString(x)
+      res.set(xs, pos)
       pos += x.length
+      code = xs[xs.length - 1] + 1
     }
   }
 
