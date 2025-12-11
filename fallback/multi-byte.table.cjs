@@ -5,23 +5,29 @@ const { utf16fromString } = require('@exodus/bytes/utf16.js') // eslint-disable-
 // Parts with $ are references to common chunks
 
 let indices
-const sizes = { jis0208: 11_104, jis0212: 7211, 'euc-kr': 23_750, gb18030: 23_940 }
+const sizes = { jis0208: 11_104, jis0212: 7211, 'euc-kr': 23_750, gb18030: 23_940, big5: 19_782 }
 const tables = new Map()
 
 /* eslint-disable @exodus/mutable/no-param-reassign-prop-only */
 
-function unwrap(res, t, pos) {
+function unwrap(res, t, pos, stringMode = false) {
   for (let i = 0; i < t.length; i++) {
     const x = t[i]
     if (typeof x === 'number') {
       if (x < 0) {
         pos -= x
+      } else if (stringMode) {
+        const len = t[++i]
+        for (let k = 0; k < len; k++, pos++) res[pos] = String.fromCodePoint(x + k)
       } else {
         const len = t[++i]
         for (let k = 0; k < len; k++, pos++) res[pos] = x + k
       }
     } else if (x[0] === '$' && Object.hasOwn(indices, x)) {
-      pos = unwrap(res, indices[x], pos) // self-reference using shared chunks
+      pos = unwrap(res, indices[x], pos, stringMode) // self-reference using shared chunks
+    } else if (stringMode) {
+      const xs = [...x] // splits by codepoints
+      for (let i = 0; i < xs.length; ) res[pos++] = xs[i++]
     } else {
       res.set(utf16fromString(x), pos)
       pos += x.length
@@ -39,9 +45,21 @@ function getTable(id) {
   if (!Object.hasOwn(indices, id) || !Object.hasOwn(sizes, id)) throw new Error('Unknown encoding')
   if (!indices[id]) throw new Error('Table already used (likely incorrect bundler dedupe)')
 
-  const res = new Uint16Array(sizes[id])
-  res.fill(0xff_fd)
-  unwrap(res, indices[id], 0)
+  let res
+  if (id === 'big5') {
+    res = new Array(sizes[id]) // array of strings or undefined
+    unwrap(res, indices[id], 0, true)
+    // Pointer code updates are embedded into the table
+    res[1133] = '\xCA\u0304'
+    res[1135] = '\xCA\u030C'
+    res[1164] = '\xEA\u0304'
+    res[1166] = '\xEA\u030C'
+  } else {
+    res = new Uint16Array(sizes[id])
+    res.fill(0xff_fd)
+    unwrap(res, indices[id], 0, false)
+  }
+
   indices[id] = null // gc
   tables.set(id, res)
   return res

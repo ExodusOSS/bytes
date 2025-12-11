@@ -2,8 +2,7 @@ import { readFileSync, readdirSync } from 'node:fs'
 import { join } from 'node:path'
 import assert from 'node:assert/strict'
 
-const nonUTF16 = new Set(['big5']) // non-charcode codepoints + continious, processed separately
-const splitChunks = new Set(['jis0208']) // pretty-print into chunks, non-continious anyway
+const splitChunks = new Set(['jis0208', 'big5']) // pretty-print into chunks, non-continious anyway
 
 const reusable = Object.entries({
   $CYR: ['АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ'], // [[1040, 6], "Ё", [1046, 26]],
@@ -32,7 +31,8 @@ for (const file of readdirSync(import.meta.dirname)) {
   const match = file.match(/^index-([a-z0-9-]+)\.txt$/u)
   if (!match) continue
   const encoding = match[1]
-  if (nonUTF16.has(encoding)) continue
+  const non16bit = encoding === 'big5'
+  if (!non16bit) continue
   const text = readFileSync(join(import.meta.dirname, file), 'utf8')
   let max = 0
   const rows = text
@@ -46,7 +46,8 @@ for (const file of readdirSync(import.meta.dirname)) {
       const code = parseInt(codeHex.slice(2), 16)
       assert.strictEqual(`${i}`, istr)
       assert.strictEqual('0x' + code.toString(16).padStart(4, '0').toUpperCase(), codeHex)
-      assert.ok(code && code !== 0xff_fd && code <= 0xff_ff, `${encoding}: ${codeHex}`) // can't be a replacement char, has to be <= 16-bit
+      assert.ok(code && code !== 0xff_fd, `${encoding}: ${codeHex}`) // can't be a replacement char
+      if (!non16bit) assert.ok(code <= 0xff_ff, `${encoding}: ${codeHex}`) // has to be <= 16-bit
       assert.ok(code < 0xd8_00 || code >= 0xe0_00, `${encoding}: ${codeHex}`) // not a surrogate
       return [i, code]
     })
@@ -55,13 +56,13 @@ for (const file of readdirSync(import.meta.dirname)) {
   const chars = []
   for (let i = 0; i <= max; i++) {
     if (known.has(i)) {
-      chars.push(String.fromCharCode(known.get(i)))
+      chars.push(String.fromCodePoint(known.get(i)))
     } else {
       chars.push('\uFFFD')
     }
   }
 
-  while (chars[chars.length - 1] === String.fromCharCode(128 + chars.length - 1)) chars.pop() // minify
+  while (chars[chars.length - 1] === String.fromCodePoint(128 + chars.length - 1)) chars.pop() // minify
 
   encodings[encoding] = chars.join('')
 }
@@ -69,9 +70,9 @@ for (const file of readdirSync(import.meta.dirname)) {
 Object.assign(encodings, Object.fromEntries(reusable))
 
 function conseqStart(str, start) {
-  const first = str[start].charCodeAt(0)
+  const first = str[start].codePointAt(0)
   let p = start
-  while (p < str.length && str[p] !== '\uFFFD' && str[p].charCodeAt(0) === first + p - start) p++
+  while (p < str.length && str[p] !== '\uFFFD' && str[p].codePointAt(0) === first + p - start) p++
   return p - start
 }
 
@@ -107,40 +108,45 @@ for (const [encoding, chars] of Object.entries(encodings)) {
       list[list.length - 1].endsWith('"')
     let minConseq = lastIsStr ? 4 : 2 // don't collapse too small chunks
 
+    let strsplit = [...str]
     {
-      const p = conseqStart(str, 0)
+      const p = conseqStart(strsplit, 0)
       if (p >= minConseq) {
-        const first = str[0].charCodeAt(0)
+        const first = strsplit[0].codePointAt(0)
         list.push(`${first},${p}`)
-        str = str.slice(p)
+        strsplit = strsplit.slice(p)
+        str = strsplit.join('')
         continue
       }
     }
 
     minConseq = 4
 
-    const index = str.indexOf('\uFFFD')
+    const index = strsplit.indexOf('\uFFFD')
     const is96 = list.length > 0 && list[list.length - 1].length > 80
-    let end = index === -1 ? str.length : index
+    let end = index === -1 ? strsplit.length : index
     if (splitChunks.has(encoding)) {
       end = index > 96 && index <= 152 && !is96 ? 76 : Math.min(96, end)
     }
 
     for (const [name, v] of reusable) {
       if (name === encoding) continue
-      const idx = str.indexOf(v)
+      const idx = str.indexOf(v) // FIXME
       assert.ok(idx !== 0)
-      if (idx > 0 && idx < end) end = idx
+      if (idx > 0) {
+        const idxu = [...str.slice(0, idx)].length // eslint-disable-line unicorn/no-useless-spread
+        if (idxu < end) end = idxu
+      }
     }
 
     for (let i = 0; i < end; i++) {
-      if (conseqStart(str, i) >= minConseq) {
+      if (conseqStart(strsplit, i) >= minConseq) {
         assert.ok(i > 0)
         end = i
       }
     }
 
-    const head = str.slice(0, end)
+    const head = strsplit.slice(0, end).join('')
     list.push(
       JSON.stringify(head).replace(/[^\\\w\n\p{N}\p{L}\p{S}\p{P} -]/gu, (x) => {
         const c = x.codePointAt(0)
@@ -149,7 +155,7 @@ for (const [encoding, chars] of Object.entries(encodings)) {
         throw new Error('Unexpected')
       })
     )
-    str = str.slice(end)
+    str = str.slice(head.length)
   }
 
   const list2 = []

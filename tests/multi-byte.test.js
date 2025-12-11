@@ -20,6 +20,7 @@ describe('multi-byte encodings tables', () => {
   for (const encoding of encodings) {
     test(encoding, (t) => {
       const size = sizes[encoding]
+      const non16bit = encoding === 'big5'
       t.assert.ok(Number.isSafeInteger(size) && size >= 0)
       const table = getTable(encoding)
       t.assert.strictEqual(table.length, size)
@@ -42,7 +43,8 @@ describe('multi-byte encodings tables', () => {
           const code = parseInt(codeHex.slice(2), 16)
           t.assert.strictEqual(`${i}`, istr)
           t.assert.strictEqual('0x' + code.toString(16).padStart(4, '0').toUpperCase(), codeHex)
-          t.assert.ok(code && code !== 0xff_fd && code <= 0xff_ff) // can't be a replacement char, has to be <= 16-bit
+          t.assert.ok(code && code !== 0xff_fd) // can't be a replacement char
+          if (!non16bit) t.assert.ok(code <= 0xff_ff) // has to be <= 16-bit
           t.assert.ok(code < 0xd8_00 || code >= 0xe0_00) // not a surrogate
           return [i, { i, code, description }]
         })
@@ -54,11 +56,17 @@ describe('multi-byte encodings tables', () => {
 
       for (let i = 0; i < size; i++) {
         const row = known.get(i)
-        if (row) {
+        if (encoding === 'big5' && [1133, 1135, 1164, 1166].includes(i)) {
+          // Patch per spec
+          t.assert.strictEqual(row, undefined)
+          t.assert.strictEqual(typeof table[i], 'string')
+          t.assert.strictEqual(table[i].length, 2)
+        } else if (row) {
+          const expected = non16bit ? String.fromCodePoint(row.code) : row.code
           t.assert.strictEqual(i, row.i)
-          t.assert.strictEqual(table[i], row.code, `Offset ${i}: ${row.description}`)
+          t.assert.strictEqual(table[i], expected, `Offset ${i}: ${row.description}`)
         } else {
-          t.assert.strictEqual(table[i], 0xff_fd, `Offset ${i}`)
+          t.assert.strictEqual(table[i], non16bit ? undefined : 0xff_fd, `Offset ${i}`)
         }
       }
     })
