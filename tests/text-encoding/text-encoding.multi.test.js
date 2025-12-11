@@ -16,7 +16,7 @@ describe('legacy multi-byte encodings snapshot tests', { skip: skipLarge }, () =
   for (const local of [true, false]) {
     describe(local ? 'Fresh instance' : 'Reuse instance', () => {
       for (const label of legacyMultiByte) {
-        if (['gbk', 'gb18030', 'big5', 'euc-kr'].includes(label)) continue // FIXME
+        if (['gbk', 'gb18030', 'big5'].includes(label)) continue // FIXME
         let loose, fatal
 
         test(label, (t) => {

@@ -135,7 +135,7 @@ describe('BOM handling', () => {
   })
 })
 
-test.skip('euc-kr encoding', (t) => {
+test('euc-kr encoding', (t) => {
   t.assert.throws(() => new TextDecoder('euc-kr', { fatal: true }).decode(Uint8Array.of(0x80)))
   t.assert.strictEqual(new TextDecoder('euc-kr').decode(Uint8Array.of(0x80)), '\uFFFD')
 

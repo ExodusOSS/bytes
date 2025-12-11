@@ -18,8 +18,32 @@ const mappers = {
   big5: () => {
     throw new RangeError('Unsupported encoding')
   },
+  // https://encoding.spec.whatwg.org/#euc-kr-decoder
   'euc-kr': () => {
-    throw new RangeError('Unsupported encoding')
+    const euc = getTable('euc-kr')
+    let lead = 0
+    return (b) => {
+      if (b === EOF) {
+        if (!lead) return null
+        lead = 0
+        return -2
+      }
+
+      if (lead) {
+        const cp = b >= 0x41 && b <= 0xfe ? euc[(lead - 0x81) * 190 + b - 0x41] : undefined
+        lead = 0
+        if (cp !== undefined && cp !== REP) return cp
+        return b < 128 ? -3 : -2 // if ASCII, restore 1 byte and error, otherwise just error
+      }
+
+      if (b < 128) return b
+      if (b >= 0x81 && b <= 0xfe) {
+        lead = b
+        return -1
+      }
+
+      return -2
+    }
   },
   // https://encoding.spec.whatwg.org/#euc-jp-decoder
   'euc-jp': () => {
@@ -200,7 +224,8 @@ const mappers = {
   },
 }
 
-mappers.gbk = mappers.gb18030
+// https://encoding.spec.whatwg.org/#gbk-decoder
+mappers.gbk = mappers.gb18030 // 10.1.1. GBK’s decoder is gb18030’s decoder.
 
 export const multibyteSupported = (enc) => Object.hasOwn(mappers, enc)
 
