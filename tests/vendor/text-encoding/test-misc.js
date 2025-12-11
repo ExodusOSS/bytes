@@ -10,11 +10,8 @@ var LEGACY_ENCODINGS = [
   'koi8-u', 'macintosh', 'windows-874', 'windows-1250', 'windows-1251',
   'windows-1252', 'windows-1253', 'windows-1254', 'windows-1255',
   'windows-1256', 'windows-1257', 'windows-1258', 'x-mac-cyrillic',
-  /*
   'gbk', 'gb18030', 'big5', 'euc-jp', 'iso-2022-jp', 'shift_jis',
   'euc-kr', 'utf-16le', 'utf-16be'
-  */
-  'utf-16le', 'utf-16be'
 ];
 
 var ASCII_SUPERSETS = THE_ENCODING.concat(LEGACY_ENCODINGS)
@@ -214,13 +211,11 @@ test(function() {
   });
 }, 'Streaming Decode');
 
-/*
 test(function() {
   var jis = [0x82, 0xC9, 0x82, 0xD9, 0x82, 0xF1];
   var expected = '\u306B\u307B\u3093'; // Nihon
   assert_equals(new TextDecoder('shift_jis').decode(new Uint8Array(jis)), expected);
 }, 'Shift_JIS Decode');
-*/
 
 test(function() {
   ASCII_SUPERSETS.forEach(function(encoding) {
