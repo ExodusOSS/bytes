@@ -4,25 +4,13 @@ import { TextDecoder } from '@exodus/bytes/text-encoding.js'
 import { toBase64 } from '@exodus/bytes/base64.js'
 import { fromHex } from '@exodus/bytes/hex.js'
 import { test, describe } from 'node:test'
+import { fromBits, fromBase4 } from './_utils.js'
 
 // import { labels } from './fixtures/encodings/encodings.cjs'
+// Also test most common single-byte decoder (windows-1252) on multi-byte input
 const labels = ['windows-1252', 'utf-8', 'euc-jp', 'iso-2022-jp', 'shift_jis']
 
 // Try all 1-byte and 2-byte inputs and save the result in a snapshot
-
-function fromBits(str) {
-  if (str.length % 8 !== 0) throw new Error('Can not')
-  const res = new Uint8Array(str.length / 8)
-  for (let i = 0; i < res.length; i++) res[i] = parseInt(str.slice(8 * i, 8 * i + 8), 2)
-  return res
-}
-
-function fromBase4(str) {
-  if (str.length % 4 !== 0) throw new Error('Can not')
-  const res = new Uint8Array(str.length / 4)
-  for (let i = 0; i < res.length; i++) res[i] = parseInt(str.slice(4 * i, 4 * i + 4), 4)
-  return res
-}
 
 describe('1-byte snapshot tests', () => {
   for (const label of labels) {

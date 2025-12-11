@@ -1,0 +1,223 @@
+exports[`1-byte encodings snapshot tests > ibm866 > non-ascii 1`] = `
+"/////////////////////w=="
+`;
+
+exports[`1-byte encodings snapshot tests > ibm866 > non-ascii 2`] = `
+"BBAEEQQSBBMEFAQVBBYEFwQYBBkEGgQbBBwEHQQeBB8EIAQhBCIEIwQkBCUEJgQnBCgEKQQqBCsELAQtBC4ELwQwBDEEMgQzBDQENQQ2BDcEOAQ5BDoEOwQ8BD0EPgQ/JZElkiWTJQIlJCVhJWIlViVVJWMlUSVXJV0lXCVbJRAlFCU0JSwlHCUAJTwlXiVfJVolVCVpJWYlYCVQJWwlZyVoJWQlZSVZJVglUiVTJWslaiUYJQwliCWEJYwlkCWABEAEQQRCBEMERARFBEYERwRIBEkESgRLBEwETQROBE8EAQRRBAQEVAQHBFcEDgReALAiGQC3IhohFgCkJaAAoA=="
+`;
+
+exports[`1-byte encodings snapshot tests > iso-8859-10 > non-ascii 1`] = `
+"/////////////////////w=="
+`;
+
+exports[`1-byte encodings snapshot tests > iso-8859-10 > non-ascii 2`] = `
+"AIAAgQCCAIMAhACFAIYAhwCIAIkAigCLAIwAjQCOAI8AkACRAJIAkwCUAJUAlgCXAJgAmQCaAJsAnACdAJ4AnwCgAQQBEgEiASoBKAE2AKcBOwEQAWABZgF9AK0BagFKALABBQETASMBKwEpATcAtwE8AREBYQFnAX4gFQFrAUsBAADBAMIAwwDEAMUAxgEuAQwAyQEYAMsBFgDNAM4AzwDQAUUBTADTANQA1QDWAWgA2AFyANoA2wDcAN0A3gDfAQEA4QDiAOMA5ADlAOYBLwENAOkBGQDrARcA7QDuAO8A8AFGAU0A8wD0APUA9gFpAPgBcwD6APsA/AD9AP4BOA=="
+`;
+
+exports[`1-byte encodings snapshot tests > iso-8859-13 > non-ascii 1`] = `
+"/////////////////////w=="
+`;
+
+exports[`1-byte encodings snapshot tests > iso-8859-13 > non-ascii 2`] = `
+"AIAAgQCCAIMAhACFAIYAhwCIAIkAigCLAIwAjQCOAI8AkACRAJIAkwCUAJUAlgCXAJgAmQCaAJsAnACdAJ4AnwCgIB0AogCjAKQgHgCmAKcA2ACpAVYAqwCsAK0ArgDGALAAsQCyALMgHAC1ALYAtwD4ALkBVwC7ALwAvQC+AOYBBAEuAQABBgDEAMUBGAESAQwAyQF5ARYBIgE2ASoBOwFgAUMBRQDTAUwA1QDWANcBcgFBAVoBagDcAXsBfQDfAQUBLwEBAQcA5ADlARkBEwENAOkBegEXASMBNwErATwBYQFEAUYA8wFNAPUA9gD3AXMBQgFbAWsA/AF8AX4gGQ=="
+`;
+
+exports[`1-byte encodings snapshot tests > iso-8859-14 > non-ascii 1`] = `
+"/////////////////////w=="
+`;
+
+exports[`1-byte encodings snapshot tests > iso-8859-14 > non-ascii 2`] = `
+"AIAAgQCCAIMAhACFAIYAhwCIAIkAigCLAIwAjQCOAI8AkACRAJIAkwCUAJUAlgCXAJgAmQCaAJsAnACdAJ4AnwCgHgIeAwCjAQoBCx4KAKcegACpHoIeCx7yAK0ArgF4Hh4eHwEgASEeQB5BALYeVh6BHlcegx5gHvMehB6FHmEAwADBAMIAwwDEAMUAxgDHAMgAyQDKAMsAzADNAM4AzwF0ANEA0gDTANQA1QDWHmoA2ADZANoA2wDcAN0BdgDfAOAA4QDiAOMA5ADlAOYA5wDoAOkA6gDrAOwA7QDuAO8BdQDxAPIA8wD0APUA9h5rAPgA+QD6APsA/AD9AXcA/w=="
+`;
+
+exports[`1-byte encodings snapshot tests > iso-8859-15 > non-ascii 1`] = `
+"/////////////////////w=="
+`;
+
+exports[`1-byte encodings snapshot tests > iso-8859-15 > non-ascii 2`] = `
+"AIAAgQCCAIMAhACFAIYAhwCIAIkAigCLAIwAjQCOAI8AkACRAJIAkwCUAJUAlgCXAJgAmQCaAJsAnACdAJ4AnwCgAKEAogCjIKwApQFgAKcBYQCpAKoAqwCsAK0ArgCvALAAsQCyALMBfQC1ALYAtwF+ALkAugC7AVIBUwF4AL8AwADBAMIAwwDEAMUAxgDHAMgAyQDKAMsAzADNAM4AzwDQANEA0gDTANQA1QDWANcA2ADZANoA2wDcAN0A3gDfAOAA4QDiAOMA5ADlAOYA5wDoAOkA6gDrAOwA7QDuAO8A8ADxAPIA8wD0APUA9gD3APgA+QD6APsA/AD9AP4A/w=="
+`;
+
+exports[`1-byte encodings snapshot tests > iso-8859-16 > non-ascii 1`] = `
+"/////////////////////w=="
+`;
+
+exports[`1-byte encodings snapshot tests > iso-8859-16 > non-ascii 2`] = `
+"AIAAgQCCAIMAhACFAIYAhwCIAIkAigCLAIwAjQCOAI8AkACRAJIAkwCUAJUAlgCXAJgAmQCaAJsAnACdAJ4AnwCgAQQBBQFBIKwgHgFgAKcBYQCpAhgAqwF5AK0BegF7ALAAsQEMAUIBfSAdALYAtwF+AQ0CGQC7AVIBUwF4AXwAwADBAMIBAgDEAQYAxgDHAMgAyQDKAMsAzADNAM4AzwEQAUMA0gDTANQBUADWAVoBcADZANoA2wDcARgCGgDfAOAA4QDiAQMA5AEHAOYA5wDoAOkA6gDrAOwA7QDuAO8BEQFEAPIA8wD0AVEA9gFbAXEA+QD6APsA/AEZAhsA/w=="
+`;
+
+exports[`1-byte encodings snapshot tests > iso-8859-2 > non-ascii 1`] = `
+"/////////////////////w=="
+`;
+
+exports[`1-byte encodings snapshot tests > iso-8859-2 > non-ascii 2`] = `
+"AIAAgQCCAIMAhACFAIYAhwCIAIkAigCLAIwAjQCOAI8AkACRAJIAkwCUAJUAlgCXAJgAmQCaAJsAnACdAJ4AnwCgAQQC2AFBAKQBPQFaAKcAqAFgAV4BZAF5AK0BfQF7ALABBQLbAUIAtAE+AVsCxwC4AWEBXwFlAXoC3QF+AXwBVADBAMIBAgDEATkBBgDHAQwAyQEYAMsBGgDNAM4BDgEQAUMBRwDTANQBUADWANcBWAFuANoBcADcAN0BYgDfAVUA4QDiAQMA5AE6AQcA5wENAOkBGQDrARsA7QDuAQ8BEQFEAUgA8wD0AVEA9gD3AVkBbwD6AXEA/AD9AWMC2Q=="
+`;
+
+exports[`1-byte encodings snapshot tests > iso-8859-3 > non-ascii 1`] = `
+"//////v9//3v/3//7/9//w=="
+`;
+
+exports[`1-byte encodings snapshot tests > iso-8859-3 > non-ascii 2`] = `
+"AIAAgQCCAIMAhACFAIYAhwCIAIkAigCLAIwAjQCOAI8AkACRAJIAkwCUAJUAlgCXAJgAmQCaAJsAnACdAJ4AnwCgASYC2ACjAKT//QEkAKcAqAEwAV4BHgE0AK3//QF7ALABJwCyALMAtAC1ASUAtwC4ATEBXwEfATUAvf/9AXwAwADBAML//QDEAQoBCADHAMgAyQDKAMsAzADNAM4Az//9ANEA0gDTANQBIADWANcBHADZANoA2wDcAWwBXADfAOAA4QDi//0A5AELAQkA5wDoAOkA6gDrAOwA7QDuAO///QDxAPIA8wD0ASEA9gD3AR0A+QD6APsA/AFtAV0C2Q=="
+`;
+
+exports[`1-byte encodings snapshot tests > iso-8859-4 > non-ascii 1`] = `
+"/////////////////////w=="
+`;
+
+exports[`1-byte encodings snapshot tests > iso-8859-4 > non-ascii 2`] = `
+"AIAAgQCCAIMAhACFAIYAhwCIAIkAigCLAIwAjQCOAI8AkACRAJIAkwCUAJUAlgCXAJgAmQCaAJsAnACdAJ4AnwCgAQQBOAFWAKQBKAE7AKcAqAFgARIBIgFmAK0BfQCvALABBQLbAVcAtAEpATwCxwC4AWEBEwEjAWcBSgF+AUsBAADBAMIAwwDEAMUAxgEuAQwAyQEYAMsBFgDNAM4BKgEQAUUBTAE2ANQA1QDWANcA2AFyANoA2wDcAWgBagDfAQEA4QDiAOMA5ADlAOYBLwENAOkBGQDrARcA7QDuASsBEQFGAU0BNwD0APUA9gD3APgBcwD6APsA/AFpAWsC2Q=="
+`;
+
+exports[`1-byte encodings snapshot tests > iso-8859-5 > non-ascii 1`] = `
+"/////////////////////w=="
+`;
+
+exports[`1-byte encodings snapshot tests > iso-8859-5 > non-ascii 2`] = `
+"AIAAgQCCAIMAhACFAIYAhwCIAIkAigCLAIwAjQCOAI8AkACRAJIAkwCUAJUAlgCXAJgAmQCaAJsAnACdAJ4AnwCgBAEEAgQDBAQEBQQGBAcECAQJBAoECwQMAK0EDgQPBBAEEQQSBBMEFAQVBBYEFwQYBBkEGgQbBBwEHQQeBB8EIAQhBCIEIwQkBCUEJgQnBCgEKQQqBCsELAQtBC4ELwQwBDEEMgQzBDQENQQ2BDcEOAQ5BDoEOwQ8BD0EPgQ/BEAEQQRCBEMERARFBEYERwRIBEkESgRLBEwETQROBE8hFgRRBFIEUwRUBFUEVgRXBFgEWQRaBFsEXACnBF4EXw=="
+`;
+
+exports[`1-byte encodings snapshot tests > iso-8859-6 > non-ascii 1`] = `
+"/////4gMABF////g///gAA=="
+`;
+
+exports[`1-byte encodings snapshot tests > iso-8859-6 > non-ascii 2`] = `
+"AIAAgQCCAIMAhACFAIYAhwCIAIkAigCLAIwAjQCOAI8AkACRAJIAkwCUAJUAlgCXAJgAmQCaAJsAnACdAJ4AnwCg//3//f/9AKT//f/9//3//f/9//3//QYMAK3//f/9//3//f/9//3//f/9//3//f/9//3//QYb//3//f/9Bh///QYhBiIGIwYkBiUGJgYnBigGKQYqBisGLAYtBi4GLwYwBjEGMgYzBjQGNQY2BjcGOAY5Bjr//f/9//3//f/9BkAGQQZCBkMGRAZFBkYGRwZIBkkGSgZLBkwGTQZOBk8GUAZRBlL//f/9//3//f/9//3//f/9//3//f/9//3//Q=="
+`;
+
+exports[`1-byte encodings snapshot tests > iso-8859-7 > non-ascii 1`] = `
+"///////9/////9///////g=="
+`;
+
+exports[`1-byte encodings snapshot tests > iso-8859-7 > non-ascii 2`] = `
+"AIAAgQCCAIMAhACFAIYAhwCIAIkAigCLAIwAjQCOAI8AkACRAJIAkwCUAJUAlgCXAJgAmQCaAJsAnACdAJ4AnwCgIBggGQCjIKwgrwCmAKcAqACpA3oAqwCsAK3//SAVALAAsQCyALMDhAOFA4YAtwOIA4kDigC7A4wAvQOOA48DkAORA5IDkwOUA5UDlgOXA5gDmQOaA5sDnAOdA54DnwOgA6H//QOjA6QDpQOmA6cDqAOpA6oDqwOsA60DrgOvA7ADsQOyA7MDtAO1A7YDtwO4A7kDugO7A7wDvQO+A78DwAPBA8IDwwPEA8UDxgPHA8gDyQPKA8sDzAPNA87//Q=="
+`;
+
+exports[`1-byte encodings snapshot tests > iso-8859-8 > non-ascii 1`] = `
+"/////7////4AAAAB////5g=="
+`;
+
+exports[`1-byte encodings snapshot tests > iso-8859-8 > non-ascii 2`] = `
+"AIAAgQCCAIMAhACFAIYAhwCIAIkAigCLAIwAjQCOAI8AkACRAJIAkwCUAJUAlgCXAJgAmQCaAJsAnACdAJ4AnwCg//0AogCjAKQApQCmAKcAqACpANcAqwCsAK0ArgCvALAAsQCyALMAtAC1ALYAtwC4ALkA9wC7ALwAvQC+//3//f/9//3//f/9//3//f/9//3//f/9//3//f/9//3//f/9//3//f/9//3//f/9//3//f/9//3//f/9//3//SAXBdAF0QXSBdMF1AXVBdYF1wXYBdkF2gXbBdwF3QXeBd8F4AXhBeIF4wXkBeUF5gXnBegF6QXq//3//SAOIA///Q=="
+`;
+
+exports[`1-byte encodings snapshot tests > iso-8859-8-i > non-ascii 1`] = `
+"/////7////4AAAAB////5g=="
+`;
+
+exports[`1-byte encodings snapshot tests > iso-8859-8-i > non-ascii 2`] = `
+"AIAAgQCCAIMAhACFAIYAhwCIAIkAigCLAIwAjQCOAI8AkACRAJIAkwCUAJUAlgCXAJgAmQCaAJsAnACdAJ4AnwCg//0AogCjAKQApQCmAKcAqACpANcAqwCsAK0ArgCvALAAsQCyALMAtAC1ALYAtwC4ALkA9wC7ALwAvQC+//3//f/9//3//f/9//3//f/9//3//f/9//3//f/9//3//f/9//3//f/9//3//f/9//3//f/9//3//f/9//3//SAXBdAF0QXSBdMF1AXVBdYF1wXYBdkF2gXbBdwF3QXeBd8F4AXhBeIF4wXkBeUF5gXnBegF6QXq//3//SAOIA///Q=="
+`;
+
+exports[`1-byte encodings snapshot tests > koi8-r > non-ascii 1`] = `
+"/////////////////////w=="
+`;
+
+exports[`1-byte encodings snapshot tests > koi8-r > non-ascii 2`] = `
+"JQAlAiUMJRAlFCUYJRwlJCUsJTQlPCWAJYQliCWMJZAlkSWSJZMjICWgIhkiGiJIImQiZQCgIyEAsACyALcA9yVQJVElUgRRJVMlVCVVJVYlVyVYJVklWiVbJVwlXSVeJV8lYCVhBAElYiVjJWQlZSVmJWclaCVpJWolayVsAKkETgQwBDEERgQ0BDUERAQzBEUEOAQ5BDoEOwQ8BD0EPgQ/BE8EQARBBEIEQwQ2BDIETARLBDcESARNBEkERwRKBC4EEAQRBCYEFAQVBCQEEwQlBBgEGQQaBBsEHAQdBB4EHwQvBCAEIQQiBCMEFgQSBCwEKwQXBCgELQQpBCcEKg=="
+`;
+
+exports[`1-byte encodings snapshot tests > koi8-u > non-ascii 1`] = `
+"/////////////////////w=="
+`;
+
+exports[`1-byte encodings snapshot tests > koi8-u > non-ascii 2`] = `
+"JQAlAiUMJRAlFCUYJRwlJCUsJTQlPCWAJYQliCWMJZAlkSWSJZMjICWgIhkiGiJIImQiZQCgIyEAsACyALcA9yVQJVElUgRRBFQlVARWBFclVyVYJVklWiVbBJEEXiVeJV8lYCVhBAEEBCVjBAYEByVmJWclaCVpJWoEkAQOAKkETgQwBDEERgQ0BDUERAQzBEUEOAQ5BDoEOwQ8BD0EPgQ/BE8EQARBBEIEQwQ2BDIETARLBDcESARNBEkERwRKBC4EEAQRBCYEFAQVBCQEEwQlBBgEGQQaBBsEHAQdBB4EHwQvBCAEIQQiBCMEFgQSBCwEKwQXBCgELQQpBCcEKg=="
+`;
+
+exports[`1-byte encodings snapshot tests > macintosh > non-ascii 1`] = `
+"/////////////////////w=="
+`;
+
+exports[`1-byte encodings snapshot tests > macintosh > non-ascii 2`] = `
+"AMQAxQDHAMkA0QDWANwA4QDgAOIA5ADjAOUA5wDpAOgA6gDrAO0A7ADuAO8A8QDzAPIA9AD2APUA+gD5APsA/CAgALAAogCjAKcgIgC2AN8ArgCpISIAtACoImAAxgDYIh4AsSJkImUApQC1IgIiESIPA8AiKwCqALoDqQDmAPgAvwChAKwiGgGSIkgiBgCrALsgJgCgAMAAwwDVAVIBUyATIBQgHCAdIBggGQD3JcoA/wF4IEQgrCA5IDr7AfsCICEAtyAaIB4gMADCAMoAwQDLAMgAzQDOAM8AzADTANT4/wDSANoA2wDZATECxgLcAK8C2ALZAtoAuALdAtsCxw=="
+`;
+
+exports[`1-byte encodings snapshot tests > windows-1250 > non-ascii 1`] = `
+"/////////////////////w=="
+`;
+
+exports[`1-byte encodings snapshot tests > windows-1250 > non-ascii 2`] = `
+"IKwAgSAaAIMgHiAmICAgIQCIIDABYCA5AVoBZAF9AXkAkCAYIBkgHCAdICIgEyAUAJghIgFhIDoBWwFlAX4BegCgAscC2AFBAKQBBACmAKcAqACpAV4AqwCsAK0ArgF7ALAAsQLbAUIAtAC1ALYAtwC4AQUBXwC7AT0C3QE+AXwBVADBAMIBAgDEATkBBgDHAQwAyQEYAMsBGgDNAM4BDgEQAUMBRwDTANQBUADWANcBWAFuANoBcADcAN0BYgDfAVUA4QDiAQMA5AE6AQcA5wENAOkBGQDrARsA7QDuAQ8BEQFEAUgA8wD0AVEA9gD3AVkBbwD6AXEA/AD9AWMC2Q=="
+`;
+
+exports[`1-byte encodings snapshot tests > windows-1251 > non-ascii 1`] = `
+"/////////////////////w=="
+`;
+
+exports[`1-byte encodings snapshot tests > windows-1251 > non-ascii 2`] = `
+"BAIEAyAaBFMgHiAmICAgISCsIDAECSA5BAoEDAQLBA8EUiAYIBkgHCAdICIgEyAUAJghIgRZIDoEWgRcBFsEXwCgBA4EXgQIAKQEkACmAKcEAQCpBAQAqwCsAK0ArgQHALAAsQQGBFYEkQC1ALYAtwRRIRYEVAC7BFgEBQRVBFcEEAQRBBIEEwQUBBUEFgQXBBgEGQQaBBsEHAQdBB4EHwQgBCEEIgQjBCQEJQQmBCcEKAQpBCoEKwQsBC0ELgQvBDAEMQQyBDMENAQ1BDYENwQ4BDkEOgQ7BDwEPQQ+BD8EQARBBEIEQwREBEUERgRHBEgESQRKBEsETARNBE4ETw=="
+`;
+
+exports[`1-byte encodings snapshot tests > windows-1252 > non-ascii 1`] = `
+"/////////////////////w=="
+`;
+
+exports[`1-byte encodings snapshot tests > windows-1252 > non-ascii 2`] = `
+"IKwAgSAaAZIgHiAmICAgIQLGIDABYCA5AVIAjQF9AI8AkCAYIBkgHCAdICIgEyAUAtwhIgFhIDoBUwCdAX4BeACgAKEAogCjAKQApQCmAKcAqACpAKoAqwCsAK0ArgCvALAAsQCyALMAtAC1ALYAtwC4ALkAugC7ALwAvQC+AL8AwADBAMIAwwDEAMUAxgDHAMgAyQDKAMsAzADNAM4AzwDQANEA0gDTANQA1QDWANcA2ADZANoA2wDcAN0A3gDfAOAA4QDiAOMA5ADlAOYA5wDoAOkA6gDrAOwA7QDuAO8A8ADxAPIA8wD0APUA9gD3APgA+QD6APsA/AD9AP4A/w=="
+`;
+
+exports[`1-byte encodings snapshot tests > windows-1253 > non-ascii 1`] = `
+"///////f/////9///////g=="
+`;
+
+exports[`1-byte encodings snapshot tests > windows-1253 > non-ascii 2`] = `
+"IKwAgSAaAZIgHiAmICAgIQCIIDAAiiA5AIwAjQCOAI8AkCAYIBkgHCAdICIgEyAUAJghIgCaIDoAnACdAJ4AnwCgA4UDhgCjAKQApQCmAKcAqACp//0AqwCsAK0AriAVALAAsQCyALMDhAC1ALYAtwOIA4kDigC7A4wAvQOOA48DkAORA5IDkwOUA5UDlgOXA5gDmQOaA5sDnAOdA54DnwOgA6H//QOjA6QDpQOmA6cDqAOpA6oDqwOsA60DrgOvA7ADsQOyA7MDtAO1A7YDtwO4A7kDugO7A7wDvQO+A78DwAPBA8IDwwPEA8UDxgPHA8gDyQPKA8sDzAPNA87//Q=="
+`;
+
+exports[`1-byte encodings snapshot tests > windows-1254 > non-ascii 1`] = `
+"/////////////////////w=="
+`;
+
+exports[`1-byte encodings snapshot tests > windows-1254 > non-ascii 2`] = `
+"IKwAgSAaAZIgHiAmICAgIQLGIDABYCA5AVIAjQCOAI8AkCAYIBkgHCAdICIgEyAUAtwhIgFhIDoBUwCdAJ4BeACgAKEAogCjAKQApQCmAKcAqACpAKoAqwCsAK0ArgCvALAAsQCyALMAtAC1ALYAtwC4ALkAugC7ALwAvQC+AL8AwADBAMIAwwDEAMUAxgDHAMgAyQDKAMsAzADNAM4AzwEeANEA0gDTANQA1QDWANcA2ADZANoA2wDcATABXgDfAOAA4QDiAOMA5ADlAOYA5wDoAOkA6gDrAOwA7QDuAO8BHwDxAPIA8wD0APUA9gD3APgA+QD6APsA/AExAV8A/w=="
+`;
+
+exports[`1-byte encodings snapshot tests > windows-1255 > non-ascii 1`] = `
+"//////////////+A////5g=="
+`;
+
+exports[`1-byte encodings snapshot tests > windows-1255 > non-ascii 2`] = `
+"IKwAgSAaAZIgHiAmICAgIQLGIDAAiiA5AIwAjQCOAI8AkCAYIBkgHCAdICIgEyAUAtwhIgCaIDoAnACdAJ4AnwCgAKEAogCjIKoApQCmAKcAqACpANcAqwCsAK0ArgCvALAAsQCyALMAtAC1ALYAtwC4ALkA9wC7ALwAvQC+AL8FsAWxBbIFswW0BbUFtgW3BbgFuQW6BbsFvAW9Bb4FvwXABcEFwgXDBfAF8QXyBfMF9P/9//3//f/9//3//f/9BdAF0QXSBdMF1AXVBdYF1wXYBdkF2gXbBdwF3QXeBd8F4AXhBeIF4wXkBeUF5gXnBegF6QXq//3//SAOIA///Q=="
+`;
+
+exports[`1-byte encodings snapshot tests > windows-1256 > non-ascii 1`] = `
+"/////////////////////w=="
+`;
+
+exports[`1-byte encodings snapshot tests > windows-1256 > non-ascii 2`] = `
+"IKwGfiAaAZIgHiAmICAgIQLGIDAGeSA5AVIGhgaYBogGryAYIBkgHCAdICIgEyAUBqkhIgaRIDoBUyAMIA0GugCgBgwAogCjAKQApQCmAKcAqACpBr4AqwCsAK0ArgCvALAAsQCyALMAtAC1ALYAtwC4ALkGGwC7ALwAvQC+Bh8GwQYhBiIGIwYkBiUGJgYnBigGKQYqBisGLAYtBi4GLwYwBjEGMgYzBjQGNQY2ANcGNwY4BjkGOgZABkEGQgZDAOAGRADiBkUGRgZHBkgA5wDoAOkA6gDrBkkGSgDuAO8GSwZMBk0GTgD0Bk8GUAD3BlEA+QZSAPsA/CAOIA8G0g=="
+`;
+
+exports[`1-byte encodings snapshot tests > windows-1257 > non-ascii 1`] = `
+"/////7v//////////////w=="
+`;
+
+exports[`1-byte encodings snapshot tests > windows-1257 > non-ascii 2`] = `
+"IKwAgSAaAIMgHiAmICAgIQCIIDAAiiA5AIwAqALHALgAkCAYIBkgHCAdICIgEyAUAJghIgCaIDoAnACvAtsAnwCg//0AogCjAKT//QCmAKcA2ACpAVYAqwCsAK0ArgDGALAAsQCyALMAtAC1ALYAtwD4ALkBVwC7ALwAvQC+AOYBBAEuAQABBgDEAMUBGAESAQwAyQF5ARYBIgE2ASoBOwFgAUMBRQDTAUwA1QDWANcBcgFBAVoBagDcAXsBfQDfAQUBLwEBAQcA5ADlARkBEwENAOkBegEXASMBNwErATwBYQFEAUYA8wFNAPUA9gD3AXMBQgFbAWsA/AF8AX4C2Q=="
+`;
+
+exports[`1-byte encodings snapshot tests > windows-1258 > non-ascii 1`] = `
+"/////////////////////w=="
+`;
+
+exports[`1-byte encodings snapshot tests > windows-1258 > non-ascii 2`] = `
+"IKwAgSAaAZIgHiAmICAgIQLGIDAAiiA5AVIAjQCOAI8AkCAYIBkgHCAdICIgEyAUAtwhIgCaIDoBUwCdAJ4BeACgAKEAogCjAKQApQCmAKcAqACpAKoAqwCsAK0ArgCvALAAsQCyALMAtAC1ALYAtwC4ALkAugC7ALwAvQC+AL8AwADBAMIBAgDEAMUAxgDHAMgAyQDKAMsDAADNAM4AzwEQANEDCQDTANQBoADWANcA2ADZANoA2wDcAa8DAwDfAOAA4QDiAQMA5ADlAOYA5wDoAOkA6gDrAwEA7QDuAO8BEQDxAyMA8wD0AaEA9gD3APgA+QD6APsA/AGwIKsA/w=="
+`;
+
+exports[`1-byte encodings snapshot tests > windows-874 > non-ascii 1`] = `
+"///////////////h////8A=="
+`;
+
+exports[`1-byte encodings snapshot tests > windows-874 > non-ascii 2`] = `
+"IKwAgQCCAIMAhCAmAIYAhwCIAIkAigCLAIwAjQCOAI8AkCAYIBkgHCAdICIgEyAUAJgAmQCaAJsAnACdAJ4AnwCgDgEOAg4DDgQOBQ4GDgcOCA4JDgoOCw4MDg0ODg4PDhAOEQ4SDhMOFA4VDhYOFw4YDhkOGg4bDhwOHQ4eDh8OIA4hDiIOIw4kDiUOJg4nDigOKQ4qDisOLA4tDi4OLw4wDjEOMg4zDjQONQ42DjcOOA45Djr//f/9//3//Q4/DkAOQQ5CDkMORA5FDkYORw5IDkkOSg5LDkwOTQ5ODk8OUA5RDlIOUw5UDlUOVg5XDlgOWQ5aDlv//f/9//3//Q=="
+`;
+
+exports[`1-byte encodings snapshot tests > x-mac-cyrillic > non-ascii 1`] = `
+"/////////////////////w=="
+`;
+
+exports[`1-byte encodings snapshot tests > x-mac-cyrillic > non-ascii 2`] = `
+"BBAEEQQSBBMEFAQVBBYEFwQYBBkEGgQbBBwEHQQeBB8EIAQhBCIEIwQkBCUEJgQnBCgEKQQqBCsELAQtBC4ELyAgALAEkACjAKcgIgC2BAYArgCpISIEAgRSImAEAwRTIh4AsSJkImUEVgC1BJEECAQEBFQEBwRXBAkEWQQKBFoEWAQFAKwiGgGSIkgiBgCrALsgJgCgBAsEWwQMBFwEVSATIBQgHCAdIBggGQD3IB4EDgReBA8EXyEWBAEEUQRPBDAEMQQyBDMENAQ1BDYENwQ4BDkEOgQ7BDwEPQQ+BD8EQARBBEIEQwREBEUERgRHBEgESQRKBEsETARNBE4grA=="
+`;
