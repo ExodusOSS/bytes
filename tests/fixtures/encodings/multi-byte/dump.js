@@ -32,7 +32,6 @@ for (const file of readdirSync(import.meta.dirname)) {
   if (!match) continue
   const encoding = match[1]
   const non16bit = encoding === 'big5'
-  if (!non16bit) continue
   const text = readFileSync(join(import.meta.dirname, file), 'utf8')
   let max = 0
   const rows = text
