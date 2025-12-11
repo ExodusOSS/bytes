@@ -1,8 +1,8 @@
 import { TextDecoder, TextEncoder } from '@exodus/bytes/text-encoding.js'
 import { fromHex } from '@exodus/bytes/hex.js'
 import { test, describe } from 'node:test'
-import unfinishedBytesFixtures from './fixtures/text-encoding.unfinishedBytes.js'
-import { labels } from './fixtures/encodings/encodings.cjs'
+import unfinishedBytesFixtures from '../fixtures/text-encoding.unfinishedBytes.js'
+import { labels } from '../fixtures/encodings/encodings.cjs'
 
 test('Unfinished bytes', (t) => {
   for (const [encoding, trail, u8] of unfinishedBytesFixtures) {
