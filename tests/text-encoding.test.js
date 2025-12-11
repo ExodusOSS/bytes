@@ -117,6 +117,22 @@ describe('BOM handling', () => {
       t.assert.strictEqual(res, string, `${enc}(${hex})`)
     }
   })
+
+  // https://bugzilla.mozilla.org/show_bug.cgi?id=2005419
+  test('throwing clears state', (t) => {
+    for (const [enc, hex, string] of fixtures) {
+      for (const prefix of ['ff', 'ffff', 'ffffff']) {
+        const decoder = new TextDecoder(enc, { fatal: true })
+        try {
+          decoder.decode(fromHex(prefix))
+        } catch {}
+
+        const res = decoder.decode(fromHex(hex))
+        t.assert.strictEqual(res.length, string.length, `${enc}(${hex}).length, prefix=${prefix}`)
+        t.assert.strictEqual(res, string, `${enc}(${hex}), prefix=${prefix}`)
+      }
+    }
+  })
 })
 
 test.skip('euc-kr encoding', (t) => {
