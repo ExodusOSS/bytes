@@ -2,7 +2,7 @@
 
 import assert, { deepStrictEqual as assertEquals } from 'node:assert'
 import { test } from 'node:test'
-import { TextEncoder, TextDecoder } from '@exodus/bytes/text-encoding.js'
+import { TextEncoder, TextDecoder } from '@exodus/bytes/encoding.js'
 const Deno = { test: (f) => test(f.name, f) }
 
 // Copyright 2018-2025 the Deno authors. MIT license.

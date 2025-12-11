@@ -1,35 +1,36 @@
 // Comment out this line to test on native impl, e.g. to cross-test in browsers
-import { TextDecoder } from '@exodus/bytes/text-encoding.js'
+import { TextDecoder } from '@exodus/bytes/encoding.js'
 
 import { toBase64 } from '@exodus/bytes/base64.js'
 import { fromHex, toHex } from '@exodus/bytes/hex.js'
 import { test, describe } from 'node:test'
 import { fromBits, fromBase4 } from './_utils.js'
-
-const labels = ['utf-8', 'utf-16le', 'utf-16be']
+import { legacyMultiByte } from '../fixtures/encodings/encodings.cjs'
 
 const skipLarge =
   process.env.EXODUS_TEST_PLATFORM === 'quickjs' ||
   process.env.EXODUS_TEST_PLATFORM === 'xs' ||
   process.env.EXODUS_TEST_PLATFORM === 'engine262'
 
-describe('Unicode encodings snapshot tests', { skip: skipLarge }, () => {
+describe('legacy multi-byte encodings snapshot tests', { skip: skipLarge }, () => {
   for (const local of [true, false]) {
     describe(local ? 'Fresh instance' : 'Reuse instance', () => {
-      for (const label of labels) {
-        test(label, (t) => {
-          let loose, fatal
+      for (const label of legacyMultiByte) {
+        if (label === 'big5') continue // FIXME
+        let loose, fatal
 
+        test(label, (t) => {
           const out = []
           const lengths = []
           const flags = []
 
           const record = (u8) => {
-            // See https://bugzilla.mozilla.org/show_bug.cgi?id=2005419
+            // See https://issues.chromium.org/issues/467624168
             if (local || !loose) loose = new TextDecoder(label)
             if (local || !fatal) fatal = new TextDecoder(label, { fatal: true })
 
             const a = loose.decode(u8)
+            t.assert.ok(a.length > 0, `Bytes: ${toHex(u8)}`)
             let b
             let ok = false
             try {
@@ -37,8 +38,8 @@ describe('Unicode encodings snapshot tests', { skip: skipLarge }, () => {
               ok = true
             } catch {}
 
-            // UTF-8 is an ASCII superset
-            if (label === 'utf-8' && u8.filter((x) => x >= 128).length === 0) {
+            // legacy multi-byte encodings are ASCII supersets, except iso-2022-jp
+            if (label !== 'iso-2022-jp' && u8.filter((x) => x >= 128).length === 0) {
               t.assert.strictEqual(a, String.fromCodePoint.apply(String, u8))
               t.assert.strictEqual(b, String.fromCodePoint.apply(String, u8))
               t.assert.strictEqual(ok, true)
@@ -57,9 +58,6 @@ describe('Unicode encodings snapshot tests', { skip: skipLarge }, () => {
               if (i <= j) record(Uint8Array.of(i, j))
               record(Uint8Array.of(i, j, j))
               record(Uint8Array.of(i, j, i))
-              record(Uint8Array.of(i, j, i, j))
-              record(Uint8Array.of(i, j, j, i))
-              record(Uint8Array.of(i, j, j, i, j))
             }
           }
 

@@ -1,4 +1,4 @@
-const { TextDecoder, TextEncoder } = require('@exodus/bytes/text-encoding.js')
+const { TextDecoder, TextEncoder } = require('@exodus/bytes/encoding.js')
 Object.assign(globalThis, { TextDecoder, TextEncoder })
 
 require('../../wpt/loader.cjs')

@@ -76,7 +76,7 @@
       "node": "./single-byte.node.js",
       "default": "./single-byte.js"
     },
-    "./text-encoding.js": "./text-encoding.js",
+    "./encoding.js": "./encoding.js",
     "./utf16.js": {
       "node": "./utf16.node.js",
       "default": "./utf16.js"

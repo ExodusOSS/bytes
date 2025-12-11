@@ -1,7 +1,7 @@
 import { describe } from 'node:test'
 import { loadDir } from './loader.cjs'
 import { toBase64, fromBase64 } from '@exodus/bytes/base64.js'
-import { TextEncoder, TextDecoder } from '@exodus/bytes/text-encoding.js'
+import { TextEncoder, TextDecoder } from '@exodus/bytes/encoding.js'
 
 globalThis.TextEncoder = TextEncoder
 globalThis.TextDecoder = TextDecoder

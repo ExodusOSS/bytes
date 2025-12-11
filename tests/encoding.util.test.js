@@ -3,7 +3,7 @@ import { fromHex, toHex } from '@exodus/bytes/hex.js'
 import { utf16fromString, utf16toString, utf16toStringLoose } from '@exodus/bytes/utf16.js'
 import { utf8fromString, utf8toString, utf8toStringLoose } from '@exodus/bytes/utf8.js'
 import { randomValues } from '@exodus/crypto/randomBytes'
-import { unfinishedBytes } from '../fallback/text-encoding.util.js'
+import { unfinishedBytes } from '../fallback/encoding.util.js'
 import unfinishedBytesFixtures from './fixtures/text-encoding.unfinishedBytes.js'
 
 const replacementChar = '\uFFFD'

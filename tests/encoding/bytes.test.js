@@ -1,5 +1,5 @@
 // Comment out this line to test on native impl, e.g. to cross-test in browsers
-import { TextDecoder } from '@exodus/bytes/text-encoding.js'
+import { TextDecoder } from '@exodus/bytes/encoding.js'
 
 import { toBase64 } from '@exodus/bytes/base64.js'
 import { fromHex } from '@exodus/bytes/hex.js'
