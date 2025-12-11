@@ -223,7 +223,59 @@ const mappers = {
   gbk: () => mappers.gb18030(), // 10.1.1. GBK’s decoder is gb18030’s decoder
   // https://encoding.spec.whatwg.org/#gb18030-decoder
   gb18030: () => {
-    throw new RangeError('Unsupported encoding')
+    const gb18030 = getTable('gb18030')
+    let g1 = 0, g2 = 0, g3 = 0 // prettier-ignore
+    return (b) => {
+      if (b === EOF) {
+        if (!g1 && !g2 && !g3) return null
+        g1 = g2 = g3 = 0
+        return -2
+      }
+
+      if (g3) {
+        if (b < 0x30 || b > 0x39) {
+          g1 = g2 = g3 = 0
+          return -5 // restore 3 bytes
+        }
+
+        const cp = gb18030[(g1 - 0x81) * 12_600 + (g2 - 0x30) * 1260 + (g3 - 0x81) * 10 + b - 0x30]
+        g1 = g2 = g3 = 0
+        if (cp !== undefined && cp !== REP) return cp
+        return -1
+      }
+
+      if (g2) {
+        if (b >= 0x81 && b <= 0xfe) {
+          g3 = b
+          return -1
+        }
+
+        g1 = g2 = 0
+        return -4 // restore 2 bytes
+      }
+
+      if (g1) {
+        if (b >= 0x30 && b <= 0x39) {
+          g2 = b
+          return -1
+        }
+
+        let cp
+        if (b >= 0x40 && b <= 0xfe && b !== 0x7f) {
+          cp = gb18030[(g1 - 0x81) * 190 + b - (b < 0x7f ? 0x40 : 0x41)]
+        }
+
+        g1 = 0
+        if (cp !== undefined && cp !== REP) return cp
+        return b < 128 ? -3 : -2 // if ASCII, restore 1 byte and error, otherwise just error
+      }
+
+      if (b < 128) return b
+      if (b === 0x80) return 0x20_ac
+      if (b === 0xff) return -2
+      g1 = b
+      return -1
+    }
   },
 }
 

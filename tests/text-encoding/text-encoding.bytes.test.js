@@ -8,7 +8,7 @@ import { fromBits, fromBase4 } from './_utils.js'
 
 // import { labels } from './fixtures/encodings/encodings.cjs'
 // Also test most common single-byte decoder (windows-1252) on multi-byte input
-const labels = ['windows-1252', 'utf-8', 'euc-kr', 'euc-jp', 'iso-2022-jp', 'shift_jis']
+const labels = ['windows-1252', 'utf-8', 'euc-kr', 'euc-jp', 'iso-2022-jp', 'shift_jis', 'gb18030']
 
 // Try all 1-byte and 2-byte inputs and save the result in a snapshot
 
