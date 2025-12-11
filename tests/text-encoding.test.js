@@ -1,4 +1,5 @@
 import { TextDecoder, TextEncoder } from '@exodus/bytes/text-encoding.js'
+import { fromHex } from '@exodus/bytes/hex.js'
 import { test, describe } from 'node:test'
 import unfinishedBytesFixtures from './fixtures/text-encoding.unfinishedBytes.js'
 import { labels } from './fixtures/encodings/encodings.cjs'
@@ -80,6 +81,42 @@ describe('encodings are ASCII supersets, except utf-16 and iso-2022-jp', () => {
       }
     })
   }
+})
+
+describe('BOM handling', () => {
+  const fixtures = [
+    ['utf-16le', 'fffe', ''],
+    ['utf-16le', 'fffefffe', '\uFEFF'],
+    ['utf-16le', 'fffefffefffe', '\uFEFF\uFEFF'],
+    ['utf-16le', 'feff', '\uFFFE'],
+    ['utf-16le', 'fefffeff', '\uFFFE\uFFFE'],
+    ['utf-16le', 'fefffefffeff', '\uFFFE\uFFFE\uFFFE'],
+
+    ['utf-16be', 'feff', ''],
+    ['utf-16be', 'fefffeff', '\uFEFF'],
+    ['utf-16be', 'fefffefffeff', '\uFEFF\uFEFF'],
+    ['utf-16be', 'fffe', '\uFFFE'],
+    ['utf-16be', 'fffefffe', '\uFFFE\uFFFE'],
+    ['utf-16be', 'fffefffefffe', '\uFFFE\uFFFE\uFFFE'],
+  ]
+
+  test('fixtures', (t) => {
+    for (const [enc, hex, string] of fixtures) {
+      const res = new TextDecoder(enc).decode(fromHex(hex))
+      t.assert.strictEqual(res.length, string.length, `${enc}(${hex}).length`)
+      t.assert.strictEqual(res, string, `${enc}(${hex})`)
+    }
+  })
+
+  test('stateless', (t) => {
+    let decoder
+    for (const [enc, hex, string] of fixtures) {
+      if (!decoder || decoder.encoding !== enc) decoder = new TextDecoder(enc)
+      const res = decoder.decode(fromHex(hex))
+      t.assert.strictEqual(res.length, string.length, `${enc}(${hex}).length`)
+      t.assert.strictEqual(res, string, `${enc}(${hex})`)
+    }
+  })
 })
 
 test.skip('euc-kr encoding', (t) => {
