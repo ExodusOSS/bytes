@@ -91,16 +91,10 @@ const mappers = {
     let out = false
     return (b) => {
       if (dState < 5) {
-        if (b === EOF && dState < 4) return null
+        if (b === EOF) return null
         if (b === 0x1b) {
           dState = 6 // escape start
           return -1
-        }
-
-        out = false
-        if (dState === 2) {
-          if (b === 0x5c) return 0xa5
-          if (b === 0x7e) return 0x20_3e
         }
       }
 
@@ -108,14 +102,22 @@ const mappers = {
         case 1:
         case 2:
           // ASCII, Roman (common)
+          out = false
+          if (dState === 2) {
+            if (b === 0x5c) return 0xa5
+            if (b === 0x7e) return 0x20_3e
+          }
+
           if (b <= 0x7f && b !== 0x0e && b !== 0x0f) return b
           return -2
         case 3:
           // Katakana
+          out = false
           if (b >= 0x21 && b <= 0x5f) return 0xff_40 + b
           return -2
         case 4:
           // Leading byte
+          out = false
           if ((b >= 0x21) & (b <= 0x7e)) {
             lead = b
             dState = 5
@@ -125,6 +127,12 @@ const mappers = {
           return -2
         case 5:
           // Trailing byte
+          out = false
+          if (b === 0x1b) {
+            dState = 6 // escape start
+            return -2
+          }
+
           dState = 4
           if (b >= 0x21 && b <= 0x7e) {
             const cp = jis0208[(lead - 0x21) * 94 + b - 0x21]
