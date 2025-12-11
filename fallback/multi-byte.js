@@ -334,14 +334,9 @@ function big5decoder(loose) {
     }
 
     if (!big5) big5 = getTable('big5')
-    const end = stream ? length : length + 1
-    for (let i = res.length; i < end; i++) {
-      const b = i === length ? EOF : arr[i]
-      if (b === EOF) {
-        if (lead === 0) break // clean exit
-        lead = 0
-        res += onErr()
-      } else if (lead) {
+    for (let i = res.length; i < length; i++) {
+      const b = arr[i]
+      if (lead) {
         let cp
         if ((b >= 0x40 && b <= 0x7e) || (b >= 0xa1 && b !== 0xff)) {
           cp = big5[(lead - 0x81) * 157 + b - (b < 0x7f ? 0x40 : 0x62)]
@@ -363,7 +358,10 @@ function big5decoder(loose) {
       }
     }
 
-    if (!stream) lead = 0 // same as cleaning up mapper in common
+    if (!stream && lead) {
+      lead = 0
+      res += onErr()
+    }
 
     return res
   }
