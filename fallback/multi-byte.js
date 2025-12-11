@@ -189,9 +189,9 @@ const mappers = {
     let lead = 0
     return (b) => {
       if (b === EOF) {
-        const ret = lead ? -2 : null
+        if (!lead) return null
         lead = 0 // this clears state completely on EOF
-        return ret
+        return -2
       }
 
       if (lead) {
@@ -199,7 +199,7 @@ const mappers = {
         lead = 0
         const offset = b < 0x7f ? 0x40 : 0x41
         const leadingOffset = l < 0xa0 ? 0x81 : 0xc1
-        if ((b >= 0x40 && b <= 0x7e) || (b >= 0x80 && b <= 0xfc)) {
+        if (b >= 0x40 && b <= 0xfc && b !== 0x7f) {
           const p = (l - leadingOffset) * 188 + b - offset
           if (p >= 8836 && p <= 10_715) return 0xe0_00 - 8836 + p // 16-bit
           const cp = jis0208[p]
@@ -209,7 +209,7 @@ const mappers = {
         return b < 128 ? -3 : -2 // if ASCII, restore 1 byte and error, otherwise just error
       }
 
-      if (b <= 0x80) return b
+      if (b <= 0x80) return b // 0x80 is allowed
       if (b >= 0xa1 && b <= 0xdf) return 0xff_61 - 0xa1 + b
       if ((b >= 0x81 && b <= 0x9f) || (b >= 0xe0 && b <= 0xfc)) {
         lead = b
@@ -219,13 +219,13 @@ const mappers = {
       return -2
     }
   },
+  // https://encoding.spec.whatwg.org/#gbk-decoder
+  gbk: () => mappers.gb18030(), // 10.1.1. GBK’s decoder is gb18030’s decoder
+  // https://encoding.spec.whatwg.org/#gb18030-decoder
   gb18030: () => {
     throw new RangeError('Unsupported encoding')
   },
 }
-
-// https://encoding.spec.whatwg.org/#gbk-decoder
-mappers.gbk = mappers.gb18030 // 10.1.1. GBK’s decoder is gb18030’s decoder.
 
 export const multibyteSupported = (enc) => Object.hasOwn(mappers, enc)
 
