@@ -15,16 +15,23 @@ const tables = new Map()
 function unwrap(res, t, pos, stringMode = false) {
   let code = 0
   for (let i = 0; i < t.length; i++) {
-    const x = t[i]
+    let x = t[i]
     if (typeof x === 'number') {
       if (x === 0) {
         pos += t[++i]
-      } else if (stringMode) {
-        code += t[++i]
-        for (let k = 0; k < x; k++, pos++, code++) res[pos] = String.fromCodePoint(code)
       } else {
-        code += t[++i]
-        for (let k = 0; k < x; k++, pos++, code++) res[pos] = code
+        if (x < 0) {
+          code -= x
+          x = 1
+        } else {
+          code += t[++i]
+        }
+
+        if (stringMode) {
+          for (let k = 0; k < x; k++, pos++, code++) res[pos] = String.fromCodePoint(code)
+        } else {
+          for (let k = 0; k < x; k++, pos++, code++) res[pos] = code
+        }
       }
     } else if (x[0] === '$' && Object.hasOwn(indices, x)) {
       pos = unwrap(res, indices[x], pos, stringMode) // self-reference using shared chunks

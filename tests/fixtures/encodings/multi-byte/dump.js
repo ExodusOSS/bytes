@@ -84,6 +84,15 @@ function conseqStart(str, start) {
   return p - start
 }
 
+const stats = new Map()
+
+function encode(count, relcodepoint) {
+  if (count === 1 && relcodepoint >= 1 && relcodepoint <= 3) return `${-relcodepoint}`
+  const res = `${count},${relcodepoint}`
+  stats.set(res, (stats.get(res) || 0) + 1)
+  return res
+}
+
 for (const [encoding, chars] of Object.entries(encodings)) {
   const list = []
   let str = chars
@@ -122,7 +131,7 @@ for (const [encoding, chars] of Object.entries(encodings)) {
       const p = conseqStart(strsplit, 0)
       if (p >= minConseq) {
         const first = strsplit[0].codePointAt(0)
-        list.push(`${p},${first - lastconseq}`)
+        list.push(encode(p, first - lastconseq))
         lastconseq = first + p
         strsplit = strsplit.slice(p)
         str = strsplit.join('')
@@ -173,7 +182,7 @@ for (const [encoding, chars] of Object.entries(encodings)) {
       while (i < strsplit.length) {
         const start = strsplit[i].codePointAt(0)
         const p = conseqStart(strsplit, i)
-        list.push(`${p},${start - lastconseq}`)
+        list.push(encode(p, start - lastconseq))
         lastconseq = start + p
         i += p
       }
@@ -200,3 +209,5 @@ for (const [encoding, chars] of Object.entries(encodings)) {
   const dump = list2.join(',\n    ')
   console.log(`const ${encoding} = [\n    ${dump}\n]\n`)
 }
+
+console.error([...stats].sort((a, b) => b[1] - a[1]))
