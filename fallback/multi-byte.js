@@ -37,12 +37,9 @@ const mappers = {
       }
 
       if (b < 128) return b
-      if (b >= 0x81 && b <= 0xfe) {
-        lead = b
-        return -1
-      }
-
-      return -2
+      if (b < 0x81 || b === 0xff) return -2
+      lead = b
+      return -1
     }
   },
   // https://encoding.spec.whatwg.org/#euc-jp-decoder
@@ -82,12 +79,9 @@ const mappers = {
       }
 
       if (b < 128) return b
-      if (b === 0x8e || b === 0x8f || (b >= 0xa1 && b <= 0xfe)) {
-        lead = b
-        return -1
-      }
-
-      return -2
+      if ((b < 0xa1 && b !== 0x8e && b !== 0x8f) || b === 0xff) return -2
+      lead = b
+      return -1
     }
   },
   // https://encoding.spec.whatwg.org/#iso-2022-jp-decoder
@@ -197,10 +191,8 @@ const mappers = {
       if (lead) {
         const l = lead
         lead = 0
-        const offset = b < 0x7f ? 0x40 : 0x41
-        const leadingOffset = l < 0xa0 ? 0x81 : 0xc1
         if (b >= 0x40 && b <= 0xfc && b !== 0x7f) {
-          const p = (l - leadingOffset) * 188 + b - offset
+          const p = (l - (l < 0xa0 ? 0x81 : 0xc1)) * 188 + b - (b < 0x7f ? 0x40 : 0x41)
           if (p >= 8836 && p <= 10_715) return 0xe0_00 - 8836 + p // 16-bit
           const cp = jis0208[p]
           if (cp !== undefined && cp !== REP) return cp
@@ -211,12 +203,9 @@ const mappers = {
 
       if (b <= 0x80) return b // 0x80 is allowed
       if (b >= 0xa1 && b <= 0xdf) return 0xff_61 - 0xa1 + b
-      if ((b >= 0x81 && b <= 0x9f) || (b >= 0xe0 && b <= 0xfc)) {
-        lead = b
-        return -1
-      }
-
-      return -2
+      if (b < 0x81 || (b > 0x9f && b < 0xe0) || b > 0xfc) return -2
+      lead = b
+      return -1
     }
   },
   // https://encoding.spec.whatwg.org/#gbk-decoder
@@ -296,7 +285,7 @@ export function multibyteDecoder(enc, loose = false) {
     let res = ''
     const length = arr.length
     if (asciiSuperset && !mapper) {
-      res = decodeLatin1(arr, 0, enc === 'iso-2022-jp' ? 0 : asciiPrefix(arr))
+      res = decodeLatin1(arr, 0, asciiPrefix(arr))
       if (res.length === arr.length) return res // ascii
     }
 
