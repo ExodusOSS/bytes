@@ -325,6 +325,7 @@ test(function() {
     new TextEncoder('big5', {NONSTANDARD_allowLegacyEncoding: true})
       .encode('\u2550\u255E\u2561\u256A\u5341\u5345'));
 }, 'NONSTANDARD - regression tests');
+*/
 
 test(function() {
   // Regression test for https://github.com/whatwg/encoding/issues/22
@@ -335,6 +336,7 @@ test(function() {
     ])), '\u1E3F\uE7C7');
 }, 'GB 18030 2000 vs 2005: U+1E3F, U+E7C7 (decoding)');
 
+/*
 test(function() {
   // Regression test for https://github.com/whatwg/encoding/issues/22
   assert_array_equals(
@@ -382,13 +384,13 @@ test(function() {
 
   }, 'NONSTANDARD - ' + encoding + ' (encoding)');
 });
+*/
 
 test(function() {
   var encoder = new TextEncoder();
   assert_array_equals([].slice.call(encoder.encode(false)), [102, 97, 108, 115, 101]);
   assert_array_equals([].slice.call(encoder.encode(0)), [48]);
 }, 'encode() called with falsy arguments (polyfill bindings)');
-*/
 
 test(function() {
   // Regression test for https://github.com/inexorabletash/text-encoding/issues/59

@@ -58,6 +58,8 @@ fs.readFileSync(path.join(__dirname, 'fixtures/encoding/api-replacement-encoding
 fs.readFileSync(path.join(__dirname, 'fixtures/encoding/api-surrogates-utf8.any.js'))
 fs.readFileSync(path.join(__dirname, 'fixtures/encoding/encodeInto.any.js'))
 fs.readFileSync(path.join(__dirname, 'fixtures/encoding/iso-2022-jp-decoder.any.js'))
+fs.readFileSync(path.join(__dirname, 'fixtures/encoding/legacy-mb-schinese/gb18030/gb18030-decoder.any.js'))
+fs.readFileSync(path.join(__dirname, 'fixtures/encoding/legacy-mb-schinese/gbk/gbk-decoder.any.js'))
 fs.readFileSync(path.join(__dirname, 'fixtures/encoding/textdecoder-arguments.any.js'))
 fs.readFileSync(path.join(__dirname, 'fixtures/encoding/textdecoder-byte-order-marks.any.js'))
 fs.readFileSync(path.join(__dirname, 'fixtures/encoding/textdecoder-copy.any.js'))

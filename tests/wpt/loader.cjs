@@ -32,7 +32,14 @@ globalThis.encodings_table = require('../fixtures/encodings/encodings.json')
 
 function loadDir(dirName) {
   const dir = path.join(__dirname, 'fixtures', dirName)
-  for (const fileName of fs.readdirSync(dir)) loadFile(path.join(dirName, fileName))
+  for (const fileName of fs.readdirSync(dir)) {
+    if (fileName === 'resources') continue
+    if (fileName.includes('.')) {
+      loadFile(path.join(dirName, fileName))
+    } else {
+      loadDir(path.join(dirName, fileName))
+    }
+  }
 }
 
 function loadFile(fullName) {
