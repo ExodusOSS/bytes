@@ -25,6 +25,18 @@ Also:
 
 See [Performance](./Performance.md) for more info
 
+## TextEncoder / TextDecoder polyfill
+
+```js
+import { TextDecoder, TextEncoder } from '@exodus/bytes/encoding.js'
+```
+
+Less than half the bundle size of [text-encoding](https://npmjs.com/text-encoding), [whatwg-encoding](https://npmjs.com/whatwg-encoding) or [iconv-lite](https://npmjs.com/iconv-lite) (gzipped or not)
+
+Spec compliant, passing WPT and covered with extra tests.
+
+Moreover, tests for this library uncovered [bugs in all major implementations](https://docs.google.com/spreadsheets/d/1pdEefRG6r9fZy61WHGz0TKSt8cO4ISWqlpBN5KntIvQ/edit) except Deno.
+
 ## API
 
 ### `@exodus/bytes/utf8.js`
