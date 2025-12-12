@@ -39,11 +39,15 @@ export function encodingMapper(encoding) {
 
     const o = Uint16Array.from(start === 0 ? arr : arr.subarray(start)) // copy to modify in-place, also those are 16-bit now
     let i = 0
-    for (const end3 = o.length - 3; i < end3; i += 4) {
+    for (const end7 = o.length - 7; i < end7; i += 8) {
       o[i] = map[o[i]]
       o[i + 1] = map[o[i + 1]]
       o[i + 2] = map[o[i + 2]]
       o[i + 3] = map[o[i + 3]]
+      o[i + 4] = map[o[i + 4]]
+      o[i + 5] = map[o[i + 5]]
+      o[i + 6] = map[o[i + 6]]
+      o[i + 7] = map[o[i + 7]]
     }
 
     for (const end = o.length; i < end; i++) o[i] = map[o[i]] // 3 high bytes must match for 0x80-0x9f range
