@@ -298,8 +298,9 @@ export function multibyteDecoder(enc, loose = false) {
     const onErr = loose
       ? () => '\uFFFD'
       : () => {
-          // TODO: recheck with tests what happens in fatal mode with stream = true in browsers
-          // The correct reading of the spec seems to be not destoying the decoder state in that case?
+          // The correct way per spec seems to be not destoying the decoder state in stream mode, even when fatal
+          // Decoders big5, euc-jp, euc-kr, shift_jis, gb18030 / gbk - all clear state before throwing unless EOF, so not affected
+          // iso-2022-jp is the only tricky one one where this !stream check matters
           if (!stream) mapper = null // destroy state, effectively the same as 'do not flush' = false, but early
           throw new Error(E_STRICT)
         }
