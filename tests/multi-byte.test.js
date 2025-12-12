@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { test, describe } from 'node:test'
-import { getTable, sizes } from '../fallback/multi-byte.table.cjs'
+import { getTable, sizes } from '../fallback/multi-byte.table.js'
 
 const encodings = Object.keys(sizes)
 

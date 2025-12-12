@@ -1,5 +1,5 @@
 import { asciiPrefix, decodeLatin1 } from './latin1.js'
-import { getTable } from './multi-byte.table.cjs'
+import { getTable } from './multi-byte.table.js'
 
 export const E_STRICT = 'Input is not well-formed for this encoding'
 

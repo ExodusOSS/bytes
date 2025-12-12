@@ -1,6 +1,15 @@
-const { fromBase64url } = require('@exodus/bytes/base64.js') // eslint-disable-line @exodus/import/no-unresolved
-const { utf16toString } = require('@exodus/bytes/utf16.js') // eslint-disable-line @exodus/import/no-unresolved
-const { to16input } = require('./utf16.js')
+import { fromBase64url } from '@exodus/bytes/base64.js' // eslint-disable-line @exodus/import/no-unresolved
+import { utf16toString } from '@exodus/bytes/utf16.js' // eslint-disable-line @exodus/import/no-unresolved
+import loadEncodings from './multi-byte.encodings.cjs'
+import { to16input } from './utf16.js'
+
+export const sizes = {
+  jis0208: 11_104,
+  jis0212: 7211,
+  'euc-kr': 23_750,
+  gb18030: 23_940,
+  big5: 19_782,
+}
 
 // This is huge. It's _much_ smaller than https://npmjs.com/text-encoding though
 // Exactly as mapped by the index table
@@ -9,9 +18,7 @@ const { to16input } = require('./utf16.js')
 // $.. - references to common chunks
 
 let indices
-const sizes = { jis0208: 11_104, jis0212: 7211, 'euc-kr': 23_750, gb18030: 23_940, big5: 19_782 }
 const tables = new Map()
-
 /* eslint-disable @exodus/mutable/no-param-reassign-prop-only */
 
 function loadBase64(str) {
@@ -62,11 +69,11 @@ function unwrap(res, t, pos, stringMode = false) {
   return pos
 }
 
-function getTable(id) {
+export function getTable(id) {
   const cached = tables.get(id)
   if (cached) return cached
 
-  if (!indices) indices = require('./multi-byte.encodings.json') // lazy-load
+  if (!indices) indices = loadEncodings() // lazy-load
   if (!Object.hasOwn(indices, id)) throw new Error('Unknown encoding')
   if (!indices[id]) throw new Error('Table already used (likely incorrect bundler dedupe)')
 
@@ -95,5 +102,3 @@ function getTable(id) {
   tables.set(id, res)
   return res
 }
-
-module.exports = { getTable, sizes }
