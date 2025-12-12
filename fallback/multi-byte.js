@@ -218,7 +218,21 @@ const mappers = {
   // https://encoding.spec.whatwg.org/#gb18030-decoder
   gb18030: () => {
     const gb18030 = getTable('gb18030')
+    const gb18030r = getTable('gb18030-ranges')
     let g1 = 0, g2 = 0, g3 = 0 // prettier-ignore
+    const index = (p) => {
+      if ((p > 39_419 && p < 189_000) || p > 1_237_575) return
+      if (p === 7457) return 0xe7_c7
+      let a = 0, b = 0 // prettier-ignore
+      for (const [c, d] of gb18030r) {
+        if (c > p) break
+        a = c
+        b = d
+      }
+
+      return b + p - a
+    }
+
     return (b) => {
       if (b === EOF) {
         if (!g1 && !g2 && !g3) return null
@@ -232,10 +246,10 @@ const mappers = {
           return -5 // restore 3 bytes
         }
 
-        const cp = gb18030[(g1 - 0x81) * 12_600 + (g2 - 0x30) * 1260 + (g3 - 0x81) * 10 + b - 0x30]
+        const cp = index((g1 - 0x81) * 12_600 + (g2 - 0x30) * 1260 + (g3 - 0x81) * 10 + b - 0x30)
         g1 = g2 = g3 = 0
         if (cp !== undefined && cp !== REP) return cp
-        return -1
+        return -2
       }
 
       if (g2) {
@@ -308,7 +322,7 @@ export function multibyteDecoder(enc, loose = false) {
         i += c + 2
         if (c < -2 && x === EOF) i-- // if we restore something and attempted EOF, we should also restore EOF
       } else {
-        res += String.fromCharCode(c) // no decoders return codepoints above 0xFFFF
+        res += String.fromCodePoint(c) // gb18030 returns codepoints above 0xFFFF from ranges
       }
     }
 
