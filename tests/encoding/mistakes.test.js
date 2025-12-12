@@ -98,6 +98,7 @@ describe('Common implementation mistakes', () => {
       }
     })
 
+    // Chrome fails at this
     // https://github.com/whatwg/encoding/issues/115
     test('Concatenating two ISO-2022-JP outputs is not always valid', (t) => {
       const fatal = new TextDecoder('iso-2022-jp', { fatal: true })
@@ -285,6 +286,7 @@ describe('Common implementation mistakes', () => {
     })
   })
 
+  // Bun is incorrect
   test('iso-2022-jp fatal stream', (t) => {
     // This is the only decoder which does not clear internal state before throwing in stream mode (non-EOF throws)
     // So the internal state of this decoder can legitimately persist after an error was thrown
@@ -345,6 +347,7 @@ describe('Common implementation mistakes', () => {
       })
     })
 
+    // Bun fails at this
     describe('BOM splitting', () => {
       test('utf-8', (t) => {
         const d = new TextDecoder()
