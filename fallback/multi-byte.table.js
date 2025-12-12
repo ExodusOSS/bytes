@@ -80,8 +80,9 @@ export function getTable(id) {
   let res
   if (id.endsWith('-ranges')) {
     res = []
-    let c = 0, d = 0 // prettier-ignore
-    for (const [a, b] of indices[id]) res.push([(c += a), (d += b)])
+    let a = 0, b = 0 // prettier-ignore
+    const idx = indices[id]
+    while (idx.length > 0) res.push([(a += idx.shift()), (b += idx.shift())]) // destroying, we remove it later anyway
   } else if (id === 'big5') {
     if (!Object.hasOwn(sizes, id)) throw new Error('Unknown encoding')
     res = new Array(sizes[id]) // array of strings or undefined
