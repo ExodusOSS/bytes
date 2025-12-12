@@ -37,6 +37,21 @@ Spec compliant, passing WPT and covered with extra tests.
 
 Moreover, tests for this library uncovered [bugs in all major implementations](https://docs.google.com/spreadsheets/d/1pdEefRG6r9fZy61WHGz0TKSt8cO4ISWqlpBN5KntIvQ/edit) except Deno.
 
+### Caveat: `TextDecoder` / `TextEncoder` APIs are lossy by default per spec
+
+_These are only provided as a compatibility layer, prefer hardened APIs instead in new code._
+
+ * `TextDecoder` can (and should) be used with `{ fatal: true }` option for all purposes demanding correctness / lossless transforms
+
+ * `TextEncoder` does not support a fatal mode per spec, it always performs replacement.
+
+   This is not suitable for hashing, cryptography or consensus applications.\
+   Otherwise there would be non-equal strings with equal signatures and hashes — the collision is caused by the lossy transform of a JS string to bytes.
+   Those also survive e.g. `JSON.stringify`/`JSON.parse` or being sent over network.
+
+   Use strict APIs in new applications, see `utf8fromString` / `utf16fromString` below.\
+   Those throw on non-well-formed strings by default.
+
 ## API
 
 ### `@exodus/bytes/utf8.js`
