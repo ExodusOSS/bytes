@@ -19,8 +19,8 @@ const reusable = Object.entries({
   $2: ['αβγδεζηθικλμνξοπρ', 'στυφχψω'], // [[945,17],[963,7]],
   $3: ['─│┌┐┘└├┬┤┴┼━┃┏┓┛┗┣┳┫┻╋┠┯┨┷┿┝┰┥┸╂'],
   $4: ['┒┑┚┙┖┕┎┍┞┟┡┢┦┧┩┪┭┮┱┲┵┶┹┺┽┾╀╁'],
-  $5: ['☆★○●◎◇◆□■△▲'],
   $6: ['☆★○●◎◇◆□■△▲', '▽▼'], // ["$5","▽▼"],
+  $5: ['☆★○●◎◇◆□■△▲'],
   $7: ['ヽヾゝゞ〃仝々〆〇ー'],
   $8: ['ēéěèīíǐìōóǒòūúǔùǖǘǚǜü'],
   $9: ['昞昡昢昣昤昦昩昪昫昬昮昰'], // ["昞",26145,4,"昦",26153,4,"昮昰"],
@@ -96,6 +96,24 @@ function encode(count, relcodepoint) {
   return res
 }
 
+function encodeString(s, lastconseq) {
+  // s is split by codepoints
+  const str = `"${toBase64(utf16fromString(s.join(''), 'uint8-le'), { padding: false })}"`
+  let i = 0
+  const parts = []
+  let ll = lastconseq
+  while (i < s.length) {
+    const start = s[i].codePointAt(0)
+    const p = conseqStart(s, i)
+    parts.push(encode(p, start - ll))
+    ll = start + p
+    i += p
+  }
+
+  const partsstr = parts.join(',')
+  return str.length * 1.5 < partsstr.length && str.length < partsstr.length - 3 ? [str] : parts
+}
+
 for (const [encoding, chars] of Object.entries(encodings)) {
   const list = []
   let str = chars
@@ -169,22 +187,10 @@ for (const [encoding, chars] of Object.entries(encodings)) {
     }
 
     strsplit = strsplit.slice(0, end)
-    const head = strsplit.join('')
-    if (strsplit.length > 6) {
-      lastconseq = strsplit[strsplit.length - 1].codePointAt(0) + 1
-      list.push(`"${toBase64(utf16fromString(head, 'uint8-le'))}"`)
-    } else {
-      let i = 0
-      while (i < strsplit.length) {
-        const start = strsplit[i].codePointAt(0)
-        const p = conseqStart(strsplit, i)
-        list.push(encode(p, start - lastconseq))
-        lastconseq = start + p
-        i += p
-      }
-    }
+    list.push(...encodeString(strsplit, lastconseq))
+    lastconseq = strsplit[strsplit.length - 1].codePointAt(0) + 1
 
-    str = str.slice(head.length)
+    str = str.slice(strsplit.join('').length)
   }
 
   const list2 = []
