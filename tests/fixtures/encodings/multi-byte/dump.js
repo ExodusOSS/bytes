@@ -1,5 +1,5 @@
 import { readFileSync, readdirSync } from 'node:fs'
-import { toBase64 } from '@exodus/bytes/base64.js' // eslint-disable-line @exodus/import/no-unresolved
+import { toBase64url } from '@exodus/bytes/base64.js' // eslint-disable-line @exodus/import/no-unresolved
 import { utf16fromString } from '@exodus/bytes/utf16.js' // eslint-disable-line @exodus/import/no-unresolved
 import { join } from 'node:path'
 import assert from 'node:assert/strict'
@@ -98,7 +98,14 @@ function encode(count, relcodepoint) {
 
 function encodeString(s, lastconseq) {
   // s is split by codepoints
-  const str = `"${toBase64(utf16fromString(s.join(''), 'uint8-le'), { padding: false })}"`
+  const u8 = utf16fromString(s.join(''), 'uint8-le')
+  // Convert to offsets
+  for (let i = u8.length - 2; i >= 2; i -= 2) {
+    u8[i + 1] -= u8[i - 1]
+    u8[i] -= u8[i - 2] + 1
+  }
+
+  const str = `"${toBase64url(u8)}"`
   let i = 0
   const parts = []
   let ll = lastconseq

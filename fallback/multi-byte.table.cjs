@@ -1,4 +1,4 @@
-const { fromBase64 } = require('@exodus/bytes/base64.js') // eslint-disable-line @exodus/import/no-unresolved
+const { fromBase64url } = require('@exodus/bytes/base64.js') // eslint-disable-line @exodus/import/no-unresolved
 const { utf16toString } = require('@exodus/bytes/utf16.js') // eslint-disable-line @exodus/import/no-unresolved
 const { to16input } = require('./utf16.js')
 
@@ -13,6 +13,16 @@ const sizes = { jis0208: 11_104, jis0212: 7211, 'euc-kr': 23_750, gb18030: 23_94
 const tables = new Map()
 
 /* eslint-disable @exodus/mutable/no-param-reassign-prop-only */
+
+function loadBase64(str) {
+  const x = fromBase64url(str)
+  for (let i = 2; i < x.length; i += 2) {
+    x[i] += x[i - 2] + 1
+    x[i + 1] += x[i - 1]
+  }
+
+  return x
+}
 
 function unwrap(res, t, pos, stringMode = false) {
   let code = 0
@@ -38,11 +48,11 @@ function unwrap(res, t, pos, stringMode = false) {
     } else if (x[0] === '$' && Object.hasOwn(indices, x)) {
       pos = unwrap(res, indices[x], pos, stringMode) // self-reference using shared chunks
     } else if (stringMode) {
-      const s = [...utf16toString(fromBase64(x), 'uint8-le')] // splits by codepoints
+      const s = [...utf16toString(loadBase64(x), 'uint8-le')] // splits by codepoints
       for (let i = 0; i < s.length; ) res[pos++] = s[i++] // TODO: splice?
       code = s[s.length - 1].codePointAt(0) + 1
     } else {
-      const u16 = to16input(fromBase64(x), true) // data is little-endian
+      const u16 = to16input(loadBase64(x), true) // data is little-endian
       res.set(u16, pos)
       pos += u16.length
       code = u16[u16.length - 1] + 1
