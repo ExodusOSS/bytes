@@ -248,7 +248,7 @@ const mappers = {
 
         const cp = index((g1 - 0x81) * 12_600 + (g2 - 0x30) * 1260 + (g3 - 0x81) * 10 + b - 0x30)
         g1 = g2 = g3 = 0
-        if (cp !== undefined && cp !== REP) return cp
+        if (cp !== undefined) return cp // Can validly return replacement
         return -2
       }
 
