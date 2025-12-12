@@ -1,10 +1,41 @@
 import { decodeLatin1, encodeCharcodes } from './latin1.js'
+import { isLE } from './_utils.js'
 
 export const E_STRICT = 'Input is not well-formed utf16'
 export const E_STRICT_UNICODE = 'Input is not well-formed Unicode'
 
 const replacementCodepoint = 0xff_fd
 const replacementCodepointSwapped = 0xfd_ff
+
+const to16 = (a) => new Uint16Array(a.buffer, a.byteOffset, a.byteLength / 2) // Requires checked length and alignment!
+
+export function to16input(u8, le) {
+  // Assume even number of bytes
+  if (le === isLE) return to16(u8.byteOffset % 2 === 0 ? u8 : Uint8Array.from(u8))
+
+  const res = new Uint8Array(u8.length)
+
+  let i = 0
+  for (const last3 = u8.length - 3; i < last3; i += 4) {
+    const x0 = u8[i]
+    const x1 = u8[i + 1]
+    const x2 = u8[i + 2]
+    const x3 = u8[i + 3]
+    res[i] = x1
+    res[i + 1] = x0
+    res[i + 2] = x3
+    res[i + 3] = x2
+  }
+
+  for (const last = u8.length - 1; i < last; i += 2) {
+    const x0 = u8[i]
+    const x1 = u8[i + 1]
+    res[i] = x1
+    res[i + 1] = x0
+  }
+
+  return to16(res)
+}
 
 export const decode = (u16, loose = false, checked = false) => {
   if (checked || isWellFormed(u16)) return decodeLatin1(u16, 0, u16.length) // it's capable of decoding Uint16Array to UTF-16 as well

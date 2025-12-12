@@ -1,6 +1,6 @@
-const { utf16fromString, utf16toString } = require('@exodus/bytes/utf16.js') // eslint-disable-line @exodus/import/no-unresolved
 const { fromBase64 } = require('@exodus/bytes/base64.js') // eslint-disable-line @exodus/import/no-unresolved
-const { isLE } = require('./_utils.js')
+const { utf16toString } = require('@exodus/bytes/utf16.js') // eslint-disable-line @exodus/import/no-unresolved
+const { to16input } = require('./utf16.js')
 
 // This is huge. It's _much_ smaller than https://npmjs.com/text-encoding though
 // Exactly as mapped by the index table
@@ -38,15 +38,11 @@ function unwrap(res, t, pos, stringMode = false) {
     } else if (x[0] === '$' && Object.hasOwn(indices, x)) {
       pos = unwrap(res, indices[x], pos, stringMode) // self-reference using shared chunks
     } else if (stringMode) {
-      const u8le = fromBase64(x)
-      const xs = [...utf16toString(u8le, 'uint8-le')] // splits by codepoints
-      for (let i = 0; i < xs.length; ) res[pos++] = xs[i++] // TODO: splice?
-      code = xs[xs.length - 1].codePointAt(0) + 1
+      const s = [...utf16toString(fromBase64(x), 'uint8-le')] // splits by codepoints
+      for (let i = 0; i < s.length; ) res[pos++] = s[i++] // TODO: splice?
+      code = s[s.length - 1].codePointAt(0) + 1
     } else {
-      const u8le = fromBase64(x)
-      const u16 = isLE
-        ? new Uint16Array(u8le.buffer, u8le.byteOffset, u8le.byteLength / 2)
-        : utf16fromString(utf16toString(u8le, 'uint8-le')) // TODO: just use swap. !isLE is exotic though
+      const u16 = to16input(fromBase64(x), true) // data is little-endian
       res.set(u16, pos)
       pos += u16.length
       code = u16[u16.length - 1] + 1

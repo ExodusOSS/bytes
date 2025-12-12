@@ -16,35 +16,6 @@ const { E_STRICT, E_STRICT_UNICODE } = js
 // Unlike utf8, operates on Uint16Arrays by default
 
 const to8 = (a) => new Uint8Array(a.buffer, a.byteOffset, a.byteLength)
-const to16 = (a) => new Uint16Array(a.buffer, a.byteOffset, a.byteLength / 2) // Requires checked length and alignment!
-
-function to16input(u8, le) {
-  // Assume even number of bytes
-  if (le === isLE) return to16(u8.byteOffset % 2 === 0 ? u8 : Uint8Array.from(u8))
-
-  const res = new Uint8Array(u8.length)
-
-  let i = 0
-  for (const last3 = u8.length - 3; i < last3; i += 4) {
-    const x0 = u8[i]
-    const x1 = u8[i + 1]
-    const x2 = u8[i + 2]
-    const x3 = u8[i + 3]
-    res[i] = x1
-    res[i + 1] = x0
-    res[i + 2] = x3
-    res[i + 3] = x2
-  }
-
-  for (const last = u8.length - 1; i < last; i += 2) {
-    const x0 = u8[i]
-    const x1 = u8[i + 1]
-    res[i] = x1
-    res[i + 1] = x0
-  }
-
-  return to16(res)
-}
 
 function encode(str, loose = false, format = 'uint16') {
   if (typeof str !== 'string') throw new TypeError('Input is not a string')
@@ -78,13 +49,13 @@ function decode(input, loose = false, format = 'uint16') {
       if (!(input instanceof Uint8Array)) throw new TypeError('Expected an Uint8Array')
       if (input.byteLength % 2 !== 0) throw new TypeError('Expected even number of bytes')
       if (canDecoders) return loose ? decoderLooseLE.decode(input) : decoderFatalLE.decode(input)
-      u16 = to16input(input, true)
+      u16 = js.to16input(input, true)
       break
     case 'uint8-be':
       if (!(input instanceof Uint8Array)) throw new TypeError('Expected an Uint8Array')
       if (input.byteLength % 2 !== 0) throw new TypeError('Expected even number of bytes')
       if (canDecoders) return loose ? decoderLooseBE.decode(input) : decoderFatalBE.decode(input)
-      u16 = to16input(input, false)
+      u16 = js.to16input(input, false)
       break
     default:
       throw new TypeError('Unknown format')
