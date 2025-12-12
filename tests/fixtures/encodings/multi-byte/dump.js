@@ -40,6 +40,7 @@ for (const file of readdirSync(import.meta.dirname)) {
   const match = file.match(/^index-([a-z0-9-]+)\.txt$/u)
   if (!match) continue
   const encoding = match[1]
+  if (encoding.endsWith('-ranges')) continue
   const non16bit = encoding === 'big5'
   const text = readFileSync(join(import.meta.dirname, file), 'utf8')
   let max = 0

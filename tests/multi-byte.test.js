@@ -72,3 +72,31 @@ describe('multi-byte encodings tables', () => {
     })
   }
 })
+
+describe('multi-byte ranges tables', () => {
+  for (const name of ['gb18030-ranges']) {
+    test(name, (t) => {
+      const table = getTable(name)
+
+      const text = readFileSync(
+        join(import.meta.dirname, 'fixtures/encodings/multi-byte', `index-${name}.txt`),
+        'utf8'
+      )
+
+      const rows = text
+        .split('\n')
+        .map((x) => x.trim())
+        .filter((x) => x && x[0] !== '#')
+        .map((x) => x.split('\t'))
+        .map(([as, bs]) => {
+          const a = parseInt(as)
+          const b = parseInt(bs)
+          t.assert.strictEqual(as, `${a}`)
+          t.assert.strictEqual(bs, `0x${b.toString(16).toUpperCase().padStart(4, '0')}`)
+          return [a, b]
+        })
+
+      t.assert.deepStrictEqual(table, rows)
+    })
+  }
+})

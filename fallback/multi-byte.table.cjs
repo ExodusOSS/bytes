@@ -55,11 +55,16 @@ function getTable(id) {
   if (cached) return cached
 
   if (!indices) indices = require('./multi-byte.encodings.json') // lazy-load
-  if (!Object.hasOwn(indices, id) || !Object.hasOwn(sizes, id)) throw new Error('Unknown encoding')
+  if (!Object.hasOwn(indices, id)) throw new Error('Unknown encoding')
   if (!indices[id]) throw new Error('Table already used (likely incorrect bundler dedupe)')
 
   let res
-  if (id === 'big5') {
+  if (id.endsWith('-ranges')) {
+    res = []
+    let c = 0, d = 0 // prettier-ignore
+    for (const [a, b] of indices[id]) res.push([(c += a), (d += b)])
+  } else if (id === 'big5') {
+    if (!Object.hasOwn(sizes, id)) throw new Error('Unknown encoding')
     res = new Array(sizes[id]) // array of strings or undefined
     unwrap(res, indices[id], 0, true)
     // Pointer code updates are embedded into the table
@@ -68,6 +73,7 @@ function getTable(id) {
     res[1164] = '\xEA\u0304'
     res[1166] = '\xEA\u030C'
   } else {
+    if (!Object.hasOwn(sizes, id)) throw new Error('Unknown encoding')
     res = new Uint16Array(sizes[id])
     res.fill(0xff_fd)
     unwrap(res, indices[id], 0, false)
