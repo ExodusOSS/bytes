@@ -6,8 +6,26 @@ import { encodingMapper, encodingDecoder, E_STRICT } from './fallback/single-byt
 
 const toBuf = (x) => Buffer.from(x.buffer, x.byteOffset, x.byteLength)
 
+function latin1Prefix(arr, start) {
+  let p = start | 0
+  const length = arr.length
+  for (const len3 = length - 3; p < len3; p += 4) {
+    if ((arr[p] & 0xe0) === 0x80) return p
+    if ((arr[p + 1] & 0xe0) === 0x80) return p + 1
+    if ((arr[p + 2] & 0xe0) === 0x80) return p + 2
+    if ((arr[p + 3] & 0xe0) === 0x80) return p + 3
+  }
+
+  for (; p < length; p++) {
+    if ((arr[p] & 0xe0) === 0x80) return p
+  }
+
+  return length
+}
+
 export function createDecoder(encoding, loose = false) {
   if (encoding === 'iso-8859-8-i') encoding = 'iso-8859-8'
+  const latin1path = encoding === 'windows-1252' // TODO: are there more?
   if (isDeno) {
     const jsDecoder = encodingDecoder(encoding) // asserts
     return (arr) => {
@@ -26,7 +44,9 @@ export function createDecoder(encoding, loose = false) {
 
     // Node.js TextDecoder is broken, so we can't use it. It's also slow anyway
 
-    const prefix = toBuf(arr).latin1Slice(0, asciiPrefix(arr)) // .latin1Slice is faster than .asciiSlice
+    let prefixBytes = asciiPrefix(arr)
+    if (latin1path) prefixBytes = latin1Prefix(arr, prefixBytes)
+    const prefix = toBuf(arr).latin1Slice(0, prefixBytes) // .latin1Slice is faster than .asciiSlice
     if (prefix.length === arr.length) return prefix
 
     const b = mapper(arr, prefix.length)
