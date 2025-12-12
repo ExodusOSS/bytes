@@ -23,12 +23,18 @@ const tables = new Map()
 
 function loadBase64(str) {
   const x = fromBase64url(str)
-  for (let i = 2; i < x.length; i += 2) {
-    x[i] += x[i - 2] + 1
-    x[i + 1] += x[i - 1]
+  const len = x.length
+  const len2 = len >> 1
+  const y = new Uint8Array(len)
+  let a = -1, b = 0 // prettier-ignore
+  for (let i = 0, j = 0; i < len; i += 2, j++) {
+    a = (a + x[j] + 1) & 0xff
+    b = (b + x[len2 + j]) & 0xff
+    y[i] = a
+    y[i + 1] = b
   }
 
-  return x
+  return y
 }
 
 function unwrap(res, t, pos, stringMode = false) {

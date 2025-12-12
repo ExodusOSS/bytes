@@ -105,7 +105,13 @@ function encodeString(s, lastconseq) {
     u8[i] -= u8[i - 2] + 1
   }
 
-  const str = `"${toBase64url(u8)}"`
+  const u8x = new Uint8Array(u8.length)
+  for (let i = 0; i < u8.length; i += 2) {
+    u8x[i / 2] = u8[i]
+    u8x[u8.length / 2 + i / 2] = u8[i + 1]
+  }
+
+  const str = `"${toBase64url(u8x)}"`
   let i = 0
   const parts = []
   let ll = lastconseq
