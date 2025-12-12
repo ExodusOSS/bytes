@@ -5,10 +5,8 @@ export const E_STRICT = 'Input is not well-formed for this encoding'
 
 // TODO: optimize
 
-// If the decoder is not cleared properly, state can be preserved between non-streaming calls, as also seen in Chrome and WebKit
-// Example: t=new TextDecoder('iso-2022-jp');t.decode(Uint8Array.of(0x1b,0x28,0x49))t.decode(Uint8Array.of(0x21)).codePointAt(0).toString(16)
-// It appears to be a bug there but we want to be aware of that so the algo has to be literal and do proper state changes on EOF,
-// even though we clear the state by destroying the mapper instance, as the spec says
+// If the decoder is not cleared properly, state can be preserved between non-streaming calls!
+// See comment about fatal stream
 
 // All except iso-2022-jp are ASCII supersets
 // When adding something that is not an ASCII superset, ajust the ASCII fast path
@@ -292,16 +290,20 @@ export const multibyteSupported = (enc) => Object.hasOwn(mappers, enc) || enc ==
 export function multibyteDecoder(enc, loose = false) {
   if (enc === 'big5') return big5decoder(loose)
   if (!Object.hasOwn(mappers, enc)) throw new RangeError('Unsupported encoding')
-  const onErr = loose
-    ? () => '\uFFFD'
-    : () => {
-        throw new Error(E_STRICT)
-      }
 
   // Input is assumed to be typechecked already
   let mapper
   const asciiSuperset = enc !== 'iso-2022-jp' // all others are ASCII supersets and can use fast path
   return (arr, stream = false) => {
+    const onErr = loose
+      ? () => '\uFFFD'
+      : () => {
+          // TODO: recheck with tests what happens in fatal mode with stream = true in browsers
+          // The correct reading of the spec seems to be not destoying the decoder state in that case?
+          if (!stream) mapper = null // destroy state, effectively the same as 'do not flush' = false, but early
+          throw new Error(E_STRICT)
+        }
+
     let res = ''
     const length = arr.length
     if (asciiSuperset && !mapper) {
@@ -338,16 +340,17 @@ export function multibyteDecoder(enc, loose = false) {
 // The only decoder which returns multiple codepoints per byte, also has non-charcode codepoints
 // We store that as strings
 function big5decoder(loose) {
-  const onErr = loose
-    ? () => '\uFFFD'
-    : () => {
-        throw new Error(E_STRICT)
-      }
-
   // Input is assumed to be typechecked already
   let lead = 0
   let big5
   return (arr, stream = false) => {
+    const onErr = loose
+      ? () => '\uFFFD'
+      : () => {
+          // Lead is always already cleared before throwing
+          throw new Error(E_STRICT)
+        }
+
     let res = ''
     const length = arr.length
     if (!lead) {
