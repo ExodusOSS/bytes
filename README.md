@@ -37,6 +37,8 @@ Spec compliant, passing WPT and covered with extra tests.
 
 Moreover, tests for this library uncovered [bugs in all major implementations](https://docs.google.com/spreadsheets/d/1pdEefRG6r9fZy61WHGz0TKSt8cO4ISWqlpBN5KntIvQ/edit) except Deno.
 
+[Faster than Node.js native implementation on Node.js](https://github.com/nodejs/node/issues/61041#issuecomment-3649242024).
+
 ### Caveat: `TextDecoder` / `TextEncoder` APIs are lossy by default per spec
 
 _These are only provided as a compatibility layer, prefer hardened APIs instead in new code._
