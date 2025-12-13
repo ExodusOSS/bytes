@@ -72,6 +72,10 @@
       "node": "./hex.node.js",
       "default": "./hex.js"
     },
+    "./multi-byte.js": {
+      "node": "./multi-byte.node.js",
+      "default": "./multi-byte.js"
+    },
     "./single-byte.js": {
       "node": "./single-byte.node.js",
       "default": "./single-byte.js"
