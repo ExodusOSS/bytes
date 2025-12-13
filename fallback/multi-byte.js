@@ -313,19 +313,36 @@ export function multibyteDecoder(enc, loose = false) {
     }
 
     if (!mapper) mapper = mappers[enc]()
-    const end = stream ? length : length + 1
-    for (let i = res.length; i < end; i++) {
-      const x = i === length ? EOF : arr[i]
-      const c = mapper(x)
-      if (x === EOF && c === null) break // clean exit
-      if (c === -1) continue // consuming
-      if (c <= -2) {
+    let i = res.length
+    // First, dump everything until EOF
+    // Same as the full loop, but without EOF handling
+    for (; i < length; i++) {
+      const c = mapper(arr[i])
+      if (c >= 0) {
+        res += String.fromCodePoint(c) // gb18030 returns codepoints above 0xFFFF from ranges
+      } else if (c <= -2) {
         // -2: error, -3: error + restore 1 byte, etc
         res += onErr()
         i += c + 2
-        if (c < -2 && x === EOF) i-- // if we restore something and attempted EOF, we should also restore EOF
-      } else {
-        res += String.fromCodePoint(c) // gb18030 returns codepoints above 0xFFFF from ranges
+      }
+    }
+
+    // Then, dump EOF. This needs the same loop as the characters can be pushed back
+    // TODO: only some encodings need this, most can be optimized
+    if (!stream) {
+      for (; i <= length; i++) {
+        const x = i === length ? EOF : arr[i]
+        const c = mapper(x)
+        if (x === EOF && c === null) break // clean exit
+        if (c === -1) continue // consuming
+        if (c <= -2) {
+          // -2: error, -3: error + restore 1 byte, etc
+          res += onErr()
+          i += c + 2
+          if (c < -2 && x === EOF) i-- // if we restore something and attempted EOF, we should also restore EOF
+        } else {
+          res += String.fromCodePoint(c) // gb18030 returns codepoints above 0xFFFF from ranges
+        }
       }
     }
 
