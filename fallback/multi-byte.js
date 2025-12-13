@@ -10,20 +10,14 @@ export const E_STRICT = 'Input is not well-formed for this encoding'
 
 // All except iso-2022-jp are ASCII supersets
 // When adding something that is not an ASCII superset, ajust the ASCII fast path
-const EOF = -1
 const REP = 0xff_fd
 const mappers = {
   // https://encoding.spec.whatwg.org/#euc-kr-decoder
   'euc-kr': () => {
     const euc = getTable('euc-kr')
     let lead = 0
-    return (b) => {
-      if (b === EOF) {
-        if (!lead) return null
-        lead = 0
-        return -2
-      }
 
+    const bytes = (b) => {
       if (lead) {
         const cp = b >= 0x41 && b <= 0xfe ? euc[(lead - 0x81) * 190 + b - 0x41] : undefined
         lead = 0
@@ -36,6 +30,14 @@ const mappers = {
       lead = b
       return -1
     }
+
+    const eof = () => {
+      if (!lead) return null
+      lead = 0
+      return -2
+    }
+
+    return { bytes, eof }
   },
   // https://encoding.spec.whatwg.org/#euc-jp-decoder
   'euc-jp': () => {
@@ -43,13 +45,8 @@ const mappers = {
     const jis0212 = getTable('jis0212')
     let j12 = false
     let lead = 0
-    return (b) => {
-      if (b === EOF) {
-        if (!lead) return null
-        lead = 0
-        return -2
-      }
 
+    const bytes = (b) => {
       if (lead === 0x8e && b >= 0xa1 && b <= 0xdf) {
         lead = 0
         return 0xfe_c0 + b
@@ -78,16 +75,27 @@ const mappers = {
       lead = b
       return -1
     }
+
+    // eslint-disable-next-line sonarjs/no-identical-functions
+    const eof = () => {
+      if (!lead) return null
+      lead = 0
+      return -2
+    }
+
+    return { bytes, eof }
   },
   // https://encoding.spec.whatwg.org/#iso-2022-jp-decoder
   // Per-letter of the spec, don't shortcut on state changes on EOF. Some code is regrouped but preserving the logic
   'iso-2022-jp': () => {
     const jis0208 = getTable('jis0208')
+    const EOF = -1
     let dState = 1
     let oState = 1
     let lead = 0
     let out = false
-    return (b) => {
+
+    const bytes = (b) => {
       if (dState < 5) {
         if (b === EOF) return null
         if (b === 0x1b) {
@@ -179,18 +187,17 @@ const mappers = {
         }
       }
     }
+
+    const eof = () => bytes(EOF)
+
+    return { bytes, eof }
   },
   // https://encoding.spec.whatwg.org/#shift_jis-decoder
   shift_jis: () => {
     const jis0208 = getTable('jis0208')
     let lead = 0
-    return (b) => {
-      if (b === EOF) {
-        if (!lead) return null
-        lead = 0 // this clears state completely on EOF
-        return -2
-      }
 
+    const bytes = (b) => {
       if (lead) {
         const l = lead
         lead = 0
@@ -210,6 +217,15 @@ const mappers = {
       lead = b
       return -1
     }
+
+    // eslint-disable-next-line sonarjs/no-identical-functions
+    const eof = () => {
+      if (!lead) return null
+      lead = 0 // this clears state completely on EOF
+      return -2
+    }
+
+    return { bytes, eof }
   },
   // https://encoding.spec.whatwg.org/#gbk-decoder
   gbk: () => mappers.gb18030(), // 10.1.1. GBK’s decoder is gb18030’s decoder
@@ -231,13 +247,7 @@ const mappers = {
       return b + p - a
     }
 
-    return (b) => {
-      if (b === EOF) {
-        if (!g1 && !g2 && !g3) return null
-        g1 = g2 = g3 = 0
-        return -2
-      }
-
+    const bytes = (b) => {
       if (g3) {
         if (b < 0x30 || b > 0x39) {
           g1 = g2 = g3 = 0
@@ -282,6 +292,14 @@ const mappers = {
       g1 = b
       return -1
     }
+
+    const eof = () => {
+      if (!g1 && !g2 && !g3) return null
+      g1 = g2 = g3 = 0
+      return -2
+    }
+
+    return { bytes, eof }
   },
 }
 
@@ -313,11 +331,12 @@ export function multibyteDecoder(enc, loose = false) {
     }
 
     if (!mapper) mapper = mappers[enc]()
+    const { bytes, eof } = mapper
     let i = res.length
     // First, dump everything until EOF
     // Same as the full loop, but without EOF handling
     for (; i < length; i++) {
-      const c = mapper(arr[i])
+      const c = bytes(arr[i])
       if (c >= 0) {
         res += String.fromCodePoint(c) // gb18030 returns codepoints above 0xFFFF from ranges
       } else if (c <= -2) {
@@ -331,15 +350,15 @@ export function multibyteDecoder(enc, loose = false) {
     // TODO: only some encodings need this, most can be optimized
     if (!stream) {
       for (; i <= length; i++) {
-        const x = i === length ? EOF : arr[i]
-        const c = mapper(x)
-        if (x === EOF && c === null) break // clean exit
+        const isEOF = i === length
+        const c = isEOF ? eof() : bytes(arr[i])
+        if (isEOF && c === null) break // clean exit
         if (c === -1) continue // consuming
         if (c <= -2) {
           // -2: error, -3: error + restore 1 byte, etc
           res += onErr()
           i += c + 2
-          if (c < -2 && x === EOF) i-- // if we restore something and attempted EOF, we should also restore EOF
+          if (c < -2 && isEOF) i-- // if we restore something and attempted EOF, we should also restore EOF
         } else {
           res += String.fromCodePoint(c) // gb18030 returns codepoints above 0xFFFF from ranges
         }
