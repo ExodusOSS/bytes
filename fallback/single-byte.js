@@ -50,7 +50,7 @@ export function encodingMapper(encoding) {
       o[i + 7] = map[o[i + 7]]
     }
 
-    for (const end = o.length; i < end; i++) o[i] = map[o[i]] // 3 high bytes must match for 0x80-0x9f range
+    for (const end = o.length; i < end; i++) o[i] = map[o[i]]
     return o
   }
 
