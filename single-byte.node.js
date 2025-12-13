@@ -45,11 +45,14 @@ export function createDecoder(encoding, loose = false) {
     // Node.js TextDecoder is broken, so we can't use it. It's also slow anyway
 
     let prefixBytes = asciiPrefix(arr)
+    let prefix = ''
     if (latin1path) prefixBytes = latin1Prefix(arr, prefixBytes)
-    const prefix = toBuf(arr).latin1Slice(0, prefixBytes) // .latin1Slice is faster than .asciiSlice
-    if (prefix.length === arr.length) return prefix
+    if (prefixBytes > 64 || prefixBytes === arr.length) {
+      prefix = toBuf(arr).latin1Slice(0, prefixBytes) // .latin1Slice is faster than .asciiSlice
+      if (prefixBytes === arr.length) return prefix
+    }
 
-    const b = mapper(arr, prefix.length)
+    const b = mapper(arr, prefix.length) // prefix.length can mismatch prefixBytes
     const suffix = isLE ? toBuf(b).ucs2Slice(0, b.byteLength) : decodeLatin1(b, 0, b.length) // decodeLatin1 is actually capable of decoding 16-bit codepoints
     if (!loose && incomplete && suffix.includes('\uFFFD')) throw new TypeError(E_STRICT)
     return prefix + suffix
