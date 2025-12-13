@@ -6,6 +6,63 @@ import { test, describe } from 'node:test'
 const u = (...args) => Uint8Array.of(...args)
 
 describe('Common implementation mistakes', () => {
+  describe.only('Unicode', () => {
+    describe('Invalid input is replaced', () => {
+      const invalid8 = [
+        { bytes: [0, 254, 255], charcodes: [0, 0xff_fd, 0xff_fd] },
+        { bytes: [0x80], charcodes: [0xff_fd] },
+        { bytes: [0xf0, 0x90, 0x80], charcodes: [0xff_fd] }, // https://npmjs.com/package/buffer is wrong
+        { bytes: [0xf0, 0x80, 0x80], charcodes: [0xff_fd, 0xff_fd, 0xff_fd] }, // https://github.com/nodejs/node/issues/16894
+      ]
+
+      const invalid16 = [
+        { invalid: [0x61, 0x62, 0xd8_00, 0x77, 0x78], replaced: [0x61, 0x62, 0xff_fd, 0x77, 0x78] },
+        { invalid: [0xd8_00], replaced: [0xff_fd] },
+        { invalid: [0xd8_00, 0xd8_00], replaced: [0xff_fd, 0xff_fd] },
+        { invalid: [0x61, 0x62, 0xdf_ff, 0x77, 0x78], replaced: [0x61, 0x62, 0xff_fd, 0x77, 0x78] },
+        { invalid: [0xdf_ff, 0xd8_00], replaced: [0xff_fd, 0xff_fd] },
+      ]
+
+      // https://npmjs.com/package/buffer is wrong on this
+      // which means that iconv-lite and whatwg-encoding are wrong on non-Node.js environments
+      // this test fails on whatwg-encoding in browsers
+      test('utf-8', (t) => {
+        const d = new TextDecoder()
+        for (const { bytes, charcodes } of invalid8) {
+          t.assert.strictEqual(d.decode(Uint8Array.from(bytes)), String.fromCharCode(...charcodes))
+        }
+      })
+
+      // whatwg-encoding, iconv-lite, and any other implementations just using Buffer fail on this
+      test('utf-16le', (t) => {
+        const d = new TextDecoder('utf-16le')
+        for (const { invalid, replaced } of invalid16) {
+          const input = new Uint8Array(invalid.length * 2)
+          for (let i = 0; i < invalid.length; i++) {
+            input[2 * i] = invalid[i] & 0xff
+            input[2 * i + 1] = invalid[i] >> 8
+          }
+
+          t.assert.strictEqual(d.decode(input), String.fromCharCode(...replaced))
+        }
+      })
+
+      // whatwg-encoding, iconv-lite, and any other implementations just using Buffer fail on this
+      test('utf-16be', (t) => {
+        const d = new TextDecoder('utf-16be')
+        for (const { invalid, replaced } of invalid16) {
+          const input = new Uint8Array(invalid.length * 2)
+          for (let i = 0; i < invalid.length; i++) {
+            input[2 * i] = invalid[i] >> 8
+            input[2 * i + 1] = invalid[i] & 0xff
+          }
+
+          t.assert.strictEqual(d.decode(input), String.fromCharCode(...replaced))
+        }
+      })
+    })
+  })
+
   describe('ASCII', () => {
     // Node.js fails on this
     // https://github.com/nodejs/node/issues/40091#issuecomment-3633854200
