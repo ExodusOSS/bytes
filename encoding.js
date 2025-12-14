@@ -123,11 +123,16 @@ export class TextDecoder {
       }
 
       if (!this.#decode) this.#decode = unicodeDecoder(this.encoding, !this.fatal)
-      const res = this.#decode(u) + suffix
-      if (res.length > 0 && stream) this.#canBOM = false
+      try {
+        const res = this.#decode(u) + suffix
+        if (res.length > 0 && stream) this.#canBOM = false
 
-      if (!stream) this.#canBOM = !this.ignoreBOM
-      return res
+        if (!stream) this.#canBOM = !this.ignoreBOM
+        return res
+      } catch (err) {
+        this.#chunk = null // reset unfinished chunk on errors
+        throw err
+      }
 
       // eslint-disable-next-line no-else-return
     } else if (this.#multibyte) {
