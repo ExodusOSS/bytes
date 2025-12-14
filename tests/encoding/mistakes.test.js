@@ -120,6 +120,25 @@ describe('Common implementation mistakes', () => {
   })
 
   describe('specific encodings', () => {
+    describe('utf-16le', () => {
+      test('does not produce more chars than truncated', (t) => {
+        const d = new TextDecoder('utf-16le')
+        t.assert.strictEqual(d.decode(u(0, 0, 0)), '\0\uFFFD') // two character, 0 was valid
+        t.assert.strictEqual(d.decode(u(42, 0, 0)), '*\uFFFD') // two characters, * was valid
+        t.assert.strictEqual(d.decode(u(0, 0xd8, 0)), '\uFFFD') // single character
+      })
+    })
+
+    describe('utf-16be', () => {
+      test('does not produce more chars than truncated', (t) => {
+        const d = new TextDecoder('utf-16be')
+        t.assert.strictEqual(d.decode(u(0, 0, 0)), '\0\uFFFD') // two character, 0 was valid
+        t.assert.strictEqual(d.decode(u(0, 42, 0)), '*\uFFFD') // two characters, * was valid
+        t.assert.strictEqual(d.decode(u(0xd8, 0, 0)), '\uFFFD') // single character
+        t.assert.strictEqual(d.decode(u(0xd8, 0, 0xd8)), '\uFFFD') // single character
+      })
+    })
+
     describe('windows-1252', () => {
       // Node.js fails on this
       // https://github.com/nodejs/node/issues/60888
