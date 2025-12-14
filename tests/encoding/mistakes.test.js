@@ -6,7 +6,7 @@ import { test, describe } from 'node:test'
 const u = (...args) => Uint8Array.of(...args)
 
 describe('Common implementation mistakes', () => {
-  describe.only('Unicode', () => {
+  describe('Unicode', () => {
     describe('Invalid input is replaced', () => {
       const invalid8 = [
         { bytes: [0, 254, 255], charcodes: [0, 0xff_fd, 0xff_fd] },
