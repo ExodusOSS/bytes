@@ -436,6 +436,24 @@ describe('Common implementation mistakes', () => {
     })
   })
 
+  describe('stream', () => {
+    // Chrome is incorrect. It also decodes fetch() responses wrong for utf-8
+    // https://issues.chromium.org/issues/468458744
+    test('utf-8', (t) => {
+      const u8 = Uint8Array.of(0xf0, 0xc3, 0x80, 42, 42)
+      const str = new TextDecoder().decode(u8)
+      t.assert.strictEqual(new TextDecoder().decode(u8), '\uFFFD\xC0**')
+
+      const d = new TextDecoder()
+      const chunks = [
+        d.decode(u8.subarray(0, 1), { stream: true }),
+        d.decode(u8.subarray(1), { stream: true }),
+        d.decode(),
+      ]
+      t.assert.strictEqual(chunks.join(''), str)
+    })
+  })
+
   describe('fatal stream', () => {
     test('utf-8', (t) => {
       const d = new TextDecoder('utf-8', { fatal: true })
