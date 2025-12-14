@@ -456,9 +456,22 @@ describe('Common implementation mistakes', () => {
 
   describe('fatal stream', () => {
     test('utf-8', (t) => {
-      const d = new TextDecoder('utf-8', { fatal: true })
-      t.assert.throws(() => d.decode(u(0xc0), { stream: true }))
-      t.assert.throws(() => d.decode(u(0xff), { stream: true }))
+      {
+        const d = new TextDecoder('utf-8', { fatal: true })
+        t.assert.throws(() => d.decode(u(0xc0), { stream: true }))
+        t.assert.throws(() => d.decode(u(0xff), { stream: true }))
+        t.assert.strictEqual(d.decode(), '')
+      }
+
+      {
+        const loose = new TextDecoder('utf-8')
+        t.assert.strictEqual(loose.decode(u(0xfd, 0xef), { stream: true }), '\uFFFD')
+        t.assert.strictEqual(loose.decode(), '\uFFFD')
+
+        const fatal = new TextDecoder('utf-8', { fatal: true })
+        t.assert.throws(() => fatal.decode(u(0xfd, 0xef), { stream: true }))
+        t.assert.strictEqual(fatal.decode(), '')
+      }
     })
 
     for (const encoding of ['utf-16le', 'utf-16be']) {
