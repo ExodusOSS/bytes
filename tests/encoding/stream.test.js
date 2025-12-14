@@ -3,22 +3,23 @@ import { TextDecoder } from '@exodus/bytes/encoding.js'
 
 import { keccakprg } from '@noble/hashes/sha3-addons.js'
 import { test, describe } from 'node:test'
-import { legacySingleByte, legacyMultiByte } from '../fixtures/encodings/encodings.cjs'
+import { legacySingleByte, legacyMultiByte, unicode } from '../fixtures/encodings/encodings.cjs'
 
 const fixedPRG = keccakprg() // We don't add any entropy, so it spills out predicatable results
 
-// 64 buffers of increasing not-always-even lengths, 184 KiB
+// 128 buffers of increasing not-always-even lengths, 184 KiB
 const seeds = []
-for (let i = 1; i <= 64; i++) seeds.push(fixedPRG.randomBytes(23 * i))
+for (let i = 1; i <= 128; i++) seeds.push(fixedPRG.randomBytes(23 * i))
 const rand = () => fixedPRG.randomBytes(1)[0] / 256 // or Math.random()
 
-function streamTest(t, label) {
+function streamTest(t, label, testFatal) {
   for (const u8i of seeds) {
     const u8 = Uint8Array.from(u8i)
     const loose = new TextDecoder(label)
     const fatal = new TextDecoder(label, { fatal: true })
     const parts = []
     let at = 0
+    let continiousValidBytes = 0
     while (at < u8.length) {
       const randsize = rand() > 0.8 ? 1 + Math.floor(rand() * rand() * rand() * 100) : 0 // prefer small chunks, 20% 0
       const delta = Math.min(u8.length - at, randsize)
@@ -26,19 +27,27 @@ function streamTest(t, label) {
       at += delta
 
       const a = loose.decode(u8s, { stream: true })
-      let b
-      let ok = false
-      try {
-        b = fatal.decode(u8s, { stream: true })
-        ok = true
-      } catch {}
+      if (testFatal) {
+        let b, ok
+        const previousValidBytes = continiousValidBytes
+        try {
+          b = fatal.decode(u8s, { stream: true })
+          ok = true
+          continiousValidBytes += u8s.length
+        } catch {
+          continiousValidBytes = 0
+        }
 
-      // TODO: check multibyte fatal streaming
-      if (legacySingleByte.includes(label)) {
-        if (ok) {
-          t.assert.strictEqual(a, b)
-        } else {
-          t.assert.ok(a.includes('\uFFFD'))
+        // Can differ on multi-byte as the previous chunk might have caused a second error in next one
+        // In fatal mode the queue from the previous invalid chunk is ignored, while in replacement it causes another error
+        // It can also go the other way around: previous state causing next input to be valid for replacement but not for fatal
+        // Continiuing streaming after fatal error can also completely switch the behavior for e.g. utf-32
+        if (legacySingleByte.includes(label) || (label === 'utf-8' && previousValidBytes >= 3)) {
+          if (ok) {
+            t.assert.strictEqual(b, a)
+          } else {
+            t.assert.ok(a.includes('\uFFFD'))
+          }
         }
       }
 
@@ -46,18 +55,19 @@ function streamTest(t, label) {
     }
 
     const af = loose.decode()
-    let bf, okf
-    try {
-      bf = fatal.decode()
-      okf = true
-    } catch {}
+    if (testFatal) {
+      let bf, okf
+      try {
+        bf = fatal.decode()
+        okf = true
+      } catch {}
 
-    // TODO: check multibyte fatal streaming
-    if (legacySingleByte.includes(label)) {
-      if (okf) {
-        t.assert.strictEqual(af, bf)
-      } else {
-        t.assert.ok(af.includes('\uFFFD'))
+      if (legacySingleByte.includes(label) || (label === 'utf-8' && continiousValidBytes >= 3)) {
+        if (okf) {
+          t.assert.strictEqual(bf, af)
+        } else {
+          t.assert.ok(af.includes('\uFFFD'))
+        }
       }
     }
 
@@ -70,14 +80,30 @@ function streamTest(t, label) {
 
 describe('stream=true in small chunks', () => {
   describe('Unicode', () => {
-    for (const label of ['utf-8', 'utf-16le', 'utf-16be']) test(label, (t) => streamTest(t, label))
+    for (const fatal of [false, true]) {
+      describe(fatal ? 'fatal' : 'loose', () => {
+        for (const label of unicode) {
+          if (label !== 'utf-8' && fatal) continue // see comment above, utf-16 is hard to test here
+          test(label, (t) => streamTest(t, label, fatal))
+        }
+      })
+    }
   })
 
   describe('1-byte encodings', () => {
-    for (const label of legacySingleByte) test(label, (t) => streamTest(t, label))
+    for (const fatal of [false, true]) {
+      describe(fatal ? 'fatal' : 'loose', () => {
+        for (const label of legacySingleByte) test(label, (t) => streamTest(t, label, fatal))
+      })
+    }
   })
 
   describe('legacy multi-byte encodings', () => {
-    for (const label of legacyMultiByte) test(label, (t) => streamTest(t, label))
+    // See comment above, fatal streaming is hard to test blindly for these
+    for (const fatal of [false]) {
+      describe(fatal ? 'fatal' : 'loose', () => {
+        for (const label of legacyMultiByte) test(label, (t) => streamTest(t, label, fatal))
+      })
+    }
   })
 })

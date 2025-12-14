@@ -16,7 +16,7 @@ const skipLarge =
 describe('tests on long fixed random strings', { skip: skipLarge }, () => {
   const fixedPRG = keccakprg() // We don't add any entropy, so it spills out predicatable results
 
-  // 64 buffers of increasing not-always-even lengths, 184 KiB
+  // 64 buffers of increasing not-always-even lengths, 46 KiB
   const seeds = []
   for (let i = 1; i <= 128; i++) seeds.push(fixedPRG.randomBytes(23 * i))
 
