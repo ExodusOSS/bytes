@@ -99,6 +99,26 @@ describe('Common implementation mistakes', () => {
     })
   })
 
+  // Chrome breaks on this
+  // https://issues.chromium.org/issues/468458388
+  describe('fast path misdetection', () => {
+    for (const fatal of [false, true]) {
+      describe(fatal ? 'fatal' : 'loose', () => {
+        const windows = [874, 1250, 1252, 1253, 1254, 1255, 1257, 1258].map((x) => `windows-${x}`) // these have \x80 mapped to euro sign
+        for (const encoding of [...windows, 'latin1', 'ascii']) {
+          test(encoding, (t) => {
+            const d = new TextDecoder(encoding, { fatal })
+            for (let i = 1; i <= 33; i++) {
+              const u8 = new Uint8Array(i)
+              u8[i - 1] = 0x80
+              t.assert.strictEqual(d.decode(u8)[i - 1], '€')
+            }
+          })
+        }
+      })
+    }
+  })
+
   describe('specific encodings', () => {
     describe('windows-1252', () => {
       // Node.js fails on this
