@@ -17,12 +17,14 @@ const mappers = {
     const euc = getTable('euc-kr')
     let lead = 0
 
+    const pushback = []
     const bytes = (b) => {
       if (lead) {
         const cp = b >= 0x41 && b <= 0xfe ? euc[(lead - 0x81) * 190 + b - 0x41] : undefined
         lead = 0
         if (cp !== undefined && cp !== REP) return cp
-        return b < 128 ? -3 : -2 // if ASCII, restore 1 byte and error, otherwise just error
+        if (b < 128) pushback.push(b)
+        return -2
       }
 
       if (b < 128) return b
@@ -37,7 +39,7 @@ const mappers = {
       return -2
     }
 
-    return { bytes, eof }
+    return { bytes, eof, pushback }
   },
   // https://encoding.spec.whatwg.org/#euc-jp-decoder
   'euc-jp': () => {
@@ -46,6 +48,7 @@ const mappers = {
     let j12 = false
     let lead = 0
 
+    const pushback = []
     const bytes = (b) => {
       if (lead === 0x8e && b >= 0xa1 && b <= 0xdf) {
         lead = 0
@@ -67,7 +70,8 @@ const mappers = {
         lead = 0
         j12 = false
         if (cp !== undefined && cp !== REP) return cp
-        return b < 128 ? -3 : -2 // if ASCII, restore 1 byte and error, otherwise just error
+        if (b < 128) pushback.push(b)
+        return -2
       }
 
       if (b < 128) return b
@@ -83,7 +87,7 @@ const mappers = {
       return -2
     }
 
-    return { bytes, eof }
+    return { bytes, eof, pushback }
   },
   // https://encoding.spec.whatwg.org/#iso-2022-jp-decoder
   // Per-letter of the spec, don't shortcut on state changes on EOF. Some code is regrouped but preserving the logic
@@ -95,6 +99,7 @@ const mappers = {
     let lead = 0
     let out = false
 
+    const pushback = []
     const bytes = (b) => {
       if (dState < 5) {
         if (b === EOF) return null
@@ -156,11 +161,14 @@ const mappers = {
 
           out = false
           dState = oState
-          return b === EOF ? -2 : -3
+          if (b !== EOF) pushback.push(b)
+          return -2
         case 7: {
           // Escape
+          const l = lead
+          lead = 0
           let s
-          if (lead === 0x28) {
+          if (l === 0x28) {
             // eslint-disable-next-line unicorn/prefer-switch
             if (b === 0x42) {
               s = 1
@@ -169,11 +177,10 @@ const mappers = {
             } else if (b === 0x49) {
               s = 3
             }
-          } else if (lead === 0x24 && (b === 0x40 || b === 0x42)) {
+          } else if (l === 0x24 && (b === 0x40 || b === 0x42)) {
             s = 4
           }
 
-          lead = 0
           if (s) {
             dState = oState = s
             const output = out
@@ -183,20 +190,23 @@ const mappers = {
 
           out = false
           dState = oState
-          return b === EOF ? -3 : -4 // restore 1 or 2 bytes
+          if (b !== EOF) pushback.push(b)
+          pushback.push(l)
+          return -2
         }
       }
     }
 
     const eof = () => bytes(EOF)
 
-    return { bytes, eof }
+    return { bytes, eof, pushback }
   },
   // https://encoding.spec.whatwg.org/#shift_jis-decoder
   shift_jis: () => {
     const jis0208 = getTable('jis0208')
     let lead = 0
 
+    const pushback = []
     const bytes = (b) => {
       if (lead) {
         const l = lead
@@ -208,7 +218,8 @@ const mappers = {
           if (cp !== undefined && cp !== REP) return cp
         }
 
-        return b < 128 ? -3 : -2 // if ASCII, restore 1 byte and error, otherwise just error
+        if (b < 128) pushback.push(b)
+        return -2
       }
 
       if (b <= 0x80) return b // 0x80 is allowed
@@ -225,7 +236,7 @@ const mappers = {
       return -2
     }
 
-    return { bytes, eof }
+    return { bytes, eof, pushback }
   },
   // https://encoding.spec.whatwg.org/#gbk-decoder
   gbk: () => mappers.gb18030(), // 10.1.1. GBK’s decoder is gb18030’s decoder
@@ -247,11 +258,13 @@ const mappers = {
       return b + p - a
     }
 
+    const pushback = []
     const bytes = (b) => {
       if (g3) {
         if (b < 0x30 || b > 0x39) {
+          pushback.push(b, g3, g2)
           g1 = g2 = g3 = 0
-          return -5 // restore 3 bytes
+          return -2
         }
 
         const cp = index((g1 - 0x81) * 12_600 + (g2 - 0x30) * 1260 + (g3 - 0x81) * 10 + b - 0x30)
@@ -266,8 +279,9 @@ const mappers = {
           return -1
         }
 
+        pushback.push(b, g2)
         g1 = g2 = 0
-        return -4 // restore 2 bytes
+        return -2
       }
 
       if (g1) {
@@ -283,7 +297,8 @@ const mappers = {
 
         g1 = 0
         if (cp !== undefined && cp !== REP) return cp
-        return b < 128 ? -3 : -2 // if ASCII, restore 1 byte and error, otherwise just error
+        if (b < 128) pushback.push(b)
+        return -2
       }
 
       if (b < 128) return b
@@ -299,7 +314,7 @@ const mappers = {
       return -2
     }
 
-    return { bytes, eof }
+    return { bytes, eof, pushback }
   },
 }
 
@@ -319,7 +334,7 @@ export function multibyteDecoder(enc, loose = false) {
       : () => {
           // The correct way per spec seems to be not destoying the decoder state in stream mode, even when fatal
           // Decoders big5, euc-jp, euc-kr, shift_jis, gb18030 / gbk - all clear state before throwing unless EOF, so not affected
-          // iso-2022-jp is the only tricky one one where this !stream check matters
+          // iso-2022-jp is the only tricky one one where this !stream check matters in non-stream mode
           if (!stream) mapper = null // destroy state, effectively the same as 'do not flush' = false, but early
           throw new Error(E_STRICT)
         }
@@ -332,34 +347,30 @@ export function multibyteDecoder(enc, loose = false) {
     }
 
     if (!mapper) mapper = mappers[enc]()
-    const { bytes, eof } = mapper
+    const { bytes, eof, pushback } = mapper
     let i = res.length
+
     // First, dump everything until EOF
     // Same as the full loop, but without EOF handling
-    for (; i < length; i++) {
-      const c = bytes(arr[i])
+    while (i < length || pushback.length > 0) {
+      const c = bytes(pushback.length > 0 ? pushback.pop() : arr[i++])
       if (c >= 0) {
         res += String.fromCodePoint(c) // gb18030 returns codepoints above 0xFFFF from ranges
-      } else if (c <= -2) {
-        // -2: error, -3: error + restore 1 byte, etc
+      } else if (c === -2) {
         res += onErr()
-        i += c + 2
       }
     }
 
     // Then, dump EOF. This needs the same loop as the characters can be pushed back
     // TODO: only some encodings need this, most can be optimized
     if (!stream) {
-      for (; i <= length; i++) {
-        const isEOF = i === length
-        const c = isEOF ? eof() : bytes(arr[i])
+      while (i <= length || pushback.length > 0) {
+        const isEOF = i === length && pushback.length === 0
+        const c = isEOF ? eof() : bytes(pushback.length > 0 ? pushback.pop() : arr[i++])
         if (isEOF && c === null) break // clean exit
         if (c === -1) continue // consuming
-        if (c <= -2) {
-          // -2: error, -3: error + restore 1 byte, etc
+        if (c === -2) {
           res += onErr()
-          i += c + 2
-          if (c < -2 && isEOF) i-- // if we restore something and attempted EOF, we should also restore EOF
         } else {
           res += String.fromCodePoint(c) // gb18030 returns codepoints above 0xFFFF from ranges
         }
@@ -381,6 +392,7 @@ function big5decoder(loose) {
   // Input is assumed to be typechecked already
   let lead = 0
   let big5
+  const pushback = []
   return (arr, stream = false) => {
     const onErr = loose
       ? () => '\uFFFD'
@@ -397,8 +409,8 @@ function big5decoder(loose) {
     }
 
     if (!big5) big5 = getTable('big5')
-    for (let i = res.length; i < length; i++) {
-      const b = arr[i]
+    for (let i = res.length; i < length || pushback.length > 0; ) {
+      const b = pushback.length > 0 ? pushback.pop() : arr[i++]
       if (lead) {
         let cp
         if ((b >= 0x40 && b <= 0x7e) || (b >= 0xa1 && b !== 0xff)) {
@@ -410,7 +422,7 @@ function big5decoder(loose) {
           res += cp // strings
         } else {
           res += onErr()
-          if (b < 128) i--
+          if (b < 128) pushback.push(b)
         }
       } else if (b < 128) {
         res += String.fromCharCode(b)
@@ -421,9 +433,13 @@ function big5decoder(loose) {
       }
     }
 
-    if (!stream && lead) {
-      lead = 0
-      res += onErr()
+    if (!stream) {
+      // Destroy decoder state
+      pushback.length = 0
+      if (lead) {
+        lead = 0
+        res += onErr()
+      }
     }
 
     return res
