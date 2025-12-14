@@ -343,25 +343,6 @@ describe('Common implementation mistakes', () => {
     })
   })
 
-  // Bun is incorrect
-  test('iso-2022-jp fatal stream', (t) => {
-    // This is the only decoder which does not clear internal state before throwing in stream mode (non-EOF throws)
-    // So the internal state of this decoder can legitimately persist after an error was thrown
-    {
-      const d = new TextDecoder('iso-2022-jp', { fatal: true })
-      t.assert.strictEqual(d.decode(Uint8Array.of(0x7e)), '\x7E')
-      t.assert.throws(() => d.decode(u(0x1b, 0x28, 0x4a, 0xff), { stream: true })) // Switch to Roman, error
-      t.assert.strictEqual(d.decode(Uint8Array.of(0x7e)), '\u203E')
-    }
-
-    {
-      const d = new TextDecoder('iso-2022-jp', { fatal: true })
-      t.assert.strictEqual(d.decode(Uint8Array.of(0x42)), 'B')
-      t.assert.throws(() => d.decode(u(0x1b, 0x28, 0x49, 0xff), { stream: true })) // Switch to Katakana, error
-      t.assert.strictEqual(d.decode(Uint8Array.of(0x42)), '\uFF82')
-    }
-  })
-
   describe('BOM handling', () => {
     // Firefox fails on this
     // https://bugzilla.mozilla.org/show_bug.cgi?id=2005419
@@ -450,5 +431,24 @@ describe('Common implementation mistakes', () => {
         t.assert.strictEqual(d.decode(), '')
       })
     }
+
+    // Bun is incorrect
+    test('iso-2022-jp', (t) => {
+      // This is the only decoder which does not clear internal state before throwing in stream mode (non-EOF throws)
+      // So the internal state of this decoder can legitimately persist after an error was thrown
+      {
+        const d = new TextDecoder('iso-2022-jp', { fatal: true })
+        t.assert.strictEqual(d.decode(Uint8Array.of(0x7e)), '\x7E')
+        t.assert.throws(() => d.decode(u(0x1b, 0x28, 0x4a, 0xff), { stream: true })) // Switch to Roman, error
+        t.assert.strictEqual(d.decode(Uint8Array.of(0x7e)), '\u203E')
+      }
+
+      {
+        const d = new TextDecoder('iso-2022-jp', { fatal: true })
+        t.assert.strictEqual(d.decode(Uint8Array.of(0x42)), 'B')
+        t.assert.throws(() => d.decode(u(0x1b, 0x28, 0x49, 0xff), { stream: true })) // Switch to Katakana, error
+        t.assert.strictEqual(d.decode(Uint8Array.of(0x42)), '\uFF82')
+      }
+    })
   })
 })
