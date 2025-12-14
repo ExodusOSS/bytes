@@ -21,6 +21,7 @@
     "test:webkit:playwright": "exodus-test --engine=webkit:playwright",
     "test:firefox:puppeteer": "exodus-test --engine=firefox:puppeteer",
     "test:firefox:playwright": "exodus-test --engine=firefox:playwright",
+    "test:servo:bundle": "exodus-test --engine=servo:bundle",
     "test": "exodus-test",
     "jsvu": "jsvu",
     "playwright": "exodus-test --playwright",
