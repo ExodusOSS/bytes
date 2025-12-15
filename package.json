@@ -46,6 +46,7 @@
     "/fallback/_utils.js",
     "/fallback/base32.js",
     "/fallback/base64.js",
+    "/fallback/encoding.js",
     "/fallback/encoding.labels.js",
     "/fallback/encoding.util.js",
     "/fallback/hex.js",
@@ -65,7 +66,6 @@
     "/base58check.js",
     "/base64.js",
     "/bech32.js",
-    "/encoding.js",
     "/hex.js",
     "/hex.node.js",
     "/multi-byte.js",
@@ -97,7 +97,7 @@
       "node": "./single-byte.node.js",
       "default": "./single-byte.js"
     },
-    "./encoding.js": "./encoding.js",
+    "./encoding.js": "./fallback/encoding.js",
     "./utf16.js": {
       "node": "./utf16.node.js",
       "default": "./utf16.js"
