@@ -100,7 +100,7 @@ test('getBOMEncoding', (t) => {
     ['utf-16le', 'fffefffefffe'],
     ['utf-16le', 'fffebb'],
     ['utf-16le', 'fffebf'],
-    ['utf-16be', 'feff', ''],
+    ['utf-16be', 'feff'],
     ['utf-16be', 'fefffeff'],
     ['utf-16be', 'fefffefffeff'],
   ]
