@@ -1,1 +1,1 @@
-export { TextDecoder, TextEncoder, getBOMEncoding } from './fallback/encoding.js'
+export { TextDecoder, TextEncoder, normalizeEncoding, getBOMEncoding } from './fallback/encoding.js'

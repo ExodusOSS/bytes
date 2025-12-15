@@ -8,6 +8,7 @@ import labels from './encoding.labels.js'
 import { unfinishedBytes } from './encoding.util.js'
 
 const E_OPTIONS = 'The "options" argument must be of type object'
+const E_ENCODING = 'Unknown encoding'
 const replacementChar = '\uFFFD'
 
 const E_MULTI =
@@ -20,14 +21,17 @@ export function setMultibyteDecoder(createDecoder) {
 }
 
 let labelsMap
-const normalizeEncoding = (enc) => {
+
+// Warning: unlike whatwg-encoding, returns lowercased labels
+// Those are case-insensitive and that's how TextDecoder encoding getter normalizes them
+export function normalizeEncoding(label) {
   // fast path
-  if (enc === 'utf-8' || enc === 'utf8') return 'utf-8'
-  if (enc === 'windows-1252' || enc === 'ascii' || enc === 'latin1') return 'windows-1252'
+  if (label === 'utf-8' || label === 'utf8' || label === 'UTF-8' || label === 'UTF8') return 'utf-8'
+  if (label === 'windows-1252' || label === 'ascii' || label === 'latin1') return 'windows-1252'
   // full map
-  let low = `${enc}`.toLowerCase()
+  let low = `${label}`.toLowerCase()
   if (low !== low.trim()) low = low.replace(/^[\t\n\f\r ]+/, '').replace(/[\t\n\f\r ]+$/, '') // only ASCII whitespace
-  if (Object.hasOwn(labels, low) && low !== 'replacement') return low
+  if (Object.hasOwn(labels, low)) return low
   if (!labelsMap) {
     labelsMap = new Map()
     for (const [label, aliases] of Object.entries(labels)) {
@@ -36,8 +40,8 @@ const normalizeEncoding = (enc) => {
   }
 
   const mapped = labelsMap.get(low)
-  if (mapped && mapped !== 'replacement') return mapped
-  throw new RangeError('Unknown encoding')
+  if (mapped) return mapped
+  throw new RangeError(E_ENCODING)
 }
 
 const define = (obj, key, value) => Object.defineProperty(obj, key, { value, writable: false })
@@ -69,6 +73,7 @@ export class TextDecoder {
   constructor(encoding = 'utf-8', options = {}) {
     if (typeof options !== 'object') throw new TypeError(E_OPTIONS)
     const enc = normalizeEncoding(encoding)
+    if (enc === 'replacement') throw new RangeError(E_ENCODING)
     define(this, 'encoding', enc)
     define(this, 'fatal', Boolean(options.fatal))
     define(this, 'ignoreBOM', Boolean(options.ignoreBOM))

@@ -3,4 +3,4 @@ import { setMultibyteDecoder } from './fallback/encoding.js'
 
 setMultibyteDecoder(createMultibyteDecoder)
 
-export { TextDecoder, TextEncoder, getBOMEncoding } from './fallback/encoding.js'
+export { TextDecoder, TextEncoder, normalizeEncoding, getBOMEncoding } from './fallback/encoding.js'
