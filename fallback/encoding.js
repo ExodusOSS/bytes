@@ -24,13 +24,14 @@ let labelsMap
 
 // Warning: unlike whatwg-encoding, returns lowercased labels
 // Those are case-insensitive and that's how TextDecoder encoding getter normalizes them
+// https://encoding.spec.whatwg.org/#names-and-labels
 export function normalizeEncoding(label) {
   // fast path
   if (label === 'utf-8' || label === 'utf8' || label === 'UTF-8' || label === 'UTF8') return 'utf-8'
   if (label === 'windows-1252' || label === 'ascii' || label === 'latin1') return 'windows-1252'
   // full map
-  let low = `${label}`.toLowerCase()
-  if (low !== low.trim()) low = low.replace(/^[\t\n\f\r ]+/, '').replace(/[\t\n\f\r ]+$/, '') // only ASCII whitespace
+  if (!/^[\w\t\n\f\r .:-]+$/i.test(label)) throw new RangeError(E_ENCODING) // must be ASCII (with ASCII whitespace)
+  const low = `${label}`.trim().toLowerCase()
   if (Object.hasOwn(labels, low)) return low
   if (!labelsMap) {
     labelsMap = new Map()

@@ -524,4 +524,11 @@ describe('Common implementation mistakes', () => {
       }
     })
   })
+
+  describe('invalid labels', () => {
+    test('non-ascii', (t) => {
+      const bad = ['\u212Aoi8-r', '\u212Aoi8-u', 'euc-\u212Ar']
+      for (const label of bad) t.assert.throws(() => new TextDecoder(label))
+    })
+  })
 })
