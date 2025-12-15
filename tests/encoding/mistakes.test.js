@@ -450,7 +450,10 @@ describe('Common implementation mistakes', () => {
 
         check([], { stream: true }, '')
         check([0xef, 0xbb], { stream: true }, '')
-        check([0xbf, 0x43], {}, 'C')
+        check([0xbf, 0x43], {}, 'C') // close
+
+        check([0xef], { stream: true }, '')
+        check([0xbb, 0xbf, 42, 43], {}, '*+') // close
       })
     })
   })
