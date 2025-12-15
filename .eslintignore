@@ -6,5 +6,6 @@ tests/wpt/fixtures/
 tests/vendor/deno/
 tests/vendor/text-encoding/test-*.js
 tests/vendor/workerd/api/
+tests/vendor/whatwg-encoding/tests.test.cjs
 __snapshots__
 __recordings__
