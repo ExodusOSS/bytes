@@ -426,11 +426,10 @@ describe('Common implementation mistakes', () => {
 
     // Bun fails at this
     describe('BOM splitting', () => {
-      test.only('utf-8', (t) => {
+      test('utf-8', (t) => {
         const d = new TextDecoder()
         const check = (a, opt, str) => t.assert.strictEqual(d.decode(Uint8Array.from(a), opt), str)
 
-        /*
         check([0x01, 0x02], { stream: true }, '\x01\x02')
         check([0x03], {}, '\x03') // close
 
@@ -452,7 +451,6 @@ describe('Common implementation mistakes', () => {
         check([], { stream: true }, '')
         check([0xef, 0xbb], { stream: true }, '')
         check([0xbf, 0x43], {}, 'C') // close
-        */
 
         check([0xef], { stream: true }, '')
         check([0xbb, 0xbf, 42, 43], {}, '*+') // close
