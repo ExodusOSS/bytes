@@ -1,8 +1,8 @@
-export function unfinishedBytes(u, enc) {
+export function unfinishedBytes(u, len, enc) {
   switch (enc) {
     case 'utf-8': {
+      // 0-3
       let p = 0
-      const len = u.byteLength
       while (p < 2 && p < len && (u[len - p - 1] & 0xc0) === 0x80) p++ // go back 0-2 trailing bytes
       if (p === len) return 0 // no space for lead
       const l = u[len - p - 1]
@@ -17,8 +17,8 @@ export function unfinishedBytes(u, enc) {
 
     case 'utf-16le':
     case 'utf-16be': {
+      // 0-3
       let p = 0
-      const len = u.byteLength
       if (len % 2 !== 0) p++ // uneven bytes
       const l = len - p - 1
       if (len - p >= 2) {

@@ -78,19 +78,43 @@ export class TextDecoder {
     return 'TextDecoder'
   }
 
-  // TODO: test behavior on BOM for LE/BE
   decode(input, options = {}) {
     if (typeof options !== 'object') throw new TypeError(E_OPTIONS)
     const stream = Boolean(options.stream)
     let u = input === undefined ? new Uint8Array() : fromSource(input)
 
     if (this.#unicode) {
+      let prefix
       if (this.#chunk) {
-        // TODO: optimize by decoding into a prefix, this is slow
-        const a = new Uint8Array(u.length + this.#chunk.length)
-        a.set(this.#chunk)
-        a.set(u, this.#chunk.length)
-        u = a
+        if (u.length === 0) {
+          if (stream) return '' // no change
+          u = this.#chunk // process as final chunk to handle errors and state changes
+        } else if (u.length < 3) {
+          // No reason to bruteforce offsets, also it's possible this doesn't yet end the sequence
+          const a = new Uint8Array(u.length + this.#chunk.length)
+          a.set(this.#chunk)
+          a.set(u, this.#chunk.length)
+          u = a
+        } else {
+          // Slice off a small portion of u into prefix chunk so we can decode them separately without extending array size
+          const t = new Uint8Array(this.#chunk.length + 3) // We have 1-3 bytes and need 1-3 more bytes
+          t.set(this.#chunk)
+          t.set(u.subarray(0, 3), this.#chunk.length)
+
+          // Stop at the first offset where unfinished bytes reaches 0 or fits into u
+          // If that doesn't happen (u too short), just concat chunk and u completely
+          for (let i = 1; i <= 3; i++) {
+            const unfinished = unfinishedBytes(t, this.#chunk.length + i, this.encoding) // 0-3
+            if (unfinished <= i) {
+              // Always reachable at 3, but we still need 'unfinished' value for it
+              const add = i - unfinished // 0-3
+              prefix = add > 0 ? t.subarray(0, this.#chunk.length + add) : this.#chunk
+              if (add > 0) u = u.subarray(add)
+              break
+            }
+          }
+        }
+
         this.#chunk = null
       } else if (u.byteLength === 0) {
         if (!stream) this.#canBOM = !this.ignoreBOM
@@ -101,7 +125,7 @@ export class TextDecoder {
       // For non-stream loose utf-16 we still have to do this as this API supports uneven byteLength unlike utf16toStringLoose
       let suffix = ''
       if (stream || (!this.fatal && this.encoding !== 'utf-8')) {
-        const trail = unfinishedBytes(u, this.encoding)
+        const trail = unfinishedBytes(u, u.byteLength, this.encoding)
         if (trail > 0) {
           if (stream) {
             this.#chunk = Uint8Array.from(u.subarray(-trail)) // copy
@@ -115,16 +139,20 @@ export class TextDecoder {
       }
 
       if (this.#canBOM) {
-        const bom = this.#findBom(u)
+        const bom = this.#findBom(prefix ?? u)
         if (bom) {
-          u = u.subarray(bom)
           if (stream) this.#canBOM = false
+          if (prefix) {
+            prefix = prefix.subarray(bom)
+          } else {
+            u = u.subarray(bom)
+          }
         }
       }
 
       if (!this.#decode) this.#decode = unicodeDecoder(this.encoding, !this.fatal)
       try {
-        const res = this.#decode(u) + suffix
+        const res = (prefix ? this.#decode(prefix) : '') + this.#decode(u) + suffix
         if (res.length > 0 && stream) this.#canBOM = false
 
         if (!stream) this.#canBOM = !this.ignoreBOM
@@ -187,7 +215,7 @@ export class TextEncoder {
       read = u8.length
     } else {
       u8 = u8.subarray(0, target.length)
-      const unfinished = unfinishedBytes(u8, 'utf-8')
+      const unfinished = unfinishedBytes(u8, u8.length, 'utf-8')
       if (unfinished > 0) u8 = u8.subarray(0, u8.length - unfinished)
 
       // We can do this because loose str -> u8 -> str preserves length, unlike loose u8 -> str -> u8

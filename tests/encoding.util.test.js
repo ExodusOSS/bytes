@@ -64,13 +64,17 @@ function concat([a, b]) {
 describe('unfinishedBytes', () => {
   test('fixtures', (t) => {
     for (const [enc, ex, u8] of unfinishedBytesFixtures) {
-      t.assert.strictEqual(unfinishedBytes(u8, enc), ex, `(0x${toHex(u8)}, ${enc}) === ${ex}`)
+      t.assert.strictEqual(
+        unfinishedBytes(u8, u8.length, enc),
+        ex,
+        `(0x${toHex(u8)}, ${enc}) === ${ex}`
+      )
     }
   })
 
   test('utf-8', (t) => {
     for (const u8 of pool) {
-      const x = unfinishedBytes(u8, 'utf-8')
+      const x = unfinishedBytes(u8, u8.length, 'utf-8')
       t.assert.ok(x >= 0 && x <= 3 && x <= u8.byteLength)
       t.assert.doesNotThrow(() => utf8toStringLoose(u8.subarray(0, u8.byteLength - x)))
       if (x > 0) {
@@ -87,7 +91,7 @@ describe('unfinishedBytes', () => {
 
   test('utf-16le', (t) => {
     for (const u8 of pool) {
-      const x = unfinishedBytes(u8, 'utf-16le')
+      const x = unfinishedBytes(u8, u8.length, 'utf-16le')
       t.assert.ok(x >= 0 && x <= 3 && x <= u8.byteLength)
       t.assert.strictEqual(x % 2, u8.byteLength % 2)
       t.assert.doesNotThrow(() => utf16toStringLoose(u8.subarray(0, u8.byteLength - x), 'uint8-le'))
@@ -110,7 +114,7 @@ describe('unfinishedBytes', () => {
 
   test('utf-16be', (t) => {
     for (const u8 of pool) {
-      const x = unfinishedBytes(u8, 'utf-16be')
+      const x = unfinishedBytes(u8, u8.length, 'utf-16be')
       t.assert.ok(x >= 0 && x <= 3 && x <= u8.byteLength)
       t.assert.strictEqual(x % 2, u8.byteLength % 2)
       t.assert.doesNotThrow(() => utf16toStringLoose(u8.subarray(0, u8.byteLength - x), 'uint8-be'))
@@ -142,14 +146,14 @@ describe('unfinishedBytes', () => {
     for (const [encoding, localPool, toString] of encodings) {
       test(encoding, (t) => {
         for (const u8 of localPool) {
-          t.assert.strictEqual(unfinishedBytes(u8, encoding), 0)
+          t.assert.strictEqual(unfinishedBytes(u8, u8.length, encoding), 0)
           const str = toString(u8)
           let end = ''
           let at = 0
           for (let i = 0; i < 10 && at < u8.length; i++) {
             t.assert.strictEqual(str, toString(u8.subarray(0, u8.length - at)) + end)
             const prev = at
-            at += 1 + unfinishedBytes(u8.subarray(0, u8.length - at - 1), encoding)
+            at += 1 + unfinishedBytes(u8, u8.length - at - 1, encoding)
             end = toString(u8.subarray(u8.length - at, u8.length - prev)) + end
           }
 
