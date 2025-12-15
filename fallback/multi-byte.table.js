@@ -16,6 +16,9 @@ export const sizes = {
 // 0,x - hole of x empty elements
 // n,c - continious [c, ...] of length n
 // $.. - references to common chunks
+// -{x} - same as 1,{x}
+
+// See tests/multi-byte.test.js to verify that this data decodes exactly into the encoding spec tables
 
 let indices
 const tables = new Map()
