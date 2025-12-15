@@ -1,5 +1,3 @@
-// A limited subset of TextEncoder / TextDecoder API
-
 // We can't return native TextDecoder if it's present, as Node.js one is broken on windows-1252 and we fix that
 // We are also faster than Node.js built-in on both TextEncoder and TextDecoder
 
