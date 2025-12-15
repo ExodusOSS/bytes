@@ -31,11 +31,11 @@ See [Performance](./Performance.md) for more info
 import { TextDecoder, TextEncoder } from '@exodus/bytes/encoding.js'
 ```
 
-Less than half the bundle size of [text-encoding](https://npmjs.com/text-encoding), [whatwg-encoding](https://npmjs.com/whatwg-encoding) or [iconv-lite](https://npmjs.com/iconv-lite) (gzipped or not)
+Less than half the bundle size of [text-encoding](https://npmjs.com/text-encoding), [whatwg-encoding](https://npmjs.com/whatwg-encoding) or [iconv-lite](https://npmjs.com/iconv-lite) (gzipped or not), and [is much faster](#fast).
 
 Spec compliant, passing WPT and covered with extra tests.
 
-Moreover, tests for this library uncovered [bugs in all major implementations](https://docs.google.com/spreadsheets/d/1pdEefRG6r9fZy61WHGz0TKSt8cO4ISWqlpBN5KntIvQ/edit) except Deno.
+Moreover, tests for this library uncovered [bugs in all major implementations](https://docs.google.com/spreadsheets/d/1pdEefRG6r9fZy61WHGz0TKSt8cO4ISWqlpBN5KntIvQ/edit).
 
 [Faster than Node.js native implementation on Node.js](https://github.com/nodejs/node/issues/61041#issuecomment-3649242024).
 
@@ -47,7 +47,7 @@ _These are only provided as a compatibility layer, prefer hardened APIs instead 
 
  * `TextEncoder` does not support a fatal mode per spec, it always performs replacement.
 
-   This is not suitable for hashing, cryptography or consensus applications.\
+   That is not suitable for hashing, cryptography or consensus applications.\
    Otherwise there would be non-equal strings with equal signatures and hashes — the collision is caused by the lossy transform of a JS string to bytes.
    Those also survive e.g. `JSON.stringify`/`JSON.parse` or being sent over network.
 
