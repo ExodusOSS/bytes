@@ -204,15 +204,17 @@ export class TextEncoder {
     if (!(target instanceof Uint8Array)) throw new TypeError('Target must be an Uint8Array')
     if (target.buffer.detached) return { read: 0, written: 0 } // Until https://github.com/whatwg/encoding/issues/324 is resolved
 
-    let u8 = utf8fromStringLoose(str) // TODO: perf?
+    const tlen = target.length
+    if (tlen < str.length) str = str.slice(0, tlen)
+    let u8 = utf8fromStringLoose(str)
     let read
-    if (target.length >= u8.length) {
+    if (tlen >= u8.length) {
       read = str.length
     } else if (u8.length === str.length) {
-      if (u8.length > target.length) u8 = u8.subarray(0, target.length) // ascii can be truncated
+      if (u8.length > tlen) u8 = u8.subarray(0, tlen) // ascii can be truncated
       read = u8.length
     } else {
-      u8 = u8.subarray(0, target.length)
+      u8 = u8.subarray(0, tlen)
       const unfinished = unfinishedBytes(u8, u8.length, 'utf-8')
       if (unfinished > 0) u8 = u8.subarray(0, u8.length - unfinished)
 
