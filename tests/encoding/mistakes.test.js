@@ -464,11 +464,59 @@ describe('Common implementation mistakes', () => {
     test('utf-8', (t) => {
       const u8 = Uint8Array.of(0xf0, 0xc3, 0x80, 42, 42)
       const str = new TextDecoder().decode(u8)
-      t.assert.strictEqual(new TextDecoder().decode(u8), '\uFFFD\xC0**')
+      t.assert.strictEqual(str, '\uFFFD\xC0**')
 
       const d = new TextDecoder()
       const chunks = [
         d.decode(u8.subarray(0, 1), { stream: true }),
+        d.decode(u8.subarray(1), { stream: true }),
+        d.decode(),
+      ]
+      t.assert.strictEqual(chunks.join(''), str)
+    })
+
+    // Deno and Servo are incorrect
+    test('big5', (t) => {
+      const u8 = Uint8Array.of(0xfe, 0x40)
+      const str = new TextDecoder('big5').decode(u8)
+      t.assert.strictEqual(str, '\u9442')
+
+      const d = new TextDecoder('big5')
+      const chunks = [
+        d.decode(u8.subarray(0, 1), { stream: true }),
+        d.decode(Uint8Array.of(), { stream: true }),
+        d.decode(u8.subarray(1), { stream: true }),
+        d.decode(),
+      ]
+      t.assert.strictEqual(chunks.join(''), str)
+    })
+
+    // Deno and Servo are incorrect
+    test('shift_jis', (t) => {
+      const u8 = Uint8Array.of(0x81, 0x87)
+      const str = new TextDecoder('shift_jis').decode(u8)
+      t.assert.strictEqual(str, '\u221E')
+
+      const d = new TextDecoder('shift_jis')
+      const chunks = [
+        d.decode(u8.subarray(0, 1), { stream: true }),
+        d.decode(Uint8Array.of(), { stream: true }),
+        d.decode(u8.subarray(1), { stream: true }),
+        d.decode(),
+      ]
+      t.assert.strictEqual(chunks.join(''), str)
+    })
+
+    // Deno and Servo are incorrect
+    test('euc-kr', (t) => {
+      const u8 = Uint8Array.of(0x81, 0x41)
+      const str = new TextDecoder('euc-kr').decode(u8)
+      t.assert.strictEqual(str, '\uAC02')
+
+      const d = new TextDecoder('euc-kr')
+      const chunks = [
+        d.decode(u8.subarray(0, 1), { stream: true }),
+        d.decode(Uint8Array.of(), { stream: true }),
         d.decode(u8.subarray(1), { stream: true }),
         d.decode(),
       ]
