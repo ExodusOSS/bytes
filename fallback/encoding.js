@@ -247,11 +247,33 @@ export class TextEncoder {
 
 // Warning: unlike whatwg-encoding, returns lowercased labels
 // Those are case-insensitive and that's how TextDecoder encoding getter normalizes them
-export function getBOMEncoding(typedArray) {
-  const u8 = fromSource(typedArray) // asserts
+export function getBOMEncoding(input) {
+  const u8 = fromSource(input) // asserts
   if (u8.length >= 3 && u8[0] === 0xef && u8[1] === 0xbb && u8[2] === 0xbf) return 'utf-8'
   if (u8.length < 2) return null
   if (u8[0] === 0xff && u8[1] === 0xfe) return 'utf-16le'
   if (u8[0] === 0xfe && u8[1] === 0xff) return 'utf-16be'
   return null
+}
+
+// https://encoding.spec.whatwg.org/#decode
+// Warning: encoding sniffed from BOM takes preference over the supplied one
+// Warning: lossy, performs replacement, no option of throwing
+// Expects normalized (lower-case) encoding as input. Completely ignores it and even skips validation when BOM is found
+export function legacyHookDecode(input, fallbackEncoding) {
+  let u8 = fromSource(input)
+  const bomEncoding = getBOMEncoding(u8)
+  if (bomEncoding) u8 = u8.subarray(bomEncoding === 'utf-8' ? 3 : 2)
+  const enc = bomEncoding ?? fallbackEncoding ?? 'utf-8' // "the byte order mark is more authoritative than anything else"
+  if (enc === 'utf-8') return utf8toStringLoose(u8)
+  if (enc === 'utf-16le') return utf16toStringLoose(u8, 'uint8-le')
+  if (enc === 'utf-16be') return utf16toStringLoose(u8, 'uint8-be')
+  if (!Object.hasOwn(labels, enc) || enc === 'replacement') throw new RangeError(E_ENCODING)
+
+  if (multibyteSet.has(enc)) {
+    if (!createMultibyteDecoder) throw new Error(E_MULTI)
+    return createMultibyteDecoder(enc, true)(u8)
+  }
+
+  return createSinglebyteDecoder(enc, true)(u8)
 }
