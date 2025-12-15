@@ -2,6 +2,8 @@
 
 `Uint8Array` conversion to and from `base64`, `base32`, `base58`, `hex`, `utf8`, `utf16`, `bech32` and `wif`
 
+And a [`TextEncoder` / `TextDecoder` polyfill](#textencoder--textdecoder-polyfill)
+
 ## Strict
 
 Performs proper input validation, ensures no garbage-in-garbage-out
