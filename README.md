@@ -72,11 +72,21 @@ _These are only provided as a compatibility layer, prefer hardened APIs instead 
 
 ### `@exodus/bytes/single-byte.js`
 
-##### `createDecoder(encoding, loose = false)`
+##### `createSinglebyteDecoder(encoding, loose = false)`
 
 Create a decoder for a supported one-byte `encoding`.
 
 Returns a function `decode(arr)` that decodes bytes to a string.
+
+### `@exodus/bytes/multi-byte.js`
+
+##### `createMultibyteDecoder(encoding, loose = false)`
+
+Create a decoder for a supported legacy multi-byte `encoding`.
+
+Returns a function `decode(arr, stream = false)` that decodes bytes to a string.
+
+That function will have state while `stream = true` is used.
 
 ##### `windows1252toString(arr)`
 
@@ -86,7 +96,7 @@ Also supports `ascii` and `latin-1` as those are strict subsets of `windows-1252
 
 There is no loose variant for this encoding, all bytes can be decoded.
 
-Same as `windows1252toString = createDecoder('windows-1252')`.
+Same as `windows1252toString = createSinglebyteDecoder('windows-1252')`.
 
 ### `@exodus/bytes/hex.js`
 

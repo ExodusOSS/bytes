@@ -5,7 +5,7 @@ import { isAscii } from 'node:buffer'
 
 const toBuf = (x) => Buffer.from(x.buffer, x.byteOffset, x.byteLength)
 
-export function createDecoder(encoding, loose = false) {
+export function createMultibyteDecoder(encoding, loose = false) {
   const jsDecoder = multibyteDecoder(encoding, loose) // asserts
   let streaming = false
   const asciiSuperset = isAsciiSuperset(encoding)

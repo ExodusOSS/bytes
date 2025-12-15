@@ -1,7 +1,7 @@
 import { assertUint8 } from './assert.js'
 import { multibyteDecoder } from './fallback/multi-byte.js'
 
-export function createDecoder(encoding, loose = false) {
+export function createMultibyteDecoder(encoding, loose = false) {
   const jsDecoder = multibyteDecoder(encoding, loose) // asserts
   let streaming = false
   return (arr, stream = false) => {

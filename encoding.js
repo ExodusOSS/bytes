@@ -7,8 +7,8 @@
 
 import { utf16toString, utf16toStringLoose } from '@exodus/bytes/utf16.js'
 import { utf8fromStringLoose, utf8toString, utf8toStringLoose } from '@exodus/bytes/utf8.js'
-import { createDecoder as createDecoderMultiByte } from '@exodus/bytes/multi-byte.js'
-import { createDecoder as createDecoderSingleByte } from '@exodus/bytes/single-byte.js'
+import { createMultibyteDecoder } from '@exodus/bytes/multi-byte.js'
+import { createSinglebyteDecoder } from '@exodus/bytes/single-byte.js'
 import { multibyteSupported } from './fallback/multi-byte.js'
 import labels from './fallback/encoding.labels.js'
 import { unfinishedBytes } from './fallback/encoding.util.js'
@@ -164,10 +164,10 @@ export class TextDecoder {
 
       // eslint-disable-next-line no-else-return
     } else if (this.#multibyte) {
-      if (!this.#decode) this.#decode = createDecoderMultiByte(this.encoding, !this.fatal) // can contain state!
+      if (!this.#decode) this.#decode = createMultibyteDecoder(this.encoding, !this.fatal) // can contain state!
       return this.#decode(u, stream)
     } else {
-      if (!this.#decode) this.#decode = createDecoderSingleByte(this.encoding, !this.fatal)
+      if (!this.#decode) this.#decode = createSinglebyteDecoder(this.encoding, !this.fatal)
       return this.#decode(u)
     }
   }

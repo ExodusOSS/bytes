@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { test, describe } from 'node:test'
-import { createDecoder } from '@exodus/bytes/single-byte.js'
+import { createSinglebyteDecoder } from '@exodus/bytes/single-byte.js'
 import { encodingDecoder } from '../fallback/single-byte.js'
 import encodingsObject from '../fallback/single-byte.encodings.js'
 
@@ -10,7 +10,7 @@ const encodings = Object.keys(encodingsObject)
 describe('single-byte encodings are supersets of ascii', () => {
   for (const encoding of encodings) {
     test(encoding, (t) => {
-      const decoder = createDecoder(encoding)
+      const decoder = createSinglebyteDecoder(encoding)
       for (let i = 0; i < 128; i++) {
         let str
         try {
@@ -29,8 +29,8 @@ describe('single-byte encodings are supersets of ascii', () => {
 describe('single-byte encodings match fallback', () => {
   for (const encoding of encodings) {
     test(encoding, (t) => {
-      const decoder = createDecoder(encoding)
-      const decoderLoose = createDecoder(encoding, true)
+      const decoder = createSinglebyteDecoder(encoding)
+      const decoderLoose = createSinglebyteDecoder(encoding, true)
       const fallback = encodingDecoder(encoding)
       for (let i = 0; i < 256; i++) {
         const u8 = Uint8Array.of(i)
@@ -63,8 +63,8 @@ describe('single-byte encodings match fallback', () => {
 describe('single-byte encodings index', () => {
   for (const encoding of encodings) {
     test(encoding, (t) => {
-      const decoder = createDecoder(encoding)
-      const decoderLoose = createDecoder(encoding, true)
+      const decoder = createSinglebyteDecoder(encoding)
+      const decoderLoose = createSinglebyteDecoder(encoding, true)
       const text = readFileSync(
         join(import.meta.dirname, 'fixtures/encodings/single-byte', `index-${encoding}.txt`),
         'utf8'

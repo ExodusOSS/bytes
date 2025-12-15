@@ -23,7 +23,7 @@ function latin1Prefix(arr, start) {
   return length
 }
 
-export function createDecoder(encoding, loose = false) {
+export function createSinglebyteDecoder(encoding, loose = false) {
   if (encoding === 'iso-8859-8-i') encoding = 'iso-8859-8'
   const latin1path = encoding === 'windows-1252' // TODO: are there more?
   if (isDeno) {
@@ -59,4 +59,4 @@ export function createDecoder(encoding, loose = false) {
   }
 }
 
-export const windows1252toString = createDecoder('windows-1252')
+export const windows1252toString = createSinglebyteDecoder('windows-1252')
