@@ -34,6 +34,7 @@ import { TextDecoder, TextEncoder } from '@exodus/bytes/encoding.js'
 ```
 
 Less than half the bundle size of [text-encoding](https://npmjs.com/text-encoding), [whatwg-encoding](https://npmjs.com/whatwg-encoding) or [iconv-lite](https://npmjs.com/iconv-lite) (gzipped or not), and [is much faster](#fast).
+See also [lite version](#lite-version).
 
 Spec compliant, passing WPT and covered with extra tests.
 
@@ -55,6 +56,22 @@ _These are only provided as a compatibility layer, prefer hardened APIs instead 
 
    Use strict APIs in new applications, see `utf8fromString` / `utf16fromString` below.\
    Those throw on non-well-formed strings by default.
+
+### Lite version
+
+If you don't need support for legacy multi-byte encodings, you can use the lite import:
+```js
+import { TextDecoder, TextEncoder } from '@exodus/bytes/encoding-lite.js'
+```
+
+This reduces the bundle size 9x:\
+from 91 KiB gzipped for `@exodus/bytes/encoding.js` to 10 KiB gzipped for `@exodus/bytes/encoding-lite.js`.\
+(For comparison, `text-encoding` module is 190 KiB gzipped, and `iconv-lite` is 194 KiB gzipped).
+
+It still supports `utf-8`, `utf-16le`, `utf-16be` and all single-byte encodings specified by the spec,
+the only difference is support for legacy multi-byte encodings.
+
+See [the list of encodings](https://encoding.spec.whatwg.org/#names-and-labels).
 
 ## API
 

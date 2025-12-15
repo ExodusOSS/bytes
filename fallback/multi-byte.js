@@ -319,7 +319,6 @@ const mappers = {
 }
 
 export const isAsciiSuperset = (enc) => enc !== 'iso-2022-jp' // all others are ASCII supersets and can use fast path
-export const multibyteSupported = (enc) => Object.hasOwn(mappers, enc) || enc === 'big5'
 
 export function multibyteDecoder(enc, loose = false) {
   if (enc === 'big5') return big5decoder(loose)

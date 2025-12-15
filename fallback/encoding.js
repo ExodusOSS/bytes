@@ -5,14 +5,21 @@
 
 import { utf16toString, utf16toStringLoose } from '@exodus/bytes/utf16.js'
 import { utf8fromStringLoose, utf8toString, utf8toStringLoose } from '@exodus/bytes/utf8.js'
-import { createMultibyteDecoder } from '@exodus/bytes/multi-byte.js'
 import { createSinglebyteDecoder } from '@exodus/bytes/single-byte.js'
-import { multibyteSupported } from './multi-byte.js'
 import labels from './encoding.labels.js'
 import { unfinishedBytes } from './encoding.util.js'
 
 const E_OPTIONS = 'The "options" argument must be of type object'
 const replacementChar = '\uFFFD'
+
+const E_MULTI =
+  'Legacy multi-byte encodings are disabled in /encoding-lite.js, use /encoding.js for full encodings range support'
+const multibyteSet = new Set(['big5', 'euc-kr', 'euc-jp', 'iso-2022-jp', 'shift_jis', 'gbk', 'gb18030']) // prettier-ignore
+let createMultibyteDecoder
+
+export function setMultibyteDecoder(createDecoder) {
+  createMultibyteDecoder = createDecoder
+}
 
 let labelsMap
 const normalizeEncoding = (enc) => {
@@ -68,7 +75,7 @@ export class TextDecoder {
     define(this, 'fatal', Boolean(options.fatal))
     define(this, 'ignoreBOM', Boolean(options.ignoreBOM))
     this.#unicode = enc === 'utf-8' || enc === 'utf-16le' || enc === 'utf-16be'
-    this.#multibyte = !this.#unicode && enc !== 'windows-1252' && multibyteSupported(enc)
+    this.#multibyte = !this.#unicode && multibyteSet.has(enc)
     this.#canBOM = this.#unicode && !this.ignoreBOM
   }
 
@@ -162,6 +169,7 @@ export class TextDecoder {
 
       // eslint-disable-next-line no-else-return
     } else if (this.#multibyte) {
+      if (!createMultibyteDecoder) throw new Error(E_MULTI)
       if (!this.#decode) this.#decode = createMultibyteDecoder(this.encoding, !this.fatal) // can contain state!
       return this.#decode(u, stream)
     } else {
