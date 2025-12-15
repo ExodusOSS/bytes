@@ -232,3 +232,14 @@ export class TextEncoder {
     return { read, written: u8.length }
   }
 }
+
+// Warning: unlike whatwg-encoding, returns lowercased labels
+// Those are case-insensitive and that's how TextDecoder encoding getter normalizes them
+export function getBOMEncoding(typedArray) {
+  const u8 = fromSource(typedArray) // asserts
+  if (u8.length >= 3 && u8[0] === 0xef && u8[1] === 0xbb && u8[2] === 0xbf) return 'utf-8'
+  if (u8.length < 2) return null
+  if (u8[0] === 0xff && u8[1] === 0xfe) return 'utf-16le'
+  if (u8[0] === 0xfe && u8[1] === 0xff) return 'utf-16be'
+  return null
+}

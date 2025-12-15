@@ -1,4 +1,4 @@
-import { TextDecoder, TextEncoder } from '@exodus/bytes/encoding.js'
+import { TextDecoder, TextEncoder, getBOMEncoding } from '@exodus/bytes/encoding.js'
 import { fromHex } from '@exodus/bytes/hex.js'
 import { test, describe } from 'node:test'
 import unfinishedBytesFixtures from '../fixtures/text-encoding.unfinishedBytes.js'
@@ -80,6 +80,33 @@ describe('encodings are ASCII supersets, except utf-16 and iso-2022-jp', () => {
         t.assert.strictEqual(fatal.decode(Uint8Array.of(i)), String.fromCodePoint(i))
       }
     })
+  }
+})
+
+test('getBOMEncoding', (t) => {
+  const fixtures = [
+    [null, ''],
+    [null, 'ff'],
+    [null, 'fe'],
+    [null, 'ef'],
+    [null, 'efbb'],
+    [null, 'efbb00'],
+    [null, 'efbfbb'],
+    [null, 'ffbbbf'],
+    ['utf-8', 'efbbbf'],
+    ['utf-8', 'efbbbf00'],
+    ['utf-16le', 'fffe'],
+    ['utf-16le', 'fffefffe'],
+    ['utf-16le', 'fffefffefffe'],
+    ['utf-16le', 'fffebb'],
+    ['utf-16le', 'fffebf'],
+    ['utf-16be', 'feff', ''],
+    ['utf-16be', 'fefffeff'],
+    ['utf-16be', 'fefffefffeff'],
+  ]
+
+  for (const [enc, hex] of fixtures) {
+    t.assert.strictEqual(getBOMEncoding(fromHex(hex)), enc, `${hex} -> ${enc}`)
   }
 })
 
