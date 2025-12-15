@@ -1,6 +1,6 @@
-import { fromBase64any, toBase64 } from '@exodus/bytes/base64.js' // eslint-disable-line @exodus/import/no-unresolved
-import { fromHex, toHex } from '@exodus/bytes/hex.js' // eslint-disable-line @exodus/import/no-unresolved
-import { utf8fromStringLoose, utf8toStringLoose } from '@exodus/bytes/utf8.js' // eslint-disable-line @exodus/import/no-unresolved
+import { fromBase64any, toBase64 } from '@exodus/bytes/base64.js'
+import { fromHex, toHex } from '@exodus/bytes/hex.js'
+import { utf8fromStringLoose, utf8toStringLoose } from '@exodus/bytes/utf8.js'
 
 // Warning: this implementation is just for testing, not universal
 

@@ -1,6 +1,6 @@
 import { readFileSync, readdirSync } from 'node:fs'
-import { toBase64url } from '@exodus/bytes/base64.js' // eslint-disable-line @exodus/import/no-unresolved
-import { utf16fromString } from '@exodus/bytes/utf16.js' // eslint-disable-line @exodus/import/no-unresolved
+import { toBase64url } from '@exodus/bytes/base64.js'
+import { utf16fromString } from '@exodus/bytes/utf16.js'
 import { join } from 'node:path'
 import assert from 'node:assert/strict'
 

@@ -1,5 +1,5 @@
-import { fromBase64url } from '@exodus/bytes/base64.js' // eslint-disable-line @exodus/import/no-unresolved
-import { utf16toString } from '@exodus/bytes/utf16.js' // eslint-disable-line @exodus/import/no-unresolved
+import { fromBase64url } from '@exodus/bytes/base64.js'
+import { utf16toString } from '@exodus/bytes/utf16.js'
 import loadEncodings from './multi-byte.encodings.cjs'
 import { to16input } from './utf16.js'
 

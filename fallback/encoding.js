@@ -1,8 +1,6 @@
 // We can't return native TextDecoder if it's present, as Node.js one is broken on windows-1252 and we fix that
 // We are also faster than Node.js built-in on both TextEncoder and TextDecoder
 
-/* eslint-disable @exodus/import/no-unresolved */
-
 import { utf16toString, utf16toStringLoose } from '@exodus/bytes/utf16.js'
 import { utf8fromStringLoose, utf8toString, utf8toStringLoose } from '@exodus/bytes/utf8.js'
 import { createSinglebyteDecoder } from '@exodus/bytes/single-byte.js'
