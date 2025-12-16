@@ -27,7 +27,14 @@ globalThis.assert_array_equals = (a, b, m) => {
   assert.deepStrictEqual([...a], [...b], m)
 }
 
-globalThis.createBuffer = (type, length, opts) => new ArrayBuffer(length, opts) // we don't bother with SharedArrayBuffer in WPT tests
+globalThis.createBuffer = (type, length, opts) => {
+  if (type === 'SharedArrayBuffer' && globalThis.SharedArrayBuffer) {
+    return new SharedArrayBuffer(length, opts)
+  }
+
+  return new ArrayBuffer(length, opts)
+}
+
 globalThis.encodings_table = require('../fixtures/encodings/encodings.json')
 
 function loadDir(dirName) {
