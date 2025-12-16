@@ -49,7 +49,7 @@ describe('benchmarks: windows1252', async () => {
           expected = expected.replaceAll(/[\x81\x8D\x8F\x90\x9D]/g, '\uFFFD') // iconv-lite maps them to replacement
         }
 
-        if (!skip) t.assert.deepEqual(f(bufs[i]), expected, name)
+        t.assert.deepEqual(f(bufs[i]), expected, name)
       }
     }
   })
