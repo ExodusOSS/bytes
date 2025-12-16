@@ -268,12 +268,16 @@ export function legacyHookDecode(input, fallbackEncoding) {
   if (enc === 'utf-8') return utf8toStringLoose(u8)
   if (enc === 'utf-16le') return utf16toStringLoose(u8, 'uint8-le')
   if (enc === 'utf-16be') return utf16toStringLoose(u8, 'uint8-be')
-  if (!Object.hasOwn(labels, enc) || enc === 'replacement') throw new RangeError(E_ENCODING)
+  if (!Object.hasOwn(labels, enc)) throw new RangeError(E_ENCODING)
 
   if (multibyteSet.has(enc)) {
     if (!createMultibyteDecoder) throw new Error(E_MULTI)
     return createMultibyteDecoder(enc, true)(u8)
   }
+
+  // https://encoding.spec.whatwg.org/#replacement-decoder
+  // On non-streaming non-fatal case, it just replaces any non-empty input with a single replacement char
+  if (enc === 'replacement') return input.byteLength > 0 ? replacementChar : ''
 
   return createSinglebyteDecoder(enc, true)(u8)
 }
