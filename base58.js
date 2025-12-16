@@ -3,10 +3,10 @@ import { assertUint8 } from './assert.js'
 import { nativeDecoder, nativeEncoder, isHermes } from './fallback/_utils.js'
 import { encodeAscii, decodeAscii } from './fallback/latin1.js'
 
-const alphabet = [...'123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz']
-const codes = new Uint8Array(alphabet.map((x) => x.charCodeAt(0)))
-const ZERO = alphabet[0]
-const zeroC = codes[0]
+const alphabet58 = [...'123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz']
+const alphabetXRP = [...'rpshnaf39wBUDNEGHJKLM4PQRST7VWXYZ2bcdeCg65jkm8oFqi1tuvAxyz']
+const codes58 = new Uint8Array(alphabet58.map((x) => x.charCodeAt(0)))
+const codesXRP = new Uint8Array(alphabetXRP.map((x) => x.charCodeAt(0)))
 
 const _0n = BigInt(0)
 const _1n = BigInt(1)
@@ -16,17 +16,18 @@ const _58n = BigInt(58)
 const _0xffffffffn = BigInt(0xff_ff_ff_ff)
 
 let table // 15 * 82, diagonal, <1kb
-let fromMap
+const fromMaps = new Map()
 
 const E_CHAR = 'Invalid character in base58 input'
 
 const shouldUseBigIntFrom = isHermes // faster only on Hermes, numbers path beats it on normal engines
 
-export function toBase58(arr) {
+function toBase58core(arr, alphabet, codes) {
   assertUint8(arr)
   const length = arr.length
   if (length === 0) return ''
 
+  const ZERO = alphabet[0]
   let zeros = 0
   while (zeros < length && arr[zeros] === 0) zeros++
 
@@ -121,17 +122,20 @@ export function toBase58(arr) {
 }
 
 // TODO: test on 'z'.repeat(from 1 to smth)
-export function fromBase58(str, format = 'uint8') {
+function fromBase58core(str, alphabet, codes, format = 'uint8') {
   if (typeof str !== 'string') throw new TypeError('Input is not a string')
   const length = str.length
   if (length === 0) return typedView(new Uint8Array(), format)
 
+  const zeroC = codes[0]
   let zeros = 0
   while (zeros < length && str.charCodeAt(zeros) === zeroC) zeros++
 
+  let fromMap = fromMaps.get(alphabet)
   if (!fromMap) {
     fromMap = new Int8Array(256).fill(-1)
     for (let i = 0; i < 58; i++) fromMap[alphabet[i].charCodeAt(0)] = i
+    fromMaps.set(alphabet, fromMap)
   }
 
   const size = zeros + (((length - zeros + 1) * 3) >> 2) // 3/4 rounded up, larger than ~0.73 coef to fit everything
@@ -210,3 +214,8 @@ export function fromBase58(str, format = 'uint8') {
 
   return typedView(res.slice(at - zeros), format) // slice is faster for small sizes than subarray
 }
+
+export const toBase58 = (arr) => toBase58core(arr, alphabet58, codes58)
+export const fromBase58 = (str, format) => fromBase58core(str, alphabet58, codes58, format)
+export const toBase58xrp = (arr) => toBase58core(arr, alphabetXRP, codesXRP)
+export const fromBase58xrp = (str, format) => fromBase58core(str, alphabetXRP, codesXRP, format)

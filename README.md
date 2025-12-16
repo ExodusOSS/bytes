@@ -150,6 +150,9 @@ Same as `windows1252toString = createSinglebyteDecoder('windows-1252')`.
 ##### `toBase58(arr)`
 ##### `fromBase58(str, format = 'uint8')`
 
+##### `toBase58xrp(arr)`
+##### `fromBase58xrp(str, format = 'uint8')`
+
 ### `@exodus/bytes/base58check.js`
 
 ##### `async toBase58check(arr)`
