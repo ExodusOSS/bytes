@@ -265,9 +265,18 @@ export function legacyHookDecode(input, fallbackEncoding) {
   const bomEncoding = getBOMEncoding(u8)
   if (bomEncoding) u8 = u8.subarray(bomEncoding === 'utf-8' ? 3 : 2)
   const enc = bomEncoding ?? fallbackEncoding ?? 'utf-8' // "the byte order mark is more authoritative than anything else"
+
   if (enc === 'utf-8') return utf8toStringLoose(u8)
-  if (enc === 'utf-16le') return utf16toStringLoose(u8, 'uint8-le')
-  if (enc === 'utf-16be') return utf16toStringLoose(u8, 'uint8-be')
+  if (enc === 'utf-16le' || enc === 'utf-16be') {
+    let suffix = ''
+    if (u8.byteLength % 2 !== 0) {
+      suffix = replacementChar
+      u8 = u8.subarray(0, -1)
+    }
+
+    return utf16toStringLoose(u8, enc === 'utf-16le' ? 'uint8-le' : 'uint8-be') + suffix
+  }
+
   if (!Object.hasOwn(labels, enc)) throw new RangeError(E_ENCODING)
 
   if (multibyteSet.has(enc)) {
