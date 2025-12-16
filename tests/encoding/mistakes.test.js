@@ -194,7 +194,8 @@ describe('Common implementation mistakes', () => {
       }
     })
 
-    // Chrome fails at this
+    // Chrome and WebKit fail at this, Firefox passes
+    // This one might be tricky to get into WPT, as two major impls ignore spec here
     // https://github.com/whatwg/encoding/issues/115
     test('Concatenating two ISO-2022-JP outputs is not always valid', (t) => {
       const fatal = new TextDecoder('iso-2022-jp', { fatal: true })
