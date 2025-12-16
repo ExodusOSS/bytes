@@ -1,22 +1,30 @@
 const { Buffer, TextEncoder, TextDecoder } = globalThis
 const haveNativeBuffer = Buffer && !Buffer.TYPED_ARRAY_SUPPORT
-let isNative = (x) => x && (haveNativeBuffer || `${x}`.includes('[native code]')) // we consider Node.js TextDecoder/TextEncoder native
+export const nativeBuffer = haveNativeBuffer ? Buffer : null
+export const isHermes = Boolean(globalThis.HermesInternal)
+export const isDeno = Boolean(globalThis.Deno)
+export const isLE = new Uint8Array(Uint16Array.of(258).buffer)[0] === 2
+
+let isNative = (x) => {
+  if (!x) return false
+  if (haveNativeBuffer) return true // we consider Node.js TextDecoder/TextEncoder native
+  const s = `${x}`
+  // See https://github.com/facebook/hermes/pull/1855#issuecomment-3659386410
+  return s.includes('[native code]') || s.includes(`[bytecode]`) // Static Hermes has [bytecode] for contrib, which includes TextEncoder/TextDecoder
+}
+
 if (!haveNativeBuffer && isNative(() => {})) isNative = () => false // e.g. XS, we don't want false positives
 
 export const nativeEncoder = isNative(TextEncoder) ? new TextEncoder() : null
 export const nativeDecoder = isNative(TextDecoder)
   ? new TextDecoder('utf-8', { ignoreBOM: true })
   : null
-export const nativeBuffer = haveNativeBuffer ? Buffer : null
-export const isHermes = Boolean(globalThis.HermesInternal)
-export const isDeno = Boolean(globalThis.Deno)
-export const isLE = new Uint8Array(Uint16Array.of(258).buffer)[0] === 2
 
 // Actually windows-1252, compatible with ascii and latin1 decoding
 // Beware that on non-latin1, i.e. on windows-1252, this is broken in ~all Node.js versions released
 // in 2025 due to a regression, so we call it Latin1 as it's usable only for that
 let nativeDecoderLatin1impl = null
-if (isNative(TextDecoder)) {
+if (nativeDecoder) {
   // Not all barebone engines with TextDecoder support something except utf-8, detect
   try {
     nativeDecoderLatin1impl = new TextDecoder('latin1', { ignoreBOM: true })
