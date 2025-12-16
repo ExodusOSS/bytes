@@ -1,7 +1,8 @@
+"use strict";
+
 const whatwgEncoding = require('./whatwg-encoding-mock.js');
 // From https://github.com/jsdom/whatwg-encoding/blob/ff5d22fd8694d713686a40f5563c3251f8426d79/test/tests.js
 
-"use strict";
 const { describe, test: it } = require("node:test");
 const assert = require("assert");
 // const whatwgEncoding = require("..");
