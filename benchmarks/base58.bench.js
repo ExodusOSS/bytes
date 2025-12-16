@@ -1,6 +1,7 @@
 import * as exodus from '../base58.js'
 import { benchmark } from '@exodus/test/benchmark' // eslint-disable-line @exodus/import/no-unresolved
 import { base58 as scure } from '@scure/base'
+import * as base58js from 'base58-js'
 import bs58 from 'bs58'
 import { base58 as bstring } from 'bstring'
 import buffer from 'buffer/index.js'
@@ -14,6 +15,7 @@ import { Table } from './utils/table.js'
 const columns = [
   '@exodus/bytes/base58',
   'scure.base58',
+  'base58-js',
   'bs58',
   'bstring', // native
 ]
@@ -37,6 +39,7 @@ describe('benchmarks: base58', async () => {
     ['@exodus/bytes/base58', (x) => exodus.toBase58(x)],
     ['bs58', (x) => bs58.encode(x)],
     ['scure.base58', (x) => scure.encode(x)],
+    ['base58-js', (x) => base58js.binary_to_base58(x)],
     ['bstring', (x) => bstring.encode(toBuffer(x))],
   ]
 
@@ -45,6 +48,7 @@ describe('benchmarks: base58', async () => {
     ['@exodus/bytes/base58', (x) => exodus.fromBase58(x)],
     ['bs58', (x) => bs58.decode(x)],
     ['scure.base58', (x) => scure.decode(x)],
+    ['base58-js', (x) => base58js.base58_to_binary(x)],
     ['bstring', (x) => bstring.decode(x)],
   ]
 
