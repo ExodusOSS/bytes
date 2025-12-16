@@ -424,8 +424,8 @@ describe('Common implementation mistakes', () => {
       })
     })
 
-    // Bun fails at this
-    describe('BOM splitting', () => {
+    describe('BOM splitting / repeats', () => {
+      // Bun fails at this
       test('utf-8', (t) => {
         const d = new TextDecoder()
         const check = (a, opt, str) => t.assert.strictEqual(d.decode(Uint8Array.from(a), opt), str)
@@ -454,6 +454,42 @@ describe('Common implementation mistakes', () => {
 
         check([0xef], { stream: true }, '')
         check([0xbb, 0xbf, 42, 43], {}, '*+') // close
+      })
+
+      // Bun fails at this
+      test('utf-16le', (t) => {
+        const d = new TextDecoder('utf-16le')
+        const check = (a, opt, str) => t.assert.strictEqual(d.decode(Uint8Array.from(a), opt), str)
+
+        check([0xff, 0xfe], { stream: true }, '')
+        check([0x03, 0x00], {}, '\x03') // close
+
+        check([0xff], { stream: true }, '')
+        check([0xfe, 0x03, 0x00], {}, '\x03') // close
+
+        check([0xff, 0xfe], { stream: true }, '')
+        check([0xff, 0xfe, 0x03, 0x00], {}, '\uFEFF\x03') // close
+
+        check([0xff], { stream: true }, '')
+        check([0xfe, 0xff, 0xfe, 0x03, 0x00], {}, '\uFEFF\x03') // close
+      })
+
+      // Bun fails at this
+      test('utf-16be', (t) => {
+        const d = new TextDecoder('utf-16be')
+        const check = (a, opt, str) => t.assert.strictEqual(d.decode(Uint8Array.from(a), opt), str)
+
+        check([0xfe, 0xff], { stream: true }, '')
+        check([0x00, 0x03], {}, '\x03') // close
+
+        check([0xfe], { stream: true }, '')
+        check([0xff, 0x00, 0x03], {}, '\x03') // close
+
+        check([0xfe, 0xff], { stream: true }, '')
+        check([0xfe, 0xff, 0x00, 0x03], {}, '\uFEFF\x03') // close
+
+        check([0xfe], { stream: true }, '')
+        check([0xff, 0xfe, 0xff, 0x00, 0x03], {}, '\uFEFF\x03') // close
       })
     })
   })
