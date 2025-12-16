@@ -121,7 +121,6 @@ function toBase58core(arr, alphabet, codes) {
   return ZERO.repeat(zeros) + out
 }
 
-// TODO: test on 'z'.repeat(from 1 to smth)
 function fromBase58core(str, alphabet, codes, format = 'uint8') {
   if (typeof str !== 'string') throw new TypeError('Input is not a string')
   const length = str.length
