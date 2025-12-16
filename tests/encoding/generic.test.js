@@ -1,4 +1,9 @@
-import { TextDecoder, TextEncoder, getBOMEncoding } from '@exodus/bytes/encoding.js'
+import {
+  TextDecoder,
+  TextEncoder,
+  getBOMEncoding,
+  legacyHookDecode,
+} from '@exodus/bytes/encoding.js'
 import { fromHex } from '@exodus/bytes/hex.js'
 import { test, describe } from 'node:test'
 import unfinishedBytesFixtures from '../fixtures/text-encoding.unfinishedBytes.js'
@@ -78,6 +83,40 @@ describe('encodings are ASCII supersets, except utf-16 and iso-2022-jp', () => {
         if (label === 'iso-2022-jp' && [0x0e, 0x0f, 0x1b].includes(i)) continue
         t.assert.strictEqual(loose.decode(Uint8Array.of(i)), String.fromCodePoint(i))
         t.assert.strictEqual(fatal.decode(Uint8Array.of(i)), String.fromCodePoint(i))
+      }
+    })
+  }
+})
+
+describe('legacyHookDecode', () => {
+  const fixtures = {
+    replacement: [
+      ['', ''],
+      ['00', '\uFFFD'],
+      ['ff', '\uFFFD'],
+      ['20', '\uFFFD'],
+      ['2020', '\uFFFD'],
+      // BOM takes preference
+      ['efbbbf', ''],
+      ['efbbbf2a', '*'],
+      ['efbbbf202a', ' *'],
+      ['fffe', ''],
+      ['fffe2a20', '\u202A'],
+      ['fffe2a', '\uFFFD'],
+      ['fffe00d72a', '\uD700\uFFFD'],
+      ['fffe00d82a', '\uFFFD\uFFFD'],
+      ['feff', ''],
+      ['feff202a', '\u202A'],
+      ['feff20', '\uFFFD'],
+      ['feffd70020', '\uD700\uFFFD'],
+      ['feffd80820', '\uFFFD\uFFFD'],
+    ],
+  }
+
+  for (const [encoding, data] of Object.entries(fixtures)) {
+    test(encoding, (t) => {
+      for (const [hex, string] of data) {
+        t.assert.strictEqual(legacyHookDecode(fromHex(hex), encoding), string, `${hex}`)
       }
     })
   }
