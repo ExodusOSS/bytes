@@ -22,9 +22,9 @@ globalThis.assert_false = (x, ...r) => assert.strictEqual(x, false, ...r)
 globalThis.assert_not_equals = (a, b, ...r) => assert.notEqual(a, b, ...r)
 globalThis.assert_throws_js = (e, f, m) => assert.throws(f, e, m)
 globalThis.assert_throws_dom = (e, f, m) => assert.throws(f, Error, m) // we don't care about exact dom errors
-globalThis.assert_array_equals = (a, b) => {
-  assert.strictEqual(a.length, b.length)
-  assert.deepStrictEqual([...a], [...b])
+globalThis.assert_array_equals = (a, b, m) => {
+  assert.strictEqual(a.length, b.length, m)
+  assert.deepStrictEqual([...a], [...b], m)
 }
 
 globalThis.createBuffer = (type, length, opts) => new ArrayBuffer(length, opts) // we don't bother with SharedArrayBuffer in WPT tests
