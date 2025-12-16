@@ -148,7 +148,7 @@
 });
 
 test(() => {
-  if (!globalThis.MessageChannel) return // Added, some engines don't have MessageChannel
+  if (!globalThis.MessageChannel) return; // Added, some engines don't have MessageChannel
   const buffer = new ArrayBuffer(10),
         view = new Uint8Array(buffer);
   let { read, written } = new TextEncoder().encodeInto("", view);
