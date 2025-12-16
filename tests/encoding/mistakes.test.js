@@ -273,12 +273,13 @@ describe('Common implementation mistakes', () => {
   describe('Push back ASCII characters on errors', () => {
     const vectors = {
       big5: [
-        [[0x81, 0x40], '\uFFFD@'], // WebKit fails on this
-        [[0x83, 0x5c], '\uFFFD\x5C'], // https://github.com/nodejs/node/issues/40091#issue-994273867
-        [[0x87, 0x87, 0x40], '\uFFFD@'], // Chrome fails on this
+        [[0x81, 0x40], '\uFFFD@'], // WebKit fails: https://bugs.webkit.org/show_bug.cgi?id=304238. Chrome and Firefox are correct. Node.js fails (see below)
+        [[0x83, 0x5c], '\uFFFD\x5C'], // Node.js fails: https://github.com/nodejs/node/issues/40091. Chrome and Firefox are correct. WebKit fails (see above)
+        [[0x87, 0x87, 0x40], '\uFFFD@'], // Chrome fails: https://issues.chromium.org/issues/467727340. Firefox and WebKit are correct
+        [[0x81, 0x81], '\uFFFD'], // Chrome fails: https://issues.chromium.org/issues/467727340. Firefox and WebKit are correct
       ],
       'iso-2022-jp': [
-        [[0x1b, 0x24], '\uFFFD$'], // Node.js fails on this
+        [[0x1b, 0x24], '\uFFFD$'], // Node.js fails on this. Chrome, Firefox and Safari are correct
         [[0x1b, 0x24, 0x40, 0x1b, 0x24], '\uFFFD\uFFFD'], // Last 0x24 is invalid on both attemtps. Chrome fails on this
       ],
       // TODO: more vectors?
