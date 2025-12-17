@@ -12,12 +12,13 @@ export type Uint8ArrayBuffer = ReturnType<typeof Uint8Array.from>;
 export type OutputFormat = 'uint8' | 'buffer';
 
 /**
- * Converts a TypedArray to a specific view format
+ * Creates a view of a TypedArray in the specified format
+ * Note: This does not copy data - returns a view on the same underlying buffer
  * @param arr - The input TypedArray
  * @param format - The desired output format ('uint8' or 'buffer')
- * @returns The converted array view
+ * @returns A view on the same underlying buffer
  */
-export function typedView(arr: ArrayBufferView, format: 'uint8'): Uint8ArrayBuffer;
+export function typedView(arr: ArrayBufferView, format: 'uint8'): Uint8Array;
 export function typedView(arr: ArrayBufferView, format: 'buffer'): Buffer;
-export function typedView(arr: ArrayBufferView, format: OutputFormat): Uint8ArrayBuffer | Buffer;
+export function typedView(arr: ArrayBufferView, format: OutputFormat): Uint8Array | Buffer;
 
