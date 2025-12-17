@@ -119,6 +119,7 @@ Same as `windows1252toString = createSinglebyteDecoder('windows-1252')`.
 
 ### `@exodus/bytes/bigint.js`
 
+##### `fromBigInt(bigint, { length, format = 'uint8' })`
 ##### `toBigInt(arr)`
 
 ### `@exodus/bytes/hex.js`

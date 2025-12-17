@@ -124,3 +124,7 @@ export function decode2string(arr, start, end, m) {
 
   return decodePart(arr, start, end, m)
 }
+
+export function assert(condition, msg) {
+  if (!condition) throw new Error(msg)
+}
