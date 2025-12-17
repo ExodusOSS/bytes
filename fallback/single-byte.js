@@ -13,10 +13,11 @@ export const assertEncoding = (encoding) => {
 function getEncoding(encoding) {
   assertEncoding(encoding)
   if (encoding === xUserDefined) {
-    return Array.from({ length: 128 }, (_, i) => String.fromCharCode(0xf7_80 + i)).join('')
+    return Array.from({ length: 128 }, (_, i) => 0xf7_80 + i)
   }
 
-  return encodings[encoding]
+  let prev = 0
+  return encodings[encoding].map((x) => (prev += x)) // eslint-disable-line no-return-assign
 }
 
 const mappers = new Map()
@@ -28,13 +29,13 @@ export function encodingMapper(encoding) {
   const cached = mappers.get(encoding)
   if (cached) return cached
 
-  const incomplete = getEncoding(encoding).includes('\uFFFD')
+  const codes = getEncoding(encoding)
+  const incomplete = codes.includes(0xff_fd)
   let map
   const mapper = (arr, start = 0) => {
     if (!map) {
       map = Uint16Array.from({ length: 256 }, (_, i) => i) // Unicode subset
-      const strings = getEncoding(encoding).split('')
-      map.set(Uint16Array.from(strings.map((x) => x.charCodeAt(0))), 128)
+      map.set(Uint16Array.from(codes), 128)
     }
 
     const o = Uint16Array.from(start === 0 ? arr : arr.subarray(start)) // copy to modify in-place, also those are 16-bit now
@@ -63,12 +64,13 @@ export function encodingDecoder(encoding) {
   if (cached) return cached
 
   let strings
-  const incomplete = getEncoding(encoding).includes('\uFFFD')
+  const codes = getEncoding(encoding)
+  const incomplete = codes.includes(0xff_fd)
   const decoder = (arr, loose = false) => {
     if (!strings) {
-      const part = getEncoding(encoding).split('')
-      strings = Array.from({ length: 128 }, (_, i) => String.fromCharCode(i)).concat(part)
-      while (strings.length < 256) strings.push(String.fromCharCode(strings.length))
+      const allCodes = Array.from({ length: 128 }, (_, i) => i).concat(codes)
+      while (allCodes.length < 256) allCodes.push(allCodes.length)
+      strings = allCodes.map((c) => String.fromCharCode(c))
     }
 
     const prefix = decodeLatin1(arr, 0, asciiPrefix(arr))

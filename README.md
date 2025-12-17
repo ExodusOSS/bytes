@@ -64,8 +64,8 @@ If you don't need support for legacy multi-byte encodings, you can use the lite 
 import { TextDecoder, TextEncoder } from '@exodus/bytes/encoding-lite.js'
 ```
 
-This reduces the bundle size 9x:\
-from 91 KiB gzipped for `@exodus/bytes/encoding.js` to 10 KiB gzipped for `@exodus/bytes/encoding-lite.js`.\
+This reduces the bundle size 10x:\
+from 90 KiB gzipped for `@exodus/bytes/encoding.js` to 9 KiB gzipped for `@exodus/bytes/encoding-lite.js`.\
 (For comparison, `text-encoding` module is 190 KiB gzipped, and `iconv-lite` is 194 KiB gzipped).
 
 It still supports `utf-8`, `utf-16le`, `utf-16be` and all single-byte encodings specified by the spec,
