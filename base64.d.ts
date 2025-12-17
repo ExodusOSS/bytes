@@ -1,6 +1,6 @@
 /// <reference types="node" />
 
-import type { OutputFormat, StrictUint8Array } from './array.js';
+import type { OutputFormat, Uint8ArrayBuffer } from './array.js';
 
 /**
  * Options for base64 encoding
@@ -34,7 +34,7 @@ export interface FromBase64Options {
  * @param options - Encoding options
  * @returns The base64 encoded string
  */
-export function toBase64(arr: StrictUint8Array, options?: ToBase64Options): string;
+export function toBase64(arr: Uint8ArrayBuffer, options?: ToBase64Options): string;
 
 /**
  * Encodes a Uint8Array to a base64url string (RFC 4648)
@@ -42,7 +42,7 @@ export function toBase64(arr: StrictUint8Array, options?: ToBase64Options): stri
  * @param options - Encoding options (padding defaults to false)
  * @returns The base64url encoded string
  */
-export function toBase64url(arr: StrictUint8Array, options?: ToBase64Options): string;
+export function toBase64url(arr: Uint8ArrayBuffer, options?: ToBase64Options): string;
 
 /**
  * Decodes a base64 string to bytes
@@ -51,7 +51,7 @@ export function toBase64url(arr: StrictUint8Array, options?: ToBase64Options): s
  * @param options - Decoding options or format string (deprecated)
  * @returns The decoded bytes
  */
-export function fromBase64(str: string, options?: FromBase64Options | OutputFormat): StrictUint8Array;
+export function fromBase64(str: string, options?: FromBase64Options | OutputFormat): Uint8ArrayBuffer;
 export function fromBase64(str: string, options: FromBase64Options & { format: 'buffer' }): Buffer;
 export function fromBase64(str: string, options: 'buffer'): Buffer;
 
@@ -62,7 +62,7 @@ export function fromBase64(str: string, options: 'buffer'): Buffer;
  * @param options - Decoding options (padding defaults to false)
  * @returns The decoded bytes
  */
-export function fromBase64url(str: string, options?: FromBase64Options): StrictUint8Array;
+export function fromBase64url(str: string, options?: FromBase64Options): Uint8ArrayBuffer;
 export function fromBase64url(str: string, options: FromBase64Options & { format: 'buffer' }): Buffer;
 
 /**
@@ -72,6 +72,6 @@ export function fromBase64url(str: string, options: FromBase64Options & { format
  * @param options - Decoding options
  * @returns The decoded bytes
  */
-export function fromBase64any(str: string, options?: FromBase64Options): StrictUint8Array;
+export function fromBase64any(str: string, options?: FromBase64Options): Uint8ArrayBuffer;
 export function fromBase64any(str: string, options: FromBase64Options & { format: 'buffer' }): Buffer;
 

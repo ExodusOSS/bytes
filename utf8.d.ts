@@ -1,6 +1,6 @@
 /// <reference types="node" />
 
-import type { OutputFormat, StrictUint8Array } from './array.js';
+import type { OutputFormat, Uint8ArrayBuffer } from './array.js';
 
 /**
  * Encodes a string to UTF-8 bytes (strict mode)
@@ -9,9 +9,9 @@ import type { OutputFormat, StrictUint8Array } from './array.js';
  * @param format - Output format (default: 'uint8')
  * @returns The encoded bytes
  */
-export function utf8fromString(str: string, format?: 'uint8'): StrictUint8Array;
+export function utf8fromString(str: string, format?: 'uint8'): Uint8ArrayBuffer;
 export function utf8fromString(str: string, format: 'buffer'): Buffer;
-export function utf8fromString(str: string, format?: OutputFormat): StrictUint8Array | Buffer;
+export function utf8fromString(str: string, format?: OutputFormat): Uint8ArrayBuffer | Buffer;
 
 /**
  * Encodes a string to UTF-8 bytes (loose mode)
@@ -20,9 +20,9 @@ export function utf8fromString(str: string, format?: OutputFormat): StrictUint8A
  * @param format - Output format (default: 'uint8')
  * @returns The encoded bytes
  */
-export function utf8fromStringLoose(str: string, format?: 'uint8'): StrictUint8Array;
+export function utf8fromStringLoose(str: string, format?: 'uint8'): Uint8ArrayBuffer;
 export function utf8fromStringLoose(str: string, format: 'buffer'): Buffer;
-export function utf8fromStringLoose(str: string, format?: OutputFormat): StrictUint8Array | Buffer;
+export function utf8fromStringLoose(str: string, format?: OutputFormat): Uint8ArrayBuffer | Buffer;
 
 /**
  * Decodes UTF-8 bytes to a string (strict mode)
@@ -30,7 +30,7 @@ export function utf8fromStringLoose(str: string, format?: OutputFormat): StrictU
  * @param arr - The bytes to decode
  * @returns The decoded string
  */
-export function utf8toString(arr: StrictUint8Array): string;
+export function utf8toString(arr: Uint8ArrayBuffer): string;
 
 /**
  * Decodes UTF-8 bytes to a string (loose mode)
@@ -38,5 +38,5 @@ export function utf8toString(arr: StrictUint8Array): string;
  * @param arr - The bytes to decode
  * @returns The decoded string
  */
-export function utf8toStringLoose(arr: StrictUint8Array): string;
+export function utf8toStringLoose(arr: Uint8ArrayBuffer): string;
 
