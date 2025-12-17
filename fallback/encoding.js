@@ -30,7 +30,7 @@ export function normalizeEncoding(label) {
   if (label === 'utf-8' || label === 'utf8' || label === 'UTF-8' || label === 'UTF8') return 'utf-8'
   if (label === 'windows-1252' || label === 'ascii' || label === 'latin1') return 'windows-1252'
   // full map
-  if (!/^[\w\t\n\f\r .:-]+$/i.test(label)) throw new RangeError(E_ENCODING) // must be ASCII (with ASCII whitespace)
+  if (!/^[\w\t\n\f\r .:-]+$/i.test(label)) return null // must be ASCII (with ASCII whitespace)
   const low = `${label}`.trim().toLowerCase()
   if (Object.hasOwn(labels, low)) return low
   if (!labelsMap) {
@@ -42,7 +42,7 @@ export function normalizeEncoding(label) {
 
   const mapped = labelsMap.get(low)
   if (mapped) return mapped
-  throw new RangeError(E_ENCODING)
+  return null
 }
 
 const define = (obj, key, value) => Object.defineProperty(obj, key, { value, writable: false })
@@ -71,7 +71,7 @@ export class TextDecoder {
   constructor(encoding = 'utf-8', options = {}) {
     if (typeof options !== 'object') throw new TypeError(E_OPTIONS)
     const enc = normalizeEncoding(encoding)
-    if (enc === 'replacement') throw new RangeError(E_ENCODING)
+    if (!enc || enc === 'replacement') throw new RangeError(E_ENCODING)
     define(this, 'encoding', enc)
     define(this, 'fatal', Boolean(options.fatal))
     define(this, 'ignoreBOM', Boolean(options.ignoreBOM))

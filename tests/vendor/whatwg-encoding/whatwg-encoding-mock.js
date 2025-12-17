@@ -21,11 +21,8 @@ const map = new Map(supported.map((x) => [x.toLowerCase(), x]))
 export const isSupported = (encoding) => set.has(encoding)
 
 export const labelToName = (label) => {
-  try {
-    return map.get(api.normalizeEncoding(label)) ?? null
-  } catch {
-    return null
-  }
+  const enc = api.normalizeEncoding(label)
+  return (enc && map.get(enc)) || null
 }
 
 export function decode(input, fallbackEncoding) {
