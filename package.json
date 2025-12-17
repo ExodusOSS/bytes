@@ -60,16 +60,19 @@
     "/fallback/utf16.js",
     "/fallback/utf8.js",
     "/array.js",
+    "/array.d.ts",
     "/assert.js",
     "/base32.js",
     "/base58.js",
     "/base58check.js",
     "/base64.js",
+    "/base64.d.ts",
     "/bech32.js",
     "/bigint.js",
     "/encoding.js",
     "/encoding-lite.js",
     "/hex.js",
+    "/hex.d.ts",
     "/hex.node.js",
     "/multi-byte.js",
     "/multi-byte.node.js",
@@ -78,18 +81,26 @@
     "/utf16.js",
     "/utf16.node.js",
     "/utf8.js",
+    "/utf8.d.ts",
     "/utf8.node.js",
     "/wif.js"
   ],
   "exports": {
-    "./array.js": "./array.js",
+    "./array.js": {
+      "types": "./array.d.ts",
+      "default": "./array.js"
+    },
     "./base32.js": "./base32.js",
     "./base58.js": "./base58.js",
     "./base58check.js": "./base58check.js",
-    "./base64.js": "./base64.js",
+    "./base64.js": {
+      "types": "./base64.d.ts",
+      "default": "./base64.js"
+    },
     "./bech32.js": "./bech32.js",
     "./bigint.js": "./bigint.js",
     "./hex.js": {
+      "types": "./hex.d.ts",
       "node": "./hex.node.js",
       "default": "./hex.js"
     },
@@ -108,6 +119,7 @@
       "default": "./utf16.js"
     },
     "./utf8.js": {
+      "types": "./utf8.d.ts",
       "node": "./utf8.node.js",
       "default": "./utf8.js"
     },
