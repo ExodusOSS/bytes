@@ -257,6 +257,7 @@ export function getBOMEncoding(input) {
 // Warning: encoding sniffed from BOM takes preference over the supplied one
 // Warning: lossy, performs replacement, no option of throwing
 // Expects normalized (lower-case) encoding as input. Completely ignores it and even skips validation when BOM is found
+// Unlike TextDecoder public API, additionally supports 'replacement' encoding
 export function legacyHookDecode(input, fallbackEncoding) {
   let u8 = fromSource(input)
   const bomEncoding = getBOMEncoding(u8)
