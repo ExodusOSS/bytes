@@ -16,7 +16,7 @@ function getEncoding(encoding) {
     return Array.from({ length: 128 }, (_, i) => 0xf7_80 + i)
   }
 
-  let prev = 0
+  let prev = 127
   return encodings[encoding].map((x) => (prev += x)) // eslint-disable-line no-return-assign
 }
 
