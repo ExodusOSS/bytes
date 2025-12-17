@@ -5,7 +5,7 @@ import { toBase64 } from '@exodus/bytes/base64.js'
 import { fromHex } from '@exodus/bytes/hex.js'
 import { test, describe } from 'node:test'
 import { fromBits, fromBase4 } from './_utils.js'
-import { legacyMultiByte } from '../fixtures/encodings/encodings.cjs'
+import { legacyMultiByte } from '../fixtures/encoding/encodings.cjs'
 
 // Also test utf-8 and the most common single-byte decoder (windows-1252) on multi-byte input
 const labels = ['windows-1252', 'utf-8', ...legacyMultiByte]

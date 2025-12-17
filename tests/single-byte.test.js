@@ -66,7 +66,7 @@ describe('single-byte encodings index', () => {
       const decoder = createSinglebyteDecoder(encoding)
       const decoderLoose = createSinglebyteDecoder(encoding, true)
       const text = readFileSync(
-        join(import.meta.dirname, 'fixtures/encodings/single-byte', `index-${encoding}.txt`),
+        join(import.meta.dirname, 'fixtures/encoding/single-byte', `index-${encoding}.txt`),
         'utf8'
       )
       const rows = text

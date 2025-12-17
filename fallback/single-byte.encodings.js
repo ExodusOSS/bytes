@@ -1,4 +1,4 @@
-// See tests/fixtures/encodings/single-byte/dump.js for generator
+// See tests/fixtures/encoding/single-byte/dump.js for generator
 
 const e = (x) => new Array(x).fill(1)
 const z = (x) => new Array(x).fill(0)

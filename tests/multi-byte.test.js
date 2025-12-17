@@ -26,7 +26,7 @@ describe('multi-byte encodings tables', () => {
       t.assert.strictEqual(table.length, size)
 
       const text = readFileSync(
-        join(import.meta.dirname, 'fixtures/encodings/multi-byte', `index-${encoding}.txt`),
+        join(import.meta.dirname, 'fixtures/encoding/multi-byte', `index-${encoding}.txt`),
         'utf8'
       )
 
@@ -79,7 +79,7 @@ describe('multi-byte ranges tables', () => {
       const table = getTable(name)
 
       const text = readFileSync(
-        join(import.meta.dirname, 'fixtures/encodings/multi-byte', `index-${name}.txt`),
+        join(import.meta.dirname, 'fixtures/encoding/multi-byte', `index-${name}.txt`),
         'utf8'
       )
 
