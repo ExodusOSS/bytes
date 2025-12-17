@@ -66,6 +66,7 @@
     "/base58check.js",
     "/base64.js",
     "/bech32.js",
+    "/bigint.js",
     "/encoding.js",
     "/encoding-lite.js",
     "/hex.js",
@@ -87,6 +88,7 @@
     "./base58check.js": "./base58check.js",
     "./base64.js": "./base64.js",
     "./bech32.js": "./bech32.js",
+    "./bigint.js": "./bigint.js",
     "./hex.js": {
       "node": "./hex.node.js",
       "default": "./hex.js"
