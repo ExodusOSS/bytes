@@ -48,12 +48,11 @@ export function toBase64url(arr: Uint8ArrayBuffer, options?: ToBase64Options): s
  * Decodes a base64 string to bytes
  * Operates in strict mode for last chunk, does not allow whitespace
  * @param str - The base64 encoded string
- * @param options - Decoding options or format string (deprecated)
+ * @param options - Decoding options
  * @returns The decoded bytes
  */
-export function fromBase64(str: string, options?: FromBase64Options | OutputFormat): Uint8ArrayBuffer;
+export function fromBase64(str: string, options?: FromBase64Options): Uint8ArrayBuffer;
 export function fromBase64(str: string, options: FromBase64Options & { format: 'buffer' }): Buffer;
-export function fromBase64(str: string, options: 'buffer'): Buffer;
 
 /**
  * Decodes a base64url string to bytes
