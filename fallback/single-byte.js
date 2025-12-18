@@ -11,14 +11,14 @@ export const assertEncoding = (encoding) => {
   throw new RangeError('Unsupported encoding')
 }
 
-const f = 0xff_fd
+const r = 0xff_fd
 
 function getEncoding(encoding) {
   assertEncoding(encoding)
   if (encoding === xUserDefined) return Array.from({ length: 128 }, (_, i) => 0xf7_80 + i)
   if (encoding === iso8i) encoding = 'iso-8859-8'
   let prev = 127
-  return encodings[encoding].map((x) => (x === f ? x : (prev += x))) // eslint-disable-line no-return-assign
+  return encodings[encoding].map((x) => (x === r ? x : (prev += x))) // eslint-disable-line no-return-assign
 }
 
 const mappers = new Map()
