@@ -1,7 +1,7 @@
 import { assertUint8 } from './assert.js'
 import { isAscii } from 'node:buffer'
 import { isDeno, isLE } from './fallback/_utils.js'
-import { asciiPrefix, decodeLatin1 } from './fallback/latin1.js'
+import { asciiPrefix } from './fallback/latin1.js'
 import { encodingMapper, encodingDecoder, E_STRICT } from './fallback/single-byte.js'
 
 const toBuf = (x) => Buffer.from(x.buffer, x.byteOffset, x.byteLength)
@@ -52,8 +52,9 @@ export function createSinglebyteDecoder(encoding, loose = false) {
       if (prefixBytes === arr.length) return prefix
     }
 
-    const b = mapper(arr, prefix.length) // prefix.length can mismatch prefixBytes
-    const suffix = isLE ? toBuf(b).ucs2Slice(0, b.byteLength) : decodeLatin1(b, 0, b.length) // decodeLatin1 is actually capable of decoding 16-bit codepoints
+    const b = toBuf(mapper(arr, prefix.length)) // prefix.length can mismatch prefixBytes
+    if (!isLE) b.swap16()
+    const suffix = b.ucs2Slice(0, b.byteLength)
     if (!loose && incomplete && suffix.includes('\uFFFD')) throw new TypeError(E_STRICT)
     return prefix + suffix
   }
