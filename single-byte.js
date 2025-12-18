@@ -29,7 +29,6 @@ function shouldUseNative(enc) {
 }
 
 export function createSinglebyteDecoder(encoding, loose = false) {
-  if (encoding === 'iso-8859-8-i') encoding = 'iso-8859-8'
   assertEncoding(encoding)
 
   if (canDecoders && shouldUseNative(encoding)) {

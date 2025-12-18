@@ -24,7 +24,6 @@ function latin1Prefix(arr, start) {
 }
 
 export function createSinglebyteDecoder(encoding, loose = false) {
-  if (encoding === 'iso-8859-8-i') encoding = 'iso-8859-8'
   const latin1path = encoding === 'windows-1252'
   if (isDeno) {
     const jsDecoder = encodingDecoder(encoding) // asserts

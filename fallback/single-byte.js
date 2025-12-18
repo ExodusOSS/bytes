@@ -4,9 +4,10 @@ import { decode2string } from './_utils.js'
 
 export const E_STRICT = 'Input is not well-formed for this encoding'
 const xUserDefined = 'x-user-defined'
+const iso8i = 'iso-8859-8-i'
 
 export const assertEncoding = (encoding) => {
-  if (Object.hasOwn(encodings, encoding) || encoding === xUserDefined) return
+  if (Object.hasOwn(encodings, encoding) || encoding === xUserDefined || encoding === iso8i) return
   throw new RangeError('Unsupported encoding')
 }
 
@@ -14,10 +15,8 @@ const f = 0xff_fd
 
 function getEncoding(encoding) {
   assertEncoding(encoding)
-  if (encoding === xUserDefined) {
-    return Array.from({ length: 128 }, (_, i) => 0xf7_80 + i)
-  }
-
+  if (encoding === xUserDefined) return Array.from({ length: 128 }, (_, i) => 0xf7_80 + i)
+  if (encoding === iso8i) encoding = 'iso-8859-8'
   let prev = 127
   return encodings[encoding].map((x) => (x === f ? x : (prev += x))) // eslint-disable-line no-return-assign
 }
