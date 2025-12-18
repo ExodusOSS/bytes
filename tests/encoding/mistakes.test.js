@@ -611,6 +611,42 @@ describe('Common implementation mistakes', () => {
     })
   })
 
+  // These are mislabeled in WPT html dataset files, their recorded codepoints do not match actual ones
+  // All browsers (and the script) agree on how these are decoded though, but let's explicitly recheck
+  // Refs: https://github.com/web-platform-tests/wpt/issues/56748
+  describe('WPT mislabels', () => {
+    const vectors = {
+      'euc-jp': [
+        [[0x5c], '\x5C'], // Not U+A5
+        [[0x7e], '\x7E'], // Not U+203E
+        [[0xa1, 0xdd], '\uFF0D'], // Not U+2212
+      ],
+      shift_jis: [
+        [[0x5c], '\x5C'], // Not U+A5
+        [[0x7e], '\x7E'], // Not U+203E
+        [[0x81, 0x7c], '\uFF0D'], // Not U+2212
+      ],
+      'iso-2022-jp': [
+        [[0x1b, 0x28, 0x4a, 0x5c, 0x1b, 0x28, 0x42], '\xA5'], // Correctly labeled, U+A5
+        [[0x1b, 0x28, 0x4a, 0x7e, 0x1b, 0x28, 0x42], '\u203E'], // Correctly labeled, U+203E
+        [[0x1b, 0x24, 0x42, 0x21, 0x5d, 0x1b, 0x28, 0x42], '\uFF0D'], // Not U+2212
+      ],
+    }
+
+    for (const [encoding, list] of Object.entries(vectors)) {
+      describe(encoding, () => {
+        for (const fatal of [false, true]) {
+          test(fatal ? 'fatal' : 'loose', (t) => {
+            for (const [bytes, string] of list) {
+              const d = new TextDecoder(encoding, { fatal })
+              t.assert.strictEqual(d.decode(Uint8Array.from(bytes)), string)
+            }
+          })
+        }
+      })
+    }
+  })
+
   describe('invalid labels', () => {
     test('non-ascii', (t) => {
       const bad = ['\u212Aoi8-r', '\u212Aoi8-u', 'euc-\u212Ar']

@@ -150,8 +150,9 @@ function loadTextDecoderHtml(fullName) {
 
         // Test decoder!
         if (
-          ['euc-jp', 'iso-2022-jp', 'shift_jis'].includes(decoder.encoding) &&
-          [0xa5, 0x20_3e, 0x22_12].includes(cp)
+          (['euc-jp', 'shift_jis'].includes(decoder.encoding) &&
+            [0xa5, 0x20_3e, 0x22_12].includes(cp)) ||
+          (decoder.encoding === 'iso-2022-jp' && cp === 0x22_12)
         ) {
           // Those three encodings are assymetrical on these codepoints
           // See https://encoding.spec.whatwg.org/ for mentions of those exact code points
