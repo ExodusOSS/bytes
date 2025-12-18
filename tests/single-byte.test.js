@@ -119,3 +119,15 @@ describe('single-byte encodings index', () => {
     })
   }
 })
+
+// https://encoding.spec.whatwg.org/#x-user-defined-decoder
+test('x-user-defined', (t) => {
+  const encoding = 'x-user-defined'
+  const decoder = createSinglebyteDecoder(encoding)
+  const decoderLoose = createSinglebyteDecoder(encoding, true)
+  for (let byte = 0; byte < 256; byte++) {
+    const str = String.fromCodePoint(byte >= 0x80 ? 0xf7_80 + byte - 0x80 : byte)
+    t.assert.strictEqual(decoder(Uint8Array.of(byte)), str, byte)
+    t.assert.strictEqual(decoderLoose(Uint8Array.of(byte)), str, byte)
+  }
+})
