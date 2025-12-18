@@ -30,7 +30,7 @@ export function normalizeEncoding(label) {
   if (label === 'utf-8' || label === 'utf8' || label === 'UTF-8' || label === 'UTF8') return 'utf-8'
   if (label === 'windows-1252' || label === 'ascii' || label === 'latin1') return 'windows-1252'
   // full map
-  if (!/^[\w\t\n\f\r .:-]+$/i.test(label)) return null // must be ASCII (with ASCII whitespace)
+  if (/[^\w\t\n\f\r .:-]/i.test(label)) return null // must be ASCII (with ASCII whitespace)
   const low = `${label}`.trim().toLowerCase()
   if (Object.hasOwn(labels, low)) return low
   if (!labelsMap) {
