@@ -35,7 +35,7 @@ export function encodingMapper(encoding) {
   let map
   const mapper = (arr, start = 0) => {
     if (!map) {
-      map = Uint16Array.from({ length: 256 }, (_, i) => i) // Unicode subset
+      map = new Uint16Array(256).map((_, i) => i) // Unicode subset
       map.set(Uint16Array.from(codes), 128)
     }
 
