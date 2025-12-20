@@ -173,6 +173,137 @@ Same as `windows1252toString = createSinglebyteDecoder('windows-1252')`.
 ##### `async toWifString({ version, privateKey, compressed })`
 ##### `toWifStringSync({ version, privateKey, compressed })`
 
+### `@exodus/bytes/encoding.js`
+
+Implements the [Encoding standard](https://encoding.spec.whatwg.org/):
+[TextDecoder](https://encoding.spec.whatwg.org/#interface-textdecoder),
+[TextEncoder](https://encoding.spec.whatwg.org/#interface-textdecoder),
+some [hooks](https://encoding.spec.whatwg.org/#specification-hooks) (see below).
+
+```js
+import { TextDecoder, TextDecoder } from '@exodus/bytes/encoding.js'
+
+// Hooks for standards
+import { getBOMEncoding, legacyHookDecode, normalizeEncoding } from '@exodus/bytes/encoding.js'
+```
+
+#### `new TextDecoder(label = 'utf-8', { fatal = false, ignoreBOM = false })`
+
+[TextDecoder](https://encoding.spec.whatwg.org/#interface-textdecoder) implementation/polyfill.
+
+#### `new TextEncoder()`
+
+[TextEncoder](https://encoding.spec.whatwg.org/#interface-textdecoder) implementation/polyfill.
+
+#### `normalizeEncoding(label)`
+
+Implements [get an encoding from a string `label`](https://encoding.spec.whatwg.org/#concept-encoding-get).
+
+Converts an encoding [label](https://encoding.spec.whatwg.org/#names-and-labels) to its name,
+as an ASCII-lowercased string.
+
+If an encoding with that label does not exist, returns `null`.
+
+This is the same as [`decoder.encoding` getter](https://encoding.spec.whatwg.org/#dom-textdecoder-encoding),
+except that it does not throw for invalid labels and instead returns `null`, and is identical to
+the following code:
+```js
+try {
+  if (!label) return null // does not default to 'utf-8'
+  return new TextDecoder(label).encoding
+} catch {
+  return null
+}
+```
+
+All encoding names are also valid labels for corresponding encodings.
+
+#### `getBOMEncoding(input)`
+
+Implements [BOM sniff](https://encoding.spec.whatwg.org/#bom-sniff) legacy hook.
+
+Given a `TypedArray` or an `ArrayBuffer` instance `input`, returns either of:
+* `'utf-8'`, if `input` starts with UTF-8 byte order mark.
+* `'utf-16le'`, if `input` starts with UTF-16LE byte order mark.
+* `'utf-16be'`, if `input` starts with UTF-16BE byte order mark.
+* `null` otherwise.
+
+#### `legacyHookDecode(input, fallbackEncoding = 'utf-8')`
+
+Implements [decode](https://encoding.spec.whatwg.org/#decode) legacy hook.
+
+Given a `TypedArray` or an `ArrayBuffer` instance `input` and an optional `fallbackEncoding`
+normalized encoding name, sniffs encoding from BOM with `fallbackEncoding` fallback and then
+decodes the `input` using that encoding, skipping BOM if it was present.
+
+Notes:
+
+ * BOM-sniffed encoding takes precedence over `fallbackEncoding` option per spec.
+   Use with care.
+ * `fallbackEncoding` must be ASCII-lowercased encoding name,
+   e.g. a result of `normalizeEncoding(label)` call.
+ * Always operates in non-fatal [mode](https://encoding.spec.whatwg.org/#textdecoder-error-mode),
+   aka replacement. It can convert different byte sequences to equal strings.
+
+This method is similar to the following code, except that it doesn't support encoding labels and
+only expects lowercased encoding name:
+
+```js
+new TextDecoder(getBOMEncoding(input) ?? fallbackEncoding ?? 'utf-8').decode(input)
+```
+
+### `@exodus/bytes/encoding-lite.js`
+
+```js
+import { TextDecoder, TextDecoder } from '@exodus/bytes/encoding-lite.js'
+
+// Hooks for standards
+import { getBOMEncoding, legacyHookDecode, normalizeEncoding } from '@exodus/bytes/encoding-lite.js'
+```
+
+The exact same exports as `@exodus/bytes/encoding.js` are also exported as
+`@exodus/bytes/encoding-lite.js`, with the difference that the lite version does not load
+multi-byte `TextDecoder` encodings by default to reduce bundle size 10x.
+
+The only affected encodings are: `gbk`, `gb18030`, `big5`, `euc-jp`, `iso-2022-jp`, `shift_jis`
+and their [labels](https://encoding.spec.whatwg.org/#names-and-labels) when used with `TextDecoder`.
+
+Legacy single-byte encodingds are loaded by default in both cases.
+
+`TextEncoder` and hooks for standards (including `normalizeEncoding`) do not have any behavior
+differences in the lite version and support full range if inputs.
+
+To avoid inconsistencies, the exported classes and methods are exactly the same objects.
+
+```console
+> lite = require('@exodus/bytes/encoding-lite.js')
+[Module: null prototype] {
+  TextDecoder: [class TextDecoder],
+  TextEncoder: [class TextEncoder],
+  getBOMEncoding: [Function: getBOMEncoding],
+  legacyHookDecode: [Function: legacyHookDecode],
+  normalizeEncoding: [Function: normalizeEncoding]
+}
+> new lite.TextDecoder('big5').decode(Uint8Array.of(0x25))
+Uncaught:
+Error: Legacy multi-byte encodings are disabled in /encoding-lite.js, use /encoding.js for full encodings range support
+
+> full = require('@exodus/bytes/encoding.js')
+[Module: null prototype] {
+  TextDecoder: [class TextDecoder],
+  TextEncoder: [class TextEncoder],
+  getBOMEncoding: [Function: getBOMEncoding],
+  legacyHookDecode: [Function: legacyHookDecode],
+  normalizeEncoding: [Function: normalizeEncoding]
+}
+> full.TextDecoder === lite.TextDecoder
+true
+> new full.TextDecoder('big5').decode(Uint8Array.of(0x25))
+'%'
+> new lite.TextDecoder('big5').decode(Uint8Array.of(0x25))
+'%'
+```
+
 ## License
 
 [MIT](./LICENSE)
