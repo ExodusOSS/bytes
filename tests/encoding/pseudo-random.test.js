@@ -5,7 +5,7 @@ import { toBase64 } from '@exodus/bytes/base64.js'
 import { fromHex } from '@exodus/bytes/hex.js'
 import { keccakprg } from '@noble/hashes/sha3-addons.js'
 import { test, describe } from 'node:test'
-import { legacySingleByte, legacyMultiByte } from '../fixtures/encoding/encodings.cjs'
+import { legacySingleByte, legacyMultiByte } from './fixtures/encodings.cjs'
 import { fromBits } from './_utils.js'
 
 const skipLarge =

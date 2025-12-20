@@ -5,7 +5,7 @@ import { toBase64 } from '@exodus/bytes/base64.js'
 import { fromHex } from '@exodus/bytes/hex.js'
 import { test, describe } from 'node:test'
 import { fromBits } from './_utils.js'
-import { legacySingleByte } from '../fixtures/encoding/encodings.cjs'
+import { legacySingleByte } from './fixtures/encodings.cjs'
 
 // All of the legacy 1-byte encodings are ASCII supersets
 // Try all 1-byte inputs for each 1-byte encoding, validate ASCII ranges immediately and non-ASCII with snapsnots

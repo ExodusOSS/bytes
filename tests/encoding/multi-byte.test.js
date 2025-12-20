@@ -5,7 +5,7 @@ import { toBase64 } from '@exodus/bytes/base64.js'
 import { fromHex, toHex } from '@exodus/bytes/hex.js'
 import { test, describe } from 'node:test'
 import { fromBits, fromBase4 } from './_utils.js'
-import { legacyMultiByte } from '../fixtures/encoding/encodings.cjs'
+import { legacyMultiByte } from './fixtures/encodings.cjs'
 
 const skipLarge =
   process.env.EXODUS_TEST_PLATFORM === 'quickjs' ||

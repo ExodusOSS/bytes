@@ -3,7 +3,7 @@ import { TextDecoder } from '@exodus/bytes/encoding.js'
 
 import { keccakprg } from '@noble/hashes/sha3-addons.js'
 import { test, describe } from 'node:test'
-import { legacySingleByte, legacyMultiByte, unicode } from '../fixtures/encoding/encodings.cjs'
+import { legacySingleByte, legacyMultiByte, unicode } from './fixtures/encodings.cjs'
 
 const fixedPRG = keccakprg() // We don't add any entropy, so it spills out predicatable results
 

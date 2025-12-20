@@ -7,6 +7,8 @@ import encodingsObject from '../fallback/single-byte.encodings.js'
 
 const encodings = Object.keys(encodingsObject)
 
+// See also tests/encoding/single-byte.tables.test.js for similar TextDecoder tests
+
 describe('single-byte encodings are supersets of ascii', () => {
   for (const encoding of encodings) {
     test(encoding, (t) => {
@@ -66,7 +68,7 @@ describe('single-byte encodings index', () => {
       const decoder = createSinglebyteDecoder(encoding)
       const decoderLoose = createSinglebyteDecoder(encoding, true)
       const text = readFileSync(
-        join(import.meta.dirname, 'fixtures/encoding/single-byte', `index-${encoding}.txt`),
+        join(import.meta.dirname, 'encoding/fixtures/single-byte', `index-${encoding}.txt`),
         'utf8'
       )
       const rows = text

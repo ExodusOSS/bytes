@@ -35,7 +35,7 @@ globalThis.createBuffer = (type, length, opts) => {
   return new ArrayBuffer(length, opts)
 }
 
-globalThis.encodings_table = require('../fixtures/encoding/encodings.json')
+globalThis.encodings_table = require('../encoding/fixtures/encodings.json')
 
 function loadDir(dirName) {
   const dir = path.join(__dirname, 'fixtures', dirName)
