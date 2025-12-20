@@ -121,11 +121,13 @@ describe('Common implementation mistakes', () => {
 
   describe('specific encodings', () => {
     describe('utf-16le', () => {
+      // https://github.com/facebook/hermes/pull/1855#issuecomment-3639872455
       test('does not produce more chars than truncated', (t) => {
         const d = new TextDecoder('utf-16le')
         t.assert.strictEqual(d.decode(u(0, 0, 0)), '\0\uFFFD') // two character, 0 was valid
         t.assert.strictEqual(d.decode(u(42, 0, 0)), '*\uFFFD') // two characters, * was valid
         t.assert.strictEqual(d.decode(u(0, 0xd8, 0)), '\uFFFD') // single character
+        t.assert.strictEqual(d.decode(u(0, 0xd8, 0xd8)), '\uFFFD') // single character
       })
     })
 
@@ -456,6 +458,15 @@ describe('Common implementation mistakes', () => {
 
         check([0xef], { stream: true }, '')
         check([0xbb, 0xbf, 42, 43], {}, '*+') // close
+
+        // https://github.com/facebook/hermes/pull/1855#issuecomment-3633217171
+        {
+          const d = new TextDecoder()
+          t.assert.strictEqual(d.decode(u(0, 0), { stream: true }), '\0\0')
+          t.assert.strictEqual(d.decode(u(0)), '\0')
+          t.assert.strictEqual(d.decode(u(0xef, 0xbb), { stream: true }), '') // empty string
+          t.assert.strictEqual(d.decode(u(0xbf)), '') // empty string
+        }
       })
 
       // Bun fails at this
@@ -511,6 +522,12 @@ describe('Common implementation mistakes', () => {
         d.decode(),
       ]
       t.assert.strictEqual(chunks.join(''), str)
+
+      // https://github.com/facebook/hermes/pull/1855#issuecomment-3630446958
+      const r = '\uFFFD'
+      t.assert.strictEqual(new TextDecoder().decode(u(0xc0), { stream: true }), r)
+      t.assert.strictEqual(new TextDecoder().decode(u(0xff), { stream: true }), r)
+      t.assert.strictEqual(new TextDecoder().decode(u(0xed, 0xbf), { stream: true }), `${r}${r}`)
     })
 
     // Deno and Servo are incorrect
@@ -582,6 +599,7 @@ describe('Common implementation mistakes', () => {
       }
     })
 
+    // https://github.com/facebook/hermes/pull/1855#issuecomment-3632349129
     for (const encoding of ['utf-16le', 'utf-16be']) {
       test(encoding, (t) => {
         const d = new TextDecoder(encoding, { fatal: true })
@@ -647,10 +665,16 @@ describe('Common implementation mistakes', () => {
     }
   })
 
-  describe('invalid labels', () => {
-    test('non-ascii', (t) => {
+  describe('labels', () => {
+    test('invalid non-ascii', (t) => {
       const bad = ['\u212Aoi8-r', '\u212Aoi8-u', 'euc-\u212Ar']
       for (const label of bad) t.assert.throws(() => new TextDecoder(label))
+    })
+
+    // https://github.com/facebook/hermes/pull/1855#issuecomment-3632092843
+    test('transformed', (t) => {
+      t.assert.strictEqual(new TextDecoder('UTF-8').encoding, 'utf-8')
+      t.assert.strictEqual(new TextDecoder('UTF-8'.toLowerCase()).encoding, 'utf-8') // Do not remove .toLowerCase() from test
     })
   })
 })
