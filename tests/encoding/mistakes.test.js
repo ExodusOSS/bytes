@@ -271,24 +271,40 @@ describe('Common implementation mistakes', () => {
     check([0, 255], [128, 255], [129, 48], [129, 255], [254, 48], [254, 255], [255, 0], [255, 255])
   })
 
-  describe('Push back ASCII characters on errors', () => {
+  describe('Replacement, push back ASCII characters', () => {
     const vectors = {
       big5: [
+        [[0x80], '\uFFFD'], // Node.js fails
         [[0x81, 0x40], '\uFFFD@'], // WebKit fails: https://bugs.webkit.org/show_bug.cgi?id=304238. Chrome and Firefox are correct. Node.js fails (see below)
         [[0x83, 0x5c], '\uFFFD\x5C'], // Node.js fails: https://github.com/nodejs/node/issues/40091. Chrome and Firefox are correct. WebKit fails (see above)
-        [[0x87, 0x87, 0x40], '\uFFFD@'], // Chrome fails: https://issues.chromium.org/issues/467727340. Firefox and WebKit are correct
-        [[0x81, 0x81], '\uFFFD'], // Chrome fails: https://issues.chromium.org/issues/467727340. Firefox and WebKit are correct
+        [[0x87, 0x87, 0x40], '\uFFFD@'], // Chrome fails: https://issues.chromium.org/issues/467727340. Firefox and WebKit are correct. iconv/whatwg-encoding fails
+        [[0x81, 0x81], '\uFFFD'], // Chrome fails: https://issues.chromium.org/issues/467727340. Firefox and WebKit are correct. iconv/whatwg-encoding fails
       ],
       'iso-2022-jp': [
         [[0x1b, 0x24], '\uFFFD$'], // Node.js fails on this. Chrome, Firefox and Safari are correct
-        [[0x1b, 0x24, 0x40, 0x1b, 0x24], '\uFFFD\uFFFD'], // Last 0x24 is invalid on both attemtps. Chrome fails on this
+        [[0x1b, 0x24, 0x40, 0x1b, 0x24], '\uFFFD\uFFFD'], // Last 0x24 is invalid on both attemtps. Chrome, WebKit, text-encoding fail on this. Firefox, Deno, Servo are correct
       ],
-      gb18030: [[[0xa0, 0x30, 0x2b], '\uFFFD0+']],
-      gbk: [[[0xa0, 0x30, 0x2b], '\uFFFD0+']],
+      gb18030: [
+        [[0xa0, 0x30, 0x2b], '\uFFFD0+'],
+        [[0x81, 0x31], '\uFFFD'], // iconv / whatwg-encoding fails
+      ],
+      'euc-jp': [
+        [[0x80], '\uFFFD'], // Node.js fails
+        [[0x8d, 0x8d], '\uFFFD\uFFFD'], // coherence
+        [[0x8e, 0x8e], '\uFFFD'], // iconv / whatwg-encoding, text-encoding fail
+      ],
+      'euc-kr': [
+        [[0x80], '\uFFFD'], // Node.js fails
+        [[0xad, 0xad], '\uFFFD'], // iconv / whatwg-encoding fails
+        [[0x41, 0xc7, 0x41], 'A\uFFFDA'], // text-encoding fails. Chrome, Firefox, Webkit are correct
+      ],
+      shift_jis: [
+        [[0x85, 0x85], '\uFFFD'], // iconv / whatwg-encoding fails
+      ],
       // TODO: more vectors?
     }
 
-    // vectors.gbk = vectors.gb18030
+    vectors.gbk = vectors.gb18030
     for (const [encoding, list] of Object.entries(vectors)) {
       describe(encoding, () => {
         for (const fatal of [false, true]) {
