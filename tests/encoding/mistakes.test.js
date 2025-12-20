@@ -530,53 +530,54 @@ describe('Common implementation mistakes', () => {
       t.assert.strictEqual(new TextDecoder().decode(u(0xed, 0xbf), { stream: true }), `${r}${r}`)
     })
 
-    // Deno and Servo are incorrect
-    test('big5', (t) => {
-      const u8 = Uint8Array.of(0xfe, 0x40)
-      const str = new TextDecoder('big5').decode(u8)
-      t.assert.strictEqual(str, '\u9442')
+    const vectors = {
+      gbk: [[0x81, 0x82], '\u4E97'],
+      gb18030: [[0x81, 0x82], '\u4E97'],
+      big5: [[0xfe, 0x40], '\u9442'],
+      shift_jis: [[0x81, 0x87], '\u221E'],
+      'euc-kr': [[0x81, 0x41], '\uAC02'],
+      'euc-jp': [[0xb0, 0xb0], '\u65ED'],
+      'iso-2022-jp': [[0x2a, 0x1b], '*\uFFFD'],
+    }
 
-      const d = new TextDecoder('big5')
-      const chunks = [
-        d.decode(u8.subarray(0, 1), { stream: true }),
-        d.decode(Uint8Array.of(), { stream: true }),
-        d.decode(u8.subarray(1), { stream: true }),
-        d.decode(),
-      ]
-      t.assert.strictEqual(chunks.join(''), str)
-    })
+    for (const [encoding, [bytes, expected]] of Object.entries(vectors)) {
+      test(encoding, (t) => {
+        const u8 = Uint8Array.from(bytes)
+        const str = new TextDecoder(encoding).decode(u8)
+        t.assert.strictEqual(str, expected)
 
-    // Deno and Servo are incorrect
-    test('shift_jis', (t) => {
-      const u8 = Uint8Array.of(0x81, 0x87)
-      const str = new TextDecoder('shift_jis').decode(u8)
-      t.assert.strictEqual(str, '\u221E')
+        // Bun is incorrect
+        {
+          const d = new TextDecoder(encoding)
+          const chunks = [d.decode(u8.subarray(0, 1), { stream: true }), d.decode(u8.subarray(1))]
+          t.assert.strictEqual(chunks.join(''), str)
+        }
 
-      const d = new TextDecoder('shift_jis')
-      const chunks = [
-        d.decode(u8.subarray(0, 1), { stream: true }),
-        d.decode(Uint8Array.of(), { stream: true }),
-        d.decode(u8.subarray(1), { stream: true }),
-        d.decode(),
-      ]
-      t.assert.strictEqual(chunks.join(''), str)
-    })
+        // Bun is incorrect
+        {
+          const d = new TextDecoder(encoding)
+          const chunks = [
+            d.decode(u8.subarray(0, 1), { stream: true }),
+            d.decode(u8.subarray(1), { stream: true }),
+            d.decode(),
+          ]
+          t.assert.strictEqual(chunks.join(''), str)
+        }
 
-    // Deno and Servo are incorrect
-    test('euc-kr', (t) => {
-      const u8 = Uint8Array.of(0x81, 0x41)
-      const str = new TextDecoder('euc-kr').decode(u8)
-      t.assert.strictEqual(str, '\uAC02')
-
-      const d = new TextDecoder('euc-kr')
-      const chunks = [
-        d.decode(u8.subarray(0, 1), { stream: true }),
-        d.decode(Uint8Array.of(), { stream: true }),
-        d.decode(u8.subarray(1), { stream: true }),
-        d.decode(),
-      ]
-      t.assert.strictEqual(chunks.join(''), str)
-    })
+        // Deno, Servo and Bun are incorrect on big5, shift_jis, euc-kr
+        // https://github.com/hsivonen/encoding_rs/issues/126
+        {
+          const d = new TextDecoder(encoding)
+          const chunks = [
+            d.decode(u8.subarray(0, 1), { stream: true }),
+            d.decode(Uint8Array.of(), { stream: true }),
+            d.decode(u8.subarray(1), { stream: true }),
+            d.decode(),
+          ]
+          t.assert.strictEqual(chunks.join(''), str)
+        }
+      })
+    }
   })
 
   describe('fatal stream', () => {
