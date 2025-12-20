@@ -336,7 +336,7 @@ export function multibyteDecoder(enc, loose = false) {
           // Decoders big5, euc-jp, euc-kr, shift_jis, gb18030 / gbk - all clear state before throwing unless EOF, so not affected
           // iso-2022-jp is the only tricky one one where this !stream check matters in non-stream mode
           if (!stream) mapper = null // destroy state, effectively the same as 'do not flush' = false, but early
-          throw new Error(E_STRICT)
+          throw new TypeError(E_STRICT)
         }
 
     let res = ''
@@ -399,7 +399,7 @@ function big5decoder(loose) {
       : () => {
           pushback.length = 0 // the queue is cleared on returning an error
           // Lead is always already cleared before throwing
-          throw new Error(E_STRICT)
+          throw new TypeError(E_STRICT)
         }
 
     let res = ''
