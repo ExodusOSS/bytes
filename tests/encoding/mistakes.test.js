@@ -178,6 +178,18 @@ describe('Common implementation mistakes', () => {
       })
     })
 
+    // Node.js misses an implementation
+    test('x-user-defined', (t) => {
+      const encoding = 'x-user-defined'
+      const loose = new TextDecoder(encoding)
+      const fatal = new TextDecoder(encoding, { fatal: true })
+      for (let byte = 0; byte < 256; byte++) {
+        const str = String.fromCodePoint(byte >= 0x80 ? 0xf7_80 + byte - 0x80 : byte)
+        t.assert.strictEqual(fatal.decode(Uint8Array.of(byte)), str, byte)
+        t.assert.strictEqual(loose.decode(Uint8Array.of(byte)), str, byte)
+      }
+    })
+
     test('big5', (t) => {
       const loose = new TextDecoder('big5')
       const fatal = new TextDecoder('big5', { fatal: true })
@@ -193,6 +205,46 @@ describe('Common implementation mistakes', () => {
       const i8i = new TextDecoder('iso-8859-8-i')
       for (let i = 0; i < 256; i++) {
         t.assert.strictEqual(i8.decode(u(i)), i8i.decode(u(i)), `Byte: ${i}`)
+      }
+    })
+
+    describe('single-byte selected tests', (t) => {
+      const r = 0xff_fd
+      const fixtures = {
+        // Node.js fails these (iconv-lite / whatwg-encoding also fails some)
+        'koi8-u': { 174: 1118, 190: 1038 },
+        'windows-874': { 129: 129, 219: r, 220: r, 221: r, 222: r, 252: r, 253: r, 254: r, 255: r },
+        'windows-1252': { 128: 8364, 129: 129, 130: 8218, 131: 402, 141: 141, 158: 382, 159: 376 },
+        'windows-1253': { 129: 129, 136: 136, 159: 159, 170: r },
+        'windows-1255': { 129: 129, 138: 138, 159: 159, 202: 1466 },
+        // iconv-lite / whatwg-encoding fails these
+        macintosh: { 189: 937, 219: 8364, 240: 63_743 },
+        'windows-1250': { 129: 129, 131: 131, 136: 136, 144: 144, 152: 152 },
+        'windows-1251': { 152: 152 },
+        'windows-1254': { 129: 129, 140: 338, 141: 141, 144: 144, 157: 157, 158: 158, 222: 350 },
+        'windows-1257': { 129: 129, 131: 131, 138: 138, 145: 8216, 159: 159, 208: 352, 255: 729 },
+        'windows-1258': { 129: 129, 138: 138, 141: 141, 158: 158, 159: 376, 208: 272, 255: 255 },
+        // Some impls miss some encodings
+        'iso-8859-8-i': { 160: 160, 161: r, 162: 162, 222: r, 223: 8215, 254: 8207, 255: r },
+        'iso-8859-16': { 128: 128, 160: 160, 161: 260, 252: 252, 253: 281, 254: 539, 255: 255 },
+        'x-mac-cyrillic': { 128: 1040, 214: 247, 254: 1102, 255: 8364 },
+      }
+
+      for (const [encoding, map] of Object.entries(fixtures)) {
+        test(encoding, (t) => {
+          const fatal = new TextDecoder(encoding, { fatal: true })
+          const loose = new TextDecoder(encoding)
+          for (const [offset, codepoint] of Object.entries(map)) {
+            const u8 = Uint8Array.of(Number(offset))
+            const str = String.fromCodePoint(codepoint)
+            t.assert.strictEqual(loose.decode(u8), str, `${offset} -> ${codepoint}`)
+            if (codepoint === r) {
+              t.assert.throws(() => fatal.decode(u8))
+            } else {
+              t.assert.strictEqual(fatal.decode(u8), str, `${offset} -> ${codepoint} (fatal)`)
+            }
+          }
+        })
       }
     })
 
