@@ -271,7 +271,6 @@ describe('Common implementation mistakes', () => {
     check([0, 255], [128, 255], [129, 48], [129, 255], [254, 48], [254, 255], [255, 0], [255, 255])
   })
 
-  // Chrome and WebKit fails on this
   describe('Push back ASCII characters on errors', () => {
     const vectors = {
       big5: [
@@ -284,6 +283,8 @@ describe('Common implementation mistakes', () => {
         [[0x1b, 0x24], '\uFFFD$'], // Node.js fails on this. Chrome, Firefox and Safari are correct
         [[0x1b, 0x24, 0x40, 0x1b, 0x24], '\uFFFD\uFFFD'], // Last 0x24 is invalid on both attemtps. Chrome fails on this
       ],
+      gb18030: [[[0xa0, 0x30, 0x2b], '\uFFFD0+']],
+      gbk: [[[0xa0, 0x30, 0x2b], '\uFFFD0+']],
       // TODO: more vectors?
     }
 
@@ -531,50 +532,70 @@ describe('Common implementation mistakes', () => {
     })
 
     const vectors = {
-      gbk: [[0x81, 0x82], '\u4E97'],
-      gb18030: [[0x81, 0x82], '\u4E97'],
-      big5: [[0xfe, 0x40], '\u9442'],
-      shift_jis: [[0x81, 0x87], '\u221E'],
-      'euc-kr': [[0x81, 0x41], '\uAC02'],
-      'euc-jp': [[0xb0, 0xb0], '\u65ED'],
-      'iso-2022-jp': [[0x2a, 0x1b], '*\uFFFD'],
+      gbk: [
+        [[0x81, 0x82], '\u4E97'], // valid
+        [[0xa0, 0x30, 0x2b], '\uFFFD0+'], // replacement
+      ],
+      gb18030: [
+        [[0x81, 0x82], '\u4E97'], // valid
+        [[0xa0, 0x30, 0x2b], '\uFFFD0+'], // replacement
+      ],
+      big5: [[[0xfe, 0x40], '\u9442']],
+      shift_jis: [[[0x81, 0x87], '\u221E']],
+      'euc-kr': [[[0x81, 0x41], '\uAC02']],
+      'euc-jp': [[[0xb0, 0xb0], '\u65ED']],
+      'iso-2022-jp': [[[0x2a, 0x1b], '*\uFFFD']],
     }
 
-    for (const [encoding, [bytes, expected]] of Object.entries(vectors)) {
+    for (const [encoding, list] of Object.entries(vectors)) {
       test(encoding, (t) => {
-        const u8 = Uint8Array.from(bytes)
-        const str = new TextDecoder(encoding).decode(u8)
-        t.assert.strictEqual(str, expected)
+        if (encoding !== 'gb18030') return
+        for (const [bytes, expected] of list) {
+          const u8 = Uint8Array.from(bytes)
+          const str = new TextDecoder(encoding).decode(u8)
+          t.assert.strictEqual(str, expected)
 
-        // Bun is incorrect
-        {
-          const d = new TextDecoder(encoding)
-          const chunks = [d.decode(u8.subarray(0, 1), { stream: true }), d.decode(u8.subarray(1))]
-          t.assert.strictEqual(chunks.join(''), str)
-        }
+          // Bun is incorrect
+          {
+            const d = new TextDecoder(encoding)
+            const chunks = [d.decode(u8.subarray(0, 1), { stream: true }), d.decode(u8.subarray(1))]
+            t.assert.strictEqual(chunks.join(''), str)
+          }
 
-        // Bun is incorrect
-        {
-          const d = new TextDecoder(encoding)
-          const chunks = [
-            d.decode(u8.subarray(0, 1), { stream: true }),
-            d.decode(u8.subarray(1), { stream: true }),
-            d.decode(),
-          ]
-          t.assert.strictEqual(chunks.join(''), str)
-        }
+          // Bun is incorrect
+          {
+            const d = new TextDecoder(encoding)
+            const chunks = [
+              d.decode(u8.subarray(0, 1), { stream: true }),
+              d.decode(u8.subarray(1), { stream: true }),
+              d.decode(),
+            ]
+            t.assert.strictEqual(chunks.join(''), str)
+          }
 
-        // Deno, Servo and Bun are incorrect on big5, shift_jis, euc-kr
-        // https://github.com/hsivonen/encoding_rs/issues/126
-        {
-          const d = new TextDecoder(encoding)
-          const chunks = [
-            d.decode(u8.subarray(0, 1), { stream: true }),
-            d.decode(Uint8Array.of(), { stream: true }),
-            d.decode(u8.subarray(1), { stream: true }),
-            d.decode(),
-          ]
-          t.assert.strictEqual(chunks.join(''), str)
+          // Deno, Servo and Bun are incorrect on big5, shift_jis, euc-kr
+          // https://github.com/hsivonen/encoding_rs/issues/126
+          {
+            const d = new TextDecoder(encoding)
+            const chunks = [
+              d.decode(u8.subarray(0, 1), { stream: true }),
+              d.decode(Uint8Array.of(), { stream: true }),
+              d.decode(u8.subarray(1), { stream: true }),
+              d.decode(),
+            ]
+            t.assert.strictEqual(chunks.join(''), str)
+          }
+
+          // Node.js throws an "data was not valid for encoding" error in replacement mode
+          {
+            const d = new TextDecoder(encoding)
+            const chunks = [
+              d.decode(u8.subarray(0, 2), { stream: true }),
+              d.decode(u8.subarray(2), { stream: true }),
+              d.decode(),
+            ]
+            t.assert.strictEqual(chunks.join(''), str)
+          }
         }
       })
     }
