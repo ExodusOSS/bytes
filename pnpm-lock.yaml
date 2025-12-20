@@ -2314,8 +2314,8 @@ packages:
     resolution: {integrity: sha512-C3FsVNH1udSEX48gGX1xfvwTWfsYWj5U+8/uK15BGzIGrKoUpghX8hWZwa/OFnakBiiVNmBvemTJR5mcy7iPcg==, tarball: https://registry.npmjs.org/pify/-/pify-3.0.0.tgz}
     engines: {node: '>=4'}
 
-  playwright-core@1.56.0:
-    resolution: {integrity: sha512-1SXl7pMfemAMSDn5rkPeZljxOCYAmQnYLBTExuh6E8USHXGSX3dx6lYZN/xPpTz1vimXmPA9CDnILvmJaB8aSQ==, tarball: https://registry.npmjs.org/playwright-core/-/playwright-core-1.56.0.tgz}
+  playwright-core@1.57.0:
+    resolution: {integrity: sha512-agTcKlMw/mjBWOnD6kFZttAAGHgi/Nw0CZ2o6JqWSbMlI219lAFLZZCyqByTsvVAJq5XA5H8cA6PrvBRpBWEuQ==, tarball: https://registry.npmjs.org/playwright-core/-/playwright-core-1.57.0.tgz}
     engines: {node: '>=18'}
     hasBin: true
 
@@ -3441,7 +3441,7 @@ snapshots:
       electron: 36.5.0
       expect: 30.2.0
       fast-glob: 3.3.3
-      playwright-core: 1.56.0
+      playwright-core: 1.57.0
       pretty-format: 30.2.0
       puppeteer-core: 24.24.0
     transitivePeerDependencies:
@@ -5532,7 +5532,7 @@ snapshots:
 
   pify@3.0.0: {}
 
-  playwright-core@1.56.0:
+  playwright-core@1.57.0:
     optional: true
 
   pluralize@8.0.0: {}
