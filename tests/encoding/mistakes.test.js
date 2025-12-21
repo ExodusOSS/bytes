@@ -252,11 +252,11 @@ describe('Common implementation mistakes', () => {
     // This one might be tricky to get into WPT, as two major impls ignore spec here
     // https://github.com/whatwg/encoding/issues/115
     test('Concatenating two ISO-2022-JP outputs is not always valid', (t) => {
-      const fatal = new TextDecoder('iso-2022-jp', { fatal: true })
       const loose = new TextDecoder('iso-2022-jp')
 
       // Roman, example from spec
       {
+        const fatal = new TextDecoder('iso-2022-jp', { fatal: true }) // Fresh instance because of sticky state, which is a separate test
         const a = u(0x1b, 0x28, 0x4a, 0x5c, 0x1b, 0x28, 0x42) // switch to Roman, select char, switch to ascii
         t.assert.strictEqual(fatal.decode(a), '\xA5')
         t.assert.strictEqual(loose.decode(a), '\xA5')
@@ -266,6 +266,7 @@ describe('Common implementation mistakes', () => {
 
       // jis
       {
+        const fatal = new TextDecoder('iso-2022-jp', { fatal: true }) // Fresh instance because of sticky state, which is a separate test
         const a = u(0x1b, 0x24, 0x42, 0x30, 0x30, 0x1b, 0x28, 0x42) // switch to jis, select char, switch to ascii
         t.assert.strictEqual(fatal.decode(a), '\u65ED')
         t.assert.strictEqual(loose.decode(a), '\u65ED')
