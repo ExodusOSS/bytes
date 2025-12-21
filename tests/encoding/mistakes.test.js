@@ -631,7 +631,6 @@ describe('Common implementation mistakes', () => {
 
     for (const [encoding, list] of Object.entries(vectors)) {
       test(encoding, (t) => {
-        if (encoding !== 'gb18030') return
         for (const [bytes, expected] of list) {
           const u8 = Uint8Array.from(bytes)
           const str = new TextDecoder(encoding).decode(u8)
