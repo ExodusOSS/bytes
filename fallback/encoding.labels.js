@@ -2,7 +2,7 @@
 
 /* eslint-disable @exodus/export-default/named */
 // prettier-ignore
-export default {
+const labels = {
   'utf-8': ['unicode-1-1-utf-8', 'unicode11utf8', 'unicode20utf8', 'utf8', 'x-unicode20utf8'],
   ibm866: ['866', 'cp866', 'csibm866'],
   'iso-8859-2': ['csisolatin2', 'iso-ir-101', 'iso8859-2', 'iso88592', 'iso_8859-2', 'iso_8859-2:1987', 'l2', 'latin2'],
@@ -22,15 +22,6 @@ export default {
   'koi8-u': ['koi8-ru'],
   macintosh: ['csmacintosh', 'mac', 'x-mac-roman'],
   'windows-874': ['dos-874', 'iso-8859-11', 'iso8859-11', 'iso885911', 'tis-620'],
-  'windows-1250': ['cp1250', 'x-cp1250'],
-  'windows-1251': ['cp1251', 'x-cp1251'],
-  'windows-1252': ['ansi_x3.4-1968', 'ascii', 'cp1252', 'cp819', 'csisolatin1', 'ibm819', 'iso-8859-1', 'iso-ir-100', 'iso8859-1', 'iso88591', 'iso_8859-1', 'iso_8859-1:1987', 'l1', 'latin1', 'us-ascii', 'x-cp1252'],
-  'windows-1253': ['cp1253', 'x-cp1253'],
-  'windows-1254': ['cp1254', 'csisolatin5', 'iso-8859-9', 'iso-ir-148', 'iso8859-9', 'iso88599', 'iso_8859-9', 'iso_8859-9:1989', 'l5', 'latin5', 'x-cp1254'],
-  'windows-1255': ['cp1255', 'x-cp1255'],
-  'windows-1256': ['cp1256', 'x-cp1256'],
-  'windows-1257': ['cp1257', 'x-cp1257'],
-  'windows-1258': ['cp1258', 'x-cp1258'],
   'x-mac-cyrillic': ['x-mac-ukrainian'],
   gbk: ['chinese', 'csgb2312', 'csiso58gb231280', 'gb2312', 'gb_2312', 'gb_2312-80', 'iso-ir-58', 'x-gbk'],
   gb18030: [],
@@ -44,3 +35,12 @@ export default {
   'utf-16le': ['csunicode', 'iso-10646-ucs-2', 'ucs-2', 'unicode', 'unicodefeff', 'utf-16'],
   'x-user-defined': [],
 }
+
+for (let i = 0; i < 9; i++) labels[`windows-125${i}`] = [`cp125${i}`, `x-cp125${i}`]
+
+// prettier-ignore
+labels['windows-1252'].push('ansi_x3.4-1968', 'ascii', 'cp819', 'csisolatin1', 'ibm819', 'iso-8859-1', 'iso-ir-100', 'iso8859-1', 'iso88591', 'iso_8859-1', 'iso_8859-1:1987', 'l1', 'latin1', 'us-ascii')
+// prettier-ignore
+labels['windows-1254'].push('csisolatin5', 'iso-8859-9', 'iso-ir-148', 'iso8859-9', 'iso88599', 'iso_8859-9', 'iso_8859-9:1989', 'l5', 'latin5')
+
+export default labels
