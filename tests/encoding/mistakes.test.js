@@ -254,11 +254,24 @@ describe('Common implementation mistakes', () => {
     test('Concatenating two ISO-2022-JP outputs is not always valid', (t) => {
       const fatal = new TextDecoder('iso-2022-jp', { fatal: true })
       const loose = new TextDecoder('iso-2022-jp')
-      const a = u(0x1b, 0x24, 0x42, 0x30, 0x30, 0x1b, 0x28, 0x42) // switch to jis, select char, switch to ascii
-      t.assert.strictEqual(fatal.decode(a), '\u65ED')
-      t.assert.strictEqual(loose.decode(a), '\u65ED')
-      t.assert.throws(() => fatal.decode(u(...a, ...a)))
-      t.assert.strictEqual(loose.decode(u(...a, ...a)), '\u65ED\uFFFD\u65ED')
+
+      // Roman, example from spec
+      {
+        const a = u(0x1b, 0x28, 0x4a, 0x5c, 0x1b, 0x28, 0x42) // switch to Roman, select char, switch to ascii
+        t.assert.strictEqual(fatal.decode(a), '\xA5')
+        t.assert.strictEqual(loose.decode(a), '\xA5')
+        t.assert.throws(() => fatal.decode(u(...a, ...a)))
+        t.assert.strictEqual(loose.decode(u(...a, ...a)), '\xA5\uFFFD\xA5')
+      }
+
+      // jis
+      {
+        const a = u(0x1b, 0x24, 0x42, 0x30, 0x30, 0x1b, 0x28, 0x42) // switch to jis, select char, switch to ascii
+        t.assert.strictEqual(fatal.decode(a), '\u65ED')
+        t.assert.strictEqual(loose.decode(a), '\u65ED')
+        t.assert.throws(() => fatal.decode(u(...a, ...a)))
+        t.assert.strictEqual(loose.decode(u(...a, ...a)), '\u65ED\uFFFD\u65ED')
+      }
     })
   })
 
