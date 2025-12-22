@@ -142,9 +142,14 @@ describe('random data', () => {
   const restored = []
   const ignoreBOM = true
 
+  let nativeIsOk = nativeDecoder
+  // Non-native might be wrong
+  // Also, Node.js without ICU has native not performing replacement, so we can't compare against that
+  nativeIsOk &= new TextDecoder('utf-16le').decode(Uint8Array.of(0x00, 0xd8)) === '\uFFFD'
+
   test('utf16toStringLoose', (t) => {
-    const decoderLE = nativeDecoder ? new TextDecoder('utf-16le', { ignoreBOM }) : null // polyfilled might be wrong
-    const decoderBE = nativeDecoder ? new TextDecoder('utf-16be', { ignoreBOM }) : null // polyfilled might be wrong
+    const decoderLE = nativeIsOk ? new TextDecoder('utf-16le', { ignoreBOM }) : null // polyfilled might be wrong
+    const decoderBE = nativeIsOk ? new TextDecoder('utf-16be', { ignoreBOM }) : null // polyfilled might be wrong
     for (const u16 of pool) {
       const str = utf16.utf16toStringLoose(u16)
       t.assert.strictEqual(str, js.decode(u16, true))
@@ -160,8 +165,8 @@ describe('random data', () => {
   })
 
   test('utf16toString (ascii)', (t) => {
-    const decoderLE = nativeDecoder ? new TextDecoder('utf-16le', { ignoreBOM }) : null
-    const decoderBE = nativeDecoder ? new TextDecoder('utf-16be', { ignoreBOM }) : null
+    const decoderLE = nativeIsOk ? new TextDecoder('utf-16le', { ignoreBOM }) : null
+    const decoderBE = nativeIsOk ? new TextDecoder('utf-16be', { ignoreBOM }) : null
     for (const u16 of poolAscii) {
       const str = utf16.utf16toString(u16)
       t.assert.strictEqual(str, utf16.utf16toStringLoose(u16))
@@ -181,8 +186,8 @@ describe('random data', () => {
   })
 
   test('utf16toString', (t) => {
-    const decoderLE = nativeDecoder ? new TextDecoder('utf-16le', { fatal: true, ignoreBOM }) : null
-    const decoderBE = nativeDecoder ? new TextDecoder('utf-16be', { fatal: true, ignoreBOM }) : null
+    const decoderLE = nativeIsOk ? new TextDecoder('utf-16le', { fatal: true, ignoreBOM }) : null
+    const decoderBE = nativeIsOk ? new TextDecoder('utf-16be', { fatal: true, ignoreBOM }) : null
     t.assert.strictEqual(strings.length, pool.length)
     for (let i = 0; i < pool.length; i++) {
       const u16 = pool[i]
@@ -197,7 +202,7 @@ describe('random data', () => {
       if (str === undefined) {
         t.assert.throws(() => js.decode(u16, false))
         t.assert.throws(() => utf16.utf16toString(u8, isLE ? 'uint8-le' : 'uint8-be'))
-        if (nativeDecoder) t.assert.throws(() => (isLE ? decoderLE : decoderBE).decode(u8))
+        if (nativeIsOk) t.assert.throws(() => (isLE ? decoderLE : decoderBE).decode(u8))
       } else {
         t.assert.strictEqual(str, strings[i])
         t.assert.strictEqual(str, utf16.utf16toStringLoose(u16))
@@ -205,7 +210,7 @@ describe('random data', () => {
         t.assert.strictEqual(str, js.decode(u16, true))
         t.assert.strictEqual(str, utf16.utf16toString(u8, isLE ? 'uint8-le' : 'uint8-be'))
         t.assert.strictEqual(str, utf16.utf16toStringLoose(u8, isLE ? 'uint8-le' : 'uint8-be'))
-        if (nativeDecoder) t.assert.strictEqual(str, (isLE ? decoderLE : decoderBE).decode(u8))
+        if (nativeIsOk) t.assert.strictEqual(str, (isLE ? decoderLE : decoderBE).decode(u8))
         if (Buffer && isLE) t.assert.strictEqual(str, Buffer.from(u8).toString('utf-16le'))
       }
     }
@@ -244,8 +249,8 @@ describe('random data', () => {
   })
 
   test('utf16toString / utf16toStringLoose', (t) => {
-    const decoderLE = nativeDecoder ? new TextDecoder('utf-16le', { fatal: true, ignoreBOM }) : null
-    const decoderBE = nativeDecoder ? new TextDecoder('utf-16be', { fatal: true, ignoreBOM }) : null
+    const decoderLE = nativeIsOk ? new TextDecoder('utf-16le', { fatal: true, ignoreBOM }) : null
+    const decoderBE = nativeIsOk ? new TextDecoder('utf-16be', { fatal: true, ignoreBOM }) : null
     t.assert.strictEqual(strings.length, pool.length)
     for (let i = 0; i < pool.length; i++) {
       const str = strings[i]
@@ -257,7 +262,7 @@ describe('random data', () => {
       t.assert.strictEqual(str, js.decode(u16, true))
       t.assert.strictEqual(str, utf16.utf16toString(u8, isLE ? 'uint8-le' : 'uint8-be'))
       t.assert.strictEqual(str, utf16.utf16toStringLoose(u8, isLE ? 'uint8-le' : 'uint8-be'))
-      if (nativeDecoder) t.assert.strictEqual(str, (isLE ? decoderLE : decoderBE).decode(u8))
+      if (nativeIsOk) t.assert.strictEqual(str, (isLE ? decoderLE : decoderBE).decode(u8))
       if (Buffer && isLE) t.assert.strictEqual(str, Buffer.from(u8).toString('utf-16le'))
     }
   })

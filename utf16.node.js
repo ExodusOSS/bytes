@@ -36,6 +36,7 @@ const swapped = (x, swap) =>
   swap ? Buffer.from(x).swap16() : Buffer.from(x.buffer, x.byteOffset, x.byteLength)
 
 // We skip TextDecoder on Node.js, as it's is somewhy significantly slower than Buffer for utf16
+// Also, it incorrectly misses replacements with Node.js is built without ICU, we fix that
 function decodeNode(input, loose = false, format = 'uint16') {
   let ble
   if (format === 'uint16') {
