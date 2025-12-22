@@ -205,16 +205,10 @@ as an ASCII-lowercased string.
 If an encoding with that label does not exist, returns `null`.
 
 This is the same as [`decoder.encoding` getter](https://encoding.spec.whatwg.org/#dom-textdecoder-encoding),
-except that it does not throw for invalid labels and instead returns `null`, and is identical to
-the following code:
-```js
-try {
-  if (!label) return null // does not default to 'utf-8'
-  return new TextDecoder(label).encoding
-} catch {
-  return null
-}
-```
+except that it:
+ 1. Supports [`replacement` encoding](https://encoding.spec.whatwg.org/#replacement) and its
+    [labels](https://encoding.spec.whatwg.org/#ref-for-replacement%E2%91%A1)
+ 2. Does not throw for invalid labels and instead returns `null`
 
 All encoding names are also valid labels for corresponding encodings.
 
