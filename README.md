@@ -227,15 +227,14 @@ Given a `TypedArray` or an `ArrayBuffer` instance `input`, returns either of:
 Implements [decode](https://encoding.spec.whatwg.org/#decode) legacy hook.
 
 Given a `TypedArray` or an `ArrayBuffer` instance `input` and an optional `fallbackEncoding`
-normalized encoding name, sniffs encoding from BOM with `fallbackEncoding` fallback and then
+encoding [label](https://encoding.spec.whatwg.org/#names-and-labels),
+sniffs encoding from BOM with `fallbackEncoding` fallback and then
 decodes the `input` using that encoding, skipping BOM if it was present.
 
 Notes:
 
  * BOM-sniffed encoding takes precedence over `fallbackEncoding` option per spec.
    Use with care.
- * `fallbackEncoding` must be ASCII-lowercased encoding name,
-   e.g. a result of `normalizeEncoding(label)` call.
  * Always operates in non-fatal [mode](https://encoding.spec.whatwg.org/#textdecoder-error-mode),
    aka replacement. It can convert different byte sequences to equal strings.
 

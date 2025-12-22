@@ -111,6 +111,10 @@ describe('legacyHookDecode', () => {
       ['feffd70020', '\uD700\uFFFD'],
       ['feffd80820', '\uFFFD\uFFFD'],
     ],
+    // non-normalized names
+    Utf8: [['c280', '\x80']],
+    unicodefeff: [['c280', '\u80C2']],
+    UnicodeFFFE: [['c280', '\uC280']],
   }
 
   test('null encoding', (t) => {
