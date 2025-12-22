@@ -41,6 +41,7 @@ Spec compliant, passing WPT and covered with extra tests.
 Moreover, tests for this library uncovered [bugs in all major implementations](https://docs.google.com/spreadsheets/d/1pdEefRG6r9fZy61WHGz0TKSt8cO4ISWqlpBN5KntIvQ/edit).
 
 [Faster than Node.js native implementation on Node.js](https://github.com/nodejs/node/issues/61041#issuecomment-3649242024).
+Runs (and passes WPT) on Node.js built without ICU.
 
 ### Caveat: `TextDecoder` / `TextEncoder` APIs are lossy by default per spec
 
