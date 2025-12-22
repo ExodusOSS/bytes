@@ -113,6 +113,10 @@ describe('legacyHookDecode', () => {
     ],
   }
 
+  test('null encoding', (t) => {
+    t.assert.throws(() => legacyHookDecode(Uint8Array.of(), null), RangeError)
+  })
+
   for (const [encoding, data] of Object.entries(fixtures)) {
     test(encoding, (t) => {
       for (const [hex, string] of data) {

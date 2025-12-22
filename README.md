@@ -243,7 +243,7 @@ This method is similar to the following code, except that it doesn't support enc
 only expects lowercased encoding name:
 
 ```js
-new TextDecoder(getBOMEncoding(input) ?? fallbackEncoding ?? 'utf-8').decode(input)
+new TextDecoder(getBOMEncoding(input) ?? fallbackEncoding).decode(input)
 ```
 
 ### `@exodus/bytes/encoding-lite.js`

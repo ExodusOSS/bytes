@@ -258,11 +258,11 @@ export function getBOMEncoding(input) {
 // Warning: lossy, performs replacement, no option of throwing
 // Expects normalized (lower-case) encoding as input. Completely ignores it and even skips validation when BOM is found
 // Unlike TextDecoder public API, additionally supports 'replacement' encoding
-export function legacyHookDecode(input, fallbackEncoding) {
+export function legacyHookDecode(input, fallbackEncoding = 'utf-8') {
   let u8 = fromSource(input)
   const bomEncoding = getBOMEncoding(u8)
   if (bomEncoding) u8 = u8.subarray(bomEncoding === 'utf-8' ? 3 : 2)
-  const enc = bomEncoding ?? fallbackEncoding ?? 'utf-8' // "the byte order mark is more authoritative than anything else"
+  const enc = bomEncoding ?? fallbackEncoding // "the byte order mark is more authoritative than anything else"
 
   if (enc === 'utf-8') return utf8toStringLoose(u8)
   if (enc === 'utf-16le' || enc === 'utf-16be') {
