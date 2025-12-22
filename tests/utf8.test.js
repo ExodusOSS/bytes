@@ -145,6 +145,16 @@ describe('random data', () => {
   const restored = []
   const ignoreBOM = true
 
+  let nativeFatal = nativeDecoder
+  if (nativeFatal) {
+    try {
+      // Non-fixed Node.js without ICU doesn't have 'fatal' option support
+      new TextDecoder('utf8', { fatal: true }) // eslint-disable-line no-new
+    } catch {
+      nativeFatal = false
+    }
+  }
+
   test('utf8toStringLoose', (t) => {
     const textDecoder = nativeDecoder ? new TextDecoder('utf8', { ignoreBOM }) : null // polyfilled might be wrong
     const NativeBuffer = globalThis.Buffer && !globalThis.Buffer.TYPED_ARRAY_SUPPORT ? Buffer : null
@@ -158,7 +168,7 @@ describe('random data', () => {
   })
 
   test('utf8toString (ascii)', (t) => {
-    const textDecoder = nativeDecoder ? new TextDecoder('utf8', { fatal: true, ignoreBOM }) : null
+    const textDecoder = nativeFatal ? new TextDecoder('utf8', { fatal: true, ignoreBOM }) : null
     for (const u8 of poolAscii) {
       const str = utf8toString(u8)
       t.assert.strictEqual(str, utf8toStringLoose(u8))
@@ -171,7 +181,7 @@ describe('random data', () => {
   })
 
   test('utf8toString', (t) => {
-    const textDecoder = nativeDecoder ? new TextDecoder('utf8', { fatal: true, ignoreBOM }) : null
+    const textDecoder = nativeFatal ? new TextDecoder('utf8', { fatal: true, ignoreBOM }) : null
     t.assert.strictEqual(strings.length, pool.length)
     for (let i = 0; i < pool.length; i++) {
       const u8 = pool[i]
@@ -227,7 +237,7 @@ describe('random data', () => {
   })
 
   test('utf8toString / utf8toStringLoose', (t) => {
-    const textDecoder = nativeDecoder ? new TextDecoder('utf8', { fatal: true, ignoreBOM }) : null
+    const textDecoder = nativeFatal ? new TextDecoder('utf8', { fatal: true, ignoreBOM }) : null
     t.assert.strictEqual(strings.length, pool.length)
     for (let i = 0; i < pool.length; i++) {
       const str = strings[i]

@@ -1,14 +1,20 @@
 import { assertUint8 } from './assert.js'
 import { typedView } from './array.js'
-import { E_STRICT_UNICODE } from './fallback/utf8.js'
+import { E_STRICT, E_STRICT_UNICODE } from './fallback/utf8.js'
 import { isAscii } from 'node:buffer'
 
 if (Buffer.TYPED_ARRAY_SUPPORT) throw new Error('Unexpected Buffer polyfill')
 
-const decoderFatal = new TextDecoder('utf-8', { ignoreBOM: true, fatal: true })
+let decoderFatal
 const decoderLoose = new TextDecoder('utf-8', { ignoreBOM: true })
 const { isWellFormed } = String.prototype
 const isDeno = Boolean(globalThis.Deno)
+
+try {
+  decoderFatal = new TextDecoder('utf-8', { ignoreBOM: true, fatal: true })
+} catch {
+  // Without ICU, Node.js doesn't support fatal option for utf-8
+}
 
 function encode(str, loose = false) {
   if (typeof str !== 'string') throw new TypeError('Input is not a string')
@@ -45,7 +51,14 @@ function decode(arr, loose = false) {
     return buf.latin1Slice(0, arr.byteLength) // .latin1Slice is faster than .asciiSlice
   }
 
-  return loose ? decoderLoose.decode(arr) : decoderFatal.decode(arr)
+  if (loose) return decoderLoose.decode(arr)
+  if (decoderFatal) return decoderFatal.decode(arr)
+
+  // We are in an env without native fatal decoder support (non-fixed Node.js without ICU)
+  // Well, just recheck against encode if it contains replacement then, this is still faster than js impl
+  const str = decoderLoose.decode(arr)
+  if (str.includes('\uFFFD') && !Buffer.from(str).equals(arr)) throw new TypeError(E_STRICT)
+  return str
 }
 
 export const utf8fromString = (str, format = 'uint8') => typedView(encode(str, false), format)
