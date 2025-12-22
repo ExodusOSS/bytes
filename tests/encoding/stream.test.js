@@ -12,7 +12,9 @@ const seeds = []
 for (let i = 1; i <= 128; i++) seeds.push(fixedPRG.randomBytes(23 * i))
 const rand = () => fixedPRG.randomBytes(1)[0] / 256 // or Math.random()
 
-function streamTest(t, label, testFatal) {
+const isConsistenFatalEncoding = (label) => legacySingleByte.includes(label) || label === 'utf-8' // see explanation below
+
+function streamChecks(t, label, testFatal) {
   for (const u8i of seeds) {
     const u8 = Uint8Array.from(u8i)
     const loose = new TextDecoder(label)
@@ -41,12 +43,16 @@ function streamTest(t, label, testFatal) {
         // Can differ on multi-byte as the previous chunk might have caused a second error in next one
         // In fatal mode the queue from the previous invalid chunk is ignored, while in replacement it causes another error
         // It can also go the other way around: previous state causing next input to be valid for replacement but not for fatal
-        // Continiuing streaming after fatal error can also completely switch the behavior for e.g. utf-32
-        if (legacySingleByte.includes(label) || (label === 'utf-8' && previousValidBytes >= 3)) {
-          if (ok) {
-            t.assert.strictEqual(b, a)
-          } else {
-            t.assert.ok(a.includes('\uFFFD'))
+        // Continuing streaming after fatal error can also completely switch the behavior for e.g. utf-16
+        // See e.g. https://github.com/whatwg/encoding/issues/358#issuecomment-3678655834
+        if (isConsistenFatalEncoding(label)) {
+          if (ok) t.assert.ok(a.includes(b))
+          if (legacySingleByte.includes(label) || (label === 'utf-8' && previousValidBytes >= 3)) {
+            if (ok) {
+              t.assert.strictEqual(b, a)
+            } else {
+              t.assert.ok(a.includes('\uFFFD'))
+            }
           }
         }
       }
@@ -62,11 +68,14 @@ function streamTest(t, label, testFatal) {
         okf = true
       } catch {}
 
-      if (legacySingleByte.includes(label) || (label === 'utf-8' && continiousValidBytes >= 3)) {
-        if (okf) {
-          t.assert.strictEqual(bf, af)
-        } else {
-          t.assert.ok(af.includes('\uFFFD'))
+      if (isConsistenFatalEncoding(label)) {
+        if (okf) t.assert.ok(af.includes(bf))
+        if (legacySingleByte.includes(label) || (label === 'utf-8' && continiousValidBytes >= 3)) {
+          if (okf) {
+            t.assert.strictEqual(bf, af)
+          } else {
+            t.assert.ok(af.includes('\uFFFD'))
+          }
         }
       }
     }
@@ -78,14 +87,16 @@ function streamTest(t, label, testFatal) {
   }
 }
 
+function streamTest(label, fatal) {
+  const skip = fatal && !isConsistenFatalEncoding(label) // see explanation in fatal path above
+  test(label, { skip }, (t) => streamChecks(t, label, fatal))
+}
+
 describe('stream=true in small chunks', () => {
   describe('Unicode', () => {
     for (const fatal of [false, true]) {
       describe(fatal ? 'fatal' : 'loose', () => {
-        for (const label of unicode) {
-          if (label !== 'utf-8' && fatal) continue // see comment above, utf-16 is hard to test here
-          test(label, (t) => streamTest(t, label, fatal))
-        }
+        for (const label of unicode) streamTest(label, fatal)
       })
     }
   })
@@ -93,16 +104,15 @@ describe('stream=true in small chunks', () => {
   describe('1-byte encodings', () => {
     for (const fatal of [false, true]) {
       describe(fatal ? 'fatal' : 'loose', () => {
-        for (const label of legacySingleByte) test(label, (t) => streamTest(t, label, fatal))
+        for (const label of legacySingleByte) streamTest(label, fatal)
       })
     }
   })
 
   describe('legacy multi-byte encodings', () => {
-    // See comment above, fatal streaming is hard to test blindly for these
-    for (const fatal of [false]) {
+    for (const fatal of [false, true]) {
       describe(fatal ? 'fatal' : 'loose', () => {
-        for (const label of legacyMultiByte) test(label, (t) => streamTest(t, label, fatal))
+        for (const label of legacyMultiByte) streamTest(label, fatal)
       })
     }
   })
