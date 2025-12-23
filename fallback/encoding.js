@@ -295,6 +295,7 @@ const uppercasePrefixes = new Set(['utf', 'iso', 'koi', 'euc', 'ibm', 'gbk'])
 // https://encoding.spec.whatwg.org/#names-and-labels
 export function labelToName(label) {
   const enc = normalizeEncoding(label)
+  if (enc === 'utf-8') return 'UTF-8' // fast path
   if (!enc) return enc
   if (uppercasePrefixes.has(enc.slice(0, 3))) return enc.toUpperCase()
   if (enc === 'big5') return 'Big5'
