@@ -92,21 +92,21 @@ See [the list of encodings](https://encoding.spec.whatwg.org/#names-and-labels).
 
 ### `@exodus/bytes/single-byte.js`
 
+Decode the legacy single-byte encodings according to the [Encoding standard](https://encoding.spec.whatwg.org/)
+([§9](https://encoding.spec.whatwg.org/#legacy-single-byte-encodings) and
+[§14.5](https://encoding.spec.whatwg.org/#x-user-defined)).
+
+Supports all single-byte encodings listed in the standard:
+`ibm866`, `iso-8859-2`, `iso-8859-3`, `iso-8859-4`, `iso-8859-5`, `iso-8859-6`, `iso-8859-7`, `iso-8859-8`,
+`iso-8859-8-i`, `iso-8859-10`, `iso-8859-13`, `iso-8859-14`, `iso-8859-15`, `iso-8859-16`, `koi8-r`, `koi8-u`,
+`macintosh`, `windows-874`, `windows-1250`, `windows-1251`, `windows-1252`, `windows-1253`, `windows-1254`,
+`windows-1255`, `windows-1256`, `windows-1257`, `windows-1258`, `x-mac-cyrillic` and `x-user-defined`.
+
 ##### `createSinglebyteDecoder(encoding, loose = false)`
 
-Create a decoder for a supported one-byte `encoding`.
+Create a decoder for a supported one-byte `encoding`, given it's lowercased name `encoding`.
 
 Returns a function `decode(arr)` that decodes bytes to a string.
-
-### `@exodus/bytes/multi-byte.js`
-
-##### `createMultibyteDecoder(encoding, loose = false)`
-
-Create a decoder for a supported legacy multi-byte `encoding`.
-
-Returns a function `decode(arr, stream = false)` that decodes bytes to a string.
-
-That function will have state while `stream = true` is used.
 
 ##### `windows1252toString(arr)`
 
@@ -116,7 +116,29 @@ Also supports `ascii` and `latin-1` as those are strict subsets of `windows-1252
 
 There is no loose variant for this encoding, all bytes can be decoded.
 
-Same as `windows1252toString = createSinglebyteDecoder('windows-1252')`.
+Same as:
+```js
+windows1252toString = createSinglebyteDecoder('windows-1252')
+```
+
+### `@exodus/bytes/multi-byte.js`
+
+Decode the legacy multi-byte encodings according to the [Encoding standard](https://encoding.spec.whatwg.org/)
+([§10](https://encoding.spec.whatwg.org/#legacy-multi-byte-chinese-(simplified)-encodings),
+[§11](https://encoding.spec.whatwg.org/#legacy-multi-byte-chinese-(traditional)-encodings),
+[§12](https://encoding.spec.whatwg.org/#legacy-multi-byte-japanese-encodings),
+[§13](https://encoding.spec.whatwg.org/#legacy-multi-byte-korean-encodings)).
+
+Supports all legacy multi-byte encodings listed in the standard:
+`gbk`, `gb18030`, `big5`, `euc-jp`, `iso-2022-jp`, `shift_jis`, `euc-kr`.
+
+##### `createMultibyteDecoder(encoding, loose = false)`
+
+Create a decoder for a supported legacy multi-byte `encoding`, given it's lowercased name `encoding`.
+
+Returns a function `decode(arr, stream = false)` that decodes bytes to a string.
+
+That function will have state while `stream = true` is used.
 
 ### `@exodus/bytes/bigint.js`
 
