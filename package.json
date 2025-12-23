@@ -45,6 +45,7 @@
   "files": [
     "/fallback/_utils.js",
     "/fallback/base32.js",
+    "/fallback/base58check.js",
     "/fallback/base64.js",
     "/fallback/encoding.js",
     "/fallback/encoding.labels.js",
@@ -65,6 +66,7 @@
     "/base32.js",
     "/base58.js",
     "/base58check.js",
+    "/base58check.node.js",
     "/base64.js",
     "/base64.d.ts",
     "/bech32.js",
@@ -92,7 +94,10 @@
     },
     "./base32.js": "./base32.js",
     "./base58.js": "./base58.js",
-    "./base58check.js": "./base58check.js",
+    "./base58check.js": {
+      "node": "./base58check.node.js",
+      "default": "./base58check.js"
+    },
     "./base64.js": {
       "types": "./base64.d.ts",
       "default": "./base64.js"
