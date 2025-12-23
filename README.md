@@ -78,6 +78,13 @@ See [the list of encodings](https://encoding.spec.whatwg.org/#names-and-labels).
 
 ### `@exodus/bytes/utf8.js`
 
+```js
+import { utf8fromString, utf8toString } from '@exodus/bytes/utf8.js'
+
+// loose
+import { utf8fromStringLoose, utf8toStringLoose } from '@exodus/bytes/utf8.js'
+```
+
 ##### `utf8fromString(str, format = 'uint8')`
 ##### `utf8fromStringLoose(str, format = 'uint8')`
 ##### `utf8toString(arr)`
@@ -85,12 +92,24 @@ See [the list of encodings](https://encoding.spec.whatwg.org/#names-and-labels).
 
 ### `@exodus/bytes/utf16.js`
 
+```js
+import { utf16fromString, utf16toString } from '@exodus/bytes/utf16.js'
+
+// loose
+import { utf16fromStringLoose, utf16toStringLoose } from '@exodus/bytes/utf16.js'
+```
+
 ##### `utf16fromString(str, format = 'uint16')`
 ##### `utf16fromStringLoose(str, format = 'uint16')`
 ##### `utf16toString(arr, 'uint16')`
 ##### `utf16toStringLoose(arr, 'uint16')`
 
 ### `@exodus/bytes/single-byte.js`
+
+```js
+import { createSinglebyteDecoder } from '@exodus/bytes/single-byte.js'
+import { windows1252toString } from '@exodus/bytes/single-byte.js'
+```
 
 Decode the legacy single-byte encodings according to the [Encoding standard](https://encoding.spec.whatwg.org/)
 ([§9](https://encoding.spec.whatwg.org/#legacy-single-byte-encodings) and
@@ -118,10 +137,14 @@ There is no loose variant for this encoding, all bytes can be decoded.
 
 Same as:
 ```js
-windows1252toString = createSinglebyteDecoder('windows-1252')
+const windows1252toString = createSinglebyteDecoder('windows-1252')
 ```
 
 ### `@exodus/bytes/multi-byte.js`
+
+```js
+import { createMultibyteDecoder } from '@exodus/bytes/multi-byte.js'
+```
 
 Decode the legacy multi-byte encodings according to the [Encoding standard](https://encoding.spec.whatwg.org/)
 ([§10](https://encoding.spec.whatwg.org/#legacy-multi-byte-chinese-(simplified)-encodings),
@@ -142,56 +165,99 @@ That function will have state while `stream = true` is used.
 
 ### `@exodus/bytes/bigint.js`
 
+```js
+import { fromBigInt, toBigInt } from '@exodus/bytes/bigint.js'
+```
+
 ##### `fromBigInt(bigint, { length, format = 'uint8' })`
 ##### `toBigInt(arr)`
 
 ### `@exodus/bytes/hex.js`
 
-##### `toHex(arr)`
+```js
+import { fromHex, toHex } from '@exodus/bytes/hex.js'
+```
+
 ##### `fromHex(string)`
+##### `toHex(arr)`
 
 ### `@exodus/bytes/base64.js`
 
-##### `toBase64(arr, { padding = true })`
-##### `toBase64url(arr, { padding = false })`
+```js
+import { fromBase64, toBase64 } from '@exodus/bytes/base64.js'
+import { fromBase64url, toBase64url } from '@exodus/bytes/base64.js'
+import { fromBase64any } from '@exodus/bytes/base64.js'
+```
+
 ##### `fromBase64(str, { format = 'uint8', padding = 'both' })`
 ##### `fromBase64url(str, { format = 'uint8', padding = false })`
 ##### `fromBase64any(str, { format = 'uint8', padding = 'both' })`
+##### `toBase64(arr, { padding = true })`
+##### `toBase64url(arr, { padding = false })`
 
 ### `@exodus/bytes/base32.js`
 
-##### `toBase32(arr, { padding = false })`
-##### `toBase32hex(arr, { padding = false })`
+```js
+import { fromBase32, toBase32 } from '@exodus/bytes/base32.js'
+import { fromBase32hex, toBase32hex } from '@exodus/bytes/base32.js'
+```
+
 ##### `fromBase32(str, { format = 'uint8', padding = 'both' })`
 ##### `fromBase32hex(str, { format = 'uint8', padding = 'both' })`
+##### `toBase32(arr, { padding = false })`
+##### `toBase32hex(arr, { padding = false })`
 
 ### `@exodus/bytes/bech32.js`
 
+```js
+import { fromBech32, toBech32 } from '@exodus/bytes/bech32.js'
+import { fromBech32m, toBech32m } from '@exodus/bytes/base32.js'
+import { getPrefix } from '@exodus/bytes/base32.js'
+```
+
 ##### `getPrefix(str, limit = 90)`
-##### `toBech32(prefix, bytes, limit = 90)`
+
 ##### `fromBech32(str, limit = 90)`
-##### `toBech32m(prefix, bytes, limit = 90)`
+##### `toBech32(prefix, bytes, limit = 90)`
+
 ##### `fromBech32m(str, limit = 90)`
+##### `toBech32m(prefix, bytes, limit = 90)`
 
 ### `@exodus/bytes/base58.js`
 
-##### `toBase58(arr)`
-##### `fromBase58(str, format = 'uint8')`
+```js
+import { fromBase58, toBase58 } from '@exodus/bytes/base58.js'
+import { fromBase58xrp, toBase58xrp } from '@exodus/bytes/base58.js'
+```
 
-##### `toBase58xrp(arr)`
+##### `fromBase58(str, format = 'uint8')`
+##### `toBase58(arr)`
+
 ##### `fromBase58xrp(str, format = 'uint8')`
+##### `toBase58xrp(arr)`
 
 ### `@exodus/bytes/base58check.js`
 
+```js
+import { fromBase58check, toBase58check } from '@exodus/bytes/base58check.js'
+import { fromBase58checkSync, toBase58checkSync } from '@exodus/bytes/base58check.js'
+import { makeBase58check } from '@exodus/bytes/base58check.js'
+```
+
 On non-Node.js, requires peer dependency [@exodus/crypto](https://www.npmjs.com/package/@exodus/crypto) to be installed.
 
-##### `async toBase58check(arr)`
-##### `toBase58checkSync(arr)`
 ##### `async fromBase58check(str, format = 'uint8')`
+##### `async toBase58check(arr)`
 ##### `fromBase58checkSync(str, format = 'uint8')`
+##### `toBase58checkSync(arr)`
 ##### `makeBase58check(hashAlgo, hashAlgoSync)`
 
 ### `@exodus/bytes/wif.js`
+
+```js
+import { fromWifString, toWifString } from '@exodus/bytes/wif.js'
+import { fromWifStringSync, toWifStringSync } from '@exodus/bytes/wif.js'
+```
 
 ##### `async fromWifString(string, version)`
 ##### `fromWifStringSync(string, version)`
@@ -200,17 +266,17 @@ On non-Node.js, requires peer dependency [@exodus/crypto](https://www.npmjs.com/
 
 ### `@exodus/bytes/encoding.js`
 
-Implements the [Encoding standard](https://encoding.spec.whatwg.org/):
-[TextDecoder](https://encoding.spec.whatwg.org/#interface-textdecoder),
-[TextEncoder](https://encoding.spec.whatwg.org/#interface-textdecoder),
-some [hooks](https://encoding.spec.whatwg.org/#specification-hooks) (see below).
-
 ```js
 import { TextDecoder, TextDecoder } from '@exodus/bytes/encoding.js'
 
 // Hooks for standards
 import { getBOMEncoding, legacyHookDecode, labelToName, normalizeEncoding } from '@exodus/bytes/encoding.js'
 ```
+
+Implements the [Encoding standard](https://encoding.spec.whatwg.org/):
+[TextDecoder](https://encoding.spec.whatwg.org/#interface-textdecoder),
+[TextEncoder](https://encoding.spec.whatwg.org/#interface-textdecoder),
+some [hooks](https://encoding.spec.whatwg.org/#specification-hooks) (see below).
 
 #### `new TextDecoder(label = 'utf-8', { fatal = false, ignoreBOM = false })`
 
