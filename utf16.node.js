@@ -1,9 +1,9 @@
-import { nativeDecoder, isDeno, isLE } from './fallback/_utils.js'
+import { isDeno, isLE } from './fallback/_utils.js'
 import { E_STRICT, E_STRICT_UNICODE } from './fallback/utf16.js'
 
 if (Buffer.TYPED_ARRAY_SUPPORT) throw new Error('Unexpected Buffer polyfill')
 
-const { isWellFormed } = String.prototype
+const { isWellFormed, toWellFormed } = String.prototype
 const to8 = (a) => new Uint8Array(a.buffer, a.byteOffset, a.byteLength)
 
 // Unlike utf8, operates on Uint16Arrays by default
@@ -14,9 +14,10 @@ function encode(str, loose = false, format = 'uint16') {
     throw new TypeError('Unknown format')
   }
 
-  if (!isWellFormed.call(str)) {
-    if (!loose) throw new TypeError(E_STRICT_UNICODE)
-    str = nativeDecoder.decode(Buffer.from(str)) // well, let's fix up (Buffer doesn't do this with utf16 encoding)
+  if (loose) {
+    str = toWellFormed.call(str) // Buffer doesn't do this with utf16 encoding
+  } else if (!isWellFormed.call(str)) {
+    throw new TypeError(E_STRICT_UNICODE)
   }
 
   const ble = Buffer.from(str, 'utf-16le')
@@ -51,9 +52,9 @@ function decodeNode(input, loose = false, format = 'uint16') {
   }
 
   const str = ble.ucs2Slice(0, ble.byteLength)
+  if (loose) return toWellFormed.call(str)
   if (isWellFormed.call(str)) return str
-  if (!loose) throw new TypeError(E_STRICT)
-  return nativeDecoder.decode(Buffer.from(str)) // fixup (see above)
+  throw new TypeError(E_STRICT)
 }
 
 function decodeDecoder(input, loose = false, format = 'uint16') {
