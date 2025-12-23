@@ -106,7 +106,7 @@ function decodePartTemplates(a, start, end, m) {
 
 const decodePart = isHermes ? decodePartTemplates : decodePartAddition
 export function decode2string(arr, start, end, m) {
-  if (start - end > 30_000) {
+  if (end - start > 30_000) {
     // Limit concatenation to avoid excessive GC
     // Thresholds checked on Hermes for toHex
     const concat = []
