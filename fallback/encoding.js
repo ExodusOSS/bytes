@@ -288,3 +288,16 @@ export function legacyHookDecode(input, fallbackEncoding = 'utf-8') {
 
   return createSinglebyteDecoder(enc, true)(u8)
 }
+
+const uppercasePrefixes = new Set(['utf', 'iso', 'koi', 'euc', 'ibm', 'gbk'])
+
+// Unlike normalizeEncoding, case-sensitive
+// https://encoding.spec.whatwg.org/#names-and-labels
+export function labelToName(label) {
+  const enc = normalizeEncoding(label)
+  if (!enc) return enc
+  if (uppercasePrefixes.has(enc.slice(0, 3))) return enc.toUpperCase()
+  if (enc === 'big5') return 'Big5'
+  if (enc === 'shift_jis') return 'Shift_JIS'
+  return enc
+}

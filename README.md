@@ -187,7 +187,7 @@ some [hooks](https://encoding.spec.whatwg.org/#specification-hooks) (see below).
 import { TextDecoder, TextDecoder } from '@exodus/bytes/encoding.js'
 
 // Hooks for standards
-import { getBOMEncoding, legacyHookDecode, normalizeEncoding } from '@exodus/bytes/encoding.js'
+import { getBOMEncoding, legacyHookDecode, labelToName, normalizeEncoding } from '@exodus/bytes/encoding.js'
 ```
 
 #### `new TextDecoder(label = 'utf-8', { fatal = false, ignoreBOM = false })`
@@ -198,9 +198,18 @@ import { getBOMEncoding, legacyHookDecode, normalizeEncoding } from '@exodus/byt
 
 [TextEncoder](https://encoding.spec.whatwg.org/#interface-textdecoder) implementation/polyfill.
 
-#### `normalizeEncoding(label)`
+#### `labelToName(label)`
 
 Implements [get an encoding from a string `label`](https://encoding.spec.whatwg.org/#concept-encoding-get).
+
+Converts an encoding [label](https://encoding.spec.whatwg.org/#names-and-labels) to its name,
+as a case-sensitive string.
+
+If an encoding with that label does not exist, returns `null`.
+
+All encoding names are also valid labels for corresponding encodings.
+
+#### `normalizeEncoding(label)`
 
 Converts an encoding [label](https://encoding.spec.whatwg.org/#names-and-labels) to its name,
 as an ASCII-lowercased string.
@@ -212,6 +221,11 @@ except that it:
  1. Supports [`replacement` encoding](https://encoding.spec.whatwg.org/#replacement) and its
     [labels](https://encoding.spec.whatwg.org/#ref-for-replacement%E2%91%A1)
  2. Does not throw for invalid labels and instead returns `null`
+
+It is identical to:
+```js
+labelToName(label)?.toLowerCase() ?? null
+```
 
 All encoding names are also valid labels for corresponding encodings.
 
@@ -254,7 +268,7 @@ new TextDecoder(getBOMEncoding(input) ?? fallbackEncoding).decode(input)
 import { TextDecoder, TextDecoder } from '@exodus/bytes/encoding-lite.js'
 
 // Hooks for standards
-import { getBOMEncoding, legacyHookDecode, normalizeEncoding } from '@exodus/bytes/encoding-lite.js'
+import { getBOMEncoding, legacyHookDecode, labelToName, normalizeEncoding } from '@exodus/bytes/encoding-lite.js'
 ```
 
 The exact same exports as `@exodus/bytes/encoding.js` are also exported as
@@ -266,7 +280,7 @@ and their [labels](https://encoding.spec.whatwg.org/#names-and-labels) when used
 
 Legacy single-byte encodingds are loaded by default in both cases.
 
-`TextEncoder` and hooks for standards (including `normalizeEncoding`) do not have any behavior
+`TextEncoder` and hooks for standards (including `labelToName` / `normalizeEncoding`) do not have any behavior
 differences in the lite version and support full range if inputs.
 
 To avoid inconsistencies, the exported classes and methods are exactly the same objects.
@@ -277,6 +291,7 @@ To avoid inconsistencies, the exported classes and methods are exactly the same 
   TextDecoder: [class TextDecoder],
   TextEncoder: [class TextEncoder],
   getBOMEncoding: [Function: getBOMEncoding],
+  labelToName: [Function: labelToName],
   legacyHookDecode: [Function: legacyHookDecode],
   normalizeEncoding: [Function: normalizeEncoding]
 }
@@ -289,6 +304,7 @@ Error: Legacy multi-byte encodings are disabled in /encoding-lite.js, use /encod
   TextDecoder: [class TextDecoder],
   TextEncoder: [class TextEncoder],
   getBOMEncoding: [Function: getBOMEncoding],
+  labelToName: [Function: labelToName],
   legacyHookDecode: [Function: legacyHookDecode],
   normalizeEncoding: [Function: normalizeEncoding]
 }
