@@ -9,7 +9,7 @@ const decoderFatalBE = canDecoders ? new TextDecoder('utf-16be', { ignoreBOM, fa
 const decoderLooseBE = canDecoders ? new TextDecoder('utf-16be', { ignoreBOM }) : null
 const decoderFatal16 = isLE ? decoderFatalLE : decoderFatalBE
 const decoderLoose16 = isLE ? decoderLooseLE : decoderFatalBE
-const { isWellFormed } = String.prototype
+const { isWellFormed, toWellFormed } = String.prototype
 
 const { E_STRICT, E_STRICT_UNICODE } = js
 
@@ -61,8 +61,9 @@ function decode(input, loose = false, format = 'uint16') {
       throw new TypeError('Unknown format')
   }
 
-  const str = js.decode(u16, loose, !loose && isWellFormed)
+  const str = js.decode(u16, loose, (!loose && isWellFormed) || (loose && toWellFormed))
   if (!loose && isWellFormed && !isWellFormed.call(str)) throw new TypeError(E_STRICT)
+  if (loose && toWellFormed) return toWellFormed.call(str)
 
   return str
 }
