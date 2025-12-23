@@ -161,6 +161,8 @@ Same as `windows1252toString = createSinglebyteDecoder('windows-1252')`.
 
 ### `@exodus/bytes/base58check.js`
 
+On non-Node.js, requires peer dependency [@exodus/crypto](https://www.npmjs.com/package/@exodus/crypto) to be installed.
+
 ##### `async toBase58check(arr)`
 ##### `toBase58checkSync(arr)`
 ##### `async fromBase58check(str, format = 'uint8')`
