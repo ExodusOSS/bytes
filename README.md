@@ -259,6 +259,8 @@ import { fromWifString, toWifString } from '@exodus/bytes/wif.js'
 import { fromWifStringSync, toWifStringSync } from '@exodus/bytes/wif.js'
 ```
 
+On non-Node.js, requires peer dependency [@exodus/crypto](https://www.npmjs.com/package/@exodus/crypto) to be installed.
+
 ##### `async fromWifString(string, version)`
 ##### `fromWifStringSync(string, version)`
 ##### `async toWifString({ version, privateKey, compressed })`
