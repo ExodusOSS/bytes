@@ -86,17 +86,17 @@ const mappers = {
       let i = start
 
       if (lead && i < end) res += decodeLead(arr[i++])
+      if (lead && i < end) res += decodeLead(arr[i++]) // could be two leads, but no more
       while (i < end) {
         const b = arr[i++]
-        if (lead) {
-          res += decodeLead(b)
-        } else if (b < 128) {
+        if (b < 128) {
           res += String.fromCharCode(b)
         } else if ((b < 0xa1 && b !== 0x8e && b !== 0x8f) || b === 0xff) {
           res += String.fromCharCode(err())
         } else {
           lead = b
           if (i < end) res += decodeLead(arr[i++])
+          if (lead && i < end) res += decodeLead(arr[i++]) // could be two leads
         }
       }
 
