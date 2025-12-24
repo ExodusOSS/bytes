@@ -33,7 +33,7 @@ const mappers = {
         const b = arr[i++]
         if (b < 128) {
           res += String.fromCharCode(b)
-        } else if (b < 0x81 || b === 0xff) {
+        } else if (b === 0x80 || b === 0xff) {
           res += String.fromCharCode(err())
         } else {
           lead = b
@@ -248,8 +248,8 @@ const mappers = {
         if (b <= 0x80) {
           res += String.fromCharCode(b) // 0x80 is allowed
         } else if (b >= 0xa1 && b <= 0xdf) {
-          res += String.fromCharCode(0xff_61 - 0xa1 + b)
-        } else if (b < 0x81 || (b > 0x9f && b < 0xe0) || b > 0xfc) {
+          res += String.fromCharCode(0xfe_c0 + b)
+        } else if (b === 0xa0 || b > 0xfc) {
           res += String.fromCharCode(err())
         } else {
           lead = b
@@ -372,7 +372,7 @@ const mappers = {
         const b = arr[i++]
         if (b < 128) {
           res += String.fromCharCode(b)
-        } else if (b < 0x81 || b === 0xff) {
+        } else if (b === 0x80 || b === 0xff) {
           res += String.fromCharCode(err())
         } else {
           lead = b
