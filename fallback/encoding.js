@@ -47,12 +47,22 @@ export function normalizeEncoding(label) {
 
 const define = (obj, key, value) => Object.defineProperty(obj, key, { value, writable: false })
 
+// TODO: make this more strict against Symbol.toStringTag
+// Is not very significant though, anything faking Symbol.toStringTag could as well override
+// prototypes, which is not something we protect against
+
 function isAnyArrayBuffer(x) {
   if (x instanceof ArrayBuffer) return true
   if (globalThis.SharedArrayBuffer && x instanceof SharedArrayBuffer) return true
   if (!x || typeof x.byteLength !== 'number') return false
   const s = Object.prototype.toString.call(x)
   return s === '[object ArrayBuffer]' || s === '[object SharedArrayBuffer]'
+}
+
+function isAnyUint8Array(x) {
+  if (x instanceof Uint8Array) return true
+  if (!x || !ArrayBuffer.isView(x) || x.BYTES_PER_ELEMENT !== 1) return false
+  return Object.prototype.toString.call(x) === '[object Uint8Array]'
 }
 
 const fromSource = (x) => {
@@ -217,7 +227,7 @@ export class TextEncoder {
 
   encodeInto(str, target) {
     if (typeof str !== 'string') str = `${str}`
-    if (!(target instanceof Uint8Array)) throw new TypeError('Target must be an Uint8Array')
+    if (!isAnyUint8Array(target)) throw new TypeError('Target must be an Uint8Array')
     if (target.buffer.detached) return { read: 0, written: 0 } // Until https://github.com/whatwg/encoding/issues/324 is resolved
 
     const tlen = target.length
