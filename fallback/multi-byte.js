@@ -331,12 +331,57 @@ const mappers = {
 
     return { bytes, eof, pushback }
   },
+  // https://encoding.spec.whatwg.org/#big5
+  big5: (err) => {
+    const big5 = getTable('big5')
+    let lead = 0
+
+    const decodeLead = (b) => {
+      let cp
+      if ((b >= 0x40 && b <= 0x7e) || (b >= 0xa1 && b !== 0xff)) {
+        cp = big5[(lead - 0x81) * 157 + b - (b < 0x7f ? 0x40 : 0x62)]
+      }
+
+      lead = 0
+      if (cp) return cp // strings
+      return b < 128 ? String.fromCharCode(err(), b) : String.fromCharCode(err())
+    }
+
+    // The only decoder which returns multiple codepoints per byte, also has non-charcode codepoints
+    // We store that as strings
+    // eslint-disable-next-line sonarjs/no-identical-functions
+    const fast = (arr, start, end, stream) => {
+      let res = ''
+      let i = start
+
+      if (lead && i < end) res += decodeLead(arr[i++])
+      while (i < end) {
+        const b = arr[i++]
+        if (b < 128) {
+          res += String.fromCharCode(b)
+        } else if (b < 0x81 || b === 0xff) {
+          res += String.fromCharCode(err())
+        } else {
+          lead = b
+          if (i < end) res += decodeLead(arr[i++])
+        }
+      }
+
+      if (lead && !stream) {
+        lead = 0
+        res += String.fromCharCode(err())
+      }
+
+      return res
+    }
+
+    return { fast, isAscii: () => lead === 0 }
+  },
 }
 
 export const isAsciiSuperset = (enc) => enc !== 'iso-2022-jp' // all others are ASCII supersets and can use fast path
 
 export function multibyteDecoder(enc, loose = false) {
-  if (enc === 'big5') return big5decoder(loose)
   if (!Object.hasOwn(mappers, enc)) throw new RangeError('Unsupported encoding')
 
   // Input is assumed to be typechecked already
@@ -390,63 +435,6 @@ export function multibyteDecoder(enc, loose = false) {
     // > If this’s do not flush is false, then set this’s decoder to a new instance of this’s encoding’s decoder,
     // > Set this’s do not flush to options["stream"]
     if (!stream) mapper = null
-
-    return res
-  }
-}
-
-// The only decoder which returns multiple codepoints per byte, also has non-charcode codepoints
-// We store that as strings
-function big5decoder(loose) {
-  // Input is assumed to be typechecked already
-  let lead = 0
-  let big5
-  return (arr, stream = false) => {
-    const onErr = loose
-      ? () => '\uFFFD'
-      : () => {
-          // Lead is always already cleared before throwing
-          throw new TypeError(E_STRICT)
-        }
-
-    let res = ''
-    const length = arr.length
-    if (!lead) {
-      res = decodeLatin1(arr, 0, asciiPrefix(arr))
-      if (res.length === arr.length) return res // ascii
-    }
-
-    if (!big5) big5 = getTable('big5')
-    for (let i = res.length; i < length; i++) {
-      const b = arr[i]
-      if (lead) {
-        let cp
-        if ((b >= 0x40 && b <= 0x7e) || (b >= 0xa1 && b !== 0xff)) {
-          cp = big5[(lead - 0x81) * 157 + b - (b < 0x7f ? 0x40 : 0x62)]
-        }
-
-        lead = 0
-        if (cp) {
-          res += cp // strings
-        } else {
-          res += onErr()
-          // same as pushing it back: lead is cleared, pushed back can't contain more than 1 byte
-          if (b < 128) res += String.fromCharCode(b)
-        }
-      } else if (b < 128) {
-        res += String.fromCharCode(b)
-      } else if (b < 0x81 || b === 0xff) {
-        res += onErr()
-      } else {
-        lead = b
-      }
-    }
-
-    if (!stream && lead) {
-      // Destroy decoder state
-      lead = 0
-      res += onErr()
-    }
 
     return res
   }
