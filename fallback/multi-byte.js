@@ -24,7 +24,7 @@ const mappers = {
       return b < 128 ? String.fromCharCode(err(), b) : String.fromCharCode(err())
     }
 
-    const fast = (arr, start, end, stream) => {
+    const decode = (arr, start, end, stream) => {
       let res = ''
       let i = start
 
@@ -49,7 +49,7 @@ const mappers = {
       return res
     }
 
-    return { fast, isAscii: () => lead === 0 }
+    return { decode, isAscii: () => lead === 0 }
   },
   // https://encoding.spec.whatwg.org/#euc-jp-decoder
   'euc-jp': (err) => {
@@ -81,7 +81,7 @@ const mappers = {
       return b < 128 ? String.fromCharCode(err(), b) : String.fromCharCode(err())
     }
 
-    const fast = (arr, start, end, stream) => {
+    const decode = (arr, start, end, stream) => {
       let res = ''
       let i = start
 
@@ -109,26 +109,20 @@ const mappers = {
       return res
     }
 
-    return { fast, isAscii: () => lead === 0 } // j12 can be true only when lead is non-zero
+    return { decode, isAscii: () => lead === 0 } // j12 can be true only when lead is non-zero
   },
   // https://encoding.spec.whatwg.org/#iso-2022-jp-decoder
-  // Per-letter of the spec, don't shortcut on state changes on EOF. Some code is regrouped but preserving the logic
   'iso-2022-jp': (err) => {
     const jis0208 = getTable('jis0208')
-    const EOF = -1
     let dState = 1
     let oState = 1
-    let lead = 0
+    let lead = 0 // 0 or 0x21-0x7e
     let out = false
 
-    const pushback = []
-    const bytes = (b) => {
-      if (dState < 5) {
-        if (b === EOF) return null
-        if (b === 0x1b) {
-          dState = 6 // escape start
-          return
-        }
+    const bytes = (pushback, b) => {
+      if (dState < 5 && b === 0x1b) {
+        dState = 6 // escape start
+        return
       }
 
       switch (dState) {
@@ -180,7 +174,7 @@ const mappers = {
 
           out = false
           dState = oState
-          if (b !== EOF) pushback.push(b)
+          pushback.push(b)
           return err()
         case 7: {
           // Escape
@@ -209,16 +203,70 @@ const mappers = {
 
           out = false
           dState = oState
-          if (b !== EOF) pushback.push(b)
-          pushback.push(l)
+          pushback.push(b, l)
           return err()
         }
       }
     }
 
-    const eof = () => bytes(EOF)
+    const eof = (pushback) => {
+      if (dState < 5) return null
+      out = false
+      switch (dState) {
+        case 5:
+          dState = 4
+          return err()
+        case 6:
+          dState = oState
+          return err()
+        case 7: {
+          dState = oState
+          pushback.push(lead)
+          lead = 0
+          return err()
+        }
+      }
+    }
 
-    return { bytes, eof, pushback }
+    const decode = (arr, start, end, stream) => {
+      let res = ''
+      let i = start
+      const pushback = [] // local and auto-cleared
+
+      // First, dump everything until EOF
+      // Same as the full loop, but without EOF handling
+      while (i < end || pushback.length > 0) {
+        const c = bytes(pushback, pushback.length > 0 ? pushback.pop() : arr[i++])
+        if (c !== undefined) res += String.fromCodePoint(c)
+      }
+
+      // Then, dump EOF. This needs the same loop as the characters can be pushed back
+      if (!stream) {
+        while (i <= end || pushback.length > 0) {
+          if (i < end || pushback.length > 0) {
+            const c = bytes(pushback, pushback.length > 0 ? pushback.pop() : arr[i++])
+            if (c !== undefined) res += String.fromCodePoint(c)
+          } else {
+            const c = eof(pushback)
+            if (c === null) break // clean exit
+            res += String.fromCodePoint(c)
+          }
+        }
+      }
+
+      // Chrome and WebKit fail on this, we don't: completely destroy the old decoder state when finished streaming
+      // > If this’s do not flush is false, then set this’s decoder to a new instance of this’s encoding’s decoder,
+      // > Set this’s do not flush to options["stream"]
+      if (!stream) {
+        dState = oState = 1
+        lead = 0
+        out = false
+      }
+
+      return res
+    }
+
+    return { decode, isAscii: () => false }
   },
   // https://encoding.spec.whatwg.org/#shift_jis-decoder
   shift_jis: (err) => {
@@ -238,7 +286,7 @@ const mappers = {
       return b < 128 ? String.fromCharCode(err(), b) : String.fromCharCode(err())
     }
 
-    const fast = (arr, start, end, stream) => {
+    const decode = (arr, start, end, stream) => {
       let res = ''
       let i = start
 
@@ -265,7 +313,7 @@ const mappers = {
       return res
     }
 
-    return { fast, isAscii: () => lead === 0 }
+    return { decode, isAscii: () => lead === 0 }
   },
   // https://encoding.spec.whatwg.org/#gbk-decoder
   gbk: (err) => mappers.gb18030(err), // 10.1.1. GBK’s decoder is gb18030’s decoder
@@ -291,7 +339,7 @@ const mappers = {
     // g2 is 0 or 0x30-0x39
     // g3 is 0 or 0x81-0xfe
 
-    const fast = (arr, start, end, stream) => {
+    const decode = (arr, start, end, stream) => {
       let res = ''
       let i = start
       const pushback = [] // local and auto-cleared
@@ -359,7 +407,7 @@ const mappers = {
       return res
     }
 
-    return { fast, isAscii: () => g1 === 0 } // if g1 = 0 then g2 = g3 = 0
+    return { decode, isAscii: () => g1 === 0 } // if g1 = 0 then g2 = g3 = 0
   },
   // https://encoding.spec.whatwg.org/#big5
   big5: (err) => {
@@ -380,7 +428,7 @@ const mappers = {
     // The only decoder which returns multiple codepoints per byte, also has non-charcode codepoints
     // We store that as strings
     // eslint-disable-next-line sonarjs/no-identical-functions
-    const fast = (arr, start, end, stream) => {
+    const decode = (arr, start, end, stream) => {
       let res = ''
       let i = start
 
@@ -405,7 +453,7 @@ const mappers = {
       return res
     }
 
-    return { fast, isAscii: () => lead === 0 }
+    return { decode, isAscii: () => lead === 0 }
   },
 }
 
@@ -421,7 +469,6 @@ export function multibyteDecoder(enc, loose = false) {
   const onErr = loose
     ? () => REP
     : () => {
-        if (mapper.pushback) mapper.pushback.length = 0 // the queue is cleared on returning an error
         // The correct way per spec seems to be not destoying the decoder state in stream mode, even when fatal
         // Decoders big5, euc-jp, euc-kr, shift_jis, gb18030 / gbk - all clear state before throwing unless EOF, so not affected
         // iso-2022-jp is the only tricky one one where this !stream check matters in non-stream mode
@@ -431,7 +478,6 @@ export function multibyteDecoder(enc, loose = false) {
 
   return (arr, stream = false) => {
     let res = ''
-    const length = arr.length
     if (asciiSuperset && (!mapper || mapper.isAscii?.())) {
       res = decodeLatin1(arr, 0, asciiPrefix(arr))
       if (res.length === arr.length) return res // ascii
@@ -439,35 +485,6 @@ export function multibyteDecoder(enc, loose = false) {
 
     streaming = stream // affects onErr
     if (!mapper) mapper = mappers[enc](onErr)
-    if (mapper.fast) return res + mapper.fast(arr, res.length, arr.length, stream) // does not need mapper deletion
-    const { bytes, eof, pushback } = mapper
-    let i = res.length
-
-    // First, dump everything until EOF
-    // Same as the full loop, but without EOF handling
-    while (i < length || pushback.length > 0) {
-      const c = bytes(pushback.length > 0 ? pushback.pop() : arr[i++])
-      if (c === undefined) continue // consuming
-      res += String.fromCodePoint(c) // gb18030 returns codepoints above 0xFFFF from ranges
-    }
-
-    // Then, dump EOF. This needs the same loop as the characters can be pushed back
-    // TODO: only some encodings need this, most can be optimized
-    if (!stream) {
-      while (i <= length || pushback.length > 0) {
-        const isEOF = i === length && pushback.length === 0
-        const c = isEOF ? eof() : bytes(pushback.length > 0 ? pushback.pop() : arr[i++])
-        if (isEOF && c === null) break // clean exit
-        if (c === undefined) continue // consuming
-        res += String.fromCodePoint(c) // gb18030 returns codepoints above 0xFFFF from ranges
-      }
-    }
-
-    // Chrome and WebKit fail on this, we don't: completely destroy the old decoder instance when finished streaming
-    // > If this’s do not flush is false, then set this’s decoder to a new instance of this’s encoding’s decoder,
-    // > Set this’s do not flush to options["stream"]
-    if (!stream) mapper = null
-
-    return res
+    return res + mapper.decode(arr, res.length, arr.length, stream)
   }
 }
