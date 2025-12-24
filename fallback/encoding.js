@@ -47,11 +47,18 @@ export function normalizeEncoding(label) {
 
 const define = (obj, key, value) => Object.defineProperty(obj, key, { value, writable: false })
 
+function isAnyArrayBuffer(x) {
+  if (x instanceof ArrayBuffer) return true
+  if (globalThis.SharedArrayBuffer && x instanceof SharedArrayBuffer) return true
+  if (!x || typeof x.byteLength !== 'number') return false
+  const s = Object.prototype.toString.call(x)
+  return s === '[object ArrayBuffer]' || s === '[object SharedArrayBuffer]'
+}
+
 const fromSource = (x) => {
   if (x instanceof Uint8Array) return x
-  if (x instanceof ArrayBuffer) return new Uint8Array(x)
   if (ArrayBuffer.isView(x)) return new Uint8Array(x.buffer, x.byteOffset, x.byteLength)
-  if (globalThis.SharedArrayBuffer && x instanceof SharedArrayBuffer) return new Uint8Array(x)
+  if (isAnyArrayBuffer(x)) return new Uint8Array(x)
   throw new TypeError('Argument must be a SharedArrayBuffer, ArrayBuffer or ArrayBufferView')
 }
 
