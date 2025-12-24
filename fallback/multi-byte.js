@@ -291,11 +291,10 @@ const mappers = {
     // g2 is 0 or 0x30-0x39
     // g3 is 0 or 0x81-0xfe
 
-    const pushback = []
-
     const fast = (arr, start, end, stream) => {
       let res = ''
       let i = start
+      const pushback = [] // local and auto-cleared
 
       // First, dump everything until EOF
       // Same as the full loop, but without EOF handling
@@ -418,18 +417,19 @@ export function multibyteDecoder(enc, loose = false) {
   // Input is assumed to be typechecked already
   let mapper
   const asciiSuperset = isAsciiSuperset(enc)
-  return (arr, stream = false) => {
-    const onErr = loose
-      ? () => REP
-      : () => {
-          if (mapper.pushback) mapper.pushback.length = 0 // the queue is cleared on returning an error
-          // The correct way per spec seems to be not destoying the decoder state in stream mode, even when fatal
-          // Decoders big5, euc-jp, euc-kr, shift_jis, gb18030 / gbk - all clear state before throwing unless EOF, so not affected
-          // iso-2022-jp is the only tricky one one where this !stream check matters in non-stream mode
-          if (!stream) mapper = null // destroy state, effectively the same as 'do not flush' = false, but early
-          throw new TypeError(E_STRICT)
-        }
+  let streaming // because onErr is cached in mapper
+  const onErr = loose
+    ? () => REP
+    : () => {
+        if (mapper.pushback) mapper.pushback.length = 0 // the queue is cleared on returning an error
+        // The correct way per spec seems to be not destoying the decoder state in stream mode, even when fatal
+        // Decoders big5, euc-jp, euc-kr, shift_jis, gb18030 / gbk - all clear state before throwing unless EOF, so not affected
+        // iso-2022-jp is the only tricky one one where this !stream check matters in non-stream mode
+        if (!streaming) mapper = null // destroy state, effectively the same as 'do not flush' = false, but early
+        throw new TypeError(E_STRICT)
+      }
 
+  return (arr, stream = false) => {
     let res = ''
     const length = arr.length
     if (asciiSuperset && (!mapper || mapper.isAscii?.())) {
@@ -437,6 +437,7 @@ export function multibyteDecoder(enc, loose = false) {
       if (res.length === arr.length) return res // ascii
     }
 
+    streaming = stream // affects onErr
     if (!mapper) mapper = mappers[enc](onErr)
     if (mapper.fast) return res + mapper.fast(arr, res.length, arr.length, stream) // does not need mapper deletion
     const { bytes, eof, pushback } = mapper

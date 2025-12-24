@@ -730,6 +730,25 @@ describe('Common implementation mistakes', () => {
         t.assert.strictEqual(d.decode(Uint8Array.of(0x42)), '\uFF82')
       }
     })
+
+    // Firefox, Deno and Servo are wrong. Chrome and WebKit are correct
+    for (const encoding of ['gb18030', 'gbk']) {
+      test(encoding, (t) => {
+        {
+          const d = new TextDecoder(encoding, { fatal: true })
+          t.assert.strictEqual(d.decode(Uint8Array.of(0x80), { stream: true }), '\u20AC')
+          t.assert.throws(() => d.decode(u(0x81, 0x30, 0x21, 0x21, 0x21), { stream: true }))
+          t.assert.strictEqual(d.decode(Uint8Array.of(0x80)), '\u20AC') // pushback is cleared
+        }
+
+        {
+          const d = new TextDecoder(encoding, { fatal: true })
+          t.assert.strictEqual(d.decode(Uint8Array.of(0x80), { stream: true }), '\u20AC')
+          t.assert.throws(() => d.decode(u(0x81, 0x30, 0x81, 0x42, 0x42), { stream: true }))
+          t.assert.strictEqual(d.decode(Uint8Array.of(0x80)), '\u20AC') // pushback is cleared
+        }
+      })
+    }
   })
 
   // These are mislabeled in WPT html dataset files, their recorded codepoints do not match actual ones
