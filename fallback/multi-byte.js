@@ -216,36 +216,47 @@ const mappers = {
     const jis0208 = getTable('jis0208')
     let lead = 0
 
-    const pushback = []
-    const bytes = (b) => {
-      if (lead) {
-        const l = lead
-        lead = 0
-        if (b >= 0x40 && b <= 0xfc && b !== 0x7f) {
-          const p = (l - (l < 0xa0 ? 0x81 : 0xc1)) * 188 + b - (b < 0x7f ? 0x40 : 0x41)
-          if (p >= 8836 && p <= 10_715) return 0xe0_00 - 8836 + p // 16-bit
-          const cp = jis0208[p]
-          if (cp !== undefined && cp !== REP) return cp
-        }
-
-        if (b < 128) pushback.push(b)
-        return err()
+    const decodeLead = (b) => {
+      const l = lead
+      lead = 0
+      if (b >= 0x40 && b <= 0xfc && b !== 0x7f) {
+        const p = (l - (l < 0xa0 ? 0x81 : 0xc1)) * 188 + b - (b < 0x7f ? 0x40 : 0x41)
+        if (p >= 8836 && p <= 10_715) return String.fromCharCode(0xe0_00 - 8836 + p)
+        const cp = jis0208[p]
+        if (cp !== undefined && cp !== REP) return String.fromCharCode(cp)
       }
 
-      if (b <= 0x80) return b // 0x80 is allowed
-      if (b >= 0xa1 && b <= 0xdf) return 0xff_61 - 0xa1 + b
-      if (b < 0x81 || (b > 0x9f && b < 0xe0) || b > 0xfc) return err()
-      lead = b
+      return b < 128 ? String.fromCharCode(err(), b) : String.fromCharCode(err())
     }
 
-    // eslint-disable-next-line sonarjs/no-identical-functions
-    const eof = () => {
-      if (!lead) return null
-      lead = 0 // this clears state completely on EOF
-      return err()
+    const fast = (arr, start, end, stream) => {
+      let res = ''
+      let i = start
+
+      if (lead && i < end) res += decodeLead(arr[i++])
+      while (i < end) {
+        const b = arr[i++]
+        if (b <= 0x80) {
+          res += String.fromCharCode(b) // 0x80 is allowed
+        } else if (b >= 0xa1 && b <= 0xdf) {
+          res += String.fromCharCode(0xff_61 - 0xa1 + b)
+        } else if (b < 0x81 || (b > 0x9f && b < 0xe0) || b > 0xfc) {
+          res += String.fromCharCode(err())
+        } else {
+          lead = b
+          if (i < end) res += decodeLead(arr[i++])
+        }
+      }
+
+      if (lead && !stream) {
+        lead = 0
+        res += String.fromCharCode(err())
+      }
+
+      return res
     }
 
-    return { bytes, eof, pushback }
+    return { fast, isAscii: () => lead === 0 }
   },
   // https://encoding.spec.whatwg.org/#gbk-decoder
   gbk: (err) => mappers.gb18030(err), // 10.1.1. GBK’s decoder is gb18030’s decoder
