@@ -392,12 +392,10 @@ function big5decoder(loose) {
   // Input is assumed to be typechecked already
   let lead = 0
   let big5
-  const pushback = []
   return (arr, stream = false) => {
     const onErr = loose
       ? () => '\uFFFD'
       : () => {
-          pushback.length = 0 // the queue is cleared on returning an error
           // Lead is always already cleared before throwing
           throw new TypeError(E_STRICT)
         }
@@ -410,8 +408,8 @@ function big5decoder(loose) {
     }
 
     if (!big5) big5 = getTable('big5')
-    for (let i = res.length; i < length || pushback.length > 0; ) {
-      const b = pushback.length > 0 ? pushback.pop() : arr[i++]
+    for (let i = res.length; i < length; i++) {
+      const b = arr[i]
       if (lead) {
         let cp
         if ((b >= 0x40 && b <= 0x7e) || (b >= 0xa1 && b !== 0xff)) {
@@ -423,7 +421,8 @@ function big5decoder(loose) {
           res += cp // strings
         } else {
           res += onErr()
-          if (b < 128) pushback.push(b)
+          // same as pushing it back: lead is cleared, pushed back can't contain more than 1 byte
+          if (b < 128) res += String.fromCharCode(b)
         }
       } else if (b < 128) {
         res += String.fromCharCode(b)
@@ -434,13 +433,10 @@ function big5decoder(loose) {
       }
     }
 
-    if (!stream) {
+    if (!stream && lead) {
       // Destroy decoder state
-      pushback.length = 0
-      if (lead) {
-        lead = 0
-        res += onErr()
-      }
+      lead = 0
+      res += onErr()
     }
 
     return res
