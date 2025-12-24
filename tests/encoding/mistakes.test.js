@@ -712,10 +712,11 @@ describe('Common implementation mistakes', () => {
       })
     }
 
-    // Bun is incorrect
     test('iso-2022-jp', (t) => {
       // This is the only decoder which does not clear internal state before throwing in stream mode (non-EOF throws)
       // So the internal state of this decoder can legitimately persist after an error was thrown
+
+      // Bun is incorrect
       {
         const d = new TextDecoder('iso-2022-jp', { fatal: true })
         t.assert.strictEqual(d.decode(Uint8Array.of(0x7e)), '\x7E')
@@ -723,11 +724,21 @@ describe('Common implementation mistakes', () => {
         t.assert.strictEqual(d.decode(Uint8Array.of(0x7e)), '\u203E')
       }
 
+      // Bun is incorrect
       {
         const d = new TextDecoder('iso-2022-jp', { fatal: true })
         t.assert.strictEqual(d.decode(Uint8Array.of(0x42)), 'B')
         t.assert.throws(() => d.decode(u(0x1b, 0x28, 0x49, 0xff), { stream: true })) // Switch to Katakana, error
         t.assert.strictEqual(d.decode(Uint8Array.of(0x42)), '\uFF82')
+      }
+
+      // Pushback queue should be cleared though
+      // Chrome and WebKit are wrong. Firefox is correct
+      {
+        const d = new TextDecoder('iso-2022-jp', { fatal: true })
+        t.assert.strictEqual(d.decode(Uint8Array.of(0x42)), 'B')
+        t.assert.throws(() => d.decode(u(0x1b, 0x21, 0x22), { stream: true })) // Invalid escape
+        t.assert.strictEqual(d.decode(Uint8Array.of(0x42)), 'B')
       }
     })
 
