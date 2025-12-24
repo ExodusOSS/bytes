@@ -292,61 +292,75 @@ const mappers = {
     // g3 is 0 or 0x81-0xfe
 
     const pushback = []
-    const bytes = (b) => {
-      if (g3) {
-        if (b < 0x30 || b > 0x39) {
-          pushback.push(b, g3, g2)
-          g1 = g2 = g3 = 0
-          return err()
-        }
 
-        const cp = index((g1 - 0x81) * 12_600 + (g2 - 0x30) * 1260 + (g3 - 0x81) * 10 + b - 0x30)
+    const fast = (arr, start, end, stream) => {
+      let res = ''
+      let i = start
+
+      // First, dump everything until EOF
+      // Same as the full loop, but without EOF handling
+      while (i < end || pushback.length > 0) {
+        const b = pushback.length > 0 ? pushback.pop() : arr[i++]
+        if (g3) {
+          if (b < 0x30 || b > 0x39) {
+            pushback.push(b, g3, g2)
+            g1 = g2 = g3 = 0
+            res += String.fromCharCode(err())
+          } else {
+            const p = index((g1 - 0x81) * 12_600 + (g2 - 0x30) * 1260 + (g3 - 0x81) * 10 + b - 0x30)
+            g1 = g2 = g3 = 0
+            if (p === undefined) {
+              res += String.fromCharCode(err())
+            } else {
+              res += String.fromCodePoint(p) // Can validly return replacement
+            }
+          }
+        } else if (g2) {
+          if (b >= 0x81 && b <= 0xfe) {
+            g3 = b
+          } else {
+            pushback.push(b, g2)
+            g1 = g2 = 0
+            res += String.fromCharCode(err())
+          }
+        } else if (g1) {
+          if (b >= 0x30 && b <= 0x39) {
+            g2 = b
+          } else {
+            let cp
+            if (b >= 0x40 && b <= 0xfe && b !== 0x7f) {
+              cp = gb18030[(g1 - 0x81) * 190 + b - (b < 0x7f ? 0x40 : 0x41)]
+            }
+
+            g1 = 0
+            if (cp !== undefined && cp !== REP) {
+              res += String.fromCodePoint(cp)
+            } else {
+              res += String.fromCharCode(err())
+              if (b < 128) res += String.fromCharCode(b) // can be processed immediately
+            }
+          }
+        } else if (b < 128) {
+          res += String.fromCharCode(b)
+        } else if (b === 0x80) {
+          res += '\u20AC'
+        } else if (b === 0xff) {
+          res += String.fromCharCode(err())
+        } else {
+          g1 = b
+        }
+      }
+
+      // if g1 = 0 then g2 = g3 = 0
+      if (g1 && !stream) {
         g1 = g2 = g3 = 0
-        if (cp !== undefined) return cp // Can validly return replacement
-        return err()
+        res += String.fromCharCode(err())
       }
 
-      if (g2) {
-        if (b >= 0x81 && b <= 0xfe) {
-          g3 = b
-          return
-        }
-
-        pushback.push(b, g2)
-        g1 = g2 = 0
-        return err()
-      }
-
-      if (g1) {
-        if (b >= 0x30 && b <= 0x39) {
-          g2 = b
-          return
-        }
-
-        let cp
-        if (b >= 0x40 && b <= 0xfe && b !== 0x7f) {
-          cp = gb18030[(g1 - 0x81) * 190 + b - (b < 0x7f ? 0x40 : 0x41)]
-        }
-
-        g1 = 0
-        if (cp !== undefined && cp !== REP) return cp
-        if (b < 128) pushback.push(b)
-        return err()
-      }
-
-      if (b < 128) return b
-      if (b === 0x80) return 0x20_ac
-      if (b === 0xff) return err()
-      g1 = b
+      return res
     }
 
-    const eof = () => {
-      if (!g1 && !g2 && !g3) return null
-      g1 = g2 = g3 = 0
-      return err()
-    }
-
-    return { bytes, eof, pushback }
+    return { fast, isAscii: () => g1 === 0 } // if g1 = 0 then g2 = g3 = 0
   },
   // https://encoding.spec.whatwg.org/#big5
   big5: (err) => {
