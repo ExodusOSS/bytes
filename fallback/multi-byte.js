@@ -17,28 +17,43 @@ const mappers = {
     const euc = getTable('euc-kr')
     let lead = 0
 
-    const pushback = []
-    const bytes = (b) => {
-      if (lead) {
+    const fast = (arr, start, end, stream) => {
+      let res = ''
+      let i = start
+
+      const decodeLead = (b) => {
         const cp = b >= 0x41 && b <= 0xfe ? euc[(lead - 0x81) * 190 + b - 0x41] : undefined
         lead = 0
-        if (cp !== undefined && cp !== REP) return cp
-        if (b < 128) pushback.push(b)
-        return err()
+        if (cp !== undefined && cp !== REP) {
+          res += String.fromCharCode(cp)
+        } else {
+          res += String.fromCharCode(err())
+          if (b < 128) res += String.fromCharCode(b)
+        }
       }
 
-      if (b < 128) return b
-      if (b < 0x81 || b === 0xff) return err()
-      lead = b
+      if (lead && i < end) decodeLead(arr[i++])
+      while (i < end) {
+        const b = arr[i++]
+        if (b < 128) {
+          res += String.fromCharCode(b)
+        } else if (b < 0x81 || b === 0xff) {
+          res += String.fromCharCode(err())
+        } else {
+          lead = b
+          if (i < end) decodeLead(arr[i++])
+        }
+      }
+
+      if (lead && !stream) {
+        lead = 0
+        res += String.fromCharCode(err())
+      }
+
+      return res
     }
 
-    const eof = () => {
-      if (!lead) return null
-      lead = 0
-      return err()
-    }
-
-    return { bytes, eof, pushback }
+    return { fast, isAscii: () => lead === 0 }
   },
   // https://encoding.spec.whatwg.org/#euc-jp-decoder
   'euc-jp': (err) => {
@@ -334,12 +349,13 @@ export function multibyteDecoder(enc, loose = false) {
 
     let res = ''
     const length = arr.length
-    if (asciiSuperset && !mapper) {
+    if (asciiSuperset && (!mapper || mapper.isAscii?.())) {
       res = decodeLatin1(arr, 0, asciiPrefix(arr))
       if (res.length === arr.length) return res // ascii
     }
 
     if (!mapper) mapper = mappers[enc](onErr)
+    if (mapper.fast) return res + mapper.fast(arr, res.length, arr.length, stream) // does not need mapper deletion
     const { bytes, eof, pushback } = mapper
     let i = res.length
 
