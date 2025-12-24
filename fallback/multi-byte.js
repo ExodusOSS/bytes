@@ -58,45 +58,58 @@ const mappers = {
     let j12 = false
     let lead = 0
 
-    const pushback = []
-    const bytes = (b) => {
+    const decodeLead = (b) => {
       if (lead === 0x8e && b >= 0xa1 && b <= 0xdf) {
         lead = 0
-        return 0xfe_c0 + b
+        return String.fromCharCode(0xfe_c0 + b)
       }
 
       if (lead === 0x8f && b >= 0xa1 && b <= 0xfe) {
         j12 = true
         lead = b
-        return
+        return ''
       }
 
-      if (lead) {
-        let cp
-        if (lead >= 0xa1 && lead <= 0xfe && b >= 0xa1 && b <= 0xfe) {
-          cp = (j12 ? jis0212 : jis0208)[(lead - 0xa1) * 94 + b - 0xa1]
-        }
-
-        lead = 0
-        j12 = false
-        if (cp !== undefined && cp !== REP) return cp
-        if (b < 128) pushback.push(b)
-        return err()
+      let cp
+      if (lead >= 0xa1 && lead <= 0xfe && b >= 0xa1 && b <= 0xfe) {
+        cp = (j12 ? jis0212 : jis0208)[(lead - 0xa1) * 94 + b - 0xa1]
       }
 
-      if (b < 128) return b
-      if ((b < 0xa1 && b !== 0x8e && b !== 0x8f) || b === 0xff) return err()
-      lead = b
-    }
-
-    // eslint-disable-next-line sonarjs/no-identical-functions
-    const eof = () => {
-      if (!lead) return null
       lead = 0
-      return err()
+      j12 = false
+      if (cp !== undefined && cp !== REP) return String.fromCharCode(cp)
+      return b < 128 ? String.fromCharCode(err(), b) : String.fromCharCode(err())
     }
 
-    return { bytes, eof, pushback }
+    const fast = (arr, start, end, stream) => {
+      let res = ''
+      let i = start
+
+      if (lead && i < end) res += decodeLead(arr[i++])
+      while (i < end) {
+        const b = arr[i++]
+        if (lead) {
+          res += decodeLead(b)
+        } else if (b < 128) {
+          res += String.fromCharCode(b)
+        } else if ((b < 0xa1 && b !== 0x8e && b !== 0x8f) || b === 0xff) {
+          res += String.fromCharCode(err())
+        } else {
+          lead = b
+          if (i < end) res += decodeLead(arr[i++])
+        }
+      }
+
+      if (lead && !stream) {
+        lead = 0
+        j12 = false // can be true only when lead is non-zero
+        res += String.fromCharCode(err())
+      }
+
+      return res
+    }
+
+    return { fast, isAscii: () => lead === 0 } // j12 can be true only when lead is non-zero
   },
   // https://encoding.spec.whatwg.org/#iso-2022-jp-decoder
   // Per-letter of the spec, don't shortcut on state changes on EOF. Some code is regrouped but preserving the logic
