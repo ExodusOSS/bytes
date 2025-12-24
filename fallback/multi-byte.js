@@ -287,6 +287,10 @@ const mappers = {
       return b + p - a
     }
 
+    // g1 is 0 or 0x81-0xfe
+    // g2 is 0 or 0x30-0x39
+    // g3 is 0 or 0x81-0xfe
+
     const pushback = []
     const bytes = (b) => {
       if (g3) {
