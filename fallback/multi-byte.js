@@ -8,6 +8,45 @@ export const E_STRICT = 'Input is not well-formed for this encoding'
 // If the decoder is not cleared properly, state can be preserved between non-streaming calls!
 // See comment about fatal stream
 
+// Common between euc-kr and big5
+function bigDecoder(err, pair) {
+  let lead = 0
+
+  const decodeLead = (b) => {
+    const str = pair(lead, b)
+    lead = 0
+    if (str) return str
+    return b < 128 ? String.fromCharCode(err(), b) : String.fromCharCode(err())
+  }
+
+  const decode = (arr, start, end, stream) => {
+    let res = ''
+    let i = start
+
+    if (lead && i < end) res += decodeLead(arr[i++])
+    while (i < end) {
+      const b = arr[i++]
+      if (b < 128) {
+        res += String.fromCharCode(b)
+      } else if (b === 0x80 || b === 0xff) {
+        res += String.fromCharCode(err())
+      } else {
+        lead = b
+        if (i < end) res += decodeLead(arr[i++])
+      }
+    }
+
+    if (lead && !stream) {
+      lead = 0
+      res += String.fromCharCode(err())
+    }
+
+    return res
+  }
+
+  return { decode, isAscii: () => lead === 0 }
+}
+
 // All except iso-2022-jp are ASCII supersets
 // When adding something that is not an ASCII superset, ajust the ASCII fast path
 const REP = 0xff_fd
@@ -15,41 +54,11 @@ const mappers = {
   // https://encoding.spec.whatwg.org/#euc-kr-decoder
   'euc-kr': (err) => {
     const euc = getTable('euc-kr')
-    let lead = 0
-
-    const decodeLead = (b) => {
-      const cp = b >= 0x41 && b <= 0xfe ? euc[(lead - 0x81) * 190 + b - 0x41] : undefined
-      lead = 0
-      if (cp !== undefined && cp !== REP) return String.fromCharCode(cp)
-      return b < 128 ? String.fromCharCode(err(), b) : String.fromCharCode(err())
-    }
-
-    const decode = (arr, start, end, stream) => {
-      let res = ''
-      let i = start
-
-      if (lead && i < end) res += decodeLead(arr[i++])
-      while (i < end) {
-        const b = arr[i++]
-        if (b < 128) {
-          res += String.fromCharCode(b)
-        } else if (b === 0x80 || b === 0xff) {
-          res += String.fromCharCode(err())
-        } else {
-          lead = b
-          if (i < end) res += decodeLead(arr[i++])
-        }
-      }
-
-      if (lead && !stream) {
-        lead = 0
-        res += String.fromCharCode(err())
-      }
-
-      return res
-    }
-
-    return { decode, isAscii: () => lead === 0 }
+    return bigDecoder(err, (l, b) => {
+      if (b < 0x41 || b > 0xfe) return
+      const cp = euc[(l - 0x81) * 190 + b - 0x41]
+      return cp !== undefined && cp !== REP ? String.fromCharCode(cp) : undefined
+    })
   },
   // https://encoding.spec.whatwg.org/#euc-jp-decoder
   'euc-jp': (err) => {
@@ -411,49 +420,13 @@ const mappers = {
   },
   // https://encoding.spec.whatwg.org/#big5
   big5: (err) => {
-    const big5 = getTable('big5')
-    let lead = 0
-
-    const decodeLead = (b) => {
-      let cp
-      if ((b >= 0x40 && b <= 0x7e) || (b >= 0xa1 && b !== 0xff)) {
-        cp = big5[(lead - 0x81) * 157 + b - (b < 0x7f ? 0x40 : 0x62)]
-      }
-
-      lead = 0
-      if (cp) return cp // strings
-      return b < 128 ? String.fromCharCode(err(), b) : String.fromCharCode(err())
-    }
-
     // The only decoder which returns multiple codepoints per byte, also has non-charcode codepoints
     // We store that as strings
-    // eslint-disable-next-line sonarjs/no-identical-functions
-    const decode = (arr, start, end, stream) => {
-      let res = ''
-      let i = start
-
-      if (lead && i < end) res += decodeLead(arr[i++])
-      while (i < end) {
-        const b = arr[i++]
-        if (b < 128) {
-          res += String.fromCharCode(b)
-        } else if (b === 0x80 || b === 0xff) {
-          res += String.fromCharCode(err())
-        } else {
-          lead = b
-          if (i < end) res += decodeLead(arr[i++])
-        }
-      }
-
-      if (lead && !stream) {
-        lead = 0
-        res += String.fromCharCode(err())
-      }
-
-      return res
-    }
-
-    return { decode, isAscii: () => lead === 0 }
+    const big5 = getTable('big5')
+    return bigDecoder(err, (l, b) => {
+      if (b < 0x40 || (b > 0x7e && b < 0xa1) || b === 0xff) return
+      return big5[(l - 0x81) * 157 + b - (b < 0x7f ? 0x40 : 0x62)] // strings
+    })
   },
 }
 
