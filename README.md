@@ -269,7 +269,7 @@ On non-Node.js, requires peer dependency [@exodus/crypto](https://www.npmjs.com/
 ### `@exodus/bytes/encoding.js`
 
 ```js
-import { TextDecoder, TextDecoder } from '@exodus/bytes/encoding.js'
+import { TextDecoder, TextEncoder } from '@exodus/bytes/encoding.js'
 
 // Hooks for standards
 import { getBOMEncoding, legacyHookDecode, labelToName, normalizeEncoding } from '@exodus/bytes/encoding.js'
@@ -355,7 +355,7 @@ new TextDecoder(getBOMEncoding(input) ?? fallbackEncoding).decode(input)
 ### `@exodus/bytes/encoding-lite.js`
 
 ```js
-import { TextDecoder, TextDecoder } from '@exodus/bytes/encoding-lite.js'
+import { TextDecoder, TextEncoder } from '@exodus/bytes/encoding-lite.js'
 
 // Hooks for standards
 import { getBOMEncoding, legacyHookDecode, labelToName, normalizeEncoding } from '@exodus/bytes/encoding-lite.js'
