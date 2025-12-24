@@ -17,22 +17,18 @@ const mappers = {
     const euc = getTable('euc-kr')
     let lead = 0
 
+    const decodeLead = (b) => {
+      const cp = b >= 0x41 && b <= 0xfe ? euc[(lead - 0x81) * 190 + b - 0x41] : undefined
+      lead = 0
+      if (cp !== undefined && cp !== REP) return String.fromCharCode(cp)
+      return b < 128 ? String.fromCharCode(err(), b) : String.fromCharCode(err())
+    }
+
     const fast = (arr, start, end, stream) => {
       let res = ''
       let i = start
 
-      const decodeLead = (b) => {
-        const cp = b >= 0x41 && b <= 0xfe ? euc[(lead - 0x81) * 190 + b - 0x41] : undefined
-        lead = 0
-        if (cp !== undefined && cp !== REP) {
-          res += String.fromCharCode(cp)
-        } else {
-          res += String.fromCharCode(err())
-          if (b < 128) res += String.fromCharCode(b)
-        }
-      }
-
-      if (lead && i < end) decodeLead(arr[i++])
+      if (lead && i < end) res += decodeLead(arr[i++])
       while (i < end) {
         const b = arr[i++]
         if (b < 128) {
@@ -41,7 +37,7 @@ const mappers = {
           res += String.fromCharCode(err())
         } else {
           lead = b
-          if (i < end) decodeLead(arr[i++])
+          if (i < end) res += decodeLead(arr[i++])
         }
       }
 
