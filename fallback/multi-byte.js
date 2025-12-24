@@ -13,7 +13,7 @@ export const E_STRICT = 'Input is not well-formed for this encoding'
 const REP = 0xff_fd
 const mappers = {
   // https://encoding.spec.whatwg.org/#euc-kr-decoder
-  'euc-kr': () => {
+  'euc-kr': (err) => {
     const euc = getTable('euc-kr')
     let lead = 0
 
@@ -24,25 +24,24 @@ const mappers = {
         lead = 0
         if (cp !== undefined && cp !== REP) return cp
         if (b < 128) pushback.push(b)
-        return -2
+        return err()
       }
 
       if (b < 128) return b
-      if (b < 0x81 || b === 0xff) return -2
+      if (b < 0x81 || b === 0xff) return err()
       lead = b
-      return -1
     }
 
     const eof = () => {
       if (!lead) return null
       lead = 0
-      return -2
+      return err()
     }
 
     return { bytes, eof, pushback }
   },
   // https://encoding.spec.whatwg.org/#euc-jp-decoder
-  'euc-jp': () => {
+  'euc-jp': (err) => {
     const jis0208 = getTable('jis0208')
     const jis0212 = getTable('jis0212')
     let j12 = false
@@ -58,7 +57,7 @@ const mappers = {
       if (lead === 0x8f && b >= 0xa1 && b <= 0xfe) {
         j12 = true
         lead = b
-        return -1
+        return
       }
 
       if (lead) {
@@ -71,27 +70,26 @@ const mappers = {
         j12 = false
         if (cp !== undefined && cp !== REP) return cp
         if (b < 128) pushback.push(b)
-        return -2
+        return err()
       }
 
       if (b < 128) return b
-      if ((b < 0xa1 && b !== 0x8e && b !== 0x8f) || b === 0xff) return -2
+      if ((b < 0xa1 && b !== 0x8e && b !== 0x8f) || b === 0xff) return err()
       lead = b
-      return -1
     }
 
     // eslint-disable-next-line sonarjs/no-identical-functions
     const eof = () => {
       if (!lead) return null
       lead = 0
-      return -2
+      return err()
     }
 
     return { bytes, eof, pushback }
   },
   // https://encoding.spec.whatwg.org/#iso-2022-jp-decoder
   // Per-letter of the spec, don't shortcut on state changes on EOF. Some code is regrouped but preserving the logic
-  'iso-2022-jp': () => {
+  'iso-2022-jp': (err) => {
     const jis0208 = getTable('jis0208')
     const EOF = -1
     let dState = 1
@@ -105,7 +103,7 @@ const mappers = {
         if (b === EOF) return null
         if (b === 0x1b) {
           dState = 6 // escape start
-          return -1
+          return
         }
       }
 
@@ -120,49 +118,46 @@ const mappers = {
           }
 
           if (b <= 0x7f && b !== 0x0e && b !== 0x0f) return b
-          return -2
+          return err()
         case 3:
           // Katakana
           out = false
           if (b >= 0x21 && b <= 0x5f) return 0xff_40 + b
-          return -2
+          return err()
         case 4:
           // Leading byte
           out = false
-          if ((b >= 0x21) & (b <= 0x7e)) {
-            lead = b
-            dState = 5
-            return -1
-          }
-
-          return -2
+          if (b < 0x21 || b > 0x7e) return err()
+          lead = b
+          dState = 5
+          return
         case 5:
           // Trailing byte
           out = false
           if (b === 0x1b) {
             dState = 6 // escape start
-            return -2
+            return err()
           }
 
           dState = 4
           if (b >= 0x21 && b <= 0x7e) {
             const cp = jis0208[(lead - 0x21) * 94 + b - 0x21]
-            return cp !== undefined && cp !== REP ? cp : -2
+            if (cp !== undefined && cp !== REP) return cp
           }
 
-          return -2
+          return err()
         case 6:
           // Escape start
           if (b === 0x24 || b === 0x28) {
             lead = b
             dState = 7
-            return -1
+            return
           }
 
           out = false
           dState = oState
           if (b !== EOF) pushback.push(b)
-          return -2
+          return err()
         case 7: {
           // Escape
           const l = lead
@@ -185,14 +180,14 @@ const mappers = {
             dState = oState = s
             const output = out
             out = true
-            return output ? -2 : -1
+            return output ? err() : undefined
           }
 
           out = false
           dState = oState
           if (b !== EOF) pushback.push(b)
           pushback.push(l)
-          return -2
+          return err()
         }
       }
     }
@@ -202,7 +197,7 @@ const mappers = {
     return { bytes, eof, pushback }
   },
   // https://encoding.spec.whatwg.org/#shift_jis-decoder
-  shift_jis: () => {
+  shift_jis: (err) => {
     const jis0208 = getTable('jis0208')
     let lead = 0
 
@@ -219,29 +214,28 @@ const mappers = {
         }
 
         if (b < 128) pushback.push(b)
-        return -2
+        return err()
       }
 
       if (b <= 0x80) return b // 0x80 is allowed
       if (b >= 0xa1 && b <= 0xdf) return 0xff_61 - 0xa1 + b
-      if (b < 0x81 || (b > 0x9f && b < 0xe0) || b > 0xfc) return -2
+      if (b < 0x81 || (b > 0x9f && b < 0xe0) || b > 0xfc) return err()
       lead = b
-      return -1
     }
 
     // eslint-disable-next-line sonarjs/no-identical-functions
     const eof = () => {
       if (!lead) return null
       lead = 0 // this clears state completely on EOF
-      return -2
+      return err()
     }
 
     return { bytes, eof, pushback }
   },
   // https://encoding.spec.whatwg.org/#gbk-decoder
-  gbk: () => mappers.gb18030(), // 10.1.1. GBK’s decoder is gb18030’s decoder
+  gbk: (err) => mappers.gb18030(err), // 10.1.1. GBK’s decoder is gb18030’s decoder
   // https://encoding.spec.whatwg.org/#gb18030-decoder
-  gb18030: () => {
+  gb18030: (err) => {
     const gb18030 = getTable('gb18030')
     const gb18030r = getTable('gb18030-ranges')
     let g1 = 0, g2 = 0, g3 = 0 // prettier-ignore
@@ -264,30 +258,30 @@ const mappers = {
         if (b < 0x30 || b > 0x39) {
           pushback.push(b, g3, g2)
           g1 = g2 = g3 = 0
-          return -2
+          return err()
         }
 
         const cp = index((g1 - 0x81) * 12_600 + (g2 - 0x30) * 1260 + (g3 - 0x81) * 10 + b - 0x30)
         g1 = g2 = g3 = 0
         if (cp !== undefined) return cp // Can validly return replacement
-        return -2
+        return err()
       }
 
       if (g2) {
         if (b >= 0x81 && b <= 0xfe) {
           g3 = b
-          return -1
+          return
         }
 
         pushback.push(b, g2)
         g1 = g2 = 0
-        return -2
+        return err()
       }
 
       if (g1) {
         if (b >= 0x30 && b <= 0x39) {
           g2 = b
-          return -1
+          return
         }
 
         let cp
@@ -298,20 +292,19 @@ const mappers = {
         g1 = 0
         if (cp !== undefined && cp !== REP) return cp
         if (b < 128) pushback.push(b)
-        return -2
+        return err()
       }
 
       if (b < 128) return b
       if (b === 0x80) return 0x20_ac
-      if (b === 0xff) return -2
+      if (b === 0xff) return err()
       g1 = b
-      return -1
     }
 
     const eof = () => {
       if (!g1 && !g2 && !g3) return null
       g1 = g2 = g3 = 0
-      return -2
+      return err()
     }
 
     return { bytes, eof, pushback }
@@ -329,7 +322,7 @@ export function multibyteDecoder(enc, loose = false) {
   const asciiSuperset = isAsciiSuperset(enc)
   return (arr, stream = false) => {
     const onErr = loose
-      ? () => '\uFFFD'
+      ? () => REP
       : () => {
           mapper.pushback.length = 0 // the queue is cleared on returning an error
           // The correct way per spec seems to be not destoying the decoder state in stream mode, even when fatal
@@ -346,7 +339,7 @@ export function multibyteDecoder(enc, loose = false) {
       if (res.length === arr.length) return res // ascii
     }
 
-    if (!mapper) mapper = mappers[enc]()
+    if (!mapper) mapper = mappers[enc](onErr)
     const { bytes, eof, pushback } = mapper
     let i = res.length
 
@@ -354,11 +347,8 @@ export function multibyteDecoder(enc, loose = false) {
     // Same as the full loop, but without EOF handling
     while (i < length || pushback.length > 0) {
       const c = bytes(pushback.length > 0 ? pushback.pop() : arr[i++])
-      if (c >= 0) {
-        res += String.fromCodePoint(c) // gb18030 returns codepoints above 0xFFFF from ranges
-      } else if (c === -2) {
-        res += onErr()
-      }
+      if (c === undefined) continue // consuming
+      res += String.fromCodePoint(c) // gb18030 returns codepoints above 0xFFFF from ranges
     }
 
     // Then, dump EOF. This needs the same loop as the characters can be pushed back
@@ -368,12 +358,8 @@ export function multibyteDecoder(enc, loose = false) {
         const isEOF = i === length && pushback.length === 0
         const c = isEOF ? eof() : bytes(pushback.length > 0 ? pushback.pop() : arr[i++])
         if (isEOF && c === null) break // clean exit
-        if (c === -1) continue // consuming
-        if (c === -2) {
-          res += onErr()
-        } else {
-          res += String.fromCodePoint(c) // gb18030 returns codepoints above 0xFFFF from ranges
-        }
+        if (c === undefined) continue // consuming
+        res += String.fromCodePoint(c) // gb18030 returns codepoints above 0xFFFF from ranges
       }
     }
 
