@@ -391,7 +391,7 @@ export function multibyteDecoder(enc, loose = false) {
     const onErr = loose
       ? () => REP
       : () => {
-          mapper.pushback.length = 0 // the queue is cleared on returning an error
+          if (mapper.pushback) mapper.pushback.length = 0 // the queue is cleared on returning an error
           // The correct way per spec seems to be not destoying the decoder state in stream mode, even when fatal
           // Decoders big5, euc-jp, euc-kr, shift_jis, gb18030 / gbk - all clear state before throwing unless EOF, so not affected
           // iso-2022-jp is the only tricky one one where this !stream check matters in non-stream mode
