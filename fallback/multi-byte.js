@@ -380,7 +380,8 @@ const mappers = {
     // g3 is 0 or 0x81-0xfe
 
     const decode = (arr, start, end, stream) => {
-      let res = ''
+      const o16 = new Uint16Array(end - start + (g1 ? 3 : 0)) // even with pushback it's at most 1 char per byte
+      let oi = 0
       let i = start
       const pushback = [] // local and auto-cleared
 
@@ -396,16 +397,20 @@ const mappers = {
               if (b < 0x30 || b > 0x39) {
                 pushback.push(b, g3, g2)
                 g1 = g2 = g3 = 0
-                res += String.fromCharCode(err())
+                o16[oi++] = err()
               } else {
                 const p = index(
                   (g1 - 0x81) * 12_600 + (g2 - 0x30) * 1260 + (g3 - 0x81) * 10 + b - 0x30
                 )
                 g1 = g2 = g3 = 0
                 if (p === undefined) {
-                  res += String.fromCharCode(err())
+                  o16[oi++] = err()
+                } else if (p <= 0xff_ff) {
+                  o16[oi++] = p // Can validly return replacement
                 } else {
-                  res += String.fromCodePoint(p) // Can validly return replacement
+                  const d = p - 0x1_00_00
+                  o16[oi++] = 0xd8_00 | (d >> 10)
+                  o16[oi++] = 0xdc_00 | (d & 0x3_ff)
                 }
               }
             } else if (b >= 0x81 && b <= 0xfe) {
@@ -413,7 +418,7 @@ const mappers = {
             } else {
               pushback.push(b, g2)
               g1 = g2 = 0
-              res += String.fromCharCode(err())
+              o16[oi++] = err()
             }
           } else if (b >= 0x30 && b <= 0x39) {
             g2 = b
@@ -425,18 +430,18 @@ const mappers = {
 
             g1 = 0
             if (cp !== undefined && cp !== REP) {
-              res += String.fromCodePoint(cp)
+              o16[oi++] = cp // 16-bit
             } else {
-              res += String.fromCharCode(err())
-              if (b < 128) res += String.fromCharCode(b) // can be processed immediately
+              o16[oi++] = err()
+              if (b < 128) o16[oi++] = b // can be processed immediately
             }
           }
         } else if (b < 128) {
-          res += String.fromCharCode(b)
+          o16[oi++] = b
         } else if (b === 0x80) {
-          res += '\u20AC'
+          o16[oi++] = 0x20_ac
         } else if (b === 0xff) {
-          res += String.fromCharCode(err())
+          o16[oi++] = err()
         } else {
           g1 = b
         }
@@ -445,10 +450,10 @@ const mappers = {
       // if g1 = 0 then g2 = g3 = 0
       if (g1 && !stream) {
         g1 = g2 = g3 = 0
-        res += String.fromCharCode(err())
+        o16[oi++] = err()
       }
 
-      return res
+      return decodeUCS2(o16, oi)
     }
 
     return { decode, isAscii: () => g1 === 0 } // if g1 = 0 then g2 = g3 = 0
