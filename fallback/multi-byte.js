@@ -11,36 +11,48 @@ export const E_STRICT = 'Input is not well-formed for this encoding'
 // Common between euc-kr and big5
 function bigDecoder(err, pair) {
   let lead = 0
+  let oi = 0
+  let o16
 
   const decodeLead = (b) => {
     const str = pair(lead, b)
     lead = 0
-    if (str) return str
-    return b < 128 ? String.fromCharCode(err(), b) : String.fromCharCode(err())
+    if (typeof str === 'number') {
+      o16[oi++] = str
+    } else if (str) {
+      // This is still faster than string concatenation. Can we optimize strings though?
+      for (let i = 0; i < str.length; i++) o16[oi++] = str.charCodeAt(i)
+    } else {
+      o16[oi++] = err()
+      if (b < 128) o16[oi++] = b
+    }
   }
 
   const decode = (arr, start, end, stream) => {
-    let res = ''
     let i = start
+    o16 = new Uint16Array(end - start)
+    oi = 0
 
-    if (lead && i < end) res += decodeLead(arr[i++])
+    if (lead && i < end) decodeLead(arr[i++])
     while (i < end) {
       const b = arr[i++]
       if (b < 128) {
-        res += String.fromCharCode(b)
+        o16[oi++] = b
       } else if (b === 0x80 || b === 0xff) {
-        res += String.fromCharCode(err())
+        o16[oi++] = err()
       } else {
         lead = b
-        if (i < end) res += decodeLead(arr[i++])
+        if (i < end) decodeLead(arr[i++])
       }
     }
 
     if (lead && !stream) {
       lead = 0
-      res += String.fromCharCode(err())
+      o16[oi++] = err()
     }
 
+    const res = decodeUCS2(o16, oi)
+    o16 = null
     return res
   }
 
@@ -57,7 +69,7 @@ const mappers = {
     return bigDecoder(err, (l, b) => {
       if (b < 0x41 || b > 0xfe) return
       const cp = euc[(l - 0x81) * 190 + b - 0x41]
-      return cp !== undefined && cp !== REP ? String.fromCharCode(cp) : undefined
+      return cp !== undefined && cp !== REP ? cp : undefined
     })
   },
   // https://encoding.spec.whatwg.org/#euc-jp-decoder
@@ -282,7 +294,7 @@ const mappers = {
     const jis0208 = getTable('jis0208')
     let lead = 0
     let oi = 0
-    let out
+    let o16
 
     const decodeLead = (b) => {
       const l = lead
@@ -290,23 +302,23 @@ const mappers = {
       if (b >= 0x40 && b <= 0xfc && b !== 0x7f) {
         const p = (l - (l < 0xa0 ? 0x81 : 0xc1)) * 188 + b - (b < 0x7f ? 0x40 : 0x41)
         if (p >= 8836 && p <= 10_715) {
-          out[oi++] = 0xe0_00 - 8836 + p
+          o16[oi++] = 0xe0_00 - 8836 + p
           return
         }
 
         const cp = jis0208[p]
         if (cp !== undefined && cp !== REP) {
-          out[oi++] = cp
+          o16[oi++] = cp
           return
         }
       }
 
-      out[oi++] = err()
-      if (b < 128) out[oi++] = b
+      o16[oi++] = err()
+      if (b < 128) o16[oi++] = b
     }
 
     const decode = (arr, start, end, stream) => {
-      out = new Uint16Array(end - start)
+      o16 = new Uint16Array(end - start)
       oi = 0
       let i = start
 
@@ -314,11 +326,11 @@ const mappers = {
       while (i < end) {
         const b = arr[i++]
         if (b <= 0x80) {
-          out[oi++] = b // 0x80 is allowed
+          o16[oi++] = b // 0x80 is allowed
         } else if (b >= 0xa1 && b <= 0xdf) {
-          out[oi++] = 0xfe_c0 + b
+          o16[oi++] = 0xfe_c0 + b
         } else if (b === 0xa0 || b > 0xfc) {
-          out[oi++] = err()
+          o16[oi++] = err()
         } else {
           lead = b
           if (i < end) decodeLead(arr[i++])
@@ -327,10 +339,12 @@ const mappers = {
 
       if (lead && !stream) {
         lead = 0
-        out[oi++] = err()
+        o16[oi++] = err()
       }
 
-      return decodeUCS2(out, oi)
+      const res = decodeUCS2(o16, oi)
+      o16 = null
+      return res
     }
 
     return { decode, isAscii: () => lead === 0 }
