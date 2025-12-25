@@ -62,9 +62,11 @@ describe('multi-byte encodings tables', () => {
           t.assert.strictEqual(typeof table[i], 'string')
           t.assert.strictEqual(table[i].length, 2)
         } else if (row) {
-          const expected = non16bit ? String.fromCodePoint(row.code) : row.code
+          const expected =
+            non16bit && typeof table[i] === 'string' ? String.fromCodePoint(row.code) : row.code
           t.assert.strictEqual(i, row.i)
           t.assert.strictEqual(table[i], expected, `Offset ${i}: ${row.description}`)
+          if (typeof expected === 'number') t.assert.ok(expected > 0 && expected < 0xff_fd)
         } else {
           t.assert.strictEqual(table[i], non16bit ? undefined : 0xff_fd, `Offset ${i}`)
         }

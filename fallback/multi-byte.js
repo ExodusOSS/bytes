@@ -15,13 +15,13 @@ function bigDecoder(err, pair) {
   let o16
 
   const decodeLead = (b) => {
-    const str = pair(lead, b)
+    const p = pair(lead, b)
     lead = 0
-    if (typeof str === 'number') {
-      o16[oi++] = str
-    } else if (str) {
+    if (typeof p === 'number') {
+      o16[oi++] = p
+    } else if (p) {
       // This is still faster than string concatenation. Can we optimize strings though?
-      for (let i = 0; i < str.length; i++) o16[oi++] = str.charCodeAt(i)
+      for (let i = 0; i < p.length; i++) o16[oi++] = p.charCodeAt(i)
     } else {
       o16[oi++] = err()
       if (b < 128) o16[oi++] = b

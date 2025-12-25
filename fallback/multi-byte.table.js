@@ -56,7 +56,9 @@ function unwrap(res, t, pos, stringMode = false) {
         }
 
         if (stringMode) {
-          for (let k = 0; k < x; k++, pos++, code++) res[pos] = String.fromCodePoint(code)
+          for (let k = 0; k < x; k++, pos++, code++) {
+            res[pos] = code <= 0xff_ff ? code : String.fromCodePoint(code)
+          }
         } else {
           for (let k = 0; k < x; k++, pos++, code++) res[pos] = code
         }
@@ -65,8 +67,13 @@ function unwrap(res, t, pos, stringMode = false) {
       pos = unwrap(res, indices[x], pos, stringMode) // self-reference using shared chunks
     } else if (stringMode) {
       const s = [...utf16toString(loadBase64(x), 'uint8-le')] // splits by codepoints
-      for (let i = 0; i < s.length; ) res[pos++] = s[i++] // TODO: splice?
-      code = s[s.length - 1].codePointAt(0) + 1
+      let char
+      for (let i = 0; i < s.length; ) {
+        char = s[i++]
+        res[pos++] = char.length === 1 ? char.charCodeAt(0) : char // strings only for high codepoints
+      }
+
+      code = char.codePointAt(0) + 1
     } else {
       const u16 = to16input(loadBase64(x), true) // data is little-endian
       res.set(u16, pos)
