@@ -256,7 +256,8 @@ const mappers = {
     }
 
     const decode = (arr, start, end, stream) => {
-      let res = ''
+      const o16 = new Uint16Array(end - start + 2) // err in eof + lead from state
+      let oi = 0
       let i = start
       const pushback = [] // local and auto-cleared
 
@@ -264,7 +265,7 @@ const mappers = {
       // Same as the full loop, but without EOF handling
       while (i < end || pushback.length > 0) {
         const c = bytes(pushback, pushback.length > 0 ? pushback.pop() : arr[i++])
-        if (c !== undefined) res += String.fromCodePoint(c)
+        if (c !== undefined) o16[oi++] = c // 16-bit
       }
 
       // Then, dump EOF. This needs the same loop as the characters can be pushed back
@@ -272,11 +273,11 @@ const mappers = {
         while (i <= end || pushback.length > 0) {
           if (i < end || pushback.length > 0) {
             const c = bytes(pushback, pushback.length > 0 ? pushback.pop() : arr[i++])
-            if (c !== undefined) res += String.fromCodePoint(c)
+            if (c !== undefined) o16[oi++] = c // 16-bit
           } else {
             const c = eof(pushback)
             if (c === null) break // clean exit
-            res += String.fromCodePoint(c)
+            o16[oi++] = c
           }
         }
       }
@@ -290,7 +291,7 @@ const mappers = {
         out = false
       }
 
-      return res
+      return decodeUCS2(o16, oi)
     }
 
     return { decode, isAscii: () => false }
