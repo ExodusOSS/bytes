@@ -30,7 +30,7 @@ function bigDecoder(err, pair) {
 
   const decode = (arr, start, end, stream) => {
     let i = start
-    o16 = new Uint16Array(end - start)
+    o16 = new Uint16Array(end - start + (lead ? 1 : 0)) // there are pairs but they consume more than one byte
     oi = 0
 
     if (lead && i < end) decodeLead(arr[i++])
@@ -78,55 +78,61 @@ const mappers = {
     const jis0212 = getTable('jis0212')
     let j12 = false
     let lead = 0
+    let oi = 0
+    let o16
 
     const decodeLead = (b) => {
       if (lead === 0x8e && b >= 0xa1 && b <= 0xdf) {
         lead = 0
-        return String.fromCharCode(0xfe_c0 + b)
-      }
-
-      if (lead === 0x8f && b >= 0xa1 && b <= 0xfe) {
+        o16[oi++] = 0xfe_c0 + b
+      } else if (lead === 0x8f && b >= 0xa1 && b <= 0xfe) {
         j12 = true
         lead = b
-        return ''
-      }
+      } else {
+        let cp
+        if (lead >= 0xa1 && lead <= 0xfe && b >= 0xa1 && b <= 0xfe) {
+          cp = (j12 ? jis0212 : jis0208)[(lead - 0xa1) * 94 + b - 0xa1]
+        }
 
-      let cp
-      if (lead >= 0xa1 && lead <= 0xfe && b >= 0xa1 && b <= 0xfe) {
-        cp = (j12 ? jis0212 : jis0208)[(lead - 0xa1) * 94 + b - 0xa1]
+        lead = 0
+        j12 = false
+        if (cp !== undefined && cp !== REP) {
+          o16[oi++] = cp
+        } else {
+          o16[oi++] = err()
+          if (b < 128) o16[oi++] = b
+        }
       }
-
-      lead = 0
-      j12 = false
-      if (cp !== undefined && cp !== REP) return String.fromCharCode(cp)
-      return b < 128 ? String.fromCharCode(err(), b) : String.fromCharCode(err())
     }
 
     const decode = (arr, start, end, stream) => {
-      let res = ''
       let i = start
+      o16 = new Uint16Array(end - start + (lead ? 1 : 0))
+      oi = 0
 
-      if (lead && i < end) res += decodeLead(arr[i++])
-      if (lead && i < end) res += decodeLead(arr[i++]) // could be two leads, but no more
+      if (lead && i < end) decodeLead(arr[i++])
+      if (lead && i < end) decodeLead(arr[i++]) // could be two leads, but no more
       while (i < end) {
         const b = arr[i++]
         if (b < 128) {
-          res += String.fromCharCode(b)
+          o16[oi++] = b
         } else if ((b < 0xa1 && b !== 0x8e && b !== 0x8f) || b === 0xff) {
-          res += String.fromCharCode(err())
+          o16[oi++] = err()
         } else {
           lead = b
-          if (i < end) res += decodeLead(arr[i++])
-          if (lead && i < end) res += decodeLead(arr[i++]) // could be two leads
+          if (i < end) decodeLead(arr[i++])
+          if (lead && i < end) decodeLead(arr[i++]) // could be two leads
         }
       }
 
       if (lead && !stream) {
         lead = 0
         j12 = false // can be true only when lead is non-zero
-        res += String.fromCharCode(err())
+        o16[oi++] = err()
       }
 
+      const res = decodeUCS2(o16, oi)
+      o16 = null
       return res
     }
 
@@ -318,7 +324,7 @@ const mappers = {
     }
 
     const decode = (arr, start, end, stream) => {
-      o16 = new Uint16Array(end - start)
+      o16 = new Uint16Array(end - start + (lead ? 1 : 0))
       oi = 0
       let i = start
 
