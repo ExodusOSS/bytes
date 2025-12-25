@@ -33,15 +33,29 @@ See [Performance](./Performance.md) for more info
 import { TextDecoder, TextEncoder } from '@exodus/bytes/encoding.js'
 ```
 
-Less than half the bundle size of [text-encoding](https://npmjs.com/text-encoding), [whatwg-encoding](https://npmjs.com/whatwg-encoding) or [iconv-lite](https://npmjs.com/iconv-lite) (gzipped or not), and [is much faster](#fast).
-See also [lite version](#lite-version).
+Less than half the bundle size of [text-encoding](https://npmjs.com/text-encoding), [whatwg-encoding](https://npmjs.com/whatwg-encoding) or [iconv-lite](https://npmjs.com/iconv-lite) (gzipped or not).\
+Also [much faster](#fast) than all of those.
 
-Spec compliant, passing WPT and covered with extra tests.
+> [!TIP]
+> See also the [lite version](#lite-version) to get this down to 9 KiB gzipped.
 
-Moreover, tests for this library uncovered [bugs in all major implementations](https://docs.google.com/spreadsheets/d/1pdEefRG6r9fZy61WHGz0TKSt8cO4ISWqlpBN5KntIvQ/edit).
+Spec compliant, passing WPT and covered with extra tests.\
+Moreover, tests for this library uncovered [bugs in all major implementations](https://docs.google.com/spreadsheets/d/1pdEefRG6r9fZy61WHGz0TKSt8cO4ISWqlpBN5KntIvQ/edit).\
+Including all three major browser engines being wrong at UTF-8.\
+See [WPT pull request](https://github.com/web-platform-tests/wpt/pull/56892).
 
-[Faster than Node.js native implementation on Node.js](https://github.com/nodejs/node/issues/61041#issuecomment-3649242024).
+It works correctly even in environments that have native implementations broken (that's all of them currently).\
 Runs (and passes WPT) on Node.js built without ICU.
+
+> [!NOTE]
+> [Faster than Node.js native implementation on Node.js](https://github.com/nodejs/node/issues/61041#issuecomment-3649242024).
+>
+> The JS multi-byte version is as fast as native impl in Node.js and browsers, but (unlike them) returns correct results.
+>
+> For encodings where native version is known to be fast and correct, it is automatically used.\
+> Some single-byte encodings are faster than native in all three major browser engines.
+
+See [analysis table](https://docs.google.com/spreadsheets/d/1pdEefRG6r9fZy61WHGz0TKSt8cO4ISWqlpBN5KntIvQ/edit) for more info.
 
 ### Caveat: `TextDecoder` / `TextEncoder` APIs are lossy by default per spec
 
