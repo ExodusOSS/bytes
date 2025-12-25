@@ -1,4 +1,4 @@
-import { decodeLatin1, encodeCharcodes } from './latin1.js'
+import { decodeUCS2, encodeCharcodes } from './latin1.js'
 import { isLE } from './_utils.js'
 
 export const E_STRICT = 'Input is not well-formed utf16'
@@ -38,9 +38,9 @@ export function to16input(u8, le) {
 }
 
 export const decode = (u16, loose = false, checked = false) => {
-  if (checked || isWellFormed(u16)) return decodeLatin1(u16, 0, u16.length) // it's capable of decoding Uint16Array to UTF-16 as well
+  if (checked || isWellFormed(u16)) return decodeUCS2(u16)
   if (!loose) throw new TypeError(E_STRICT)
-  return decodeLatin1(toWellFormed(Uint16Array.from(u16)), 0, u16.length) // cloned for replacement
+  return decodeUCS2(toWellFormed(Uint16Array.from(u16))) // cloned for replacement
 }
 
 export function encode(str, loose = false, checked = false, swapped = false) {

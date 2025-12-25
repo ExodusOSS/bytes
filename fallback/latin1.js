@@ -5,6 +5,7 @@ import {
   nativeBuffer,
   isHermes,
   isDeno,
+  isLE,
 } from './_utils.js'
 
 // See http://stackoverflow.com/a/22747272/680742, which says that lowest limit is in Chrome, with 0xffff args
@@ -59,6 +60,16 @@ export function decodeLatin1(arr, start = 0, stop = arr.length) {
   const sliced = start === 0 && stop === arr.length ? arr : arr.subarray(start, stop)
   return String.fromCharCode.apply(String, sliced)
 }
+
+// Unchecked for well-formedness, raw. Expects Uint16Array input
+export const decodeUCS2 =
+  nativeBuffer && isLE && !isDeno
+    ? (u16, stop = u16.length) => {
+        // TODO: fast path for BE, perhaps faster path for Deno. Note that decoder replaces, this function doesn't
+        if (stop > 32) return nativeBuffer.from(u16.buffer, u16.byteOffset, stop * 2).ucs2Slice() // from 64 bytes, below are in heap
+        return decodeLatin1(u16, 0, stop)
+      }
+    : (u16, stop = u16.length) => decodeLatin1(u16, 0, stop)
 
 // Does not check input, uses best available method
 // Building an array for this is only faster than proper string concatenation when TextDecoder or native Buffer are available

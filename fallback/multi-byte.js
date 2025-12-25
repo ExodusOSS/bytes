@@ -1,4 +1,4 @@
-import { asciiPrefix, decodeLatin1 } from './latin1.js'
+import { asciiPrefix, decodeLatin1, decodeUCS2 } from './latin1.js'
 import { getTable } from './multi-byte.table.js'
 
 export const E_STRICT = 'Input is not well-formed for this encoding'
@@ -281,45 +281,56 @@ const mappers = {
   shift_jis: (err) => {
     const jis0208 = getTable('jis0208')
     let lead = 0
+    let oi = 0
+    let out
 
     const decodeLead = (b) => {
       const l = lead
       lead = 0
       if (b >= 0x40 && b <= 0xfc && b !== 0x7f) {
         const p = (l - (l < 0xa0 ? 0x81 : 0xc1)) * 188 + b - (b < 0x7f ? 0x40 : 0x41)
-        if (p >= 8836 && p <= 10_715) return String.fromCharCode(0xe0_00 - 8836 + p)
+        if (p >= 8836 && p <= 10_715) {
+          out[oi++] = 0xe0_00 - 8836 + p
+          return
+        }
+
         const cp = jis0208[p]
-        if (cp !== undefined && cp !== REP) return String.fromCharCode(cp)
+        if (cp !== undefined && cp !== REP) {
+          out[oi++] = cp
+          return
+        }
       }
 
-      return b < 128 ? String.fromCharCode(err(), b) : String.fromCharCode(err())
+      out[oi++] = err()
+      if (b < 128) out[oi++] = b
     }
 
     const decode = (arr, start, end, stream) => {
-      let res = ''
+      out = new Uint16Array(end - start)
+      oi = 0
       let i = start
 
-      if (lead && i < end) res += decodeLead(arr[i++])
+      if (lead && i < end) decodeLead(arr[i++])
       while (i < end) {
         const b = arr[i++]
         if (b <= 0x80) {
-          res += String.fromCharCode(b) // 0x80 is allowed
+          out[oi++] = b // 0x80 is allowed
         } else if (b >= 0xa1 && b <= 0xdf) {
-          res += String.fromCharCode(0xfe_c0 + b)
+          out[oi++] = 0xfe_c0 + b
         } else if (b === 0xa0 || b > 0xfc) {
-          res += String.fromCharCode(err())
+          out[oi++] = err()
         } else {
           lead = b
-          if (i < end) res += decodeLead(arr[i++])
+          if (i < end) decodeLead(arr[i++])
         }
       }
 
       if (lead && !stream) {
         lead = 0
-        res += String.fromCharCode(err())
+        out[oi++] = err()
       }
 
-      return res
+      return decodeUCS2(out, oi)
     }
 
     return { decode, isAscii: () => lead === 0 }
