@@ -1,10 +1,8 @@
 import { assertUint8 } from './assert.js'
 import { isAscii } from 'node:buffer'
-import { isDeno, isLE } from './fallback/_utils.js'
+import { isDeno, isLE, toBuf } from './fallback/_utils.js'
 import { asciiPrefix } from './fallback/latin1.js'
 import { encodingMapper, encodingDecoder, E_STRICT } from './fallback/single-byte.js'
-
-const toBuf = (x) => Buffer.from(x.buffer, x.byteOffset, x.byteLength)
 
 function latin1Prefix(arr, start) {
   let p = start | 0

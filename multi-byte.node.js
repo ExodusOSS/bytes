@@ -1,9 +1,7 @@
 import { assertUint8 } from './assert.js'
-import { isDeno } from './fallback/_utils.js'
+import { isDeno, toBuf } from './fallback/_utils.js'
 import { isAsciiSuperset, multibyteDecoder } from './fallback/multi-byte.js'
 import { isAscii } from 'node:buffer'
-
-const toBuf = (x) => Buffer.from(x.buffer, x.byteOffset, x.byteLength)
 
 export function createMultibyteDecoder(encoding, loose = false) {
   const jsDecoder = multibyteDecoder(encoding, loose) // asserts

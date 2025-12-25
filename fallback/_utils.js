@@ -128,3 +128,9 @@ export function decode2string(arr, start, end, m) {
 export function assert(condition, msg) {
   if (!condition) throw new Error(msg)
 }
+
+// On arrays in heap (<= 64) it's cheaper to copy into a pooled buffer than lazy-create the ArrayBuffer storage
+export const toBuf = (x) =>
+  x.byteLength <= 64 && x.BYTES_PER_ELEMENT === 1
+    ? Buffer.from(x)
+    : Buffer.from(x.buffer, x.byteOffset, x.byteLength)
