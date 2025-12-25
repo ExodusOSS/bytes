@@ -6,6 +6,12 @@ const { TextDecoder } = globalThis
 
 let windows1252works
 
+// prettier-ignore
+const skipNative = new Set([
+  'iso-8859-16', // iso-8859-16 is somehow broken in WebKit, at least on CI
+  'iso-8859-6', 'iso-8859-8', 'iso-8859-8-i', // slow in all 3 engines
+])
+
 function shouldUseNative(enc) {
   // https://issues.chromium.org/issues/468458388
   // Also might be incorrectly imlemented on platforms as Latin1 (e.g. in Node.js) or regress
@@ -24,8 +30,7 @@ function shouldUseNative(enc) {
     return windows1252works
   }
 
-  // iso-8859-16 is somehow broken in WebKit, at least on CI
-  return enc !== 'iso-8859-16'
+  return !skipNative.has(enc)
 }
 
 export function createSinglebyteDecoder(encoding, loose = false) {
