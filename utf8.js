@@ -57,7 +57,7 @@ function decode(arr, loose = false) {
   if (nativeDecoder) return loose ? decoderLoose.decode(arr) : decoderFatal.decode(arr) // Node.js and browsers
 
   // Fast path for ASCII prefix, this is faster than all alternatives below
-  const prefix = decodeLatin1(arr, 0, asciiPrefix(arr))
+  const prefix = decodeLatin1(arr, 0, asciiPrefix(arr)) // No native decoder to use, so decodeAscii is useless here
   if (prefix.length === arr.length) return prefix
 
   // This codepath gives a ~3x perf boost on Hermes

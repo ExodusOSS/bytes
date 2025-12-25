@@ -1,4 +1,4 @@
-import { asciiPrefix, decodeLatin1 } from './latin1.js'
+import { asciiPrefix, decodeAscii, decodeLatin1 } from './latin1.js'
 import encodings from './single-byte.encodings.js'
 import { decode2string } from './_utils.js'
 
@@ -74,8 +74,9 @@ export function encodingDecoder(encoding) {
       strings = allCodes.map((c) => String.fromCharCode(c))
     }
 
-    const prefix = decodeLatin1(arr, 0, asciiPrefix(arr))
-    if (prefix.length === arr.length) return prefix
+    const prefixLen = asciiPrefix(arr)
+    if (prefixLen === arr.length) return decodeAscii(arr)
+    const prefix = decodeLatin1(arr, 0, prefixLen) // TODO: check if decodeAscii with subarray is faster for small prefixes too
     const suffix = decode2string(arr, prefix.length, arr.length, strings)
     if (!loose && incomplete && suffix.includes('\uFFFD')) throw new TypeError(E_STRICT)
     return prefix + suffix

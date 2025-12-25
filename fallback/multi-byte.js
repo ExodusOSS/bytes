@@ -1,4 +1,4 @@
-import { asciiPrefix, decodeLatin1, decodeUCS2 } from './latin1.js'
+import { asciiPrefix, decodeAscii, decodeLatin1, decodeUCS2 } from './latin1.js'
 import { getTable } from './multi-byte.table.js'
 
 export const E_STRICT = 'Input is not well-formed for this encoding'
@@ -493,8 +493,9 @@ export function multibyteDecoder(enc, loose = false) {
   return (arr, stream = false) => {
     let res = ''
     if (asciiSuperset && (!mapper || mapper.isAscii?.())) {
-      res = decodeLatin1(arr, 0, asciiPrefix(arr))
-      if (res.length === arr.length) return res // ascii
+      const prefixLen = asciiPrefix(arr)
+      if (prefixLen === arr.length) return decodeAscii(arr) // ascii
+      res = decodeLatin1(arr, 0, prefixLen) // TODO: check if decodeAscii with subarray is faster for small prefixes too
     }
 
     streaming = stream // affects onErr

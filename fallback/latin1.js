@@ -81,7 +81,10 @@ export const decodeAscii = nativeBuffer
         : nativeDecoder.decode(a) // On Node.js, utf8 decoder is faster than latin1
   : nativeDecoderLatin1
     ? (a) => nativeDecoderLatin1.decode(a) // On browsers (specifically WebKit), latin1 decoder is faster than utf8
-    : (a) => decodeLatin1(new Uint8Array(a.buffer, a.byteOffset, a.byteLength)) // Fallback. We shouldn't get here, constructing with strings directly is faster
+    : (a) =>
+        decodeLatin1(
+          a instanceof Uint8Array ? a : new Uint8Array(a.buffer, a.byteOffset, a.byteLength)
+        )
 
 /* eslint-disable @exodus/mutable/no-param-reassign-prop-only */
 
