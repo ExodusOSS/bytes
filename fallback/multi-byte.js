@@ -357,30 +357,34 @@ const mappers = {
       // Same as the full loop, but without EOF handling
       while (i < end || pushback.length > 0) {
         const b = pushback.length > 0 ? pushback.pop() : arr[i++]
-        if (g3) {
-          if (b < 0x30 || b > 0x39) {
-            pushback.push(b, g3, g2)
-            g1 = g2 = g3 = 0
-            res += String.fromCharCode(err())
-          } else {
-            const p = index((g1 - 0x81) * 12_600 + (g2 - 0x30) * 1260 + (g3 - 0x81) * 10 + b - 0x30)
-            g1 = g2 = g3 = 0
-            if (p === undefined) {
-              res += String.fromCharCode(err())
+        if (g1) {
+          // g2 can be set only when g1 is set, g3 can be set only when g2 is set
+          // hence, 3 checks for g3 is faster than 3 checks for g1
+          if (g2) {
+            if (g3) {
+              if (b < 0x30 || b > 0x39) {
+                pushback.push(b, g3, g2)
+                g1 = g2 = g3 = 0
+                res += String.fromCharCode(err())
+              } else {
+                const p = index(
+                  (g1 - 0x81) * 12_600 + (g2 - 0x30) * 1260 + (g3 - 0x81) * 10 + b - 0x30
+                )
+                g1 = g2 = g3 = 0
+                if (p === undefined) {
+                  res += String.fromCharCode(err())
+                } else {
+                  res += String.fromCodePoint(p) // Can validly return replacement
+                }
+              }
+            } else if (b >= 0x81 && b <= 0xfe) {
+              g3 = b
             } else {
-              res += String.fromCodePoint(p) // Can validly return replacement
+              pushback.push(b, g2)
+              g1 = g2 = 0
+              res += String.fromCharCode(err())
             }
-          }
-        } else if (g2) {
-          if (b >= 0x81 && b <= 0xfe) {
-            g3 = b
-          } else {
-            pushback.push(b, g2)
-            g1 = g2 = 0
-            res += String.fromCharCode(err())
-          }
-        } else if (g1) {
-          if (b >= 0x30 && b <= 0x39) {
+          } else if (b >= 0x30 && b <= 0x39) {
             g2 = b
           } else {
             let cp
