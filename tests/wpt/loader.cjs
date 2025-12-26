@@ -3,11 +3,18 @@ const fs = require('node:fs')
 const path = require('node:path')
 const { describe, test } = require('node:test')
 
+// TextDecoderStream / TextEncoderStream implementations expect Streams to be present
+if (!globalThis.ReadableStream) {
+  const { ReadableStream, WritableStream, TransformStream } = require('web-streams-polyfill')
+  Object.assign(globalThis, { ReadableStream, WritableStream, TransformStream })
+}
+
 globalThis.self = globalThis
 
 globalThis.setup = (f) => f()
 globalThis.describe = (f, name) => describe(name, f)
 globalThis.test = (f, name) => test(name, f)
+globalThis.promise_test = (f, name) => test(name, f)
 globalThis.subsetTest = (t, ...a) => t(...a)
 globalThis.generate_tests = (t, l) => {
   describe('generate_tests', () => {
@@ -22,10 +29,37 @@ globalThis.assert_false = (x, ...r) => assert.strictEqual(x, false, ...r)
 globalThis.assert_not_equals = (a, b, ...r) => assert.notEqual(a, b, ...r)
 globalThis.assert_throws_js = (e, f, m) => assert.throws(f, e, m)
 globalThis.assert_throws_dom = (e, f, m) => assert.throws(f, Error, m) // we don't care about exact dom errors
+globalThis.promise_rejects_js = (t, e, p, m) => assert.rejects(p, e, m)
 globalThis.assert_array_equals = (a, b, m) => {
   assert.strictEqual(a.length, b.length, m)
   assert.deepStrictEqual([...a], [...b], m)
 }
+
+// wpt/encoding/streams/resources/readable-stream-from-array.js
+function readableStreamFromArray(array) {
+  return new ReadableStream({
+    start(controller) {
+      for (const entry of array) {
+        controller.enqueue(entry)
+      }
+
+      controller.close()
+    },
+  })
+}
+
+// wpt/encoding/streams/resources/readable-stream-to-array.js
+function readableStreamToArray(stream) {
+  var array = []
+  var writable = new WritableStream({
+    write(chunk) {
+      array.push(chunk)
+    },
+  })
+  return stream.pipeTo(writable).then(() => array)
+}
+
+Object.assign(globalThis, { readableStreamFromArray, readableStreamToArray })
 
 globalThis.createBuffer = (type, length, opts) => {
   if (type === 'SharedArrayBuffer' && globalThis.SharedArrayBuffer) {

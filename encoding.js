@@ -6,6 +6,7 @@ setMultibyteDecoder(createMultibyteDecoder)
 export {
   TextDecoder,
   TextEncoder,
+  TextDecoderStream,
   normalizeEncoding,
   getBOMEncoding,
   labelToName,

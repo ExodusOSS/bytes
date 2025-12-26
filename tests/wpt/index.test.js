@@ -1,10 +1,9 @@
 import { describe } from 'node:test'
 import { loadDir } from './loader.cjs'
 import { toBase64, fromBase64 } from '@exodus/bytes/base64.js'
-import { TextEncoder, TextDecoder } from '@exodus/bytes/encoding.js'
+import { TextEncoder, TextDecoder, TextDecoderStream } from '@exodus/bytes/encoding.js'
 
-globalThis.TextEncoder = TextEncoder
-globalThis.TextDecoder = TextDecoder
+Object.assign(globalThis, { TextEncoder, TextDecoder, TextDecoderStream })
 
 if (!globalThis.atob || !globalThis.HermesInternal) {
   globalThis.atob = (x) => {
@@ -52,6 +51,13 @@ fs.readFileSync(path.join(__dirname, 'fixtures/encoding/encodeInto.any.js'))
 fs.readFileSync(path.join(__dirname, 'fixtures/encoding/iso-2022-jp-decoder.any.js'))
 fs.readFileSync(path.join(__dirname, 'fixtures/encoding/legacy-mb-schinese/gb18030/gb18030-decoder.any.js'))
 fs.readFileSync(path.join(__dirname, 'fixtures/encoding/legacy-mb-schinese/gbk/gbk-decoder.any.js'))
+fs.readFileSync(path.join(__dirname, 'fixtures/encoding/streams/decode-attributes.any.js'))
+fs.readFileSync(path.join(__dirname, 'fixtures/encoding/streams/decode-bad-chunks.any.js'))
+fs.readFileSync(path.join(__dirname, 'fixtures/encoding/streams/decode-ignore-bom.any.js'))
+fs.readFileSync(path.join(__dirname, 'fixtures/encoding/streams/decode-incomplete-input.any.js'))
+fs.readFileSync(path.join(__dirname, 'fixtures/encoding/streams/decode-non-utf8.any.js'))
+fs.readFileSync(path.join(__dirname, 'fixtures/encoding/streams/decode-split-character.any.js'))
+fs.readFileSync(path.join(__dirname, 'fixtures/encoding/streams/decode-utf8.any.js'))
 fs.readFileSync(path.join(__dirname, 'fixtures/encoding/textdecoder-arguments.any.js'))
 fs.readFileSync(path.join(__dirname, 'fixtures/encoding/textdecoder-byte-order-marks.any.js'))
 fs.readFileSync(path.join(__dirname, 'fixtures/encoding/textdecoder-copy.any.js'))

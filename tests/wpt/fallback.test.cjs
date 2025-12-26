@@ -11,12 +11,11 @@ Uint8Array.prototype.toBase64 = undefined // eslint-disable-line no-extend-nativ
 const { describe } = require('node:test')
 const { loadDir } = require('./loader.cjs')
 const base64 = require('../../fallback/base64.js')
-const { TextEncoder, TextDecoder } = require('@exodus/bytes/encoding.js')
+const { TextEncoder, TextDecoder, TextDecoderStream } = require('@exodus/bytes/encoding.js')
 
 if (!TextDecoder || !TextEncoder) throw new Error('No TextDecoder / TextEncoder')
 
-globalThis.TextEncoder = TextEncoder
-globalThis.TextDecoder = TextDecoder
+Object.assign(globalThis, { TextEncoder, TextDecoder, TextDecoderStream })
 
 globalThis.atob = (x) => {
   x = String(x).replaceAll(/[\t\n\f\r ]/g, '')
@@ -60,6 +59,13 @@ fs.readFileSync(path.join(__dirname, 'fixtures/encoding/encodeInto.any.js'))
 fs.readFileSync(path.join(__dirname, 'fixtures/encoding/iso-2022-jp-decoder.any.js'))
 fs.readFileSync(path.join(__dirname, 'fixtures/encoding/legacy-mb-schinese/gb18030/gb18030-decoder.any.js'))
 fs.readFileSync(path.join(__dirname, 'fixtures/encoding/legacy-mb-schinese/gbk/gbk-decoder.any.js'))
+fs.readFileSync(path.join(__dirname, 'fixtures/encoding/streams/decode-attributes.any.js'))
+fs.readFileSync(path.join(__dirname, 'fixtures/encoding/streams/decode-bad-chunks.any.js'))
+fs.readFileSync(path.join(__dirname, 'fixtures/encoding/streams/decode-ignore-bom.any.js'))
+fs.readFileSync(path.join(__dirname, 'fixtures/encoding/streams/decode-incomplete-input.any.js'))
+fs.readFileSync(path.join(__dirname, 'fixtures/encoding/streams/decode-non-utf8.any.js'))
+fs.readFileSync(path.join(__dirname, 'fixtures/encoding/streams/decode-split-character.any.js'))
+fs.readFileSync(path.join(__dirname, 'fixtures/encoding/streams/decode-utf8.any.js'))
 fs.readFileSync(path.join(__dirname, 'fixtures/encoding/textdecoder-arguments.any.js'))
 fs.readFileSync(path.join(__dirname, 'fixtures/encoding/textdecoder-byte-order-marks.any.js'))
 fs.readFileSync(path.join(__dirname, 'fixtures/encoding/textdecoder-copy.any.js'))

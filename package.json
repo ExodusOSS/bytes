@@ -172,6 +172,7 @@
     "typescript": "^5.9.3",
     "uint8array-tools": "^0.0.9",
     "utf8": "^3.0.0",
+    "web-streams-polyfill": "^4.2.0",
     "whatwg-encoding": "^3.1.1",
     "wif": "^5.0.0"
   },

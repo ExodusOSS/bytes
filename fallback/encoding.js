@@ -268,6 +268,38 @@ export class TextEncoder {
   }
 }
 
+const E_NO_STREAMS = 'TransformStream global not present in the environment'
+
+// https://encoding.spec.whatwg.org/#interface-textdecoderstream
+export class TextDecoderStream {
+  constructor(encoding = 'utf-8', options = {}) {
+    if (!globalThis.TransformStream) throw new Error(E_NO_STREAMS)
+    const decoder = new TextDecoder(encoding, options)
+    const transform = new TransformStream({
+      transform: (chunk, controller) => {
+        const value = decoder.decode(fromSource(chunk), { stream: true })
+        if (value) controller.enqueue(value)
+      },
+      flush: (controller) => {
+        // https://streams.spec.whatwg.org/#dom-transformer-flush
+        const value = decoder.decode()
+        if (value) controller.enqueue(value)
+        // No need to call .terminate() (Node.js is wrong)
+      },
+    })
+
+    define(this, 'encoding', decoder.encoding)
+    define(this, 'fatal', decoder.fatal)
+    define(this, 'ignoreBOM', decoder.ignoreBOM)
+    define(this, 'readable', transform.readable)
+    define(this, 'writable', transform.writable)
+  }
+
+  get [Symbol.toStringTag]() {
+    return 'TextDecoderStream'
+  }
+}
+
 // Warning: unlike whatwg-encoding, returns lowercased labels
 // Those are case-insensitive and that's how TextDecoder encoding getter normalizes them
 export function getBOMEncoding(input) {

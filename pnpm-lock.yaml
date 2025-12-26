@@ -113,6 +113,9 @@ importers:
       utf8:
         specifier: ^3.0.0
         version: 3.0.0
+      web-streams-polyfill:
+        specifier: ^4.2.0
+        version: 4.2.0
       whatwg-encoding:
         specifier: ^3.1.1
         version: 3.1.1
@@ -2918,6 +2921,10 @@ packages:
 
   validate-npm-package-license@3.0.4:
     resolution: {integrity: sha512-DpKm2Ui/xN7/HQKCtpZxoRWBhZ9Z0kqtygG8XCgNQ8ZlDnxuQmWhj566j8fN4Cu3/JmbhsDo7fcAJq4s9h27Ew==, tarball: https://registry.npmjs.org/validate-npm-package-license/-/validate-npm-package-license-3.0.4.tgz}
+
+  web-streams-polyfill@4.2.0:
+    resolution: {integrity: sha512-0rYDzGOh9EZpig92umN5g5D/9A1Kff7k0/mzPSSCY8jEQeYkgRMoY7LhbXtUCWzLCMX0TUE9aoHkjFNB7D9pfA==, tarball: https://registry.npmjs.org/web-streams-polyfill/-/web-streams-polyfill-4.2.0.tgz}
+    engines: {node: '>= 8'}
 
   webdriver-bidi-protocol@0.3.6:
     resolution: {integrity: sha512-mlGndEOA9yK9YAbvtxaPTqdi/kaCWYYfwrZvGzcmkr/3lWM+tQj53BxtpVd6qbC6+E5OnHXgCcAhre6AkXzxjA==, tarball: https://registry.npmjs.org/webdriver-bidi-protocol/-/webdriver-bidi-protocol-0.3.6.tgz}
@@ -6254,6 +6261,8 @@ snapshots:
     dependencies:
       spdx-correct: 3.2.0
       spdx-expression-parse: 3.0.1
+
+  web-streams-polyfill@4.2.0: {}
 
   webdriver-bidi-protocol@0.3.6:
     optional: true
