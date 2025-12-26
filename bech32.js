@@ -179,6 +179,9 @@ function assertDecodeArgs(str, limit) {
   if (typeof limit !== 'number' || str.length < 8 || !(str.length <= limit)) throw new Error(E_SIZE)
 }
 
+// this is instant on 8-bit strings
+const NON_LATIN = /[^\x00-\xFF]/ // eslint-disable-line no-control-regex
+
 function fromBech32enc(str, limit, encoding) {
   assertDecodeArgs(str, limit)
   const lower = str.toLowerCase()
@@ -195,6 +198,7 @@ function fromBech32enc(str, limit, encoding) {
   if (wordsLength < 0) throw new Error(E_SIZE)
   const bytesLength = (wordsLength * 5) >> 3
   const slice = str.slice(split + 1)
+  if (!nativeEncoder && NON_LATIN.test(slice)) throw new SyntaxError(E_CHARACTER) // otherwise can't use encodeLatin1
   const c = nativeEncoder ? encodeAscii(slice, E_CHARACTER) : encodeLatin1(slice) // suboptimal, but only affects non-Hermes barebones
   const bytes = new Uint8Array(bytesLength)
 

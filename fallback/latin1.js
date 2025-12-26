@@ -109,6 +109,7 @@ export const encodeCharcodes = isHermes
 
 /* eslint-enable @exodus/mutable/no-param-reassign-prop-only */
 
+// Warning: can be used only on checked strings, converts strings to 8-bit
 export const encodeLatin1 = (str) => encodeCharcodes(str, new Uint8Array(str.length))
 
 // Expects nativeEncoder to be present

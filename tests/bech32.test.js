@@ -87,3 +87,12 @@ test('sizes roundtrip, random data', (t) => {
     }
   }
 })
+
+test('fromBech32 does not accept non-Latin1 chars', (t) => {
+  t.assert.deepStrictEqual(fromBech32('b19gzdzt2z'), { prefix: 'b', bytes: Uint8Array.of(42) })
+  t.assert.deepStrictEqual(fromBech32m('c19v6eekez'), { prefix: 'c', bytes: Uint8Array.of(43) })
+  t.assert.throws(() => fromBech32('\u106219gzdzt2z'), /Missing or invalid prefix/)
+  t.assert.throws(() => fromBech32m('\u206319gzdzt2z'), /Missing or invalid prefix/)
+  t.assert.throws(() => fromBech32('b19gzd\u107At2z'), /Non-bech32 character/)
+  t.assert.throws(() => fromBech32m('c19gzd\u207At2z'), /Non-bech32 character/)
+})
