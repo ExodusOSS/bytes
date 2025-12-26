@@ -68,7 +68,16 @@ function isAnyUint8Array(x) {
 const fromSource = (x) => {
   if (x instanceof Uint8Array) return x
   if (ArrayBuffer.isView(x)) return new Uint8Array(x.buffer, x.byteOffset, x.byteLength)
-  if (isAnyArrayBuffer(x)) return new Uint8Array(x)
+  if (isAnyArrayBuffer(x)) {
+    if ('detached' in x) return x.detached === true ? new Uint8Array() : new Uint8Array(x)
+    // Old engines without .detached, try-catch
+    try {
+      return new Uint8Array(x)
+    } catch {
+      return new Uint8Array()
+    }
+  }
+
   throw new TypeError('Argument must be a SharedArrayBuffer, ArrayBuffer or ArrayBufferView')
 }
 

@@ -811,4 +811,26 @@ describe('Common implementation mistakes', () => {
       t.assert.strictEqual(new TextDecoder('UTF-8'.toLowerCase()).encoding, 'utf-8') // Do not remove .toLowerCase() from test
     })
   })
+
+  // text-encoding is wrong, naive whatwg-encoding usage fails too
+  // https://webidl.spec.whatwg.org/#dfn-get-buffer-source-copy
+  // 7. If IsDetachedBuffer(jsArrayBuffer) is true, then return the empty byte sequence.
+  test('decoding detached returns empty data', { skip: !globalThis.MessageChannel }, (t) => {
+    for (const fatal of [false, true]) {
+      const decoder = new TextDecoder('utf-8', { fatal })
+      const a = new ArrayBuffer(2)
+      const b = new Uint8Array(a)
+      b[0] = 0x24
+      b[1] = 0x25
+      t.assert.strictEqual(decoder.decode(a), '$%')
+      t.assert.strictEqual(decoder.decode(b), '$%')
+      // second time
+      t.assert.strictEqual(decoder.decode(a), '$%')
+      t.assert.strictEqual(decoder.decode(b), '$%')
+      new MessageChannel().port1.postMessage(a, [a])
+      // but not anymore
+      t.assert.strictEqual(decoder.decode(a), '')
+      t.assert.strictEqual(decoder.decode(b), '')
+    }
+  })
 })
