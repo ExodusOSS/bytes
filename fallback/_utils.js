@@ -5,12 +5,8 @@ export const isHermes = Boolean(globalThis.HermesInternal)
 export const isDeno = Boolean(globalThis.Deno)
 export const isLE = new Uint8Array(Uint16Array.of(258).buffer)[0] === 2
 
-let isNative = (x) => {
-  if (!x) return false
-  if (haveNativeBuffer) return true // we consider Node.js TextDecoder/TextEncoder native
-  return `${x}`.includes('[native code]')
-}
-
+// We consider Node.js TextDecoder/TextEncoder native
+let isNative = (x) => x && (haveNativeBuffer || `${x}`.includes('[native code]'))
 if (!haveNativeBuffer && isNative(() => {})) isNative = () => false // e.g. XS, we don't want false positives
 
 export const nativeEncoder = isNative(TextEncoder) ? new TextEncoder() : null
