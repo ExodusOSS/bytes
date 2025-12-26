@@ -8,9 +8,7 @@ export const isLE = new Uint8Array(Uint16Array.of(258).buffer)[0] === 2
 let isNative = (x) => {
   if (!x) return false
   if (haveNativeBuffer) return true // we consider Node.js TextDecoder/TextEncoder native
-  const s = `${x}`
-  // See https://github.com/facebook/hermes/pull/1855#issuecomment-3659386410
-  return s.includes('[native code]') || s.includes(`[bytecode]`) // Static Hermes has [bytecode] for contrib, which includes TextEncoder/TextDecoder
+  return `${x}`.includes('[native code]')
 }
 
 if (!haveNativeBuffer && isNative(() => {})) isNative = () => false // e.g. XS, we don't want false positives
