@@ -23,6 +23,7 @@ function getEncoding(encoding) {
 
 const mappers = new Map()
 const decoders = new Map()
+const encmaps = new Map()
 
 // Used only on Node.js, no reason to optimize for anything else
 // E.g. avoiding .from and filling zero-initialized arr manually is faster on Hermes, but we avoid this codepath on Hermes completely
@@ -84,4 +85,22 @@ export function encodingDecoder(encoding) {
 
   decoders.set(encoding, decoder)
   return decoder
+}
+
+export function encodeMap(encoding) {
+  const cached = encmaps.get(encoding)
+  if (cached) return cached
+
+  const codes = getEncoding(encoding)
+  let max = 128
+  while (codes.length < 128) codes.push(128 + codes.length)
+  for (const code of codes) if (code > max && code !== r) max = code
+  const map = new Uint8Array(max + 1) // < 10 KiB for all except macintosh, 63 KiB for macintosh
+  for (let i = 0; i < 128; i++) {
+    map[i] = i
+    if (codes[i] !== r) map[codes[i]] = 128 + i
+  }
+
+  encmaps.set(encoding, map)
+  return map
 }

@@ -1,6 +1,7 @@
 import { assertUint8 } from './assert.js'
-import { canDecoders } from './fallback/_utils.js'
-import { assertEncoding, encodingDecoder } from './fallback/single-byte.js'
+import { canDecoders, nativeEncoder } from './fallback/_utils.js'
+import { encodeAscii } from './fallback/latin1.js'
+import { assertEncoding, encodingDecoder, encodeMap, E_STRICT } from './fallback/single-byte.js'
 
 const { TextDecoder } = globalThis
 
@@ -57,4 +58,45 @@ export function createSinglebyteDecoder(encoding, loose = false) {
   }
 }
 
+const NON_LATIN = /[^\x00-\xFF]/ // eslint-disable-line no-control-regex
+
+function encode(s, m) {
+  const len = s.length
+  const x = new Uint8Array(len)
+  for (let i = 0; i < len; i++) {
+    const x0 = s.charCodeAt(i)
+    const c0 = m[x0]
+    if (!c0 && x0) return null
+    x[i] = c0
+  }
+
+  return x
+}
+
+export function createSinglebyteEncoder(encoding, { mode = 'fatal' } = {}) {
+  // TODO: replacement, truncate (replacement will need varying length)
+  if (mode !== 'fatal') throw new Error('Unsupported mode')
+  const m = encodeMap(encoding) // asserts
+
+  // No single-byte encoder produces surrogate pairs, so any surrogate is invalid
+  // This needs special treatment only to decide how many replacement chars to output, one or two
+  // Not much use in running isWellFormed, most likely cause of error is unmapped chars, not surrogate pairs
+  return (s) => {
+    if (typeof s !== 'string') throw new TypeError('Input is not a string')
+
+    // Instead of an ASCII regex check, encode optimistically - this is faster
+    // Check for 8-bit string with a regex though, this is instant on 8-bit strings so doesn't hurt the ASCII fast path
+    if (nativeEncoder && !NON_LATIN.test(s)) {
+      try {
+        return encodeAscii(s, E_STRICT)
+      } catch {}
+    }
+
+    const res = encode(s, m)
+    if (!res) throw new TypeError(E_STRICT)
+    return res
+  }
+}
+
 export const windows1252toString = createSinglebyteDecoder('windows-1252')
+export const windows1252fromString = createSinglebyteEncoder('windows-1252')

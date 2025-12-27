@@ -12,15 +12,15 @@ import { Table } from './utils/table.js'
 if (!globalThis.Buffer) globalThis.Buffer = buffer.Buffer
 const bufferIsPolyfilled = Buffer === buffer.Buffer
 
-const strings = bufs.map((x) => exodus.windows1252toString(x))
+let strings = bufs.map((x) => exodus.windows1252toString(x))
 const asciiBufs = bufs.map((x) => x.map((c) => c & 0x7f))
-const asciiStrings = asciiBufs.map((x) => exodus.windows1252toString(x))
+let asciiStrings = asciiBufs.map((x) => exodus.windows1252toString(x))
 
 const isNative = (x) => x && (!bufferIsPolyfilled || `${x}`.includes('[native code]')) // we consider Node.js TextDecoder/TextEncoder native
 const { TextDecoder } = globalThis
 const textDecoder = isNative(TextDecoder) ? new TextDecoder('windows-1252', { fatal: true }) : null
 const textDecoderJS = new js.TextDecoder('windows-1252', { fatal: true })
-const fallback = encodingDecoder('windows-1252')
+const fallbackDecoder = encodingDecoder('windows-1252')
 
 const columns = [
   '@exodus/bytes/windows1252',
@@ -32,7 +32,7 @@ describe('benchmarks: windows1252', async () => {
   // [name, impl, skip]
   const windows1252toString = [
     ['@exodus/bytes/windows1252', (x) => exodus.windows1252toString(x)],
-    ['fallback', (x) => fallback(x)],
+    ['fallback', (x) => fallbackDecoder(x)],
     ['TextDecoder', (x) => textDecoder.decode(x), !textDecoder],
     ['text-encoding', (x) => textDecoderJS.decode(x)],
     ['iconv-lite', (x) => iconv.decode(x, 'windows-1252', { stripBOM: false })],
@@ -67,6 +67,44 @@ describe('benchmarks: windows1252', async () => {
     const res = new Table()
     for (const [name, f, skip] of windows1252toString) {
       res.add(name, await benchmark(`${t.name}: ${name}`, { skip, args: bufs }, f))
+    }
+
+    res.print(columns)
+  })
+
+  const windows1252fromString = [
+    ['@exodus/bytes/windows1252', (x) => exodus.windows1252fromString(x)],
+    ['iconv-lite', (x) => iconv.encode(x, 'windows-1252', { addBOM: false })],
+  ]
+
+  test('windows1252fromString coherence', (t) => {
+    for (let i = 0; i < 100; i++) {
+      for (const [name, f, skip] of windows1252fromString) {
+        if (skip) continue
+        t.assert.deepEqual(f(asciiStrings[i]), asciiBufs[i], name)
+        if (name === 'iconv-lite') continue // mapping is invalid there
+        t.assert.deepEqual(f(strings[i]), bufs[i], name)
+      }
+    }
+  })
+
+  test('windows1252fromString, ascii', { timeout: 20_000 }, async (t) => {
+    const res = new Table()
+    for (const [name, f, skip] of windows1252fromString) {
+      // Prepare fresh input as internal engine state is affected by lib order otherwise
+      asciiStrings = asciiBufs.map((x) => exodus.windows1252toString(x))
+      res.add(name, await benchmark(`${t.name}: ${name}`, { skip, args: asciiStrings }, f))
+    }
+
+    res.print(columns)
+  })
+
+  test('windows1252fromString, complex', { timeout: 20_000 }, async (t) => {
+    const res = new Table()
+    for (const [name, f, skip] of windows1252fromString) {
+      // Prepare fresh input as internal engine state is affected by lib order otherwise
+      strings = bufs.map((x) => exodus.windows1252toString(x))
+      res.add(name, await benchmark(`${t.name}: ${name}`, { skip, args: strings }, f))
     }
 
     res.print(columns)

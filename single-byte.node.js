@@ -2,7 +2,7 @@ import { assertUint8 } from './assert.js'
 import { isAscii } from 'node:buffer'
 import { isDeno, isLE, toBuf } from './fallback/_utils.js'
 import { asciiPrefix } from './fallback/latin1.js'
-import { encodingMapper, encodingDecoder, E_STRICT } from './fallback/single-byte.js'
+import { encodingMapper, encodingDecoder, encodeMap, E_STRICT } from './fallback/single-byte.js'
 
 function latin1Prefix(arr, start) {
   let p = start | 0
@@ -58,4 +58,51 @@ export function createSinglebyteDecoder(encoding, loose = false) {
   }
 }
 
+const NON_LATIN = /[^\x00-\xFF]/ // eslint-disable-line no-control-regex
+
+export function createSinglebyteEncoder(encoding, { mode = 'fatal' } = {}) {
+  // TODO: replacement, truncate (replacement will need varying length)
+  if (mode !== 'fatal') throw new Error('Unsupported mode')
+  const m = encodeMap(encoding) // asserts
+
+  return (s) => {
+    if (typeof s !== 'string') throw new TypeError('Input is not a string')
+
+    // Instead of an ASCII regex check, encode optimistically - this is faster
+    // Check for 8-bit string with a regex though, this is instant on 8-bit strings so doesn't hurt the ASCII fast path
+    if (!NON_LATIN.test(s)) {
+      const b = Buffer.from(s, 'utf8') // ascii/latin1 coerces, we need to check
+      if (b.length === s.length) return new Uint8Array(b.buffer, b.byteOffset, b.byteLength)
+    }
+
+    const len = s.length
+    let i = 0
+    const b = Buffer.from(s, 'utf-16le') // aligned
+    if (!isLE) b.swap16()
+    const x = new Uint16Array(b.buffer, b.byteOffset, b.byteLength / 2)
+    for (const len3 = len - 3; i < len3; i += 4) {
+      const x0 = x[i], x1 = x[i + 1], x2 = x[i + 2], x3 = x[i + 3] // prettier-ignore
+      const c0 = m[x0], c1 = m[x1], c2 = m[x2], c3 = m[x3] // prettier-ignore
+      if (!(c0 && c1 && c2 && c3) && ((!c0 && x0) || (!c1 && x1) || (!c2 && x2) || (!c3 && x3))) {
+        throw new TypeError(E_STRICT)
+      }
+
+      x[i] = c0
+      x[i + 1] = c1
+      x[i + 2] = c2
+      x[i + 3] = c3
+    }
+
+    for (; i < len; i++) {
+      const x0 = x[i]
+      const c0 = m[x0]
+      if (!c0 && x0) throw new TypeError(E_STRICT)
+      x[i] = c0
+    }
+
+    return new Uint8Array(x)
+  }
+}
+
 export const windows1252toString = createSinglebyteDecoder('windows-1252')
+export const windows1252fromString = createSinglebyteEncoder('windows-1252')
