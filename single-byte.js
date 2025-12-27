@@ -1,6 +1,7 @@
 import { assertUint8 } from './assert.js'
-import { canDecoders } from './fallback/_utils.js'
-import { assertEncoding, encodingDecoder } from './fallback/single-byte.js'
+import { canDecoders, nativeEncoder } from './fallback/_utils.js'
+import { encodeAscii } from './fallback/latin1.js'
+import { assertEncoding, encodingDecoder, encodeMap, E_STRICT } from './fallback/single-byte.js'
 
 const { TextDecoder } = globalThis
 
@@ -57,4 +58,30 @@ export function createSinglebyteDecoder(encoding, loose = false) {
   }
 }
 
+export function createSinglebyteEncoder(encoding, { mode = 'fatal' } = {}) {
+  // TODO: replacement, truncate (replacement will need varying length)
+  if (mode !== 'fatal') throw new Error('Unsupported mode')
+  const m = encodeMap(encoding) // asserts
+
+  // No single-byte encoder produces surrogate pairs, so any surrogate is invalid
+  // This needs special treatment only to decide how many replacement chars to output, one or two
+  // No much use in running isWellFormed, most likely cause of error is unmapped chars, not surrogate pairs
+  return (s) => {
+    if (typeof s !== 'string') throw new TypeError('Input is not a string')
+    if (nativeEncoder && !/[^\x00-\x7F]/.test(s)) return encodeAscii(s) // eslint-disable-line no-control-regex
+    const len = s.length
+    let i = 0
+    const x = new Uint8Array(len)
+    for (; i < len; i++) {
+      const x0 = s.charCodeAt(i)
+      const c0 = m[x0]
+      if (!c0 && x0) throw new TypeError(E_STRICT)
+      x[i] = c0
+    }
+
+    return x.length === i ? x : x.subarray(0, i)
+  }
+}
+
 export const windows1252toString = createSinglebyteDecoder('windows-1252')
+export const windows1252fromString = createSinglebyteEncoder('windows-1252')

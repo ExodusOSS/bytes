@@ -123,7 +123,7 @@ import { utf16fromStringLoose, utf16toStringLoose } from '@exodus/bytes/utf16.js
 ### `@exodus/bytes/single-byte.js`
 
 ```js
-import { createSinglebyteDecoder } from '@exodus/bytes/single-byte.js'
+import { createSinglebyteDecoder, createSinglebyteEncoder } from '@exodus/bytes/single-byte.js'
 import { windows1252toString } from '@exodus/bytes/single-byte.js'
 ```
 
@@ -143,6 +143,15 @@ Create a decoder for a supported one-byte `encoding`, given it's lowercased name
 
 Returns a function `decode(arr)` that decodes bytes to a string.
 
+##### `createSinglebyteEncoder(encoding, { mode = 'fatal' })`
+
+Create an encoder for a supported one-byte `encoding`, given it's lowercased name `encoding`.
+
+Returns a function `encode(string)` that decodes bytes to a string.
+
+In `'fatal'` mode (default), will throw on non well-formed strings or any codepoints which could
+not be encoded in the target encoding.
+
 ##### `windows1252toString(arr)`
 
 Decode `windows-1252` bytes to a string.
@@ -154,6 +163,19 @@ There is no loose variant for this encoding, all bytes can be decoded.
 Same as:
 ```js
 const windows1252toString = createSinglebyteDecoder('windows-1252')
+```
+
+##### `windows1252fromString(string)`
+
+Encode a string to `windows-1252` bytes.
+
+Also supports `ascii` and `latin-1` as those are strict subsets of `windows-1252`.
+
+Will throw on non well-formed strings or any codepoins which could not be encoded in `windows-1252`.
+
+Same as:
+```js
+const windows1252fromString = createSinglebyteEncoder('windows-1252', { mode: 'fatal' })
 ```
 
 ### `@exodus/bytes/multi-byte.js`

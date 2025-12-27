@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { test, describe } from 'node:test'
-import { createSinglebyteDecoder } from '@exodus/bytes/single-byte.js'
+import { createSinglebyteDecoder, createSinglebyteEncoder } from '@exodus/bytes/single-byte.js'
 import { encodingDecoder } from '../fallback/single-byte.js'
 import encodingsObject from '../fallback/single-byte.encodings.js'
 
@@ -123,13 +123,27 @@ describe('single-byte encodings index', () => {
 })
 
 // https://encoding.spec.whatwg.org/#x-user-defined-decoder
-test('x-user-defined', (t) => {
+describe('x-user-defined', () => {
   const encoding = 'x-user-defined'
-  const decoder = createSinglebyteDecoder(encoding)
-  const decoderLoose = createSinglebyteDecoder(encoding, true)
-  for (let byte = 0; byte < 256; byte++) {
-    const str = String.fromCodePoint(byte >= 0x80 ? 0xf7_80 + byte - 0x80 : byte)
-    t.assert.strictEqual(decoder(Uint8Array.of(byte)), str, byte)
-    t.assert.strictEqual(decoderLoose(Uint8Array.of(byte)), str, byte)
-  }
+  test('decode', (t) => {
+    const decoder = createSinglebyteDecoder(encoding)
+    const decoderLoose = createSinglebyteDecoder(encoding, true)
+    for (let byte = 0; byte < 256; byte++) {
+      const str = String.fromCodePoint(byte >= 0x80 ? 0xf7_80 + byte - 0x80 : byte)
+      t.assert.strictEqual(decoder(Uint8Array.of(byte)), str, byte)
+      t.assert.strictEqual(decoderLoose(Uint8Array.of(byte)), str, byte)
+    }
+  })
+
+  test('encode', (t) => {
+    const encoder = createSinglebyteEncoder(encoding)
+    for (let byte = 0; byte < 256; byte++) {
+      const str = String.fromCodePoint(byte >= 0x80 ? 0xf7_80 + byte - 0x80 : byte)
+      t.assert.deepStrictEqual(encoder(str), Uint8Array.of(byte), byte)
+    }
+
+    for (let i = 128; i < 512; i++) {
+      t.assert.throws(() => encoder(String.fromCodePoint(i)), /Input is not well-formed/)
+    }
+  })
 })
