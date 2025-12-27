@@ -474,6 +474,7 @@ const mappers = {
 export const isAsciiSuperset = (enc) => enc !== 'iso-2022-jp' // all others are ASCII supersets and can use fast path
 
 export function multibyteDecoder(enc, loose = false) {
+  if (typeof loose !== 'boolean') throw new TypeError('loose option should be boolean')
   if (!Object.hasOwn(mappers, enc)) throw new RangeError('Unsupported encoding')
 
   // Input is assumed to be typechecked already

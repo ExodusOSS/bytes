@@ -22,6 +22,7 @@ function latin1Prefix(arr, start) {
 }
 
 export function createSinglebyteDecoder(encoding, loose = false) {
+  if (typeof loose !== 'boolean') throw new TypeError('loose option should be boolean')
   const latin1path = encoding === 'windows-1252'
   if (isDeno) {
     const jsDecoder = encodingDecoder(encoding) // asserts

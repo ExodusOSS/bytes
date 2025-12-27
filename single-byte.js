@@ -34,6 +34,7 @@ function shouldUseNative(enc) {
 }
 
 export function createSinglebyteDecoder(encoding, loose = false) {
+  if (typeof loose !== 'boolean') throw new TypeError('loose option should be boolean')
   assertEncoding(encoding)
 
   if (canDecoders && shouldUseNative(encoding)) {
