@@ -31,7 +31,7 @@ export function encodingMapper(encoding) {
   if (cached) return cached
 
   const codes = getEncoding(encoding)
-  const incomplete = codes.includes(0xff_fd)
+  const incomplete = codes.includes(r)
   let map
   const mapper = (arr, start = 0) => {
     if (!map) {
@@ -66,7 +66,7 @@ export function encodingDecoder(encoding) {
 
   let strings
   const codes = getEncoding(encoding)
-  const incomplete = codes.includes(0xff_fd)
+  const incomplete = codes.includes(r)
   const decoder = (arr, loose = false) => {
     if (!strings) {
       const allCodes = Array.from({ length: 128 }, (_, i) => i).concat(codes)
