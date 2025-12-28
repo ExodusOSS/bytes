@@ -1,7 +1,18 @@
-const { TextDecoder, TextEncoder } = require('@exodus/bytes/encoding.js')
+const {
+  TextDecoder,
+  TextEncoder,
+  TextDecoderStream,
+  TextEncoderStream,
+} = require('@exodus/bytes/encoding.js')
 const { test, describe } = require('node:test')
 
-Object.assign(globalThis, { TextDecoder, TextEncoder })
+Object.assign(globalThis, { TextDecoder, TextEncoder, TextDecoderStream, TextEncoderStream })
+
+// TextDecoderStream / TextEncoderStream implementations expect Streams to be present
+if (!globalThis.ReadableStream) {
+  const { ReadableStream, WritableStream, TransformStream } = require('web-streams-polyfill')
+  Object.assign(globalThis, { ReadableStream, WritableStream, TransformStream })
+}
 
 // Older but supported Node.js versions don't have Float16Array which is used in some tests
 if (!globalThis.Float16Array) {

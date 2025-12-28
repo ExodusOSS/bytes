@@ -363,7 +363,6 @@ export const encodeWptTest = {
   },
 };
 
-/*
 export const big5 = {
   test() {
     // Input is the Big5 encoding for the word 中國人 (meaning Chinese Person)
@@ -381,7 +380,6 @@ export const big5 = {
     }
   },
 };
-*/
 
 export const utf16leFastTrack = {
   test() {
@@ -655,7 +653,6 @@ export const allTheDecoders = {
   },
 };
 
-/*
 export const textDecoderStream = {
   test() {
     const stream = new TextDecoderStream('utf-16', {
@@ -670,4 +667,3 @@ export const textDecoderStream = {
     strictEqual(enc.encoding, 'utf-8');
   },
 };
-*/
