@@ -31,7 +31,7 @@ See [Performance](./Performance.md) for more info
 
 ```js
 import { TextDecoder, TextEncoder } from '@exodus/bytes/encoding.js'
-import { TextDecoderStream } from '@exodus/bytes/encoding.js' // Requires Streams
+import { TextDecoderStream, TextEncoderStream } from '@exodus/bytes/encoding.js' // Requires Streams
 ```
 
 Less than half the bundle size of [text-encoding](https://npmjs.com/text-encoding), [whatwg-encoding](https://npmjs.com/whatwg-encoding) or [iconv-lite](https://npmjs.com/iconv-lite) (gzipped or not).\
@@ -78,7 +78,7 @@ _These are only provided as a compatibility layer, prefer hardened APIs instead 
 If you don't need support for legacy multi-byte encodings, you can use the lite import:
 ```js
 import { TextDecoder, TextEncoder } from '@exodus/bytes/encoding-lite.js'
-import { TextDecoderStream } from '@exodus/bytes/encoding-lite.js' // Requires Streams
+import { TextDecoderStream, TextEncoderStream } from '@exodus/bytes/encoding-lite.js' // Requires Streams
 ```
 
 This reduces the bundle size 10x:\
@@ -308,7 +308,7 @@ On non-Node.js, requires peer dependency [@exodus/crypto](https://www.npmjs.com/
 
 ```js
 import { TextDecoder, TextEncoder } from '@exodus/bytes/encoding.js'
-import { TextDecoderStream } from '@exodus/bytes/encoding.js' // Requires Streams
+import { TextDecoderStream, TextEncoderStream } from '@exodus/bytes/encoding.js' // Requires Streams
 
 // Hooks for standards
 import { getBOMEncoding, legacyHookDecode, labelToName, normalizeEncoding } from '@exodus/bytes/encoding.js'
@@ -316,7 +316,9 @@ import { getBOMEncoding, legacyHookDecode, labelToName, normalizeEncoding } from
 
 Implements the [Encoding standard](https://encoding.spec.whatwg.org/):
 [TextDecoder](https://encoding.spec.whatwg.org/#interface-textdecoder),
-[TextEncoder](https://encoding.spec.whatwg.org/#interface-textdecoder),
+[TextEncoder](https://encoding.spec.whatwg.org/#interface-textencoder),
+[TextDecoderStream](https://encoding.spec.whatwg.org/#interface-textdecoderstream),
+[TextEncoderStream](https://encoding.spec.whatwg.org/#interface-textencoderstream),
 some [hooks](https://encoding.spec.whatwg.org/#specification-hooks) (see below).
 
 #### `new TextDecoder(label = 'utf-8', { fatal = false, ignoreBOM = false })`
@@ -325,11 +327,18 @@ some [hooks](https://encoding.spec.whatwg.org/#specification-hooks) (see below).
 
 #### `new TextEncoder()`
 
-[TextEncoder](https://encoding.spec.whatwg.org/#interface-textdecoder) implementation/polyfill.
+[TextEncoder](https://encoding.spec.whatwg.org/#interface-textencoder) implementation/polyfill.
 
 #### `new TextDecoderStream(label = 'utf-8', { fatal = false, ignoreBOM = false })`
 
 [TextDecoderStream](https://encoding.spec.whatwg.org/#interface-textdecoderstream) implementation/polyfill.
+
+Requires [Streams](https://streams.spec.whatwg.org/) to be either supported by the platform or
+[polyfilled](https://npmjs.com/package/web-streams-polyfill).
+
+#### `new TextEncoderStream()`
+
+[TextEncoderStream](https://encoding.spec.whatwg.org/#interface-textencoderstream) implementation/polyfill.
 
 Requires [Streams](https://streams.spec.whatwg.org/) to be either supported by the platform or
 [polyfilled](https://npmjs.com/package/web-streams-polyfill).
@@ -402,7 +411,7 @@ new TextDecoder(getBOMEncoding(input) ?? fallbackEncoding).decode(input)
 
 ```js
 import { TextDecoder, TextEncoder } from '@exodus/bytes/encoding-lite.js'
-import { TextDecoderStream } from '@exodus/bytes/encoding-lite.js' // Requires Streams
+import { TextDecoderStream, TextEncoderStream } from '@exodus/bytes/encoding-lite.js' // Requires Streams
 
 // Hooks for standards
 import { getBOMEncoding, legacyHookDecode, labelToName, normalizeEncoding } from '@exodus/bytes/encoding-lite.js'
@@ -428,6 +437,7 @@ To avoid inconsistencies, the exported classes and methods are exactly the same 
   TextDecoder: [class TextDecoder],
   TextDecoderStream: [class TextDecoderStream],
   TextEncoder: [class TextEncoder],
+  TextEncoderStream: [class TextEncoderStream],
   getBOMEncoding: [Function: getBOMEncoding],
   labelToName: [Function: labelToName],
   legacyHookDecode: [Function: legacyHookDecode],
@@ -442,6 +452,7 @@ Error: Legacy multi-byte encodings are disabled in /encoding-lite.js, use /encod
   TextDecoder: [class TextDecoder],
   TextDecoderStream: [class TextDecoderStream],
   TextEncoder: [class TextEncoder],
+  TextEncoderStream: [class TextEncoderStream],
   getBOMEncoding: [Function: getBOMEncoding],
   labelToName: [Function: labelToName],
   legacyHookDecode: [Function: legacyHookDecode],

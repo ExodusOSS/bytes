@@ -2,6 +2,7 @@ export {
   TextDecoder,
   TextEncoder,
   TextDecoderStream,
+  TextEncoderStream,
   normalizeEncoding,
   getBOMEncoding,
   labelToName,
