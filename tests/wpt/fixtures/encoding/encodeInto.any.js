@@ -134,7 +134,6 @@
  "Float64Array"].forEach(type => {
   ["ArrayBuffer", "SharedArrayBuffer"].forEach((arrayBufferOrSharedArrayBuffer) => {
     test(() => {
-      if (!self[type]) return // Added, as old engines don't have e.g. Float16Array
       const viewInstance = new self[type](createBuffer(arrayBufferOrSharedArrayBuffer, 0));
       assert_throws_js(TypeError, () => new TextEncoder().encodeInto("", viewInstance));
     }, "Invalid encodeInto() destination: " + type + ", backed by: " + arrayBufferOrSharedArrayBuffer);

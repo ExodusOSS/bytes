@@ -9,6 +9,12 @@ if (!globalThis.ReadableStream) {
   Object.assign(globalThis, { ReadableStream, WritableStream, TransformStream })
 }
 
+// Older but supported Node.js versions don't have Float16Array which is used in some tests
+if (!globalThis.Float16Array) {
+  const { Float16Array } = require('@petamoriken/float16')
+  Object.assign(globalThis, { Float16Array })
+}
+
 globalThis.self = globalThis
 
 globalThis.setup = (f) => f()
