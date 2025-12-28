@@ -28,8 +28,9 @@ globalThis.generate_tests = (t, l) => {
   })
 }
 
-globalThis.assert_equals = assert.strictEqual
 globalThis.format_value = (x) => JSON.stringify(x)
+globalThis.step_timeout = setTimeout
+globalThis.assert_equals = assert.strictEqual
 globalThis.assert_true = (x, ...r) => assert.strictEqual(x, true, ...r)
 globalThis.assert_false = (x, ...r) => assert.strictEqual(x, false, ...r)
 globalThis.assert_not_equals = (a, b, ...r) => assert.notEqual(a, b, ...r)
