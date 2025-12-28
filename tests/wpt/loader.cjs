@@ -29,7 +29,7 @@ globalThis.self = globalThis
 globalThis.setup = (f) => f()
 globalThis.describe = (f, name) => describe(name, f)
 globalThis.test = (f, name) => test(name, f)
-globalThis.promise_test = (f, name) => test(name, f)
+globalThis.promise_test = (f, name) => test(name, { timeout: 20_000 }, f)
 globalThis.subsetTest = (t, ...a) => t(...a)
 globalThis.generate_tests = (t, l) => {
   describe('generate_tests', () => {
