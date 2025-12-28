@@ -30,6 +30,7 @@ globalThis.assert_not_equals = (a, b, ...r) => assert.notEqual(a, b, ...r)
 globalThis.assert_throws_js = (e, f, m) => assert.throws(f, e, m)
 globalThis.assert_throws_dom = (e, f, m) => assert.throws(f, Error, m) // we don't care about exact dom errors
 globalThis.promise_rejects_js = (t, e, p, m) => assert.rejects(p, e, m)
+globalThis.promise_rejects_exactly = (t, e, p, m) => assert.rejects(p, (x) => x === e, m)
 globalThis.assert_array_equals = (a, b, m) => {
   assert.strictEqual(a.length, b.length, m)
   assert.deepStrictEqual([...a], [...b], m)

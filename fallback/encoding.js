@@ -300,6 +300,47 @@ export class TextDecoderStream {
   }
 }
 
+// https://encoding.spec.whatwg.org/#interface-textencoderstream
+// Only UTF-8 per spec
+export class TextEncoderStream {
+  constructor() {
+    if (!globalThis.TransformStream) throw new Error(E_NO_STREAMS)
+    let lead
+    const transform = new TransformStream({
+      // https://encoding.spec.whatwg.org/#encode-and-enqueue-a-chunk
+      // Not identical in code, but reuses loose mode to have identical behavior
+      transform: (chunk, controller) => {
+        let s = String(chunk) // DOMString, might contain unpaired surrogates
+        if (s.length === 0) return
+        if (lead) {
+          s = lead + s
+          lead = null
+        }
+
+        const last = s.charCodeAt(s.length - 1) // Can't come from previous lead due to length check
+        if ((last & 0xfc_00) === 0xd8_00) {
+          lead = s[s.length - 1]
+          s = s.slice(0, -1)
+        }
+
+        if (s) controller.enqueue(utf8fromStringLoose(s))
+      },
+      // https://encoding.spec.whatwg.org/#encode-and-flush
+      flush: (controller) => {
+        if (lead) controller.enqueue(Uint8Array.of(0xef, 0xbf, 0xbd))
+      },
+    })
+
+    define(this, 'encoding', 'utf-8')
+    define(this, 'readable', transform.readable)
+    define(this, 'writable', transform.writable)
+  }
+
+  get [Symbol.toStringTag]() {
+    return 'TextEncoderStream'
+  }
+}
+
 // Warning: unlike whatwg-encoding, returns lowercased labels
 // Those are case-insensitive and that's how TextDecoder encoding getter normalizes them
 export function getBOMEncoding(input) {
