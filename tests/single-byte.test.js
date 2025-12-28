@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { test, describe } from 'node:test'
-import { createSinglebyteDecoder } from '@exodus/bytes/single-byte.js'
+import { createSinglebyteDecoder, createSinglebyteEncoder } from '@exodus/bytes/single-byte.js'
 import { encodingDecoder } from '../fallback/single-byte.js'
 import encodingsObject from '../fallback/single-byte.encodings.js'
 
@@ -13,6 +13,7 @@ describe('single-byte encodings are supersets of ascii', () => {
   for (const encoding of encodings) {
     test(encoding, (t) => {
       const decoder = createSinglebyteDecoder(encoding)
+      const encoder = createSinglebyteEncoder(encoding)
       for (let i = 0; i < 128; i++) {
         let str
         try {
@@ -23,6 +24,8 @@ describe('single-byte encodings are supersets of ascii', () => {
 
         t.assert.strictEqual(str.length, 1, i)
         t.assert.strictEqual(str.codePointAt(0), i, i)
+
+        t.assert.deepStrictEqual(encoder(str), Uint8Array.of(i))
       }
     })
   }
@@ -67,6 +70,7 @@ describe('single-byte encodings index', () => {
     test(encoding, (t) => {
       const decoder = createSinglebyteDecoder(encoding)
       const decoderLoose = createSinglebyteDecoder(encoding, true)
+      const encoder = createSinglebyteEncoder(encoding)
       const text = readFileSync(
         join(import.meta.dirname, 'encoding/fixtures/single-byte', `index-${encoding}.txt`),
         'utf8'
@@ -106,6 +110,8 @@ describe('single-byte encodings index', () => {
           t.assert.strictEqual(str.length, 1, row.description)
           t.assert.strictEqual(str.codePointAt(0), row.code, row.description)
           t.assert.strictEqual(str, decoderLoose(Uint8Array.of(byte)))
+
+          t.assert.deepStrictEqual(encoder(str), Uint8Array.of(byte))
         } else {
           t.assert.throws(() => decoder(Uint8Array.of(byte)))
           try {
@@ -123,13 +129,27 @@ describe('single-byte encodings index', () => {
 })
 
 // https://encoding.spec.whatwg.org/#x-user-defined-decoder
-test('x-user-defined', (t) => {
+describe('x-user-defined', () => {
   const encoding = 'x-user-defined'
-  const decoder = createSinglebyteDecoder(encoding)
-  const decoderLoose = createSinglebyteDecoder(encoding, true)
-  for (let byte = 0; byte < 256; byte++) {
-    const str = String.fromCodePoint(byte >= 0x80 ? 0xf7_80 + byte - 0x80 : byte)
-    t.assert.strictEqual(decoder(Uint8Array.of(byte)), str, byte)
-    t.assert.strictEqual(decoderLoose(Uint8Array.of(byte)), str, byte)
-  }
+  test('decode', (t) => {
+    const decoder = createSinglebyteDecoder(encoding)
+    const decoderLoose = createSinglebyteDecoder(encoding, true)
+    for (let byte = 0; byte < 256; byte++) {
+      const str = String.fromCodePoint(byte >= 0x80 ? 0xf7_80 + byte - 0x80 : byte)
+      t.assert.strictEqual(decoder(Uint8Array.of(byte)), str, byte)
+      t.assert.strictEqual(decoderLoose(Uint8Array.of(byte)), str, byte)
+    }
+  })
+
+  test('encode', (t) => {
+    const encoder = createSinglebyteEncoder(encoding)
+    for (let byte = 0; byte < 256; byte++) {
+      const str = String.fromCodePoint(byte >= 0x80 ? 0xf7_80 + byte - 0x80 : byte)
+      t.assert.deepStrictEqual(encoder(str), Uint8Array.of(byte), byte)
+    }
+
+    for (let i = 128; i < 512; i++) {
+      t.assert.throws(() => encoder(String.fromCodePoint(i)), /Input is not well-formed/)
+    }
+  })
 })

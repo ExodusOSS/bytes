@@ -123,8 +123,8 @@ import { utf16fromStringLoose, utf16toStringLoose } from '@exodus/bytes/utf16.js
 ### `@exodus/bytes/single-byte.js`
 
 ```js
-import { createSinglebyteDecoder } from '@exodus/bytes/single-byte.js'
-import { windows1252toString } from '@exodus/bytes/single-byte.js'
+import { createSinglebyteDecoder, createSinglebyteEncoder } from '@exodus/bytes/single-byte.js'
+import { windows1252toString, windows1252fromString } from '@exodus/bytes/single-byte.js'
 ```
 
 Decode the legacy single-byte encodings according to the [Encoding standard](https://encoding.spec.whatwg.org/)
@@ -139,9 +139,18 @@ Supports all single-byte encodings listed in the standard:
 
 ##### `createSinglebyteDecoder(encoding, loose = false)`
 
-Create a decoder for a supported one-byte `encoding`, given it's lowercased name `encoding`.
+Create a decoder for a supported one-byte `encoding`, given its lowercased name `encoding`.
 
 Returns a function `decode(arr)` that decodes bytes to a string.
+
+##### `createSinglebyteEncoder(encoding, { mode = 'fatal' })`
+
+Create an encoder for a supported one-byte `encoding`, given its lowercased name `encoding`.
+
+Returns a function `encode(string)` that encodes a string to bytes.
+
+In `'fatal'` mode (default), will throw on non well-formed strings or any codepoints which could
+not be encoded in the target encoding.
 
 ##### `windows1252toString(arr)`
 
@@ -154,6 +163,19 @@ There is no loose variant for this encoding, all bytes can be decoded.
 Same as:
 ```js
 const windows1252toString = createSinglebyteDecoder('windows-1252')
+```
+
+##### `windows1252fromString(string)`
+
+Encode a string to `windows-1252` bytes.
+
+Also supports `ascii` and `latin-1` as those are strict subsets of `windows-1252`.
+
+Will throw on non well-formed strings or any codepoints which could not be encoded in `windows-1252`.
+
+Same as:
+```js
+const windows1252fromString = createSinglebyteEncoder('windows-1252', { mode: 'fatal' })
 ```
 
 ### `@exodus/bytes/multi-byte.js`
@@ -173,7 +195,7 @@ Supports all legacy multi-byte encodings listed in the standard:
 
 ##### `createMultibyteDecoder(encoding, loose = false)`
 
-Create a decoder for a supported legacy multi-byte `encoding`, given it's lowercased name `encoding`.
+Create a decoder for a supported legacy multi-byte `encoding`, given its lowercased name `encoding`.
 
 Returns a function `decode(arr, stream = false)` that decodes bytes to a string.
 
