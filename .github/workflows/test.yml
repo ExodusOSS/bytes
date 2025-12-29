@@ -50,6 +50,10 @@ jobs:
           cache: pnpm
           registry-url: 'https://registry.npmjs.org'
       - run: pnpm i --frozen-lockfile
+      - uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: ~/.jsvu
+          key: barebone-${{ matrix.engine }}-${{ runner.os }}
       - run: node --run jsvu -- --os=linux64 --engines="${{ matrix.engine }}"
       - run: EXODUS_TEST_DROP_NETWORK=1 node --run "test:${{ matrix.engine }}"
 
