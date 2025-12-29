@@ -152,9 +152,20 @@ export function encode(string, loose) {
   const length = string.length
   let small = true
   let bytes = new Uint8Array(length) // assume ascii
-  let p = 0
 
-  for (let i = 0; i < length; i++) {
+  let i = 0
+  for (const len3 = length - 3; i < len3; i += 4) {
+    const x0 = string.charCodeAt(i), x1 = string.charCodeAt(i + 1) // prettier-ignore
+    const x2 = string.charCodeAt(i + 2), x3 = string.charCodeAt(i + 3) // prettier-ignore
+    if (x0 > 128 || x1 > 128 || x2 > 128 || x3 > 128) break
+    bytes[i] = x0
+    bytes[i + 1] = x1
+    bytes[i + 2] = x2
+    bytes[i + 3] = x3
+  }
+
+  let p = i
+  for (; i < length; i++) {
     let code = string.charCodeAt(i)
     if (code < 0x80) {
       bytes[p++] = code
