@@ -119,9 +119,6 @@ importers:
       web-streams-polyfill:
         specifier: ^4.2.0
         version: 4.2.0
-      whatwg-encoding:
-        specifier: ^3.1.1
-        version: 3.1.1
       wif:
         specifier: ^5.0.0
         version: 5.0.0
@@ -1704,10 +1701,6 @@ packages:
     resolution: {integrity: sha512-v3MXnZAcvnywkTUEZomIActle7RXXeedOR31wwl7VlyoXO4Qi9arvSenNQWne1TcRwhCL1HwLI21bEqdpj8/rA==, tarball: https://registry.npmjs.org/iconv-lite/-/iconv-lite-0.4.24.tgz}
     engines: {node: '>=0.10.0'}
 
-  iconv-lite@0.6.3:
-    resolution: {integrity: sha512-4fCk79wshMdzMp2rH06qWrJE4iolqLhCUH+OiuIgU++RB0+94NlDL81atO7GX55uUKueo0txHNtvEyI6D7WdMw==, tarball: https://registry.npmjs.org/iconv-lite/-/iconv-lite-0.6.3.tgz}
-    engines: {node: '>=0.10.0'}
-
   iconv-lite@0.7.0:
     resolution: {integrity: sha512-cf6L2Ds3h57VVmkZe+Pn+5APsT7FpqJtEhhieDCvrE2MK5Qk9MyffgQyuxQTm6BChfeZNtcOLHp9IcWRVcIcBQ==, tarball: https://registry.npmjs.org/iconv-lite/-/iconv-lite-0.7.0.tgz}
     engines: {node: '>=0.10.0'}
@@ -2934,10 +2927,6 @@ packages:
 
   webdriver-bidi-protocol@0.3.6:
     resolution: {integrity: sha512-mlGndEOA9yK9YAbvtxaPTqdi/kaCWYYfwrZvGzcmkr/3lWM+tQj53BxtpVd6qbC6+E5OnHXgCcAhre6AkXzxjA==, tarball: https://registry.npmjs.org/webdriver-bidi-protocol/-/webdriver-bidi-protocol-0.3.6.tgz}
-
-  whatwg-encoding@3.1.1:
-    resolution: {integrity: sha512-6qN4hJdMwfYBtE3YBTTHhoeuUrDBPZmbQaxWAqSALV/MeEnR5z1xd8UKud2RAkFoPkmB+hli1TZSnyi84xz1vQ==, tarball: https://registry.npmjs.org/whatwg-encoding/-/whatwg-encoding-3.1.1.tgz}
-    engines: {node: '>=18'}
 
   which-boxed-primitive@1.1.1:
     resolution: {integrity: sha512-TbX3mj8n0odCBFVlY8AxkqcHASw3L60jIuF8jFP78az3C2YhmGvqbHBpAjTRH2/xqYunrJ9g1jSyjCjpoWzIAA==, tarball: https://registry.npmjs.org/which-boxed-primitive/-/which-boxed-primitive-1.1.1.tgz}
@@ -4919,10 +4908,6 @@ snapshots:
     dependencies:
       safer-buffer: 2.1.2
 
-  iconv-lite@0.6.3:
-    dependencies:
-      safer-buffer: 2.1.2
-
   iconv-lite@0.7.0:
     dependencies:
       safer-buffer: 2.1.2
@@ -6274,10 +6259,6 @@ snapshots:
 
   webdriver-bidi-protocol@0.3.6:
     optional: true
-
-  whatwg-encoding@3.1.1:
-    dependencies:
-      iconv-lite: 0.6.3
 
   which-boxed-primitive@1.1.1:
     dependencies:
