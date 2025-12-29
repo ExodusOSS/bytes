@@ -212,6 +212,8 @@ import { fromBigInt, toBigInt } from '@exodus/bytes/bigint.js'
 
 ### `@exodus/bytes/hex.js`
 
+Implements Base16 from [RFC4648](https://datatracker.ietf.org/doc/html/rfc4648) (no differences from [RFC3548](https://datatracker.ietf.org/doc/html/rfc4648)).
+
 ```js
 import { fromHex, toHex } from '@exodus/bytes/hex.js'
 ```
@@ -220,6 +222,8 @@ import { fromHex, toHex } from '@exodus/bytes/hex.js'
 ##### `toHex(arr)`
 
 ### `@exodus/bytes/base64.js`
+
+Implements Base64 from [RFC4648](https://datatracker.ietf.org/doc/html/rfc4648) (no differences from [RFC3548](https://datatracker.ietf.org/doc/html/rfc4648)).
 
 ```js
 import { fromBase64, toBase64 } from '@exodus/bytes/base64.js'
@@ -235,6 +239,8 @@ import { fromBase64any } from '@exodus/bytes/base64.js'
 
 ### `@exodus/bytes/base32.js`
 
+Implements Base32 from [RFC4648](https://datatracker.ietf.org/doc/html/rfc4648) (no differences from [RFC3548](https://datatracker.ietf.org/doc/html/rfc4648)).
+
 ```js
 import { fromBase32, toBase32 } from '@exodus/bytes/base32.js'
 import { fromBase32hex, toBase32hex } from '@exodus/bytes/base32.js'
@@ -246,6 +252,8 @@ import { fromBase32hex, toBase32hex } from '@exodus/bytes/base32.js'
 ##### `toBase32hex(arr, { padding = false })`
 
 ### `@exodus/bytes/bech32.js`
+
+Implements [BIP-0173](https://github.com/bitcoin/bips/blob/master/bip-0173.mediawiki#specification) and [BIP-0350](https://github.com/bitcoin/bips/blob/master/bip-0350.mediawiki#specification).
 
 ```js
 import { fromBech32, toBech32 } from '@exodus/bytes/bech32.js'
