@@ -1,5 +1,9 @@
 # `@exodus/bytes`
 
+[![](https://flat.badgen.net/npm/v/@exodus/bytes)](https://npmjs.org/package/@exodus/bytes)
+![](https://flat.badgen.net/npm/dm/@exodus/bytes)
+[![](https://flat.badgen.net/npm/license/@exodus/bytes)](https://github.com/ExodusOSS/bytes/blob/HEAD/LICENSE)
+
 `Uint8Array` conversion to and from `base64`, `base32`, `base58`, `hex`, `utf8`, `utf16`, `bech32` and `wif`
 
 And a [`TextEncoder` / `TextDecoder` polyfill](#textencoder--textdecoder-polyfill)
@@ -38,7 +42,7 @@ Less than half the bundle size of [text-encoding](https://npmjs.com/text-encodin
 Also [much faster](#fast) than all of those.
 
 > [!TIP]
-> See also the [lite version](#lite-version) to get this down to 9 KiB gzipped.
+> See also the [lite version](#lite-version) to get this down to 10 KiB gzipped.
 
 Spec compliant, passing WPT and covered with extra tests.\
 Moreover, tests for this library uncovered [bugs in all major implementations](https://docs.google.com/spreadsheets/d/1pdEefRG6r9fZy61WHGz0TKSt8cO4ISWqlpBN5KntIvQ/edit).\
@@ -81,9 +85,9 @@ import { TextDecoder, TextEncoder } from '@exodus/bytes/encoding-lite.js'
 import { TextDecoderStream, TextEncoderStream } from '@exodus/bytes/encoding-lite.js' // Requires Streams
 ```
 
-This reduces the bundle size 10x:\
-from 90 KiB gzipped for `@exodus/bytes/encoding.js` to 9 KiB gzipped for `@exodus/bytes/encoding-lite.js`.\
-(For comparison, `text-encoding` module is 190 KiB gzipped, and `iconv-lite` is 194 KiB gzipped).
+This reduces the bundle size 9x:\
+from 90 KiB gzipped for `@exodus/bytes/encoding.js` to 10 KiB gzipped for `@exodus/bytes/encoding-lite.js`.\
+(For comparison, `text-encoding` module is 190 KiB gzipped, and `iconv-lite` is 194 KiB gzipped):
 
 It still supports `utf-8`, `utf-16le`, `utf-16be` and all single-byte encodings specified by the spec,
 the only difference is support for legacy multi-byte encodings.
