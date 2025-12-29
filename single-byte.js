@@ -63,7 +63,20 @@ const NON_LATIN = /[^\x00-\xFF]/ // eslint-disable-line no-control-regex
 function encode(s, m) {
   const len = s.length
   const x = new Uint8Array(len)
-  for (let i = 0; i < len; i++) {
+  let i = 0
+
+  if (!nativeEncoder) {
+    for (const len3 = len - 3; i < len3; i += 4) {
+      const x0 = s.charCodeAt(i), x1 = s.charCodeAt(i + 1), x2 = s.charCodeAt(i + 2), x3 = s.charCodeAt(i + 3) // prettier-ignore
+      if (x0 > 128 || x1 > 128 || x2 > 128 || x3 > 128) break
+      x[i] = x0
+      x[i + 1] = x1
+      x[i + 2] = x2
+      x[i + 3] = x3
+    }
+  }
+
+  for (; i < len; i++) {
     const x0 = s.charCodeAt(i)
     const c0 = m[x0]
     if (!c0 && x0) return null
