@@ -18,7 +18,8 @@ function getEncoding(encoding) {
   if (encoding === xUserDefined) return Array.from({ length: 128 }, (_, i) => 0xf7_80 + i)
   if (encoding === iso8i) encoding = 'iso-8859-8'
   let prev = 127
-  return encodings[encoding].map((x) => (x === r ? x : (prev += x))) // eslint-disable-line no-return-assign
+  const enc = encodings[encoding].flat().flat().flat() // max depth is 3, rechecked by tests
+  return enc.map((x) => (x === r ? x : (prev += x))) // eslint-disable-line no-return-assign
 }
 
 const mappers = new Map()
