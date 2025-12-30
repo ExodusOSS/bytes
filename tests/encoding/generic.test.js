@@ -73,6 +73,17 @@ test('x-user-defined encoding', (t) => {
   }
 })
 
+// iso-8859-1, iso-8859-9, iso-8859-11 differ in WHATWG Encoding spec from https://unicode.org/Public/MAPPINGS/ISO8859
+// and map to windows-1252, windows-1254, windows-874 instead
+test('not all ISO-8859 encodings are present in TextDecoder', (t) => {
+  t.assert.strictEqual(new TextDecoder('iso-8859-1').encoding, 'windows-1252')
+  t.assert.strictEqual(new TextDecoder('iso-8859-2').encoding, 'iso-8859-2') // present
+  t.assert.strictEqual(new TextDecoder('iso-8859-9').encoding, 'windows-1254')
+  t.assert.strictEqual(new TextDecoder('iso-8859-11').encoding, 'windows-874')
+  t.assert.throws(() => new TextDecoder('iso-8859-12'))
+  t.assert.strictEqual(new TextDecoder('iso-8859-13').encoding, 'iso-8859-13') // present
+})
+
 describe('encodings are ASCII supersets, except utf-16 and iso-2022-jp', () => {
   for (const label of labels) {
     if (label === 'replacement' || label === 'utf-16le' || label === 'utf-16be') continue
