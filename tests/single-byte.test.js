@@ -153,3 +153,27 @@ describe('x-user-defined', () => {
     }
   })
 })
+
+describe('codes above 0x7F are non-ASCII', () => {
+  // 0x80 maps to U+80
+  for (const encoding of ['iso-8859-2', 'iso-8859-16']) {
+    test(encoding, (t) => {
+      const encoder = createSinglebyteEncoder(encoding)
+      t.assert.deepStrictEqual(encoder('\x80'), new Uint8Array(1).fill(0x80))
+      t.assert.deepStrictEqual(encoder('\x80'.repeat(4)), new Uint8Array(4).fill(0x80))
+      t.assert.deepStrictEqual(encoder('\x80'.repeat(8)), new Uint8Array(8).fill(0x80))
+      t.assert.deepStrictEqual(encoder('\x80'.repeat(16)), new Uint8Array(16).fill(0x80))
+    })
+  }
+
+  // 0x80 maps to something else
+  for (const encoding of ['windows-1250', 'windows-1252', 'x-user-defined']) {
+    test(encoding, (t) => {
+      const encoder = createSinglebyteEncoder(encoding)
+      t.assert.throws(() => encoder('\x80'))
+      t.assert.throws(() => encoder('\x80'.repeat(4)))
+      t.assert.throws(() => encoder('\x80'.repeat(8)))
+      t.assert.throws(() => encoder('\x80'.repeat(16)))
+    })
+  }
+})

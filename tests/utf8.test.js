@@ -26,6 +26,13 @@ const orphans = [
   { charcodes: [0xdf_ff, 0xd8_00], hex: 'efbfbdefbfbd' },
 ]
 
+const fixtures = [
+  { charcodes: new Array(1).fill(0x80), hex: 'c280' },
+  { charcodes: new Array(4).fill(0x80), hex: 'c280'.repeat(4) },
+  { charcodes: new Array(8).fill(0x80), hex: 'c280'.repeat(8) },
+  { charcodes: new Array(16).fill(0x80), hex: 'c280'.repeat(16) },
+]
+
 const seed = randomValues(5 * 1024)
 const pool = [
   new Uint8Array(0),
@@ -33,6 +40,7 @@ const pool = [
   new Uint8Array(256),
   new Uint8Array(256).fill(1),
   new Uint8Array(256).fill(42),
+  new Uint8Array(256).fill(0x80),
   new Uint8Array(256).fill(0xd0),
   new Uint8Array(256).fill(255),
   Uint8Array.of(0xef, 0xbb, 0xbf), // BOM
@@ -58,6 +66,21 @@ describe('utf8toString', () => {
       test(method.name, (t) => {
         for (const input of [null, undefined, [], [1, 2], new Uint16Array(1), 'string']) {
           t.assert.throws(() => method(input))
+        }
+      })
+    }
+  })
+
+  describe('valid input', () => {
+    for (const method of [
+      utf8toString,
+      utf8toStringLoose,
+      (x) => js.decode(x, false),
+      (x) => js.decode(x, true),
+    ]) {
+      test(method.name || method + '', (t) => {
+        for (const { charcodes, hex } of fixtures) {
+          t.assert.strictEqual(method(fromHex(hex)), String.fromCharCode(...charcodes))
         }
       })
     }
@@ -117,6 +140,21 @@ describe('utf8fromString', () => {
           for (const form of ['uint8', 'buffer', 'hex']) {
             t.assert.throws(() => method(input, form))
           }
+        }
+      })
+    }
+  })
+
+  describe('valid input', () => {
+    for (const method of [
+      utf8fromString,
+      utf8fromStringLoose,
+      (x) => js.encode(x, false),
+      (x) => js.encode(x, true),
+    ]) {
+      test(method.name || method + '', (t) => {
+        for (const { charcodes, hex } of fixtures) {
+          t.assert.deepStrictEqual(method(String.fromCharCode(...charcodes)), fromHex(hex))
         }
       })
     }
