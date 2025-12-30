@@ -3,24 +3,21 @@
 import type { Uint8ArrayBuffer } from './array.js';
 
 /**
- * Normalizes an encoding label to its canonical name
- * Returns lowercased encoding names (case-insensitive)
+ * Converts an encoding label to its name, as an ASCII-lowercased string
  * @param label - The encoding label to normalize
  * @returns The normalized encoding name, or null if invalid
  */
 export function normalizeEncoding(label: string): string | null;
 
 /**
- * Detects BOM (Byte Order Mark) and returns the corresponding encoding
+ * Implements BOM sniff (https://encoding.spec.whatwg.org/#bom-sniff) legacy hook.
  * @param input - The bytes to check for BOM
  * @returns The encoding ('utf-8', 'utf-16le', 'utf-16be'), or null if no BOM found
  */
 export function getBOMEncoding(input: ArrayBufferLike | ArrayBufferView): 'utf-8' | 'utf-16le' | 'utf-16be' | null;
 
 /**
- * Legacy hook for decoding bytes using optional encoding with BOM detection
- * BOM takes preference over the supplied encoding
- * Performs lossy decoding with replacement character for invalid sequences
+ * Implements decode (https://encoding.spec.whatwg.org/#decode) legacy hook.
  * @param input - The bytes to decode
  * @param fallbackEncoding - The encoding to use if no BOM detected (default: 'utf-8')
  * @returns The decoded string
@@ -28,7 +25,7 @@ export function getBOMEncoding(input: ArrayBufferLike | ArrayBufferView): 'utf-8
 export function legacyHookDecode(input: ArrayBufferLike | ArrayBufferView, fallbackEncoding?: string): string;
 
 /**
- * Converts an encoding label to its proper display name
+ * Converts an encoding label to its name, as a case-sensitive string.
  * @param label - The encoding label
  * @returns The proper case encoding name, or null if invalid
  */
