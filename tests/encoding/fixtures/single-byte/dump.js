@@ -28,26 +28,35 @@ for (const file of readdirSync(import.meta.dirname)) {
   const chars = []
   for (let i = 0; i < 128; i++) {
     if (known.has(i)) {
-      chars.push(String.fromCharCode(known.get(i)))
+      chars.push(known.get(i))
     } else {
-      chars.push('\uFFFD')
+      chars.push(0xff_fd)
     }
   }
 
-  while (chars[chars.length - 1] === String.fromCharCode(128 + chars.length - 1)) chars.pop() // minify
-
-  encodings[encoding] = chars.join('')
+  while (chars[chars.length - 1] === 128 + chars.length - 1) chars.pop() // minify
+  let last = 127
+  const deltas = chars.map((x) => {
+    if (x === 0xff_fd) return x
+    x -= last
+    last += x
+    return x
+  })
+  encodings[encoding] = `[${deltas.join(',')}]`
 }
 
 const table = JSON.stringify(encodings, undefined, 2)
-  .replaceAll('\uFFFD', '\\uFFFD')
-  .replace(/[^\\\w\n\p{N}\p{L}\p{S}\p{P} -]/gu, (x) => {
-    const c = x.codePointAt(0)
-    if (c <= 0xff) return `\\x${c.toString(16).padStart(2, '0').toUpperCase()}`
-    if (c <= 0xff_ff) return `\\u${c.toString(16).padStart(4, '0').toUpperCase()}`
-    throw new Error('Unexpected')
-  })
-  .replaceAll(/(\\uFFFD){2,}/g, (x) => `" + "\\uFFFD".repeat(${x.length / 6}) + "`)
-  .replaceAll(') + ""', ')')
+  .replaceAll(']"', ']')
+  .replaceAll('"[', '[')
+  .replaceAll('"', "'")
+  .replaceAll(/(\D)65533/g, '$1r')
+  .replaceAll(
+    /([^\dr])(1(?:,1){4,})([^\dr])/g,
+    (_, a, b, c) => `${a}...e(${(b.length + 1) / 2})${c}`
+  )
+  .replaceAll(
+    /([^\dr])(r(?:,r){4,})([^\dr])/g,
+    (_, a, b, c) => `${a}...h(${(b.length + 1) / 2})${c}`
+  )
 
 console.log(table)
