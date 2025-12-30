@@ -1,5 +1,5 @@
 import * as js from './fallback/utf16.js'
-import { canDecoders, isLE } from './fallback/_utils.js'
+import { canDecoders, isLE, E_STRING } from './fallback/_utils.js'
 
 const { TextDecoder } = globalThis // Buffer is optional
 const ignoreBOM = true
@@ -18,7 +18,7 @@ const { E_STRICT, E_STRICT_UNICODE } = js
 const to8 = (a) => new Uint8Array(a.buffer, a.byteOffset, a.byteLength)
 
 function encode(str, loose = false, format = 'uint16') {
-  if (typeof str !== 'string') throw new TypeError('Input is not a string')
+  if (typeof str !== 'string') throw new TypeError(E_STRING)
   if (format !== 'uint16' && format !== 'uint8-le' && format !== 'uint8-be') {
     throw new TypeError('Unknown format')
   }

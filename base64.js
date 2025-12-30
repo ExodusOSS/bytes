@@ -1,6 +1,6 @@
 import { assertUint8, assertEmptyRest } from './assert.js'
 import { typedView } from './array.js'
-import { isHermes, skipWeb } from './fallback/_utils.js'
+import { isHermes, skipWeb, E_STRING } from './fallback/_utils.js'
 import { decodeLatin1, encodeLatin1 } from './fallback/latin1.js'
 import * as js from './fallback/base64.js'
 
@@ -79,7 +79,7 @@ export function fromBase64any(str, { format = 'uint8', padding = 'both', ...rest
 }
 
 function fromBase64common(str, isBase64url, padding, format, rest) {
-  if (typeof str !== 'string') throw new TypeError('Input is not a string')
+  if (typeof str !== 'string') throw new TypeError(E_STRING)
   if (rest !== null) assertEmptyRest(rest)
   const auto = padding === 'both' ? str.endsWith('=') : undefined
   // Older JSC supporting Uint8Array.fromBase64 lacks proper checks

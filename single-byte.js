@@ -1,5 +1,5 @@
 import { assertUint8 } from './assert.js'
-import { canDecoders, nativeEncoder, isHermes } from './fallback/_utils.js'
+import { canDecoders, nativeEncoder, isHermes, E_STRING } from './fallback/_utils.js'
 import { encodeAscii } from './fallback/latin1.js'
 import { assertEncoding, encodingDecoder, encodeMap, E_STRICT } from './fallback/single-byte.js'
 
@@ -108,7 +108,7 @@ export function createSinglebyteEncoder(encoding, { mode = 'fatal' } = {}) {
   // This needs special treatment only to decide how many replacement chars to output, one or two
   // Not much use in running isWellFormed, most likely cause of error is unmapped chars, not surrogate pairs
   return (s) => {
-    if (typeof s !== 'string') throw new TypeError('Input is not a string')
+    if (typeof s !== 'string') throw new TypeError(E_STRING)
 
     // Instead of an ASCII regex check, encode optimistically - this is faster
     // Check for 8-bit string with a regex though, this is instant on 8-bit strings so doesn't hurt the ASCII fast path

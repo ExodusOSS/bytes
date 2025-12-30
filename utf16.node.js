@@ -1,4 +1,4 @@
-import { isDeno, isLE } from './fallback/_utils.js'
+import { isDeno, isLE, E_STRING } from './fallback/_utils.js'
 import { E_STRICT, E_STRICT_UNICODE } from './fallback/utf16.js'
 
 if (Buffer.TYPED_ARRAY_SUPPORT) throw new Error('Unexpected Buffer polyfill')
@@ -9,7 +9,7 @@ const to8 = (a) => new Uint8Array(a.buffer, a.byteOffset, a.byteLength)
 // Unlike utf8, operates on Uint16Arrays by default
 
 function encode(str, loose = false, format = 'uint16') {
-  if (typeof str !== 'string') throw new TypeError('Input is not a string')
+  if (typeof str !== 'string') throw new TypeError(E_STRING)
   if (format !== 'uint16' && format !== 'uint8-le' && format !== 'uint8-be') {
     throw new TypeError('Unknown format')
   }

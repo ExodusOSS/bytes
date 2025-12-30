@@ -1,5 +1,6 @@
 import { assertUint8 } from './assert.js'
 import { typedView } from './array.js'
+import { E_STRING } from './fallback/_utils.js'
 import { E_STRICT, E_STRICT_UNICODE } from './fallback/utf8.js'
 import { isAscii } from 'node:buffer'
 
@@ -17,7 +18,7 @@ try {
 }
 
 function encode(str, loose = false) {
-  if (typeof str !== 'string') throw new TypeError('Input is not a string')
+  if (typeof str !== 'string') throw new TypeError(E_STRING)
   const strLength = str.length
   if (strLength === 0) return new Uint8Array() // faster than Uint8Array.of
   let res

@@ -1,5 +1,5 @@
 import { assertUint8 } from './assert.js'
-import { nativeEncoder } from './fallback/_utils.js'
+import { nativeEncoder, E_STRING } from './fallback/_utils.js'
 import { decodeAscii, encodeAscii, encodeLatin1 } from './fallback/latin1.js'
 
 const alphabet = [...'qpzry9x8gf2tvdw0s3jn54khce6mua7l']
@@ -12,7 +12,6 @@ const E_MIXED = 'Mixed-case string'
 const E_PADDING = 'Padding is invalid'
 const E_CHECKSUM = 'Invalid checksum'
 const E_CHARACTER = 'Non-bech32 character'
-const E_STRING = 'Input is not a string'
 
 // nativeEncoder path uses encodeAscii which asserts ascii, otherwise we have 0-255 bytes from encodeLatin1
 const c2x = new Int8Array(nativeEncoder ? 128 : 256).fill(-1)

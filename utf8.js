@@ -1,6 +1,6 @@
 import { assertUint8 } from './assert.js'
 import { typedView } from './array.js'
-import { isHermes, nativeDecoder, nativeEncoder } from './fallback/_utils.js'
+import { isHermes, nativeDecoder, nativeEncoder, E_STRING } from './fallback/_utils.js'
 import { asciiPrefix, decodeLatin1 } from './fallback/latin1.js'
 import * as js from './fallback/utf8.js'
 
@@ -44,7 +44,7 @@ function deLoose(str, loose, res) {
 }
 
 function encode(str, loose = false) {
-  if (typeof str !== 'string') throw new TypeError('Input is not a string')
+  if (typeof str !== 'string') throw new TypeError(E_STRING)
   if (str.length === 0) return new Uint8Array() // faster than Uint8Array.of
   if (nativeEncoder) return deLoose(str, loose, nativeEncoder.encode(str))
   // No reason to use unescape + encodeURIComponent: it's slower than JS on normal engines, and modern Hermes already has TextEncoder

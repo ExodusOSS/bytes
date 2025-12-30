@@ -1,5 +1,5 @@
 import { assertUint8 } from '../assert.js'
-import { nativeDecoder, nativeEncoder, decode2string } from './_utils.js'
+import { nativeDecoder, nativeEncoder, decode2string, E_STRING } from './_utils.js'
 import { encodeAscii, decodeAscii } from './latin1.js'
 
 let hexArray // array of 256 bytes converted to two-char hex strings
@@ -52,7 +52,7 @@ export function toHex(arr) {
 }
 
 export function fromHex(str) {
-  if (typeof str !== 'string') throw new TypeError('Input is not a string')
+  if (typeof str !== 'string') throw new TypeError(E_STRING)
   if (str.length % 2 !== 0) throw new SyntaxError(E_HEX)
 
   const length = str.length / 2 // this helps Hermes in loops

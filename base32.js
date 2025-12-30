@@ -1,5 +1,6 @@
 import { assertEmptyRest } from './assert.js'
 import { typedView } from './array.js'
+import { E_STRING } from './fallback/_utils.js'
 import * as js from './fallback/base32.js'
 
 // See https://datatracker.ietf.org/doc/html/rfc4648
@@ -25,7 +26,7 @@ export function fromBase32hex(str, options) {
 }
 
 function fromBase32common(str, isBase32Hex, padding, format, rest) {
-  if (typeof str !== 'string') throw new TypeError('Input is not a string')
+  if (typeof str !== 'string') throw new TypeError(E_STRING)
   if (rest !== null) assertEmptyRest(rest)
 
   if (padding === true) {

@@ -128,3 +128,5 @@ export const toBuf = (x) =>
   x.byteLength <= 64 && x.BYTES_PER_ELEMENT === 1
     ? Buffer.from(x)
     : Buffer.from(x.buffer, x.byteOffset, x.byteLength)
+
+export const E_STRING = 'Input is not a string'

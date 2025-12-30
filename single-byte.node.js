@@ -1,6 +1,6 @@
 import { assertUint8 } from './assert.js'
 import { isAscii } from 'node:buffer'
-import { isDeno, isLE, toBuf } from './fallback/_utils.js'
+import { isDeno, isLE, toBuf, E_STRING } from './fallback/_utils.js'
 import { asciiPrefix } from './fallback/latin1.js'
 import { encodingMapper, encodingDecoder, encodeMap, E_STRICT } from './fallback/single-byte.js'
 
@@ -66,7 +66,7 @@ export function createSinglebyteEncoder(encoding, { mode = 'fatal' } = {}) {
   const m = encodeMap(encoding) // asserts
 
   return (s) => {
-    if (typeof s !== 'string') throw new TypeError('Input is not a string')
+    if (typeof s !== 'string') throw new TypeError(E_STRING)
 
     // Instead of an ASCII regex check, encode optimistically - this is faster
     // Check for 8-bit string with a regex though, this is instant on 8-bit strings so doesn't hurt the ASCII fast path

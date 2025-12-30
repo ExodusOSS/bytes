@@ -1,6 +1,6 @@
 import { typedView } from './array.js'
 import { assertUint8 } from './assert.js'
-import { nativeDecoder, nativeEncoder, isHermes } from './fallback/_utils.js'
+import { nativeDecoder, nativeEncoder, isHermes, E_STRING } from './fallback/_utils.js'
 import { encodeAscii, decodeAscii } from './fallback/latin1.js'
 
 const alphabet58 = [...'123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz']
@@ -122,7 +122,7 @@ function toBase58core(arr, alphabet, codes) {
 }
 
 function fromBase58core(str, alphabet, codes, format = 'uint8') {
-  if (typeof str !== 'string') throw new TypeError('Input is not a string')
+  if (typeof str !== 'string') throw new TypeError(E_STRING)
   const length = str.length
   if (length === 0) return typedView(new Uint8Array(), format)
 
