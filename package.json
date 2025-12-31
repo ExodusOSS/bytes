@@ -72,6 +72,7 @@
     "/bech32.js",
     "/bigint.js",
     "/encoding.js",
+    "/encoding.d.ts",
     "/encoding-lite.js",
     "/hex.js",
     "/hex.d.ts",
@@ -117,7 +118,10 @@
       "node": "./single-byte.node.js",
       "default": "./single-byte.js"
     },
-    "./encoding.js": "./encoding.js",
+    "./encoding.js": {
+      "types": "./encoding.d.ts",
+      "default": "./encoding.js"
+    },
     "./encoding-lite.js": "./encoding-lite.js",
     "./utf16.js": {
       "node": "./utf16.node.js",
