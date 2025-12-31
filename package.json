@@ -74,6 +74,7 @@
     "/encoding.js",
     "/encoding.d.ts",
     "/encoding-lite.js",
+    "/encoding-lite.d.ts",
     "/hex.js",
     "/hex.d.ts",
     "/hex.node.js",
@@ -122,7 +123,10 @@
       "types": "./encoding.d.ts",
       "default": "./encoding.js"
     },
-    "./encoding-lite.js": "./encoding-lite.js",
+    "./encoding-lite.js": {
+      "types": "./encoding-lite.d.ts",
+      "default": "./encoding-lite.js"
+    },
     "./utf16.js": {
       "node": "./utf16.node.js",
       "default": "./utf16.js"
