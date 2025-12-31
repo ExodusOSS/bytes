@@ -65,7 +65,72 @@ describe('single-byte encodings match fallback', () => {
   }
 })
 
-describe('single-byte encodings index', () => {
+describe('single-byte encodings index: Unicode', () => {
+  for (const encoding of encodings) {
+    if (!encoding.startsWith('iso-8859-')) continue // only iso-8859
+    const fileName = `ISO8859/${encoding.replace('iso-', '')}.txt`
+    test(encoding, (t) => {
+      const decoder = createSinglebyteDecoder(encoding)
+      const decoderLoose = createSinglebyteDecoder(encoding, true)
+      const encoder = createSinglebyteEncoder(encoding)
+      const text = readFileSync(
+        join(import.meta.dirname, 'encoding/fixtures/unicode/', fileName),
+        'utf8'
+      )
+      const rows = text
+        .split('\n')
+        .map((x) => x.trim())
+        .filter((x) => x && x[0] !== '#')
+        .map((x) => x.split('\t'))
+        .map(([iHex, codeHex]) => {
+          const i = parseInt(iHex.slice(2), 16)
+          t.assert.ok(i < 256)
+          const code = parseInt(codeHex.slice(2), 16)
+          t.assert.strictEqual('0x' + i.toString(16).padStart(2, '0').toUpperCase(), iHex)
+          t.assert.strictEqual('0x' + code.toString(16).padStart(4, '0').toUpperCase(), codeHex)
+          t.assert.ok(i === 0 || code !== 0)
+          t.assert.ok(code !== 0xff_fd && code <= 0xff_ff) // can't be a replacement char, has to be <= 16-bit
+          t.assert.ok(code < 0xd8_00 || code >= 0xe0_00) // not a surrogate
+          t.assert.ok(i > 128 || code === i)
+          return [i, code]
+        })
+
+      t.assert.ok(rows.length >= 128 && rows.length <= 256)
+      const known = new Map(rows)
+      t.assert.strictEqual(rows.length, known.size) // all unique
+
+      for (let byte = 0; byte < 256; byte++) {
+        const code = known.get(byte)
+        let str
+        if (code === undefined) {
+          t.assert.throws(() => decoder(Uint8Array.of(byte)))
+          try {
+            str = decoderLoose(Uint8Array.of(byte))
+          } catch (cause) {
+            throw new Error(`Error decoding unmapped ${byte} in ${encoding}`, { cause })
+          }
+
+          t.assert.strictEqual(str.length, 1)
+          t.assert.strictEqual(str.codePointAt(0), 0xff_fd)
+        } else {
+          try {
+            str = decoder(Uint8Array.of(byte))
+          } catch (cause) {
+            throw new Error(`Error decoding ${byte} in ${encoding}: ${byte}`, { cause })
+          }
+
+          t.assert.strictEqual(str.length, 1, byte)
+          t.assert.strictEqual(str.codePointAt(0), code, byte)
+          t.assert.strictEqual(str, decoderLoose(Uint8Array.of(byte)))
+
+          t.assert.deepStrictEqual(encoder(str), Uint8Array.of(byte))
+        }
+      }
+    })
+  }
+})
+
+describe('single-byte encodings index: WHATWG', () => {
   for (const encoding of encodings) {
     test(encoding, (t) => {
       const decoder = createSinglebyteDecoder(encoding)
