@@ -1,9 +1,9 @@
 import { assertUint8 } from './assert.js'
-import { canDecoders, nativeEncoder, isHermes, E_STRING } from './fallback/_utils.js'
+import { canDecoders, nativeEncoder, isHermes, skipWeb, E_STRING } from './fallback/_utils.js'
 import { encodeAscii, encodeAsciiPrefix, encodeLatin1 } from './fallback/latin1.js'
 import { assertEncoding, encodingDecoder, encodeMap, E_STRICT } from './fallback/single-byte.js'
 
-const { TextDecoder } = globalThis
+const { TextDecoder, btoa } = globalThis
 
 let windows1252works
 
@@ -89,6 +89,9 @@ function encode(s, m) {
   return x
 }
 
+// fromBase64+btoa path is faster on everything where fromBase64 is fast
+const useLatin1btoa = Uint8Array.fromBase64 && btoa && !skipWeb
+
 export function createSinglebyteEncoder(encoding, { mode = 'fatal' } = {}) {
   // TODO: replacement, truncate (replacement will need varying length)
   if (mode !== 'fatal') throw new Error('Unsupported mode')
@@ -101,6 +104,15 @@ export function createSinglebyteEncoder(encoding, { mode = 'fatal' } = {}) {
   return (s) => {
     if (typeof s !== 'string') throw new TypeError(E_STRING)
     if (isLatin1) {
+      // max limit is to not produce base64 strings that are too long
+      if (s.length >= 1024 && s.length < 1e8 && useLatin1btoa) {
+        try {
+          return Uint8Array.fromBase64(btoa(s)) // fails on non-latin1
+        } catch {
+          throw new TypeError(E_STRICT)
+        }
+      }
+
       if (NON_LATIN.test(s)) throw new TypeError(E_STRICT)
       return encodeLatin1(s)
     }
