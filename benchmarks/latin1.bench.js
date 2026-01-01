@@ -3,8 +3,10 @@ import { benchmark } from '@exodus/test/benchmark' // eslint-disable-line @exodu
 import buffer from 'buffer/index.js'
 import { describe, test } from 'node:test'
 import iconv from 'iconv-lite'
+import js from 'text-encoding'
 
 import { bufs } from './utils/random.js'
+import { Table } from './utils/table.js'
 import * as latin1 from '../fallback/latin1.js'
 
 if (!globalThis.Buffer) globalThis.Buffer = buffer.Buffer
@@ -20,6 +22,10 @@ const { TextEncoder, TextDecoder, btoa } = globalThis
 const textEncoder = isNative(TextEncoder) ? new TextEncoder() : null
 const textDecoder = isNative(TextDecoder) ? new TextDecoder() : null
 const textDecoderAscii = isNative(TextDecoder) ? new TextDecoder('ascii') : null
+const textDecoderJS = new js.TextDecoder('windows-1252')
+const textEncoderJS = new js.TextEncoder()
+
+const columns = ['@exodus/bytes', '@exodus/bytes latin1', 'Buffer', 'Buffer (latin1)', 'iconv-lite']
 
 const timeout = 30_000
 describe('benchmarks: latin1', async () => {
@@ -54,8 +60,9 @@ describe('benchmarks: latin1', async () => {
     ['Buffer (ascii)', (x) => toBuffer(x, Buffer).toString('ascii')],
     ['Buffer (latin1)', (x) => toBuffer(x, Buffer).toString('latin1')],
     ['Buffer (utf8)', (x) => toBuffer(x, Buffer).toString('utf8')],
-    ['TextDecoder', (x) => textDecoder.decode(x), !textDecoder],
+    ['TextDecoder (utf8)', (x) => textDecoder.decode(x), !textDecoder],
     ['TextDecoder (ascii)', (x) => textDecoderAscii.decode(x), !textDecoderAscii],
+    ['text-encoding (windows-1252)', (x) => textDecoderJS.decode(x)],
     ['String.fromCharCode', (x) => String.fromCharCode.apply(String, x)],
     ['iconv-lite', (x) => iconv.decode(x, 'ascii')],
   ]
@@ -67,7 +74,8 @@ describe('benchmarks: latin1', async () => {
     ['Buffer (ascii)', (x) => Buffer.from(x, 'ascii')],
     ['Buffer (latin1)', (x) => Buffer.from(x, 'latin1')],
     ['Buffer (utf8)', (x) => Buffer.from(x, 'utf8')],
-    ['TextEncoder', (x) => textEncoder.encode(x), !textEncoder],
+    ['TextEncoder (utf8)', (x) => textEncoder.encode(x), !textEncoder],
+    ['text-encoding (utf8)', (x) => textEncoderJS.encode(x)],
     ['iconv-lite', (x) => iconv.encode(x, 'ascii')],
   ]
 
@@ -92,9 +100,12 @@ describe('benchmarks: latin1', async () => {
   })
 
   test('decodeLatin1', { timeout }, async () => {
+    const res = new Table()
     for (const [name, f, skip] of decodeLatin1) {
-      await benchmark(`decodeLatin1: ${name}`, { skip, args: bufs }, f)
+      res.add(name, await benchmark(`decodeLatin1: ${name}`, { skip, args: bufs }, f))
     }
+
+    res.print(columns)
   })
 
   test('encodeLatin1 coherence', (t) => {
@@ -105,9 +116,12 @@ describe('benchmarks: latin1', async () => {
   })
 
   test('encodeLatin1', { timeout }, async () => {
+    const res = new Table()
     for (const [name, f, skip] of encodeLatin1) {
-      await benchmark(`encodeLatin1: ${name}`, { skip, args: strings }, f)
+      res.add(name, await benchmark(`encodeLatin1: ${name}`, { skip, args: strings }, f))
     }
+
+    res.print(columns)
   })
 
   test('decodeAscii coherence', (t) => {
@@ -120,9 +134,12 @@ describe('benchmarks: latin1', async () => {
   })
 
   test('decodeAscii', { timeout }, async () => {
+    const res = new Table()
     for (const [name, f, skip] of decodeAscii) {
-      await benchmark(`decodeAscii: ${name}`, { skip, args: asciiBufs }, f)
+      res.add(name, await benchmark(`decodeAscii: ${name}`, { skip, args: asciiBufs }, f))
     }
+
+    res.print(columns)
   })
 
   test('encodeAscii coherence', (t) => {
@@ -135,8 +152,11 @@ describe('benchmarks: latin1', async () => {
   })
 
   test('encodeAscii', { timeout }, async () => {
+    const res = new Table()
     for (const [name, f, skip] of encodeAscii) {
-      await benchmark(`encodeAscii: ${name}`, { skip, args: asciiStrings }, f)
+      res.add(name, await benchmark(`encodeAscii: ${name}`, { skip, args: asciiStrings }, f))
     }
+
+    res.print(columns)
   })
 })
