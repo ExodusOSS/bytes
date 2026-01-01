@@ -1,6 +1,6 @@
 import { asciiPrefix, decodeAscii, decodeLatin1 } from './latin1.js'
 import encodings from './single-byte.encodings.js'
-import { decode2string } from './_utils.js'
+import { decode2string, nativeDecoder } from './_utils.js'
 
 export const E_STRICT = 'Input is not well-formed for this encoding'
 const xUserDefined = 'x-user-defined'
@@ -65,7 +65,8 @@ export function encodingMapper(encoding) {
 export function encodingDecoder(encoding) {
   const cached = decoders.get(encoding)
   if (cached) return cached
-  if (encoding === 'iso-8859-1') return (arr, loose = false) => decodeLatin1(arr)
+  const isLatin1 = encoding === 'iso-8859-1'
+  if (isLatin1 && !nativeDecoder) return (arr, loose = false) => decodeLatin1(arr) // native decoder is faster for ascii below
 
   let strings
   const codes = getEncoding(encoding)
@@ -79,6 +80,7 @@ export function encodingDecoder(encoding) {
 
     const prefixLen = asciiPrefix(arr)
     if (prefixLen === arr.length) return decodeAscii(arr)
+    if (isLatin1) return decodeLatin1(arr) // TODO: check if decodeAscii with subarray is faster for small prefixes too
     const prefix = decodeLatin1(arr, 0, prefixLen) // TODO: check if decodeAscii with subarray is faster for small prefixes too
     const suffix = decode2string(arr, prefix.length, arr.length, strings)
     if (!loose && incomplete && suffix.includes('\uFFFD')) throw new TypeError(E_STRICT)
