@@ -1,21 +1,17 @@
-import { utf8fromString } from '@exodus/bytes/utf8.js'
 import { benchmark } from '@exodus/test/benchmark' // eslint-disable-line @exodus/import/no-unresolved
 import buffer from 'buffer/index.js'
 import { describe, test } from 'node:test'
+import iconv from 'iconv-lite'
 
-import { bufs as bufsRaw } from './utils/random.js'
+import { bufs } from './utils/random.js'
 import * as latin1 from '../fallback/latin1.js'
 
 if (!globalThis.Buffer) globalThis.Buffer = buffer.Buffer
 const bufferIsPolyfilled = Buffer === buffer.Buffer
 const toBuffer = (x, B) => B.from(x.buffer, x.byteOffset, x.byteLength)
 
-const replacementChar = String.fromCodePoint(0xff_fd) // We don't expect much of these in real usage, and rng will spawn a lot of those, so strip
-const strings = bufsRaw.map((x) => toBuffer(x, Buffer).toString().replaceAll(replacementChar, '∀')) // loose, but we want that here
-const bufs = strings.map((x) => utf8fromString(x))
-const latin = bufs.map((x) => toBuffer(x, Buffer).toString('latin1'))
-
-const asciiBufs = bufsRaw.map((x) => x.map((c) => (c >= 0x80 ? c - 0x80 : c)))
+const strings = bufs.map((x) => toBuffer(x, Buffer).toString('latin1'))
+const asciiBufs = bufs.map((x) => x.map((c) => (c >= 0x80 ? c - 0x80 : c)))
 const asciiStrings = asciiBufs.map((x) => toBuffer(x, Buffer).toString())
 
 const isNative = (x) => x && (!bufferIsPolyfilled || `${x}`.includes('[native code]')) // we consider Node.js TextDecoder/TextEncoder native
@@ -36,6 +32,7 @@ describe('benchmarks: latin1', async () => {
     // ['Buffer.from', (x) => Buffer.from(x).toString('latin1')],
     ['buffer/Buffer', (x) => toBuffer(x, buffer.Buffer).toString('latin1'), bufferIsPolyfilled],
     // ['buffer/Buffer.from', (x) => buffer.Buffer.from(x).toString('latin1'), bufferIsPolyfilled],
+    ['iconv-lite', (x) => iconv.decode(x, 'iso-8859-1')],
   ]
 
   // [name, impl, skip]
@@ -44,6 +41,7 @@ describe('benchmarks: latin1', async () => {
     ['Buffer', (x) => Buffer.from(x, 'latin1')],
     ['buffer/Buffer', (x) => buffer.Buffer.from(x, 'latin1'), bufferIsPolyfilled],
     ['fromBase64 + btoa', (x) => Uint8Array.fromBase64(btoa(x)), !Uint8Array.fromBase64 || !btoa],
+    ['iconv-lite', (x) => iconv.encode(x, 'iso-8859-1')],
   ]
 
   // [name, impl, skip]
@@ -55,6 +53,7 @@ describe('benchmarks: latin1', async () => {
     ['TextDecoder', (x) => textDecoder.decode(x), !textDecoder],
     ['TextDecoder (ascii)', (x) => textDecoderAscii.decode(x), !textDecoderAscii],
     ['String.fromCharCode', (x) => String.fromCharCode.apply(String, x)],
+    ['iconv-lite', (x) => iconv.decode(x, 'ascii')],
   ]
 
   // [name, impl, skip]
@@ -64,6 +63,7 @@ describe('benchmarks: latin1', async () => {
     ['Buffer (latin1)', (x) => Buffer.from(x, 'latin1')],
     ['Buffer (utf8)', (x) => Buffer.from(x, 'utf8')],
     ['TextEncoder', (x) => textEncoder.encode(x), !textEncoder],
+    ['iconv-lite', (x) => iconv.encode(x, 'ascii')],
   ]
 
   test('asciiPrefix coherence', (t) => {
@@ -82,7 +82,7 @@ describe('benchmarks: latin1', async () => {
   test('decodeLatin1 coherence', (t) => {
     for (const [name, f, skip] of decodeLatin1) {
       if (skip) continue
-      for (let i = 0; i < bufs.length; i++) t.assert.strictEqual(f(bufs[i]), latin[i], name)
+      for (let i = 0; i < bufs.length; i++) t.assert.strictEqual(f(bufs[i]), strings[i], name)
     }
   })
 
@@ -95,13 +95,13 @@ describe('benchmarks: latin1', async () => {
   test('encodeLatin1 coherence', (t) => {
     for (const [name, f, skip] of encodeLatin1) {
       if (skip) continue
-      for (let i = 0; i < bufs.length; i++) t.assert.deepEqual(f(latin[i]), bufs[i], name)
+      for (let i = 0; i < bufs.length; i++) t.assert.deepEqual(f(strings[i]), bufs[i], name)
     }
   })
 
   test('encodeLatin1', { timeout }, async () => {
     for (const [name, f, skip] of encodeLatin1) {
-      await benchmark(`encodeLatin1: ${name}`, { skip, args: latin }, f)
+      await benchmark(`encodeLatin1: ${name}`, { skip, args: strings }, f)
     }
   })
 
