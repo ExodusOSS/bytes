@@ -6,6 +6,7 @@ import { encodingDecoder } from '../fallback/single-byte.js'
 import encodingsObject from '../fallback/single-byte.encodings.js'
 
 const encodings = Object.keys(encodingsObject)
+const nonWhatwg = new Set(['iso-8859-1', 'iso-8859-9', 'iso-8859-11'])
 
 // See also tests/encoding/single-byte.tables.test.js for similar TextDecoder tests
 
@@ -132,6 +133,7 @@ describe('single-byte encodings index: Unicode', () => {
 
 describe('single-byte encodings index: WHATWG', () => {
   for (const encoding of encodings) {
+    if (nonWhatwg.has(encoding)) continue
     test(encoding, (t) => {
       const decoder = createSinglebyteDecoder(encoding)
       const decoderLoose = createSinglebyteDecoder(encoding, true)
