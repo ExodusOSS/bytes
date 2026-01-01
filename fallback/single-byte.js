@@ -65,6 +65,7 @@ export function encodingMapper(encoding) {
 export function encodingDecoder(encoding) {
   const cached = decoders.get(encoding)
   if (cached) return cached
+  if (encoding === 'iso-8859-1') return (arr, loose = false) => decodeLatin1(arr)
 
   let strings
   const codes = getEncoding(encoding)

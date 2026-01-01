@@ -1,3 +1,4 @@
+import { latin1fromString, latin1toString } from '@exodus/bytes/single-byte.js'
 import { benchmark } from '@exodus/test/benchmark' // eslint-disable-line @exodus/import/no-unresolved
 import buffer from 'buffer/index.js'
 import { describe, test } from 'node:test'
@@ -10,9 +11,9 @@ if (!globalThis.Buffer) globalThis.Buffer = buffer.Buffer
 const bufferIsPolyfilled = Buffer === buffer.Buffer
 const toBuffer = (x, B) => B.from(x.buffer, x.byteOffset, x.byteLength)
 
-const strings = bufs.map((x) => toBuffer(x, Buffer).toString('latin1'))
+const strings = bufs.map((x) => latin1toString(x))
 const asciiBufs = bufs.map((x) => x.map((c) => (c >= 0x80 ? c - 0x80 : c)))
-const asciiStrings = asciiBufs.map((x) => toBuffer(x, Buffer).toString())
+const asciiStrings = asciiBufs.map((x) => latin1toString(x))
 
 const isNative = (x) => x && (!bufferIsPolyfilled || `${x}`.includes('[native code]')) // we consider Node.js TextDecoder/TextEncoder native
 const { TextEncoder, TextDecoder, btoa } = globalThis
@@ -27,6 +28,7 @@ describe('benchmarks: latin1', async () => {
 
   // [name, impl, skip]
   const decodeLatin1 = [
+    ['@exodus/bytes', (x) => latin1toString(x)],
     ['./fallback/latin1', (x) => latin1.decodeLatin1(x)],
     ['Buffer', (x) => toBuffer(x, Buffer).toString('latin1')],
     // ['Buffer.from', (x) => Buffer.from(x).toString('latin1')],
@@ -37,6 +39,7 @@ describe('benchmarks: latin1', async () => {
 
   // [name, impl, skip]
   const encodeLatin1 = [
+    ['@exodus/bytes', (x) => latin1fromString(x)],
     ['./fallback/latin1', (x) => latin1.encodeLatin1(x)],
     ['Buffer', (x) => Buffer.from(x, 'latin1')],
     ['buffer/Buffer', (x) => buffer.Buffer.from(x, 'latin1'), bufferIsPolyfilled],
@@ -46,6 +49,7 @@ describe('benchmarks: latin1', async () => {
 
   // [name, impl, skip]
   const decodeAscii = [
+    ['@exodus/bytes latin1', (x) => latin1toString(x)],
     ['./fallback/latin1', (x) => latin1.decodeAscii(x)],
     ['Buffer (ascii)', (x) => toBuffer(x, Buffer).toString('ascii')],
     ['Buffer (latin1)', (x) => toBuffer(x, Buffer).toString('latin1')],
@@ -58,6 +62,7 @@ describe('benchmarks: latin1', async () => {
 
   // [name, impl, skip]
   const encodeAscii = [
+    ['@exodus/bytes latin1', (x) => latin1fromString(x)],
     ['./fallback/latin1', (x) => latin1.encodeAscii(x, 'ERR'), !textEncoder],
     ['Buffer (ascii)', (x) => Buffer.from(x, 'ascii')],
     ['Buffer (latin1)', (x) => Buffer.from(x, 'latin1')],

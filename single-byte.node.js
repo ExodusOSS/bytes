@@ -23,7 +23,6 @@ function latin1Prefix(arr, start) {
 
 export function createSinglebyteDecoder(encoding, loose = false) {
   if (typeof loose !== 'boolean') throw new TypeError('loose option should be boolean')
-  const latin1path = encoding === 'windows-1252'
   if (isDeno) {
     const jsDecoder = encodingDecoder(encoding) // asserts
     return (arr) => {
@@ -34,11 +33,13 @@ export function createSinglebyteDecoder(encoding, loose = false) {
     }
   }
 
+  const isLatin1 = encoding === 'iso-8859-1'
+  const latin1path = encoding === 'windows-1252'
   const { incomplete, mapper } = encodingMapper(encoding) // asserts
   return (arr) => {
     assertUint8(arr)
     if (arr.byteLength === 0) return ''
-    if (isAscii(arr)) return toBuf(arr).latin1Slice(0, arr.byteLength) // .latin1Slice is faster than .asciiSlice
+    if (isLatin1 || isAscii(arr)) return toBuf(arr).latin1Slice() // .latin1Slice is faster than .asciiSlice
 
     // Node.js TextDecoder is broken, so we can't use it. It's also slow anyway
 
@@ -64,9 +65,15 @@ export function createSinglebyteEncoder(encoding, { mode = 'fatal' } = {}) {
   // TODO: replacement, truncate (replacement will need varying length)
   if (mode !== 'fatal') throw new Error('Unsupported mode')
   const m = encodeMap(encoding) // asserts
+  const isLatin1 = encoding === 'iso-8859-1'
 
   return (s) => {
     if (typeof s !== 'string') throw new TypeError(E_STRING)
+    if (isLatin1) {
+      if (NON_LATIN.test(s)) throw new TypeError(E_STRICT)
+      const b = Buffer.from(s, 'latin1')
+      return new Uint8Array(b.buffer, b.byteOffset, b.byteLength)
+    }
 
     // Instead of an ASCII regex check, encode optimistically - this is faster
     // Check for 8-bit string with a regex though, this is instant on 8-bit strings so doesn't hurt the ASCII fast path
@@ -104,5 +111,7 @@ export function createSinglebyteEncoder(encoding, { mode = 'fatal' } = {}) {
   }
 }
 
+export const latin1toString = createSinglebyteDecoder('iso-8859-1')
+export const latin1fromString = createSinglebyteEncoder('iso-8859-1')
 export const windows1252toString = createSinglebyteDecoder('windows-1252')
 export const windows1252fromString = createSinglebyteEncoder('windows-1252')
