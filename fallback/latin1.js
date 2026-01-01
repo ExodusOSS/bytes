@@ -6,11 +6,18 @@ import {
   isHermes,
   isDeno,
   isLE,
+  skipWeb,
 } from './_utils.js'
+
+const { atob } = globalThis
+const { toBase64: web64 } = Uint8Array.prototype
 
 // See http://stackoverflow.com/a/22747272/680742, which says that lowest limit is in Chrome, with 0xffff args
 // On Hermes, actual max is 0x20_000 minus current stack depth, 1/16 of that should be safe
 const maxFunctionArgs = 0x20_00
+
+// toBase64+atob path is faster on everything where fromBase64 is fast
+const useLatin1atob = web64 && atob && !skipWeb
 
 export function asciiPrefix(arr) {
   let p = 0 // verified ascii bytes
@@ -46,6 +53,18 @@ export function decodeLatin1(arr, start = 0, stop = arr.length) {
   stop |= 0
   const total = stop - start
   if (total === 0) return ''
+
+  if (
+    useLatin1atob &&
+    total >= 256 &&
+    total < 1e8 &&
+    arr.toBase64 === web64 &&
+    arr.BYTES_PER_ELEMENT === 1
+  ) {
+    const sliced = start === 0 && stop === arr.length ? arr : arr.subarray(start, stop)
+    return atob(sliced.toBase64())
+  }
+
   if (total > maxFunctionArgs) {
     let prefix = ''
     for (let i = start; i < stop; ) {

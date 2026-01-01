@@ -105,7 +105,7 @@ export function createSinglebyteEncoder(encoding, { mode = 'fatal' } = {}) {
     if (typeof s !== 'string') throw new TypeError(E_STRING)
     if (isLatin1) {
       // max limit is to not produce base64 strings that are too long
-      if (s.length >= 1024 && s.length < 1e8 && useLatin1btoa) {
+      if (useLatin1btoa && s.length >= 1024 && s.length < 1e8) {
         try {
           return Uint8Array.fromBase64(btoa(s)) // fails on non-latin1
         } catch {
