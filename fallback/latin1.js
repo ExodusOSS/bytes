@@ -107,6 +107,20 @@ export const encodeCharcodes = isHermes
       return arr
     }
 
+export function encodeAsciiPrefix(x, s) {
+  let i = 0
+  for (const len3 = s.length - 3; i < len3; i += 4) {
+    const x0 = s.charCodeAt(i), x1 = s.charCodeAt(i + 1), x2 = s.charCodeAt(i + 2), x3 = s.charCodeAt(i + 3) // prettier-ignore
+    if ((x0 | x1 | x2 | x3) >= 128) break
+    x[i] = x0
+    x[i + 1] = x1
+    x[i + 2] = x2
+    x[i + 3] = x3
+  }
+
+  return i
+}
+
 /* eslint-enable @exodus/mutable/no-param-reassign-prop-only */
 
 // Warning: can be used only on checked strings, converts strings to 8-bit

@@ -1,6 +1,6 @@
 import { assertUint8 } from './assert.js'
 import { canDecoders, nativeEncoder, isHermes, E_STRING } from './fallback/_utils.js'
-import { encodeAscii } from './fallback/latin1.js'
+import { encodeAscii, encodeAsciiPrefix } from './fallback/latin1.js'
 import { assertEncoding, encodingDecoder, encodeMap, E_STRICT } from './fallback/single-byte.js'
 
 const { TextDecoder } = globalThis
@@ -63,18 +63,7 @@ const NON_LATIN = /[^\x00-\xFF]/ // eslint-disable-line no-control-regex
 function encode(s, m) {
   const len = s.length
   const x = new Uint8Array(len)
-  let i = 0
-
-  if (!nativeEncoder) {
-    for (const len3 = len - 3; i < len3; i += 4) {
-      const x0 = s.charCodeAt(i), x1 = s.charCodeAt(i + 1), x2 = s.charCodeAt(i + 2), x3 = s.charCodeAt(i + 3) // prettier-ignore
-      if ((x0 | x1 | x2 | x3) >= 128) break
-      x[i] = x0
-      x[i + 1] = x1
-      x[i + 2] = x2
-      x[i + 3] = x3
-    }
-  }
+  let i = nativeEncoder ? 0 : encodeAsciiPrefix(x, s)
 
   if (!isHermes) {
     for (const len3 = len - 3; i < len3; i += 4) {

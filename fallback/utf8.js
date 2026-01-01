@@ -1,3 +1,5 @@
+import { encodeAsciiPrefix } from './latin1.js'
+
 export const E_STRICT = 'Input is not well-formed utf8'
 export const E_STRICT_UNICODE = 'Input is not well-formed Unicode'
 
@@ -153,17 +155,7 @@ export function encode(string, loose) {
   let small = true
   let bytes = new Uint8Array(length) // assume ascii
 
-  let i = 0
-  for (const len3 = length - 3; i < len3; i += 4) {
-    const x0 = string.charCodeAt(i), x1 = string.charCodeAt(i + 1) // prettier-ignore
-    const x2 = string.charCodeAt(i + 2), x3 = string.charCodeAt(i + 3) // prettier-ignore
-    if ((x0 | x1 | x2 | x3) >= 128) break
-    bytes[i] = x0
-    bytes[i + 1] = x1
-    bytes[i + 2] = x2
-    bytes[i + 3] = x3
-  }
-
+  let i = encodeAsciiPrefix(bytes, string)
   let p = i
   for (; i < length; i++) {
     let code = string.charCodeAt(i)
