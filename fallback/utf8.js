@@ -157,7 +157,7 @@ export function encode(string, loose) {
   for (const len3 = length - 3; i < len3; i += 4) {
     const x0 = string.charCodeAt(i), x1 = string.charCodeAt(i + 1) // prettier-ignore
     const x2 = string.charCodeAt(i + 2), x3 = string.charCodeAt(i + 3) // prettier-ignore
-    if (x0 >= 128 || x1 >= 128 || x2 >= 128 || x3 >= 128) break
+    if ((x0 | x1 | x2 | x3) >= 128) break
     bytes[i] = x0
     bytes[i + 1] = x1
     bytes[i + 2] = x2

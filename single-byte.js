@@ -68,7 +68,7 @@ function encode(s, m) {
   if (!nativeEncoder) {
     for (const len3 = len - 3; i < len3; i += 4) {
       const x0 = s.charCodeAt(i), x1 = s.charCodeAt(i + 1), x2 = s.charCodeAt(i + 2), x3 = s.charCodeAt(i + 3) // prettier-ignore
-      if (x0 >= 128 || x1 >= 128 || x2 >= 128 || x3 >= 128) break
+      if ((x0 | x1 | x2 | x3) >= 128) break
       x[i] = x0
       x[i + 1] = x1
       x[i + 2] = x2
