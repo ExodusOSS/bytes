@@ -18,7 +18,7 @@ const asciiBufs = bufs.map((x) => x.map((c) => (c >= 0x80 ? c - 0x80 : c)))
 const asciiStrings = asciiBufs.map((x) => latin1toString(x))
 
 const isNative = (x) => x && (!bufferIsPolyfilled || `${x}`.includes('[native code]')) // we consider Node.js TextDecoder/TextEncoder native
-const { TextEncoder, TextDecoder, btoa } = globalThis
+const { TextEncoder, TextDecoder, atob, btoa } = globalThis
 const textEncoder = isNative(TextEncoder) ? new TextEncoder() : null
 const textDecoder = isNative(TextDecoder) ? new TextDecoder() : null
 const textDecoderAscii = isNative(TextDecoder) ? new TextDecoder('ascii') : null
@@ -39,6 +39,7 @@ describe('benchmarks: latin1', async () => {
     ['Buffer', (x) => toBuffer(x, Buffer).toString('latin1')],
     // ['Buffer.from', (x) => Buffer.from(x).toString('latin1')],
     ['buffer/Buffer', (x) => toBuffer(x, buffer.Buffer).toString('latin1'), bufferIsPolyfilled],
+    ['toBase64 + atob', (x) => atob(x.toBase64()), !Uint8Array.prototype.toBase64 || !atob],
     // ['buffer/Buffer.from', (x) => buffer.Buffer.from(x).toString('latin1'), bufferIsPolyfilled],
     ['iconv-lite', (x) => iconv.decode(x, 'iso-8859-1')],
   ]
