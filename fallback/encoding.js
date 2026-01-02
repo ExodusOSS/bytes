@@ -305,7 +305,7 @@ export function legacyHookDecode(input, fallbackEncoding = 'utf-8') {
     let suffix = ''
     if (u8.byteLength % 2 !== 0) {
       suffix = replacementChar
-      u8 = u8.subarray(0, -1)
+      u8 = u8.subarray(0, -unfinishedBytes(u8, u8.byteLength, enc))
     }
 
     return utf16toStringLoose(u8, enc === 'utf-16le' ? 'uint8-le' : 'uint8-be') + suffix
