@@ -48,6 +48,7 @@
     "/fallback/base58check.js",
     "/fallback/base64.js",
     "/fallback/encoding.js",
+    "/fallback/encoding.api.js",
     "/fallback/encoding.labels.js",
     "/fallback/encoding.util.js",
     "/fallback/hex.js",
