@@ -72,6 +72,10 @@
     "/base64.d.ts",
     "/bech32.js",
     "/bigint.js",
+    "/encoding-browser.js",
+    "/encoding-browser.browser.js",
+    "/encoding-browser.native.js",
+    "/encoding-browser.d.ts",
     "/encoding.js",
     "/encoding.d.ts",
     "/encoding-lite.js",
@@ -128,6 +132,13 @@
       "types": "./encoding-lite.d.ts",
       "default": "./encoding-lite.js"
     },
+    "./encoding-browser.js": {
+      "types": "./encoding-browser.d.ts",
+      "node": "./encoding-browser.js",
+      "react-native": "./encoding-browser.native.js",
+      "browser": "./encoding-browser.browser.js",
+      "default": "./encoding-browser.js"
+    },
     "./utf16.js": {
       "node": "./utf16.node.js",
       "default": "./utf16.js"
@@ -138,6 +149,9 @@
       "default": "./utf8.js"
     },
     "./wif.js": "./wif.js"
+  },
+  "react-native": {
+    "./encoding-browser.js": "./encoding-browser.native.js"
   },
   "peerDependencies": {
     "@exodus/crypto": "^1.0.0-rc.4"
