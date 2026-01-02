@@ -2,6 +2,8 @@ import labels from './encoding.labels.js'
 
 let labelsMap
 
+export const E_ENCODING = 'Unknown encoding'
+
 // Warning: unlike whatwg-encoding, returns lowercased labels
 // Those are case-insensitive and that's how TextDecoder encoding getter normalizes them
 // https://encoding.spec.whatwg.org/#names-and-labels

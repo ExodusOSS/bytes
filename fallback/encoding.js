@@ -5,17 +5,15 @@ import { utf16toString, utf16toStringLoose } from '@exodus/bytes/utf16.js'
 import { utf8fromStringLoose, utf8toString, utf8toStringLoose } from '@exodus/bytes/utf8.js'
 import { createSinglebyteDecoder } from '@exodus/bytes/single-byte.js'
 import labels from './encoding.labels.js'
-import { fromSource, getBOMEncoding, normalizeEncoding } from './encoding.api.js'
+import { fromSource, getBOMEncoding, normalizeEncoding, E_ENCODING } from './encoding.api.js'
 import { unfinishedBytes } from './encoding.util.js'
 
 export { labelToName, getBOMEncoding, normalizeEncoding } from './encoding.api.js'
 
 const E_OPTIONS = 'The "options" argument must be of type object'
-const E_ENCODING = 'Unknown encoding'
-const replacementChar = '\uFFFD'
-
 const E_MULTI =
   'Legacy multi-byte encodings are disabled in /encoding-lite.js, use /encoding.js for full encodings range support'
+const replacementChar = '\uFFFD'
 const multibyteSet = new Set(['big5', 'euc-kr', 'euc-jp', 'iso-2022-jp', 'shift_jis', 'gbk', 'gb18030']) // prettier-ignore
 let createMultibyteDecoder
 
