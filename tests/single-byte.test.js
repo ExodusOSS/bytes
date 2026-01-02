@@ -68,8 +68,17 @@ describe('single-byte encodings match fallback', () => {
 
 describe('single-byte encodings index: Unicode', () => {
   for (const encoding of encodings) {
-    if (!encoding.startsWith('iso-8859-')) continue // only iso-8859
-    const fileName = `ISO8859/${encoding.replace('iso-', '')}.txt`
+    let fileName
+    let allowSuperset = false
+    if (encoding.startsWith('iso-8859-')) {
+      fileName = `ISO8859/${encoding.replace('iso-', '')}.txt`
+    } else if (encoding.startsWith('windows-')) {
+      fileName = `VENDORS/MICSFT/WINDOWS/CP${encoding.replace('windows-', '')}.txt`
+      allowSuperset = true
+    } else {
+      continue
+    }
+
     test(encoding, (t) => {
       const decoder = createSinglebyteDecoder(encoding)
       const decoderLoose = createSinglebyteDecoder(encoding, true)
@@ -83,16 +92,18 @@ describe('single-byte encodings index: Unicode', () => {
         .map((x) => x.trim())
         .filter((x) => x && x[0] !== '#')
         .map((x) => x.split('\t'))
+        .filter((x) => !(['', '      '].includes(x[1]) && x[2] === '#UNDEFINED'))
         .map(([iHex, codeHex]) => {
+          const id = `${fileName}: ${iHex} -> ${codeHex}`
           const i = parseInt(iHex.slice(2), 16)
           t.assert.ok(i < 256)
           const code = parseInt(codeHex.slice(2), 16)
-          t.assert.strictEqual('0x' + i.toString(16).padStart(2, '0').toUpperCase(), iHex)
-          t.assert.strictEqual('0x' + code.toString(16).padStart(4, '0').toUpperCase(), codeHex)
-          t.assert.ok(i === 0 || code !== 0)
-          t.assert.ok(code !== 0xff_fd && code <= 0xff_ff) // can't be a replacement char, has to be <= 16-bit
-          t.assert.ok(code < 0xd8_00 || code >= 0xe0_00) // not a surrogate
-          t.assert.ok(i > 128 || code === i)
+          t.assert.strictEqual('0x' + i.toString(16).padStart(2, '0').toUpperCase(), iHex, id)
+          t.assert.strictEqual('0x' + code.toString(16).padStart(4, '0').toUpperCase(), codeHex, id)
+          t.assert.ok(i === 0 || code !== 0, id)
+          t.assert.ok(code !== 0xff_fd && code <= 0xff_ff, id) // can't be a replacement char, has to be <= 16-bit
+          t.assert.ok(code < 0xd8_00 || code >= 0xe0_00, id) // not a surrogate
+          t.assert.ok(i > 0x7f || code === i, id)
           return [i, code]
         })
 
@@ -101,8 +112,16 @@ describe('single-byte encodings index: Unicode', () => {
       t.assert.strictEqual(rows.length, known.size) // all unique
 
       for (let byte = 0; byte < 256; byte++) {
-        const code = known.get(byte)
+        let code = known.get(byte)
         let str
+        if (allowSuperset && code === undefined) {
+          try {
+            const dec = decoder(Uint8Array.of(byte))
+            // if it doesn't throw, it should map to the same byte, except windows-1255 which adds more non-trivial entries
+            code = encoding === 'windows-1255' ? dec.codePointAt(0) : byte
+          } catch {}
+        }
+
         if (code === undefined) {
           t.assert.throws(() => decoder(Uint8Array.of(byte)))
           try {

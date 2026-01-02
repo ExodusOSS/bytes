@@ -167,6 +167,11 @@ Also supports `iso-8859-1`, `iso-8859-9`, `iso-8859-11` as defined at
 '\x80\x81Ğ' // this is iso-8859-9 as defined at https://unicode.org/Public/MAPPINGS/ISO8859/8859-9.txt
 ```
 
+All WHATWG Encoding spec [`windows-*` encodings](https://encoding.spec.whatwg.org/#windows-874) are supersets of
+corresponding [unicode.org encodings](https://unicode.org/Public/MAPPINGS/VENDORS/MICSFT/WINDOWS/), meaning that
+they encode/decode all the old valid (non-replacement) strings / byte sequences identically, but can also support
+a wider range of inputs.
+
 ##### `createSinglebyteDecoder(encoding, loose = false)`
 
 Create a decoder for a supported one-byte `encoding`, given its lowercased name `encoding`.
