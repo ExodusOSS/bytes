@@ -1,7 +1,7 @@
 import * as exodus from '@exodus/bytes/bech32.js'
 import { benchmark } from '@exodus/test/benchmark' // eslint-disable-line @exodus/import/no-unresolved
 import { bech32 as scure } from '@scure/base'
-import { bech32 } from 'bech32'
+import { bech32 } from '../node_modules/bech32/dist/index.js'
 import { describe, test } from 'node:test'
 
 import { Table } from './utils/table.js'
