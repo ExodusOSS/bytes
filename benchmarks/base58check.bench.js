@@ -1,4 +1,4 @@
-import * as exodus from '../base58check.js'
+import * as exodus from '@exodus/bytes/base58check.js'
 import { benchmark } from '@exodus/test/benchmark'
 import { createBase58check as createScure } from '@scure/base'
 import { sha256 } from '@noble/hashes/sha2.js'
