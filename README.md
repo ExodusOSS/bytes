@@ -1,7 +1,7 @@
 # `@exodus/bytes`
 
 [![](https://flat.badgen.net/npm/v/@exodus/bytes)](https://npmjs.org/package/@exodus/bytes)
-![](https://flat.badgen.net/npm/dm/@exodus/bytes)
+[![](https://flat.badgen.net/npm/dm/@exodus/bytes)](https://www.npmcharts.com/compare/@exodus/bytes?minimal=true)
 [![](https://flat.badgen.net/npm/license/@exodus/bytes)](https://github.com/ExodusOSS/bytes/blob/HEAD/LICENSE)
 
 `Uint8Array` conversion to and from `base64`, `base32`, `base58`, `hex`, `utf8`, `utf16`, `bech32` and `wif`
