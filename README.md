@@ -1,6 +1,7 @@
 # `@exodus/bytes`
 
 [![](https://flat.badgen.net/npm/v/@exodus/bytes)](https://npmjs.org/package/@exodus/bytes)
+[![](https://flat.badgen.net/github/release/ExodusOSS/bytes?icon=github)](https://github.com/ExodusOSS/bytes/releases)
 [![](https://flat.badgen.net/npm/dm/@exodus/bytes)](https://www.npmcharts.com/compare/@exodus/bytes?minimal=true)
 [![](https://flat.badgen.net/npm/license/@exodus/bytes)](https://github.com/ExodusOSS/bytes/blob/HEAD/LICENSE)
 
