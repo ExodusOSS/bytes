@@ -346,7 +346,7 @@ import { fromBase58checkSync, toBase58checkSync } from '@exodus/bytes/base58chec
 import { makeBase58check } from '@exodus/bytes/base58check.js'
 ```
 
-On non-Node.js, requires peer dependency [@exodus/crypto](https://www.npmjs.com/package/@exodus/crypto) to be installed.
+On non-Node.js, requires peer dependency [@noble/hashes](https://www.npmjs.com/package/@noble/hashes) to be installed.
 
 ##### `async fromBase58check(str, format = 'uint8')`
 ##### `async toBase58check(arr)`
@@ -361,7 +361,7 @@ import { fromWifString, toWifString } from '@exodus/bytes/wif.js'
 import { fromWifStringSync, toWifStringSync } from '@exodus/bytes/wif.js'
 ```
 
-On non-Node.js, requires peer dependency [@exodus/crypto](https://www.npmjs.com/package/@exodus/crypto) to be installed.
+On non-Node.js, requires peer dependency [@noble/hashes](https://www.npmjs.com/package/@noble/hashes) to be installed.
 
 ##### `async fromWifString(string, version)`
 ##### `fromWifStringSync(string, version)`

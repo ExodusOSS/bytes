@@ -155,10 +155,10 @@
     "./encoding-browser.js": "./encoding-browser.native.js"
   },
   "peerDependencies": {
-    "@exodus/crypto": "^1.0.0-rc.4"
+    "@noble/hashes": "^1.8.0 || ^2.0.0"
   },
   "peerDependenciesMeta": {
-    "@exodus/crypto": {
+    "@noble/hashes": {
       "optional": true
     }
   },
