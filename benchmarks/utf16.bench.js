@@ -50,7 +50,6 @@ const columns = [
   isNative(TextDecoder) ? 'TextDecoder (loose)' : 'text-encoding (loose)',
   'Buffer',
   'iconv-lite',
-  '@ethersproject/strings',
   'String.fromCharCode',
 ]
 
@@ -112,6 +111,10 @@ describe('benchmarks: utf16', async () => {
     ['buffer/Buffer', (x) => buffer.Buffer.from(x, 'utf16le').swap16(), bufferIsPolyfilled],
     ['iconv-lite', (x) => iconv.encode(x, 'utf-16be', { addBOM: false })],
   ]
+
+  test('to16input', async (t) => {
+    await benchmark(t.name, { args: u8be }, (x) => fallback.to16input(x, !isLE))
+  })
 
   test('utf16toString coherence, uint16', (t) => {
     for (const [n, f, skip] of utf16toString16) {
