@@ -194,6 +194,7 @@
     "hi-base32": "^0.5.1",
     "iconv-lite": "^0.7.0",
     "jsvu": "^3.0.3",
+    "punycode": "^2.3.1",
     "text-encoding": "^0.7.0",
     "typescript": "^5.9.3",
     "uint8array-tools": "^0.0.9",
