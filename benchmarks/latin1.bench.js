@@ -25,7 +25,14 @@ const textDecoderAscii = isNative(TextDecoder) ? new TextDecoder('ascii') : null
 const textDecoderJS = new js.TextDecoder('windows-1252')
 const textEncoderJS = new js.TextEncoder()
 
-const columns = ['@exodus/bytes', '@exodus/bytes latin1', 'Buffer', 'Buffer (latin1)', 'iconv-lite']
+const columns = [
+  '@exodus/bytes',
+  '@exodus/bytes latin1',
+  'Buffer',
+  'Buffer (latin1)',
+  'iconv-lite',
+  'iconv-lite (binary)',
+]
 
 const timeout = 30_000
 describe('benchmarks: latin1', async () => {
@@ -42,6 +49,7 @@ describe('benchmarks: latin1', async () => {
     ['toBase64 + atob', (x) => atob(x.toBase64()), !Uint8Array.prototype.toBase64 || !atob],
     // ['buffer/Buffer.from', (x) => buffer.Buffer.from(x).toString('latin1'), bufferIsPolyfilled],
     ['iconv-lite', (x) => iconv.decode(x, 'iso-8859-1')],
+    ['iconv-lite (binary)', (x) => iconv.decode(x, 'binary')],
   ]
 
   // [name, impl, skip]
@@ -52,6 +60,7 @@ describe('benchmarks: latin1', async () => {
     ['buffer/Buffer', (x) => buffer.Buffer.from(x, 'latin1'), bufferIsPolyfilled],
     ['fromBase64 + btoa', (x) => Uint8Array.fromBase64(btoa(x)), !Uint8Array.fromBase64 || !btoa],
     ['iconv-lite', (x) => iconv.encode(x, 'iso-8859-1')],
+    ['iconv-lite (binary)', (x) => iconv.encode(x, 'binary')],
   ]
 
   // [name, impl, skip]
@@ -65,7 +74,9 @@ describe('benchmarks: latin1', async () => {
     ['TextDecoder (ascii)', (x) => textDecoderAscii.decode(x), !textDecoderAscii],
     ['text-encoding (windows-1252)', (x) => textDecoderJS.decode(x)],
     ['String.fromCharCode', (x) => String.fromCharCode.apply(String, x)],
-    ['iconv-lite', (x) => iconv.decode(x, 'ascii')],
+    ['iconv-lite', (x) => iconv.decode(x, 'iso-8859-1')],
+    ['iconv-lite (ascii)', (x) => iconv.decode(x, 'ascii')],
+    ['iconv-lite (binary)', (x) => iconv.decode(x, 'binary')],
   ]
 
   // [name, impl, skip]
@@ -77,7 +88,9 @@ describe('benchmarks: latin1', async () => {
     ['Buffer (utf8)', (x) => Buffer.from(x, 'utf8')],
     ['TextEncoder (utf8)', (x) => textEncoder.encode(x), !textEncoder],
     ['text-encoding (utf8)', (x) => textEncoderJS.encode(x)],
-    ['iconv-lite', (x) => iconv.encode(x, 'ascii')],
+    ['iconv-lite', (x) => iconv.encode(x, 'iso-8859-1')],
+    ['iconv-lite (ascii)', (x) => iconv.encode(x, 'ascii')],
+    ['iconv-lite (binary)', (x) => iconv.encode(x, 'binary')],
   ]
 
   test('asciiPrefix coherence', (t) => {
