@@ -61,7 +61,6 @@ describe('benchmarks: utf32', async () => {
   const utf32fromString32 = [
     ['@exodus/bytes/utf32', (x) => exodus.utf32fromString(x)],
     ['@exodus/bytes/utf32, loose', (x) => exodus.utf32fromStringLoose(x)],
-    ['fallback', (x) => fallback.encode(x)],
     ['String.codePointAt(...)', (x) => [...x].map((y) => y.codePointAt(0))],
     ['punycode', (x) => punycode.ucs2.decode(x)],
   ]

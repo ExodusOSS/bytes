@@ -1,7 +1,6 @@
 import { isLE } from './_utils.js'
 
 export const E_STRICT = 'Input is not well-formed utf32'
-export const E_STRICT_UNICODE = 'Input is not well-formed Unicode'
 
 export const to8 = (a) => new Uint8Array(a.buffer, a.byteOffset, a.byteLength)
 const to32 = (a) => new Uint32Array(a.buffer, a.byteOffset, a.byteLength / 4) // Requires checked length and alignment!
@@ -9,7 +8,7 @@ const to32 = (a) => new Uint32Array(a.buffer, a.byteOffset, a.byteLength / 4) //
 /* eslint-disable @exodus/mutable/no-param-reassign-prop-only */
 
 // Assumes checked length % 4 === 0, otherwise does not swap tail
-function swap32(u8) {
+export function swap32(u8) {
   let i = 0
   for (const last3 = u8.length - 3; i < last3; i += 4) {
     const x0 = u8[i]
@@ -44,29 +43,6 @@ export function decode(u32, loose = false, checked = false) {
   }
 }
 
-export function encode(str, loose, checked, shouldSwap) {
-  const u32 = new Uint32Array([...str].map((x) => x.codePointAt(0)))
-  if (!checked) {
-    if (loose) {
-      toWellFormed(u32)
-    } else if (!isWellFormed(u32)) {
-      throw new TypeError(E_STRICT_UNICODE)
-    }
-  }
-
-  if (shouldSwap) swap32(to8(u32))
-  return u32
-}
-
-function isWellFormed(u32) {
-  const length = u32.length
-  for (let i = 0; i < length; i++) {
-    if (u32[i] >= 0x11_00_00) return false
-  }
-
-  return true
-}
-
 function toWellFormed(u32) {
   const length = u32.length
   for (let i = 0; i < length; i++) {
@@ -75,4 +51,21 @@ function toWellFormed(u32) {
   }
 
   return u32
+}
+
+// Only defined on valid input
+export function utf16to32(u16) {
+  const length = u16.length
+  const u32 = new Uint32Array(length)
+  let i = 0
+  for (let j = 0; j < length; j++) {
+    const x0 = u16[j]
+    if ((x0 & 0xf8_00) === 0xd8_00) {
+      u32[i++] = 0x1_00_00 + ((u16[++j] & 0x3_ff) | ((x0 & 0x3_ff) << 10))
+    } else {
+      u32[i++] = x0
+    }
+  }
+
+  return i === length ? u32 : u32.subarray(0, i)
 }

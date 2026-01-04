@@ -1,9 +1,10 @@
 import { isLE, E_STRING } from './fallback/_utils.js'
 import * as js from './fallback/utf32.js'
+import * as utf16 from '@exodus/bytes/utf16.js'
 
 const { isWellFormed, toWellFormed } = String.prototype
 
-const { E_STRICT, E_STRICT_UNICODE } = js
+const { E_STRICT } = js
 
 // Unlike utf8, operates on Uint32Arrays by default
 
@@ -13,12 +14,15 @@ function encode(str, loose = false, format = 'uint32') {
     throw new TypeError('Unknown format')
   }
 
-  const shouldSwap = (isLE && format === 'uint8-be') || (!isLE && format === 'uint8-le')
-  if (!loose && isWellFormed && !isWellFormed.call(str)) throw new TypeError(E_STRICT_UNICODE)
-  const u32 = js.encode(str, loose, !loose && isWellFormed, shouldSwap)
+  const u32 = js.utf16to32(loose ? utf16.utf16fromStringLoose(str) : utf16.utf16fromString(str))
 
-  if (format === 'uint8-le' || format === 'uint8-be') return js.to8(u32) // Already swapped
   if (format === 'uint32') return u32
+  if (format === 'uint8-le' || format === 'uint8-be') {
+    const u8 = js.to8(u32)
+    if (isLE !== (format === 'uint8-le')) js.swap32(u8)
+    return u8
+  }
+
   throw new Error('Unreachable')
 }
 
