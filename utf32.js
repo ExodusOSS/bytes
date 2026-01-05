@@ -45,6 +45,11 @@ function decode(input, loose = false, format = 'uint32') {
 
   // TODO: recheck spidermonkey/Firefox/jsc perf
 
+  if (!js.isStrict(u32)) {
+    if (!loose) throw new RangeError(js.E_STRICT)
+    u32 = js.toWellFormed(new Uint32Array(u32))
+  }
+
   // Significantly faster on Hermes
   if (isHermes) return js.decode(u32, loose)
 
