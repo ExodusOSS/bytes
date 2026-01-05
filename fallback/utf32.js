@@ -34,11 +34,11 @@ function decode32(u32) {
   return String.fromCodePoint.apply(String, u32) // TODO: max len
 }
 
-export function decode(u32, loose = false, checked = false) {
-  if (loose && !checked) return decode32(toWellFormed(Uint32Array.from(u32))) // cloned for replacement
+export function decode(u32, loose = false) {
   try {
     return decode32(u32) // throws on invalid input
   } catch {
+    if (loose) return decode32(toWellFormed(Uint32Array.from(u32))) // cloned for replacement
     throw new TypeError(E_STRICT)
   }
 }
@@ -54,6 +54,7 @@ function toWellFormed(u32) {
 }
 
 // Only defined on valid input
+// TODO: add fast path for prefix without high bits
 export function utf16to32(u16) {
   const length = u16.length
   const u32 = new Uint32Array(length)
@@ -68,4 +69,28 @@ export function utf16to32(u16) {
   }
 
   return i === length ? u32 : u32.subarray(0, i)
+}
+
+// Maps invalid input to lone trailing surrogates,
+// which then reproduces the wanted behavior when passed to utf16 decoder
+// TODO: add fast path for prefix without high bits
+export function utf32to16(u32) {
+  const length = u32.length
+  const u16 = new Uint16Array(length * 2)
+  let i = 0
+  for (let j = 0; j < length; j++) {
+    const x = u32[j]
+    if (x <= 0xff_ff) {
+      // We don't expect any surrogates as utf32 input
+      u16[i++] = (x & 0xf8_00) === 0xd8_00 ? 0xdc_00 : x
+    } else if (x < 0x11_00_00) {
+      const y = x - 0x1_00_00
+      u16[i++] = (y >> 10) | 0xd8_00
+      u16[i++] = (y & 0x3_ff) | 0xdc_00
+    } else {
+      u16[i++] = 0xdc_00 // lone trail, will trigger replacement or error
+    }
+  }
+
+  return i === u16.length ? u16 : u16.subarray(0, i)
 }

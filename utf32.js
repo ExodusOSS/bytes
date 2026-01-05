@@ -1,10 +1,6 @@
-import { isLE, E_STRING } from './fallback/_utils.js'
+import { isHermes, isLE, E_STRING } from './fallback/_utils.js'
 import * as js from './fallback/utf32.js'
 import * as utf16 from '@exodus/bytes/utf16.js'
-
-const { isWellFormed, toWellFormed } = String.prototype
-
-const { E_STRICT } = js
 
 // Unlike utf8, operates on Uint32Arrays by default
 
@@ -47,11 +43,14 @@ function decode(input, loose = false, format = 'uint32') {
       throw new TypeError('Unknown format')
   }
 
-  const str = js.decode(u32, loose, (!loose && isWellFormed) || (loose && toWellFormed))
-  if (!loose && isWellFormed && !isWellFormed.call(str)) throw new TypeError(E_STRICT)
-  if (loose && toWellFormed) return toWellFormed.call(str)
+  // TODO: recheck spidermonkey/Firefox/jsc perf
 
-  return str
+  // Significantly faster on Hermes
+  if (isHermes) return js.decode(u32, loose)
+
+  // Significantly faster on Node.js, Chromium, v8, WebKit
+  const u16 = js.utf32to16(u32)
+  return loose ? utf16.utf16toStringLoose(u16) : utf16.utf16toString(u16)
 }
 
 export const utf32fromString = (str, format = 'uint32') => encode(str, false, format)
