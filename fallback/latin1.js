@@ -37,6 +37,7 @@ export function asciiPrefix(arr) {
       const b = u32[i + 1]
       const c = u32[i + 2]
       const d = u32[i + 3]
+      // "(a | b | c | d) & mask" is slower on Hermes though faster on v8
       if (a & 0x80_80_80_80 || b & 0x80_80_80_80 || c & 0x80_80_80_80 || d & 0x80_80_80_80) break
     }
 
