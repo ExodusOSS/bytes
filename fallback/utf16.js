@@ -124,6 +124,7 @@ function encodeUncheckedSwapped(str, arr, loose = false) {
   return arr
 }
 
+// Only needed on Hermes, everything else has native impl
 export function toWellFormed(u16) {
   const length = u16.length
   for (let i = 0; i < length; i++) {
@@ -146,9 +147,14 @@ export function toWellFormed(u16) {
   return u16
 }
 
+// Only needed on Hermes, everything else has native impl
 export function isWellFormed(u16) {
   const length = u16.length
   let i = 0
+
+  const m = 0x80_00_80_00
+  const l = 0xd8_00
+  const h = 0xe0_00
 
   // Speedup with u32, by skipping to the first surrogate
   // Only implemented for aligned input for now, but almost all input is aligned (pooled Buffer or 0 offset)
@@ -161,21 +167,31 @@ export function isWellFormed(u16) {
       const b = u32[i + 1]
       const c = u32[i + 2]
       const d = u32[i + 3]
-      if (a & 0x80_00_80_00 || b & 0x80_00_80_00 || c & 0x80_00_80_00 || d & 0x80_00_80_00) break
+      if (a & m || b & m || c & m || d & m) break // bitwise OR does not make this faster on Hermes
     }
 
-    for (; i < u32length; i++) if (u32[i] & 0x80_00_80_00) break
+    for (; i < u32length; i++) if (u32[i] & m) break
     i *= 2
+  }
+
+  // An extra loop gives ~30-40% speedup e.g. on English text without surrogates but with other symbols above 0x80_00
+  for (const last3 = length - 3; ; i += 4) {
+    if (i >= last3) break
+    const a = u16[i]
+    const b = u16[i + 1]
+    const c = u16[i + 2]
+    const d = u16[i + 3]
+    if ((a >= l && a < h) || (b >= l && b < h) || (c >= l && c < h) || (d >= l && d < h)) break
   }
 
   for (; i < length; i++) {
     const code = u16[i]
-    if (code >= 0xd8_00 && code < 0xe0_00) {
+    if (code >= l && code < h) {
       // An unexpected trail or a lead at the very end of input
-      if (code > 0xdb_ff || i + 1 >= length) return false
+      if (code >= 0xdc_00 || i + 1 >= length) return false
       i++ // consume next
       const next = u16[i] // Process valid pairs immediately
-      if (next < 0xdc_00 || next >= 0xe0_00) return false
+      if (next < 0xdc_00 || next >= h) return false
     }
   }
 
