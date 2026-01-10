@@ -205,7 +205,7 @@ function loadTextDecoderHtml(fullName) {
             [0xa5, 0x20_3e, 0x22_12].includes(cp)) ||
           (decoder.encoding === 'iso-2022-jp' && cp === 0x22_12)
         ) {
-          // Those three encodings are assymetrical on these codepoints
+          // Those three encodings are asymmetrical on these codepoints
           // See https://encoding.spec.whatwg.org/ for mentions of those exact code points
           // So, skip testing decoder on those
           // E.g., test data includes: <span data-cp="A5" data-bytes="5C">

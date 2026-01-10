@@ -1,5 +1,4 @@
 import { describe } from 'node:test'
-import { loadDir } from './loader.cjs'
 import { toBase64, fromBase64 } from '@exodus/bytes/base64.js'
 import {
   TextEncoder,
@@ -7,6 +6,7 @@ import {
   TextDecoderStream,
   TextEncoderStream,
 } from '@exodus/bytes/encoding.js'
+import { loadDir } from './loader.cjs'
 
 Object.assign(globalThis, { TextEncoder, TextDecoder, TextDecoderStream, TextEncoderStream })
 
