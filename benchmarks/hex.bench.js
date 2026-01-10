@@ -3,6 +3,7 @@ import * as fallback from '../fallback/hex.js'
 import * as stablelib from '@stablelib/hex'
 import { benchmark } from '@exodus/test/benchmark' // eslint-disable-line @exodus/import/no-unresolved
 import { hex as scure } from '@scure/base'
+import * as oslo from '@oslojs/encoding'
 import buffer from 'buffer/index.js'
 import * as hextreme from 'hextreme'
 import * as uint8arraytools from 'uint8array-tools'
@@ -18,6 +19,7 @@ const columns = [
   '@stablelib',
   'hextreme',
   'uint8array-tools',
+  'oslo',
   'Buffer.from',
 ]
 const columnsOld = [
@@ -27,6 +29,7 @@ const columnsOld = [
   '@stablelib',
   'hextreme, no native',
   'uint8array-tools',
+  'oslo',
   'Buffer.from',
 ]
 
@@ -72,6 +75,7 @@ describe('benchmarks: hex', async () => {
     ['hextreme', (x) => hextreme.toHex(x)],
     ['hextreme, no native', (x) => hextremeJS.toHex(x), !hextremeJS, true], // uses TextDecoder
     ['uint8array-tools', (x) => uint8arraytools.toHex(x)],
+    ['oslo', (x) => oslo.encodeHexLowerCase(x)],
   ]
 
   // [name, impl, skip, removeNative]
@@ -87,6 +91,7 @@ describe('benchmarks: hex', async () => {
     ['hextreme', (x) => hextreme.fromHex(x)],
     ['hextreme, no native', (x) => hextremeJS.fromHex(x), !hextremeJS, true], // uses TextEncoder
     ['uint8array-tools', (x) => uint8arraytools.fromHex(x)],
+    ['oslo', (x) => oslo.decodeHex(x)],
   ]
 
   test('toHex coherence', (t) => {

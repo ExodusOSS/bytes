@@ -169,6 +169,7 @@
     "@exodus/prettier": "^1.0.0",
     "@exodus/test": "^1.0.0-rc.109",
     "@noble/hashes": "^2.0.1",
+    "@oslojs/encoding": "^1.1.0",
     "@petamoriken/float16": "^3.9.3",
     "@scure/base": "^1.2.6",
     "@stablelib/base64": "^2.0.1",

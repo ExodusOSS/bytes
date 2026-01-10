@@ -1,7 +1,8 @@
 import * as exodus from '@exodus/bytes/base32.js'
 import { benchmark } from '@exodus/test/benchmark' // eslint-disable-line @exodus/import/no-unresolved
 import { base32nopad as scure } from '@scure/base'
-import base32js from 'base32.js'
+import * as oslo from '@oslojs/encoding'
+import base32js from '../node_modules/base32.js/base32.js'
 import hiBase32 from 'hi-base32'
 import buffer from 'buffer/index.js'
 import { describe, test } from 'node:test'
@@ -9,7 +10,7 @@ import { describe, test } from 'node:test'
 import { bufs } from './utils/random.js'
 import { Table } from './utils/table.js'
 
-const columns = ['@exodus/bytes/base32', 'scure.base32', 'base32.js', 'hi-base32']
+const columns = ['@exodus/bytes/base32', 'scure.base32', 'base32.js', 'hi-base32', 'oslo']
 
 if (!globalThis.Buffer) globalThis.Buffer = buffer.Buffer
 
@@ -22,6 +23,7 @@ describe('benchmarks: base32', async () => {
     ['base32.js', (x) => base32js.encode(x)],
     ['hi-base32', (x) => hiBase32.encode(x)],
     ['scure.base32', (x) => scure.encode(x)],
+    ['oslo', (x) => oslo.encodeBase32NoPadding(x)],
   ]
 
   // [name, impl, skip]
@@ -30,6 +32,7 @@ describe('benchmarks: base32', async () => {
     ['base32.js', (x) => base32js.decode(x)],
     ['hi-base32', (x) => hiBase32.decode.asBytes(x)],
     ['scure.base32', (x) => scure.decode(x)],
+    ['oslo', (x) => oslo.decodeBase32IgnorePadding(x)],
   ]
 
   test('toBase32 coherence', (t) => {

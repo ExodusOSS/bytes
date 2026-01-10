@@ -3,6 +3,7 @@ import * as fallback from '../fallback/base64.js'
 import * as stablelib from '@stablelib/base64'
 import { benchmark } from '@exodus/test/benchmark' // eslint-disable-line @exodus/import/no-unresolved
 import { base64 as scure } from '@scure/base'
+import * as oslo from '@oslojs/encoding'
 import base64js from 'base64-js'
 import fastBase64Decode from 'fast-base64-decode'
 import fastBase64Encode from 'fast-base64-encode'
@@ -19,24 +20,26 @@ const columns = [
   'scure.base64',
   'Buffer',
   '@stablelib',
+  'hextreme',
   'base64-js',
   'fast-base64-decode',
   'fast-base64-encode',
-  'hextreme',
-  'Buffer.from',
   'uint8array-tools',
+  'oslo',
+  'Buffer.from',
 ]
 const columnsOld = [
   '@exodus/bytes/base64, no native',
   'scure.base64, no native',
   'Buffer',
   '@stablelib',
+  'hextreme, no native',
   'base64-js',
   'fast-base64-decode',
   'fast-base64-encode',
-  'hextreme, no native',
-  'Buffer.from',
   'uint8array-tools',
+  'oslo',
+  'Buffer.from',
 ]
 
 if (!globalThis.Buffer) globalThis.Buffer = buffer.Buffer
@@ -101,6 +104,7 @@ describe('benchmarks: base64', async () => {
     ['hextreme', (x) => hextreme.toBase64(x)],
     ['hextreme, no native', (x) => hextremeJS.toBase64(x), !hextremeJS, true], // uses TextDecoder
     ['uint8array-tools', (x) => uint8arraytools.toBase64(x)],
+    ['oslo', (x) => oslo.encodeBase64(x)],
   ]
 
   // [name, impl, skip, removeNative]
@@ -130,6 +134,7 @@ describe('benchmarks: base64', async () => {
     ['hextreme', (x) => hextreme.fromBase64(x)],
     ['hextreme, no native', (x) => hextremeJS.fromBase64(x), !hextremeJS, true], // uses TextEncoder
     ['uint8array-tools', (x) => uint8arraytools.fromBase64(x)],
+    ['oslo', (x) => oslo.decodeBase64(x)],
   ]
 
   test('toBase64 coherence', (t) => {
