@@ -2,6 +2,7 @@ const assert = require('node:assert/strict')
 const fs = require('node:fs')
 const path = require('node:path')
 const { describe, test } = require('node:test')
+const { createMultibyteEncoder } = require('@exodus/bytes/multi-byte.js')
 
 // TextDecoderStream / TextEncoderStream implementations expect Streams to be present
 if (!globalThis.ReadableStream) {
@@ -146,6 +147,8 @@ function loadTextDecoderHtml(fullName) {
     assert.ok(encoding && encoding.length > 0)
     const decoder = new globalThis.TextDecoder(encoding)
     const fatal = new globalThis.TextDecoder(encoding, { fatal: true })
+    const encode =
+      decoder.encoding === 'iso-2022-jp' ? null : createMultibyteEncoder(decoder.encoding) // TODO: iso-2022-jp
 
     if (fullName.endsWith('_errors.html')) {
       const sep0 = '<span>'
@@ -214,6 +217,19 @@ function loadTextDecoderHtml(fullName) {
           const expected = String.fromCodePoint(cp)
           t.assert.strictEqual(decoder.decode(bytes), expected, `${bytesHex} => U+${cpHex}`)
           t.assert.strictEqual(fatal.decode(bytes), expected, `${bytesHex} => U+${cpHex}`)
+        }
+
+        // Test encoder
+        // This is limited, encoders are asymmetrical
+        if (
+          !(decoder.encoding === 'euc-jp' && bytes.length === 3) && // no jis0212 encoding in spec
+          !(decoder.encoding === 'big5' && bytes[0] > 0x7f && bytes[0] <= 0xa0) && // encoding excludes pointers less than (0xA1 - 0x81) × 157.
+          decoder.encoding !== 'iso-2022-jp' // Not implemented yet
+        ) {
+          t.assert.doesNotThrow(
+            () => t.assert.deepEqual(encode(String.fromCodePoint(cp)), bytes),
+            `encode U+${cpHex} => ${bytesHex}`
+          )
         }
 
         tested++

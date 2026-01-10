@@ -1,5 +1,6 @@
 import { assertUint8 } from './assert.js'
-import { multibyteDecoder } from './fallback/multi-byte.js'
+import { E_STRING } from './fallback/_utils.js'
+import { multibyteDecoder, multibyteEncoder } from './fallback/multi-byte.js'
 
 export function createMultibyteDecoder(encoding, loose = false) {
   const jsDecoder = multibyteDecoder(encoding, loose) // asserts
@@ -9,5 +10,15 @@ export function createMultibyteDecoder(encoding, loose = false) {
     if (!streaming && arr.byteLength === 0) return ''
     streaming = stream
     return jsDecoder(arr, stream)
+  }
+}
+
+export function createMultibyteEncoder(encoding, { mode = 'fatal' } = {}) {
+  // TODO: replacement, truncate (replacement will need varying length)
+  if (mode !== 'fatal') throw new Error('Unsupported mode')
+  const jsEncoder = multibyteEncoder(encoding) // asserts
+  return (s) => {
+    if (typeof s !== 'string') throw new TypeError(E_STRING)
+    return jsEncoder(s)
   }
 }

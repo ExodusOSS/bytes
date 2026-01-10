@@ -104,6 +104,7 @@ export function getTable(id) {
     res = new Array(sizes[id]) // array of strings or undefined
     unwrap(res, indices[id], 0, true)
     // Pointer code updates are embedded into the table
+    // These are skipped in encoder as encoder uses only pointers >= (0xA1 - 0x81) * 157
     res[1133] = '\xCA\u0304'
     res[1135] = '\xCA\u030C'
     res[1164] = '\xEA\u0304'
