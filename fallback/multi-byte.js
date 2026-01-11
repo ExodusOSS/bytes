@@ -1,3 +1,4 @@
+import { E_STRING } from './_utils.js'
 import { asciiPrefix, decodeAscii, decodeLatin1, decodeUCS2, encodeAscii } from './latin1.js'
 import { getTable } from './multi-byte.table.js'
 
@@ -507,20 +508,36 @@ export function multibyteDecoder(enc, loose = false) {
 
 /* Encoders */
 
-// TODO: optimize, check memory usage?
-// TODO: just precalculate all bytes and store offsets in one large u8?
-
-const e7 = new Map([[148, 236], [149, 237], [150, 243]]) // prettier-ignore
-const e8 = new Map([[30, 89], [38, 97], [43, 102], [44, 103], [50, 109], [67, 126], [84, 144], [100, 160]]) // prettier-ignore
 const maps = new Map()
+const e7 = [[148, 236], [149, 237], [150, 243]] // prettier-ignore
+const e8 = [[30, 89], [38, 97], [43, 102], [44, 103], [50, 109], [67, 126], [84, 144], [100, 160]] // prettier-ignore
+const preencoders = {
+  __proto__: null,
+  big5: (p) => ((((p / 157) | 0) + 0x81) << 8) | ((p % 157 < 0x3f ? 0x40 : 0x62) + (p % 157)),
+  shift_jis: (p) => {
+    const l = (p / 188) | 0
+    const t = p % 188
+    return ((l + (l < 0x1f ? 0x81 : 0xc1)) << 8) | ((t < 0x3f ? 0x40 : 0x41) + t)
+  },
+  'euc-jp': (p) => ((((p / 94) | 0) + 0xa1) << 8) | ((p % 94) + 0xa1),
+  'euc-kr': (p) => ((((p / 190) | 0) + 0x81) << 8) | ((p % 190) + 0x41),
+  gb18030: (p) => ((((p / 190) | 0) + 0x81) << 8) | ((p % 190 < 0x3f ? 0x40 : 0x41) + (p % 190)),
+}
+
+preencoders.gbk = preencoders.gb18030
 
 // We accept that encoders use non-trivial amount of mem, for perf
 // most are are 128 KiB mem, big5 is 380 KiB, lazy-loaded at first use
-function getMap(id, name = id) {
+function getMap(id, size) {
   const cached = maps.get(id)
   if (cached) return cached
-  const table = getTable(name)
-  const map = new Uint16Array(id === 'big5' ? 0x2_f8_a7 : 0xff_e7) // max codepoint in table + 1
+  let tname = id
+  const sjis = id === 'shift_jis'
+  if (id === 'gbk') tname = 'gb18030'
+  if (id === 'euc-jp' || sjis) tname = 'jis0208'
+  const table = getTable(tname)
+  const map = new Uint16Array(size)
+  const enc = preencoders[id] || ((p) => p + 1)
   for (let i = 0; i < table.length; i++) {
     const c = table[i]
     if (c === REP || c === undefined) continue
@@ -539,218 +556,50 @@ function getMap(id, name = id) {
         continue
       }
     } else {
-      if (id === 'shift_jis' && i >= 8272 && i <= 8835) continue
+      if (sjis && i >= 8272 && i <= 8835) continue
       if (map[c]) continue
     }
 
     if (typeof c === 'string') {
       // always a single codepoint here
-      map[c.codePointAt(0)] = 1 + i
+      map[c.codePointAt(0)] = enc(i)
     } else if (c !== REP) {
-      map[c] = 1 + i
+      map[c] = enc(i)
     }
   }
 
-  if (id === 'shift_jis' || id === 'euc-jp') map[0x22_12] = map[0xff_0d]
+  for (let i = 0; i < 0x80; i++) map[i] = i
+  if (sjis || id === 'euc-jp') {
+    if (sjis) map[0x80] = 0x80
+    const d = sjis ? 0xfe_c0 : 0x70_c0
+    for (let i = 0xff_61; i <= 0xff_9f; i++) map[i] = i - d
+    map[0x22_12] = map[0xff_0d]
+    map[0xa5] = 0x5c
+    map[0x20_3e] = 0x7e
+  } else if (tname === 'gb18030') {
+    if (id === 'gbk') map[0x20_ac] = 0x80
+    for (let i = 0xe7_8d; i <= 0xe7_93; i++) map[i] = i - 0x40_b4
+    for (const [a, b] of e7) map[0xe7_00 | a] = 0xa6_00 | b
+    for (const [a, b] of e8) map[0xe8_00 | a] = 0xfe_00 | b
+  }
+
   maps.set(id, map)
   return map
 }
 
-/* eslint-disable @exodus/mutable/no-param-reassign-prop-only */
-
-const encoders = {
-  big5: (err) => {
-    const map = getMap('big5')
-    const encode = (u8, i, cp) => {
-      let p = map[cp]
-      if (!p) return err(cp)
-      p--
-      const t = p % 157
-      u8[i] = 0x81 + ((p / 157) | 0)
-      u8[i + 1] = (t < 0x3f ? 0x40 : 0x62) + t
-      return 2
-    }
-
-    return { encode, ascii: 0x80 }
-  },
-  'euc-kr': (err) => {
-    const map = getMap('euc-kr')
-    const encode = (u8, i, cp) => {
-      let p = map[cp]
-      if (!p) return err(cp)
-      p--
-      u8[i] = 0x81 + ((p / 190) | 0)
-      u8[i + 1] = (p % 190) + 0x41
-      return 2
-    }
-
-    return { encode, ascii: 0x80 }
-  },
-  'euc-jp': (err) => {
-    const map = getMap('euc-jp', 'jis0208')
-    const encode = (u8, i, cp) => {
-      if (cp === 0xa5) {
-        u8[i] = 0x5c
-        return 1
-      }
-
-      if (cp === 0x20_3e) {
-        u8[i] = 0x7e
-        return 1
-      }
-
-      if (cp >= 0xff_61 && cp <= 0xff_9f) {
-        u8[i] = 0x8e
-        u8[i + 1] = cp - 0xfe_c0
-        return 2
-      }
-
-      let p = map[cp]
-      if (!p) return err(cp)
-      p--
-      u8[i] = ((p / 94) | 0) + 0xa1
-      u8[i + 1] = (p % 94) + 0xa1
-      return 2
-    }
-
-    return { encode, ascii: 0x80 }
-  },
-  shift_jis: (err) => {
-    const map = getMap('shift_jis', 'jis0208')
-    const encode = (u8, i, cp) => {
-      if (cp === 0xa5) {
-        u8[i] = 0x5c
-        return 1
-      }
-
-      if (cp === 0x20_3e) {
-        u8[i] = 0x7e
-        return 1
-      }
-
-      if (cp >= 0xff_61 && cp <= 0xff_9f) {
-        u8[i] = cp - 0xfe_c0
-        return 1
-      }
-
-      let p = map[cp]
-      if (!p) return err(cp)
-      p--
-      const l = (p / 188) | 0
-      const t = p % 188
-      u8[i] = (l < 0x1f ? 0x81 : 0xc1) + l
-      u8[i + 1] = (t < 0x3f ? 0x40 : 0x41) + t
-      return 2
-    }
-
-    return { encode, ascii: 0x81 }
-  },
-  gbk: (err) => {
-    const map = getMap('gb18030')
-
-    const encode = (u8, i, cp) => {
-      if (cp === 0xe5_e5) return err(cp)
-      if (cp === 0x20_ac) {
-        u8[i] = 0x80
-        return 1
-      }
-
-      if (cp >= 0xe7_8d && cp <= 0xe8_64) {
-        if (cp <= 0xe7_93) {
-          u8[i] = 0xa6
-          u8[i + 1] = cp - 0xe6_b4
-          return 2
-        }
-
-        const l = cp < 0xe8_00 ? 0xa6 : 0xfe
-        const t = (l === 0xa6 ? e7 : e8).get(cp & 0xff)
-        if (t) {
-          u8[i] = l
-          u8[i + 1] = t
-          return 2
-        }
-      }
-
-      let p = map[cp]
-      if (p) {
-        p--
-        const t = p % 190
-        u8[i] = 0x81 + ((p / 190) | 0)
-        u8[i + 1] = (t < 0x3f ? 0x40 : 0x41) + t
-        return 2
-      }
-
-      return err(cp)
-    }
-
-    return { encode, ascii: 0x80, width: 2 }
-  },
-  gb18030: (err) => {
-    const map = getMap('gb18030')
-    const gb18030r = getTable('gb18030-ranges')
-
-    const encode = (u8, i, cp) => {
-      if (cp === 0xe5_e5) return err(cp)
-      if (cp >= 0xe7_8d && cp <= 0xe8_64) {
-        if (cp <= 0xe7_93) {
-          u8[i] = 0xa6
-          u8[i + 1] = cp - 0xe6_b4
-          return 2
-        }
-
-        const l = cp < 0xe8_00 ? 0xa6 : 0xfe
-        const t = (l === 0xa6 ? e7 : e8).get(cp & 0xff)
-        if (t) {
-          u8[i] = l
-          u8[i + 1] = t
-          return 2
-        }
-      }
-
-      let p = map[cp]
-      if (p) {
-        p--
-        const t = p % 190
-        u8[i] = 0x81 + ((p / 190) | 0)
-        u8[i + 1] = (t < 0x3f ? 0x40 : 0x41) + t
-        return 2
-      }
-
-      let a = 0, b = 0 // prettier-ignore
-      for (const [c, d] of gb18030r) {
-        if (d > cp) break
-        a = c
-        b = d
-      }
-
-      let rp = cp === 0xe7_c7 ? 7457 : a + cp - b
-      u8[i] = 0x81 + ((rp / 12_600) | 0)
-      rp %= 12_600
-      u8[i + 1] = 0x30 + ((rp / 1260) | 0)
-      rp %= 1260
-      u8[i + 2] = 0x81 + ((rp / 10) | 0)
-      u8[i + 3] = 0x30 + (rp % 10)
-      return 4
-    }
-
-    return { encode, ascii: 0x80, width: 4 }
-  },
-}
-
-/* eslint-enable @exodus/mutable/no-param-reassign-prop-only */
-
+const encoders = new Set(['big5', 'euc-kr', 'euc-jp', 'shift_jis', 'gbk', 'gb18030'])
 const NON_LATIN = /[^\x00-\xFF]/ // eslint-disable-line no-control-regex
+let gb18030r
 
-export function multibyteEncoder(enc) {
-  if (!Object.hasOwn(encoders, enc)) throw new RangeError('Unsupported encoding')
+export function multibyteEncoder(enc, onError) {
+  if (!encoders.has(enc)) throw new RangeError('Unsupported encoding')
+  const size = enc === 'big5' ? 0x2_f8_a7 : 0x1_00_00 // for big5, max codepoint in table + 1
+  const width = enc === 'gb18030' ? 4 : 2
+  const map = getMap(enc, size)
+  if (enc === 'gb18030' && !gb18030r) gb18030r = getTable('gb18030-ranges')
 
-  // eslint-disable-next-line unicorn/consistent-function-scoping
-  const onErr = (code) => {
-    throw new TypeError(E_STRICT)
-  }
-
-  const { encode, ascii, width = 2 } = encoders[enc](onErr)
   return (str) => {
+    if (typeof str !== 'string') throw new TypeError(E_STRING)
     if (!NON_LATIN.test(str)) {
       try {
         return encodeAscii(str, E_STRICT)
@@ -761,29 +610,108 @@ export function multibyteEncoder(enc) {
     const u8 = new Uint8Array(length * width)
     let i = 0
     while (i < length) {
-      const x0 = str.charCodeAt(i)
-      if (x0 >= 128) break
-      u8[i++] = x0
+      const x = str.charCodeAt(i)
+      if (x >= 128) break
+      u8[i++] = x
     }
 
-    for (let j = i; j < length; j++) {
-      const x0 = str.charCodeAt(j)
-      if (x0 < ascii) {
-        u8[i++] = x0
-      } else if (x0 >= 0xd8_00 && x0 < 0xe0_00) {
-        if (x0 >= 0xdc_00 || j + 1 === length) {
-          onErr(x0) // Lone surrogate, TODO: how to handle this in non-strict?
-        } else {
-          const x1 = str.charCodeAt(j + 1)
-          if (x1 < 0xdc_00 || x1 > 0xe0_00) {
-            onErr(x0) // Lone surrogate, TODO: how to handle this in non-strict?
+    // eslint-disable-next-line unicorn/consistent-function-scoping
+    const err = (code) => {
+      if (onError) return onError(code, u8, i)
+      throw new TypeError(E_STRICT)
+    }
+
+    if (!map || map.length < size) throw new Error('Unreachable') // Important for perf
+    if (enc === 'gb18030') {
+      // Deduping this branch hurts other encoders perf
+      const encode = (cp) => {
+        let a = 0, b = 0 // prettier-ignore
+        for (const [c, d] of gb18030r) {
+          if (d > cp) break
+          a = c
+          b = d
+        }
+
+        let rp = cp === 0xe7_c7 ? 7457 : a + cp - b
+        u8[i++] = 0x81 + ((rp / 12_600) | 0)
+        rp %= 12_600
+        u8[i++] = 0x30 + ((rp / 1260) | 0)
+        rp %= 1260
+        u8[i++] = 0x81 + ((rp / 10) | 0)
+        u8[i++] = 0x30 + (rp % 10)
+      }
+
+      for (let j = i; j < length; j++) {
+        const x = str.charCodeAt(j)
+        if (x >= 0xd8_00 && x < 0xe0_00) {
+          if (x >= 0xdc_00 || j + 1 === length) {
+            i += err(x) // lone
           } else {
-            j++ // consume x1
-            i += encode(u8, i, 0x1_00_00 + ((x1 & 0x3_ff) | ((x0 & 0x3_ff) << 10)))
+            const x1 = str.charCodeAt(j + 1)
+            if (x1 < 0xdc_00 || x1 >= 0xe0_00) {
+              i += err(x) // lone
+            } else {
+              j++ // consume x1
+              encode(0x1_00_00 + ((x1 & 0x3_ff) | ((x & 0x3_ff) << 10)))
+            }
+          }
+        } else {
+          const e = map[x]
+          if (e & 0xff_00) {
+            u8[i++] = e >> 8
+            u8[i++] = e & 0xff
+          } else if (e || x === 0) {
+            u8[i++] = e
+          } else if (x === 0xe5_e5) {
+            i += err(x)
+          } else {
+            encode(x)
           }
         }
-      } else {
-        i += encode(u8, i, x0)
+      }
+    } else {
+      const long =
+        enc === 'big5'
+          ? (x) => {
+              const e = map[x]
+              if (e & 0xff_00) {
+                u8[i++] = e >> 8
+                u8[i++] = e & 0xff
+              } else if (e || x === 0) {
+                u8[i++] = e
+              } else {
+                i += err(x)
+              }
+            }
+          : (x) => {
+              i += err(x)
+            }
+
+      for (let j = i; j < length; j++) {
+        const x = str.charCodeAt(j)
+        if (x >= 0xd8_00 && x < 0xe0_00) {
+          if (x >= 0xdc_00 || j + 1 === length) {
+            i += err(x) // lone
+          } else {
+            const x1 = str.charCodeAt(j + 1)
+            if (x1 < 0xdc_00 || x1 >= 0xe0_00) {
+              i += err(x) // lone
+            } else {
+              j++ // consume x1
+              long(0x1_00_00 + ((x1 & 0x3_ff) | ((x & 0x3_ff) << 10)))
+            }
+          }
+        } else {
+          const e = map[x]
+          if (e & 0xff_00) {
+            u8[i++] = e >> 8
+            u8[i++] = e & 0xff
+          } else if (e || x === 0) {
+            u8[i++] = e
+          } else {
+            i += err(x)
+          }
+        }
       }
     }
 
