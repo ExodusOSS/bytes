@@ -130,6 +130,7 @@ import { utf16fromStringLoose, utf16toStringLoose } from '@exodus/bytes/utf16.js
 ```js
 import { createSinglebyteDecoder, createSinglebyteEncoder } from '@exodus/bytes/single-byte.js'
 import { windows1252toString, windows1252fromString } from '@exodus/bytes/single-byte.js'
+import { latin1toString, latin1fromString } from '@exodus/bytes/single-byte.js'
 ```
 
 Decode / encode the legacy single-byte encodings according to the
@@ -314,8 +315,8 @@ Implements [BIP-0173](https://github.com/bitcoin/bips/blob/master/bip-0173.media
 
 ```js
 import { fromBech32, toBech32 } from '@exodus/bytes/bech32.js'
-import { fromBech32m, toBech32m } from '@exodus/bytes/base32.js'
-import { getPrefix } from '@exodus/bytes/base32.js'
+import { fromBech32m, toBech32m } from '@exodus/bytes/bech32.js'
+import { getPrefix } from '@exodus/bytes/bech32.js'
 ```
 
 ##### `getPrefix(str, limit = 90)`
