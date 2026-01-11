@@ -123,6 +123,30 @@ const mappers = {
       o16 = new Uint16Array(end - start + (lead ? 1 : 0))
       oi = 0
 
+      // Fast path, non-j12
+      // lead = 0 means j12 = 0
+      if (!lead) {
+        for (const last1 = end - 1; i < last1; ) {
+          const l = arr[i]
+          if (l < 128) {
+            o16[oi++] = l
+            i++
+          } else {
+            const b = arr[i + 1]
+            if (l === 0x8e && b >= 0xa1 && b <= 0xdf) {
+              o16[oi++] = 0xfe_c0 + b
+              i += 2
+            } else {
+              if (l < 0xa1 || l === 0xff || b < 0xa1 || b === 0xff) break
+              const cp = jis0208[(l - 0xa1) * 94 + b - 0xa1]
+              if (!cp) break
+              o16[oi++] = cp
+              i += 2
+            }
+          }
+        }
+      }
+
       if (lead && i < end) decodeLead(arr[i++])
       if (lead && i < end) decodeLead(arr[i++]) // could be two leads, but no more
       while (i < end) {
