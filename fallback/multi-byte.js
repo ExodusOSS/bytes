@@ -396,11 +396,7 @@ const mappers = {
           // hence, 3 checks for g3 is faster than 3 checks for g1
           if (g2) {
             if (g3) {
-              if (b < 0x30 || b > 0x39) {
-                pushback.push(b, g3, g2)
-                g1 = g2 = g3 = 0
-                o16[oi++] = err()
-              } else {
+              if (b <= 0x39 && b >= 0x30) {
                 const p = index(
                   (g1 - 0x81) * 12_600 + (g2 - 0x30) * 1260 + (g3 - 0x81) * 10 + b - 0x30
                 )
@@ -414,6 +410,10 @@ const mappers = {
                   o16[oi++] = 0xd8_00 | (d >> 10)
                   o16[oi++] = 0xdc_00 | (d & 0x3_ff)
                 }
+              } else {
+                pushback.push(b, g3, g2)
+                g1 = g2 = g3 = 0
+                o16[oi++] = err()
               }
             } else if (b >= 0x81 && b <= 0xfe) {
               g3 = b
@@ -422,7 +422,7 @@ const mappers = {
               g1 = g2 = 0
               o16[oi++] = err()
             }
-          } else if (b >= 0x30 && b <= 0x39) {
+          } else if (b <= 0x39 && b >= 0x30) {
             g2 = b
           } else {
             let cp
