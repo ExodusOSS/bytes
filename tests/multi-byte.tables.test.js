@@ -59,16 +59,21 @@ describe('multi-byte encodings tables', () => {
         if (encoding === 'big5' && [1133, 1135, 1164, 1166].includes(i)) {
           // Patch per spec
           t.assert.strictEqual(row, undefined)
-          t.assert.strictEqual(typeof table[i], 'string')
-          t.assert.strictEqual(table[i].length, 2)
+          t.assert.strictEqual(typeof table[i], 'number')
+          t.assert.ok(table[i] > 0xff_ff)
         } else if (row) {
-          const expected =
-            non16bit && typeof table[i] === 'string' ? String.fromCodePoint(row.code) : row.code
+          let expected = row.code
+          if (non16bit && row.code > 0xff_ff) {
+            const s = String.fromCodePoint(row.code)
+            expected = ((s.charCodeAt(0) << 16) | s.charCodeAt(1)) >>> 0
+          }
+
+          t.assert.ok(expected > 0)
+          if (!non16bit) t.assert.ok(expected < 0xff_fd)
           t.assert.strictEqual(i, row.i)
           t.assert.strictEqual(table[i], expected, `Offset ${i}: ${row.description}`)
-          if (typeof expected === 'number') t.assert.ok(expected > 0 && expected < 0xff_fd)
         } else {
-          t.assert.strictEqual(table[i], non16bit ? undefined : 0xff_fd, `Offset ${i}`)
+          t.assert.strictEqual(table[i], non16bit ? 0 : 0xff_fd, `Offset ${i}`)
         }
       }
     })

@@ -518,13 +518,13 @@ const mappers = {
         o16[oi++] = err()
         if (b < 128) o16[oi++] = b
       } else {
-        const p = big5[(lead - 0x81) * 157 + b - (b < 0x7f ? 0x40 : 0x62)] // strings
+        const p = big5[(lead - 0x81) * 157 + b - (b < 0x7f ? 0x40 : 0x62)]
         lead = 0
-        if (typeof p === 'number') {
-          o16[oi++] = p
+        if (p > 0x1_00_00) {
+          o16[oi++] = p >> 16
+          o16[oi++] = p & 0xff_ff
         } else if (p) {
-          // This is still faster than string concatenation. Can we optimize strings though?
-          for (let i = 0; i < p.length; i++) o16[oi++] = p.charCodeAt(i)
+          o16[oi++] = p
         } else {
           o16[oi++] = err()
           if (b < 128) o16[oi++] = b
@@ -633,9 +633,8 @@ function getMap(id, size) {
   const enc = preencoders[id] || ((p) => p + 1)
   for (let i = 0; i < table.length; i++) {
     const c = table[i]
-    if (c === REP || c === undefined) continue
     if (id === 'big5') {
-      if (i < 5024) continue // this also skips multi-codepoint strings
+      if (!c || i < 5024) continue // this also skips multi-codepoint strings
       // In big5, all return first entries except for these
       if (
         map[c] &&
@@ -649,13 +648,15 @@ function getMap(id, size) {
         continue
       }
     } else {
+      if (c === REP) continue
       if (sjis && i >= 8272 && i <= 8835) continue
       if (map[c]) continue
     }
 
-    if (typeof c === 'string') {
+    if (c > 0xff_ff) {
       // always a single codepoint here
-      map[c.codePointAt(0)] = enc(i)
+      const s = String.fromCharCode(c >> 16, c & 0xff_ff)
+      map[s.codePointAt(0)] = enc(i)
     } else if (c !== REP) {
       map[c] = enc(i)
     }

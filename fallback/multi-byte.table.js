@@ -40,7 +40,7 @@ function loadBase64(str) {
   return y
 }
 
-function unwrap(res, t, pos, stringMode = false) {
+function unwrap(res, t, pos, highMode = false) {
   let code = 0
   for (let i = 0; i < t.length; i++) {
     let x = t[i]
@@ -55,25 +55,30 @@ function unwrap(res, t, pos, stringMode = false) {
           code += t[++i]
         }
 
-        if (stringMode) {
+        if (highMode) {
           for (let k = 0; k < x; k++, pos++, code++) {
-            res[pos] = code <= 0xff_ff ? code : String.fromCodePoint(code)
+            if (code <= 0xff_ff) {
+              res[pos] = code
+            } else {
+              const c = String.fromCodePoint(code)
+              res[pos] = (c.charCodeAt(0) << 16) | c.charCodeAt(1)
+            }
           }
         } else {
           for (let k = 0; k < x; k++, pos++, code++) res[pos] = code
         }
       }
     } else if (x[0] === '$' && Object.hasOwn(indices, x)) {
-      pos = unwrap(res, indices[x], pos, stringMode) // self-reference using shared chunks
-    } else if (stringMode) {
+      pos = unwrap(res, indices[x], pos, highMode) // self-reference using shared chunks
+    } else if (highMode) {
       const s = [...utf16toString(loadBase64(x), 'uint8-le')] // splits by codepoints
-      let char
+      let c
       for (let i = 0; i < s.length; ) {
-        char = s[i++]
-        res[pos++] = char.length === 1 ? char.charCodeAt(0) : char // strings only for high codepoints
+        c = s[i++]
+        res[pos++] = c.length === 1 ? c.charCodeAt(0) : (c.charCodeAt(0) << 16) | c.charCodeAt(1)
       }
 
-      code = char.codePointAt(0) + 1
+      code = c.codePointAt(0) + 1
     } else {
       const u16 = to16input(loadBase64(x), true) // data is little-endian
       res.set(u16, pos)
@@ -101,14 +106,14 @@ export function getTable(id) {
     while (idx.length > 0) res.push([(a += idx.shift()), (b += idx.shift())]) // destroying, we remove it later anyway
   } else if (id === 'big5') {
     if (!Object.hasOwn(sizes, id)) throw new Error('Unknown encoding')
-    res = new Array(sizes[id]) // array of strings or undefined
+    res = new Uint32Array(sizes[id]) // array of strings or undefined
     unwrap(res, indices[id], 0, true)
     // Pointer code updates are embedded into the table
     // These are skipped in encoder as encoder uses only pointers >= (0xA1 - 0x81) * 157
-    res[1133] = '\xCA\u0304'
-    res[1135] = '\xCA\u030C'
-    res[1164] = '\xEA\u0304'
-    res[1166] = '\xEA\u030C'
+    res[1133] = 0xca_03_04
+    res[1135] = 0xca_03_0c
+    res[1164] = 0xea_03_04
+    res[1166] = 0xea_03_0c
   } else {
     if (!Object.hasOwn(sizes, id)) throw new Error('Unknown encoding')
     res = new Uint16Array(sizes[id])
