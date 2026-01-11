@@ -227,8 +227,12 @@ describe('roundtrip, tables', () => {
   }
 })
 
+const slowEngine =
+  process.env.EXODUS_TEST_PLATFORM === 'quickjs' ||
+  process.env.EXODUS_TEST_PLATFORM === 'xs' ||
+  process.env.EXODUS_TEST_PLATFORM === 'engine262'
 describe('roundtrip, full Unicode', () => {
-  const MAX = 0x10_ff_ff // Max Unicode codepoint
+  const MAX = slowEngine ? 0x1_ff_ff : 0x10_ff_ff // Max Unicode codepoint
 
   test('gb18030', { timeout: 60_000 }, (t) => {
     const enc = createMultibyteEncoder('gb18030')
