@@ -73,4 +73,3 @@ export function fromBase64url(str: string, options: FromBase64Options & { format
  */
 export function fromBase64any(str: string, options?: FromBase64Options): Uint8ArrayBuffer;
 export function fromBase64any(str: string, options: FromBase64Options & { format: 'buffer' }): Buffer;
-

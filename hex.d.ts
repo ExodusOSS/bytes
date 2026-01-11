@@ -19,4 +19,3 @@ export function toHex(arr: Uint8ArrayBuffer): string;
 export function fromHex(str: string, format?: 'uint8'): Uint8ArrayBuffer;
 export function fromHex(str: string, format: 'buffer'): Buffer;
 export function fromHex(str: string, format?: OutputFormat): Uint8ArrayBuffer | Buffer;
-

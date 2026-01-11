@@ -21,4 +21,3 @@ export type OutputFormat = 'uint8' | 'buffer';
 export function typedView(arr: ArrayBufferView, format: 'uint8'): Uint8Array;
 export function typedView(arr: ArrayBufferView, format: 'buffer'): Buffer;
 export function typedView(arr: ArrayBufferView, format: OutputFormat): Uint8Array | Buffer;
-
