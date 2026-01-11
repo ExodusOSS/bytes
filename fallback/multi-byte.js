@@ -387,6 +387,34 @@ const mappers = {
       let i = start
       const pushback = [] // local and auto-cleared
 
+      // Fast path for 2-byte only
+      // pushback is always empty ad start, and g1 = 0 means g2 = g3 = 0
+      if (g1 === 0) {
+        for (const last1 = end - 1; i < last1; i++) {
+          const b = arr[i]
+          if (b < 128) {
+            o16[oi++] = b
+          } else if (b === 0x80) {
+            o16[oi++] = 0x20_ac
+          } else {
+            if (b === 0xff) break
+            const n = arr[i + 1]
+            let cp
+            if (n < 0x7f) {
+              if (n < 0x40) break
+              cp = gb18030[(b - 0x81) * 190 + n - 0x40]
+            } else {
+              if (n === 0xff || n === 0x7f) break
+              cp = gb18030[(b - 0x81) * 190 + n - 0x41]
+            }
+
+            if (cp === undefined || cp === REP) break
+            o16[oi++] = cp // 16-bit
+            i++
+          }
+        }
+      }
+
       // First, dump everything until EOF
       // Same as the full loop, but without EOF handling
       while (i < end || pushback.length > 0) {
