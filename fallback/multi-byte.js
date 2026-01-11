@@ -42,6 +42,25 @@ const mappers = {
       o16 = new Uint16Array(end - start + (lead ? 1 : 0)) // there are pairs but they consume more than one byte
       oi = 0
 
+      // Fast path
+      if (!lead) {
+        for (const last1 = end - 1; i < last1; ) {
+          const l = arr[i]
+          if (l < 128) {
+            o16[oi++] = l
+            i++
+          } else {
+            if (l === 0x80 || l === 0xff) break
+            const b = arr[i + 1]
+            if (b < 0x41 || b === 0xff) break
+            const p = euc[(l - 0x81) * 190 + b - 0x41]
+            if (p === undefined || p === REP) break
+            o16[oi++] = p
+            i += 2
+          }
+        }
+      }
+
       if (lead && i < end) decodeLead(arr[i++])
       while (i < end) {
         const b = arr[i++]
@@ -384,12 +403,14 @@ const mappers = {
       // Fast path for 2-byte only
       // pushback is always empty ad start, and g1 = 0 means g2 = g3 = 0
       if (g1 === 0) {
-        for (const last1 = end - 1; i < last1; i++) {
+        for (const last1 = end - 1; i < last1; ) {
           const b = arr[i]
           if (b < 128) {
             o16[oi++] = b
+            i++
           } else if (b === 0x80) {
             o16[oi++] = 0x20_ac
+            i++
           } else {
             if (b === 0xff) break
             const n = arr[i + 1]
@@ -404,7 +425,7 @@ const mappers = {
 
             if (cp === undefined || cp === REP) break
             o16[oi++] = cp // 16-bit
-            i++
+            i += 2
           }
         }
       }
