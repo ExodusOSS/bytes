@@ -117,7 +117,6 @@ export function getTable(id) {
   } else {
     if (!Object.hasOwn(sizes, id)) throw new Error('Unknown encoding')
     res = new Uint16Array(sizes[id])
-    res.fill(0xff_fd)
     unwrap(res, indices[id], 0, false)
   }
 

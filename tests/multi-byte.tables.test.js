@@ -43,7 +43,7 @@ describe('multi-byte encodings tables', () => {
           const code = parseInt(codeHex.slice(2), 16)
           t.assert.strictEqual(`${i}`, istr)
           t.assert.strictEqual('0x' + code.toString(16).padStart(4, '0').toUpperCase(), codeHex)
-          t.assert.ok(code && code !== 0xff_fd) // can't be a replacement char
+          t.assert.ok(code && code !== 0xff_fd) // can't be a replacement char or zero
           if (!non16bit) t.assert.ok(code <= 0xff_ff) // has to be <= 16-bit
           t.assert.ok(code < 0xd8_00 || code >= 0xe0_00) // not a surrogate
           return [i, { i, code, description }]
@@ -73,7 +73,7 @@ describe('multi-byte encodings tables', () => {
           t.assert.strictEqual(i, row.i)
           t.assert.strictEqual(table[i], expected, `Offset ${i}: ${row.description}`)
         } else {
-          t.assert.strictEqual(table[i], non16bit ? 0 : 0xff_fd, `Offset ${i}`)
+          t.assert.strictEqual(table[i], 0, `Offset ${i}`)
         }
       }
     })

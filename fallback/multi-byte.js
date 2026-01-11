@@ -11,7 +11,6 @@ export const E_STRICT = 'Input is not well-formed for this encoding'
 
 // All except iso-2022-jp are ASCII supersets
 // When adding something that is not an ASCII superset, ajust the ASCII fast path
-const REP = 0xff_fd
 const mappers = {
   // https://encoding.spec.whatwg.org/#euc-kr-decoder
   'euc-kr': (err) => {
@@ -28,7 +27,7 @@ const mappers = {
       } else {
         const p = euc[(lead - 0x81) * 190 + b - 0x41]
         lead = 0
-        if (p !== undefined && p !== REP) {
+        if (p) {
           o16[oi++] = p
         } else {
           o16[oi++] = err()
@@ -54,7 +53,7 @@ const mappers = {
             const b = arr[i + 1]
             if (b < 0x41 || b === 0xff) break
             const p = euc[(l - 0x81) * 190 + b - 0x41]
-            if (p === undefined || p === REP) break
+            if (!p) break
             o16[oi++] = p
             i += 2
           }
@@ -110,7 +109,7 @@ const mappers = {
 
         lead = 0
         j12 = false
-        if (cp !== undefined && cp !== REP) {
+        if (cp) {
           o16[oi++] = cp
         } else {
           o16[oi++] = err()
@@ -201,7 +200,7 @@ const mappers = {
           dState = 4
           if (b >= 0x21 && b <= 0x7e) {
             const cp = jis0208[(lead - 0x21) * 94 + b - 0x21]
-            if (cp !== undefined && cp !== REP) return cp
+            if (cp) return cp
           }
 
           return err()
@@ -328,7 +327,7 @@ const mappers = {
         }
 
         const cp = jis0208[p]
-        if (cp !== undefined && cp !== REP) {
+        if (cp) {
           o16[oi++] = cp
           return
         }
@@ -423,7 +422,7 @@ const mappers = {
               cp = gb18030[(b - 0x81) * 190 + n - 0x41]
             }
 
-            if (cp === undefined || cp === REP) break
+            if (!cp) break
             o16[oi++] = cp // 16-bit
             i += 2
           }
@@ -474,7 +473,7 @@ const mappers = {
             }
 
             g1 = 0
-            if (cp !== undefined && cp !== REP) {
+            if (cp) {
               o16[oi++] = cp // 16-bit
             } else {
               o16[oi++] = err()
@@ -576,7 +575,7 @@ export function multibyteDecoder(enc, loose = false) {
   const asciiSuperset = isAsciiSuperset(enc)
   let streaming // because onErr is cached in mapper
   const onErr = loose
-    ? () => REP
+    ? () => 0xff_fd
     : () => {
         // The correct way per spec seems to be not destoying the decoder state in stream mode, even when fatal
         // Decoders big5, euc-jp, euc-kr, shift_jis, gb18030 / gbk - all clear state before throwing unless EOF, so not affected
@@ -633,8 +632,9 @@ function getMap(id, size) {
   const enc = preencoders[id] || ((p) => p + 1)
   for (let i = 0; i < table.length; i++) {
     const c = table[i]
+    if (!c) continue
     if (id === 'big5') {
-      if (!c || i < 5024) continue // this also skips multi-codepoint strings
+      if (i < 5024) continue // this also skips multi-codepoint strings
       // In big5, all return first entries except for these
       if (
         map[c] &&
@@ -648,7 +648,6 @@ function getMap(id, size) {
         continue
       }
     } else {
-      if (c === REP) continue
       if (sjis && i >= 8272 && i <= 8835) continue
       if (map[c]) continue
     }
@@ -657,7 +656,7 @@ function getMap(id, size) {
       // always a single codepoint here
       const s = String.fromCharCode(c >> 16, c & 0xff_ff)
       map[s.codePointAt(0)] = enc(i)
-    } else if (c !== REP) {
+    } else {
       map[c] = enc(i)
     }
   }
