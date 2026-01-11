@@ -84,6 +84,8 @@
     "/hex.js",
     "/hex.d.ts",
     "/hex.node.js",
+    "/index.js",
+    "/index.d.ts",
     "/multi-byte.js",
     "/multi-byte.node.js",
     "/single-byte.js",
@@ -95,7 +97,14 @@
     "/utf8.node.js",
     "/wif.js"
   ],
+  "main": "index.js",
+  "module": "index.js",
+  "types": "index.d.ts",
   "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "default": "./index.js"
+    },
     "./array.js": {
       "types": "./array.d.ts",
       "default": "./array.js"
