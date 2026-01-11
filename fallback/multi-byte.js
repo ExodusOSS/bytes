@@ -537,6 +537,31 @@ const mappers = {
       o16 = new Uint16Array(end - start + (lead ? 1 : 0)) // there are pairs but they consume more than one byte
       oi = 0
 
+      // Fast path
+      if (!lead) {
+        for (const last1 = end - 1; i < last1; ) {
+          const l = arr[i]
+          if (l < 128) {
+            o16[oi++] = l
+            i++
+          } else {
+            if (l === 0x80 || l === 0xff) break
+            const b = arr[i + 1]
+            if (b < 0x40 || (b > 0x7e && b < 0xa1) || b === 0xff) break
+            const p = big5[(l - 0x81) * 157 + b - (b < 0x7f ? 0x40 : 0x62)]
+            if (p > 0x1_00_00) {
+              o16[oi++] = p >> 16
+              o16[oi++] = p & 0xff_ff
+            } else {
+              if (!p) break
+              o16[oi++] = p
+            }
+
+            i += 2
+          }
+        }
+      }
+
       if (lead && i < end) decodeLead(arr[i++])
       while (i < end) {
         const b = arr[i++]
