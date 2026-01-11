@@ -197,6 +197,19 @@ describe('Common implementation mistakes', () => {
       // Node.js fails on this
       t.assert.strictEqual(loose.decode(u(0x80)), '\uFFFD')
       t.assert.throws(() => fatal.decode(u(0x80)))
+
+      // Specific pointer updates
+      // Node.js fails on this
+      for (const dec of [loose, fatal]) {
+        t.assert.strictEqual(dec.decode(u(0x88, 0x61)), '\xD2') // 1132, not updated (from index)
+        t.assert.strictEqual(dec.decode(u(0x88, 0x62)), '\xCA\u0304') // 1133, updated
+        t.assert.strictEqual(dec.decode(u(0x88, 0x63)), '\u1EBE') // 1134, not updated (from index)
+        t.assert.strictEqual(dec.decode(u(0x88, 0x64)), '\xCA\u030C') // 1135, updated
+        t.assert.strictEqual(dec.decode(u(0x88, 0xa2)), '\xFC') // 1163, not updated (from index)
+        t.assert.strictEqual(dec.decode(u(0x88, 0xa3)), '\xEA\u0304') // 1164, updated
+        t.assert.strictEqual(dec.decode(u(0x88, 0xa4)), '\u1EBF') // 1165, not updated (from index)
+        t.assert.strictEqual(dec.decode(u(0x88, 0xa5)), '\xEA\u030C') // 1166, updated
+      }
     })
 
     // https://npmjs.com/text-encoding and https://npmjs.com/whatwg-encoding fail on this
