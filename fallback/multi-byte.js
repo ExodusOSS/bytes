@@ -9,57 +9,6 @@ export const E_STRICT = 'Input is not well-formed for this encoding'
 // If the decoder is not cleared properly, state can be preserved between non-streaming calls!
 // See comment about fatal stream
 
-// Common between euc-kr and big5
-function bigDecoder(err, pair) {
-  let lead = 0
-  let oi = 0
-  let o16
-
-  const decodeLead = (b) => {
-    const p = pair(lead, b)
-    lead = 0
-    if (typeof p === 'number') {
-      o16[oi++] = p
-    } else if (p) {
-      // This is still faster than string concatenation. Can we optimize strings though?
-      for (let i = 0; i < p.length; i++) o16[oi++] = p.charCodeAt(i)
-    } else {
-      o16[oi++] = err()
-      if (b < 128) o16[oi++] = b
-    }
-  }
-
-  const decode = (arr, start, end, stream) => {
-    let i = start
-    o16 = new Uint16Array(end - start + (lead ? 1 : 0)) // there are pairs but they consume more than one byte
-    oi = 0
-
-    if (lead && i < end) decodeLead(arr[i++])
-    while (i < end) {
-      const b = arr[i++]
-      if (b < 128) {
-        o16[oi++] = b
-      } else if (b === 0x80 || b === 0xff) {
-        o16[oi++] = err()
-      } else {
-        lead = b
-        if (i < end) decodeLead(arr[i++])
-      }
-    }
-
-    if (lead && !stream) {
-      lead = 0
-      o16[oi++] = err()
-    }
-
-    const res = decodeUCS2(o16, oi)
-    o16 = null
-    return res
-  }
-
-  return { decode, isAscii: () => lead === 0 }
-}
-
 // All except iso-2022-jp are ASCII supersets
 // When adding something that is not an ASCII superset, ajust the ASCII fast path
 const REP = 0xff_fd
@@ -67,11 +16,56 @@ const mappers = {
   // https://encoding.spec.whatwg.org/#euc-kr-decoder
   'euc-kr': (err) => {
     const euc = getTable('euc-kr')
-    return bigDecoder(err, (l, b) => {
-      if (b < 0x41 || b > 0xfe) return
-      const cp = euc[(l - 0x81) * 190 + b - 0x41]
-      return cp !== undefined && cp !== REP ? cp : undefined
-    })
+    let lead = 0
+    let oi = 0
+    let o16
+
+    const decodeLead = (b) => {
+      if (b < 0x41 || b > 0xfe) {
+        lead = 0
+        o16[oi++] = err()
+        if (b < 128) o16[oi++] = b
+      } else {
+        const p = euc[(lead - 0x81) * 190 + b - 0x41]
+        lead = 0
+        if (p !== undefined && p !== REP) {
+          o16[oi++] = p
+        } else {
+          o16[oi++] = err()
+          if (b < 128) o16[oi++] = b
+        }
+      }
+    }
+
+    const decode = (arr, start, end, stream) => {
+      let i = start
+      o16 = new Uint16Array(end - start + (lead ? 1 : 0)) // there are pairs but they consume more than one byte
+      oi = 0
+
+      if (lead && i < end) decodeLead(arr[i++])
+      while (i < end) {
+        const b = arr[i++]
+        if (b < 128) {
+          o16[oi++] = b
+        } else if (b === 0x80 || b === 0xff) {
+          o16[oi++] = err()
+        } else {
+          lead = b
+          if (i < end) decodeLead(arr[i++])
+        }
+      }
+
+      if (lead && !stream) {
+        lead = 0
+        o16[oi++] = err()
+      }
+
+      const res = decodeUCS2(o16, oi)
+      o16 = null
+      return res
+    }
+
+    return { decode, isAscii: () => lead === 0 }
   },
   // https://encoding.spec.whatwg.org/#euc-jp-decoder
   'euc-jp': (err) => {
@@ -493,10 +487,60 @@ const mappers = {
     // The only decoder which returns multiple codepoints per byte, also has non-charcode codepoints
     // We store that as strings
     const big5 = getTable('big5')
-    return bigDecoder(err, (l, b) => {
-      if (b < 0x40 || (b > 0x7e && b < 0xa1) || b === 0xff) return
-      return big5[(l - 0x81) * 157 + b - (b < 0x7f ? 0x40 : 0x62)] // strings
-    })
+    let lead = 0
+    let oi = 0
+    let o16
+
+    const decodeLead = (b) => {
+      if (b < 0x40 || (b > 0x7e && b < 0xa1) || b === 0xff) {
+        lead = 0
+        o16[oi++] = err()
+        if (b < 128) o16[oi++] = b
+      } else {
+        const p = big5[(lead - 0x81) * 157 + b - (b < 0x7f ? 0x40 : 0x62)] // strings
+        lead = 0
+        if (typeof p === 'number') {
+          o16[oi++] = p
+        } else if (p) {
+          // This is still faster than string concatenation. Can we optimize strings though?
+          for (let i = 0; i < p.length; i++) o16[oi++] = p.charCodeAt(i)
+        } else {
+          o16[oi++] = err()
+          if (b < 128) o16[oi++] = b
+        }
+      }
+    }
+
+    // eslint-disable-next-line sonarjs/no-identical-functions
+    const decode = (arr, start, end, stream) => {
+      let i = start
+      o16 = new Uint16Array(end - start + (lead ? 1 : 0)) // there are pairs but they consume more than one byte
+      oi = 0
+
+      if (lead && i < end) decodeLead(arr[i++])
+      while (i < end) {
+        const b = arr[i++]
+        if (b < 128) {
+          o16[oi++] = b
+        } else if (b === 0x80 || b === 0xff) {
+          o16[oi++] = err()
+        } else {
+          lead = b
+          if (i < end) decodeLead(arr[i++])
+        }
+      }
+
+      if (lead && !stream) {
+        lead = 0
+        o16[oi++] = err()
+      }
+
+      const res = decodeUCS2(o16, oi)
+      o16 = null
+      return res
+    }
+
+    return { decode, isAscii: () => lead === 0 }
   },
 }
 
