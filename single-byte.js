@@ -1,5 +1,5 @@
 import { assertUint8 } from './assert.js'
-import { canDecoders, nativeEncoder, isHermes, skipWeb, E_STRING } from './fallback/_utils.js'
+import { canDecoders, nativeEncoder, skipWeb, E_STRING } from './fallback/_utils.js'
 import { encodeAscii, encodeAsciiPrefix, encodeLatin1 } from './fallback/latin1.js'
 import { assertEncoding, encodingDecoder, encodeMap, E_STRICT } from './fallback/single-byte.js'
 
@@ -66,17 +66,15 @@ function encode(s, m) {
   const x = new Uint8Array(len)
   let i = nativeEncoder ? 0 : encodeAsciiPrefix(x, s)
 
-  if (!isHermes) {
-    for (const len3 = len - 3; i < len3; i += 4) {
-      const x0 = s.charCodeAt(i), x1 = s.charCodeAt(i + 1), x2 = s.charCodeAt(i + 2), x3 = s.charCodeAt(i + 3) // prettier-ignore
-      const c0 = m[x0], c1 = m[x1], c2 = m[x2], c3 = m[x3] // prettier-ignore
-      if ((!c0 && x0) || (!c1 && x1) || (!c2 && x2) || (!c3 && x3)) return null
+  for (const len3 = len - 3; i < len3; i += 4) {
+    const x0 = s.charCodeAt(i), x1 = s.charCodeAt(i + 1), x2 = s.charCodeAt(i + 2), x3 = s.charCodeAt(i + 3) // prettier-ignore
+    const c0 = m[x0], c1 = m[x1], c2 = m[x2], c3 = m[x3] // prettier-ignore
+    if ((!c0 && x0) || (!c1 && x1) || (!c2 && x2) || (!c3 && x3)) return null
 
-      x[i] = c0
-      x[i + 1] = c1
-      x[i + 2] = c2
-      x[i + 3] = c3
-    }
+    x[i] = c0
+    x[i + 1] = c1
+    x[i + 2] = c2
+    x[i + 3] = c3
   }
 
   for (; i < len; i++) {

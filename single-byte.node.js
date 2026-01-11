@@ -61,6 +61,32 @@ export function createSinglebyteDecoder(encoding, loose = false) {
 
 const NON_LATIN = /[^\x00-\xFF]/ // eslint-disable-line no-control-regex
 
+function encode(s, m) {
+  const len = s.length
+  let i = 0
+  const b = Buffer.from(s, 'utf-16le') // aligned
+  if (!isLE) b.swap16()
+  const x = new Uint16Array(b.buffer, b.byteOffset, b.byteLength / 2)
+  for (const len3 = len - 3; i < len3; i += 4) {
+    const x0 = x[i], x1 = x[i + 1], x2 = x[i + 2], x3 = x[i + 3] // prettier-ignore
+    const c0 = m[x0], c1 = m[x1], c2 = m[x2], c3 = m[x3] // prettier-ignore
+    if (!(c0 && c1 && c2 && c3) && ((!c0 && x0) || (!c1 && x1) || (!c2 && x2) || (!c3 && x3))) return null // prettier-ignore
+    x[i] = c0
+    x[i + 1] = c1
+    x[i + 2] = c2
+    x[i + 3] = c3
+  }
+
+  for (; i < len; i++) {
+    const x0 = x[i]
+    const c0 = m[x0]
+    if (!c0 && x0) return null
+    x[i] = c0
+  }
+
+  return new Uint8Array(x)
+}
+
 export function createSinglebyteEncoder(encoding, { mode = 'fatal' } = {}) {
   // TODO: replacement, truncate (replacement will need varying length)
   if (mode !== 'fatal') throw new Error('Unsupported mode')
@@ -82,32 +108,9 @@ export function createSinglebyteEncoder(encoding, { mode = 'fatal' } = {}) {
       if (b.length === s.length) return new Uint8Array(b.buffer, b.byteOffset, b.byteLength)
     }
 
-    const len = s.length
-    let i = 0
-    const b = Buffer.from(s, 'utf-16le') // aligned
-    if (!isLE) b.swap16()
-    const x = new Uint16Array(b.buffer, b.byteOffset, b.byteLength / 2)
-    for (const len3 = len - 3; i < len3; i += 4) {
-      const x0 = x[i], x1 = x[i + 1], x2 = x[i + 2], x3 = x[i + 3] // prettier-ignore
-      const c0 = m[x0], c1 = m[x1], c2 = m[x2], c3 = m[x3] // prettier-ignore
-      if (!(c0 && c1 && c2 && c3) && ((!c0 && x0) || (!c1 && x1) || (!c2 && x2) || (!c3 && x3))) {
-        throw new TypeError(E_STRICT)
-      }
-
-      x[i] = c0
-      x[i + 1] = c1
-      x[i + 2] = c2
-      x[i + 3] = c3
-    }
-
-    for (; i < len; i++) {
-      const x0 = x[i]
-      const c0 = m[x0]
-      if (!c0 && x0) throw new TypeError(E_STRICT)
-      x[i] = c0
-    }
-
-    return new Uint8Array(x)
+    const res = encode(s, m)
+    if (!res) throw new TypeError(E_STRICT)
+    return res
   }
 }
 
