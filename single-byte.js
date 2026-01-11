@@ -70,7 +70,7 @@ function encode(s, m) {
     for (const len3 = len - 3; i < len3; i += 4) {
       const x0 = s.charCodeAt(i), x1 = s.charCodeAt(i + 1), x2 = s.charCodeAt(i + 2), x3 = s.charCodeAt(i + 3) // prettier-ignore
       const c0 = m[x0], c1 = m[x1], c2 = m[x2], c3 = m[x3] // prettier-ignore
-      if ((!c0 && x0) || (!c1 && x1) || (!c2 && x2) || (!c3 && x3)) throw new TypeError(E_STRICT)
+      if ((!c0 && x0) || (!c1 && x1) || (!c2 && x2) || (!c3 && x3)) return null
 
       x[i] = c0
       x[i + 1] = c1
