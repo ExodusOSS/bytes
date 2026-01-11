@@ -342,6 +342,34 @@ const mappers = {
       oi = 0
       let i = start
 
+      // Fast path
+      if (!lead) {
+        for (const last1 = end - 1; i < last1; ) {
+          const l = arr[i]
+          if (l <= 0x80) {
+            o16[oi++] = l
+            i++
+          } else if (l >= 0xa1 && l <= 0xdf) {
+            o16[oi++] = 0xfe_c0 + l
+            i++
+          } else {
+            if (l === 0xa0 || l > 0xfc) break
+            const b = arr[i + 1]
+            if (b < 0x40 || b > 0xfc || b === 0x7f) break
+            const p = (l - (l < 0xa0 ? 0x81 : 0xc1)) * 188 + b - (b < 0x7f ? 0x40 : 0x41)
+            if (p >= 8836 && p <= 10_715) {
+              o16[oi++] = 0xe0_00 - 8836 + p
+              i += 2
+            } else {
+              const cp = jis0208[p]
+              if (!cp) break
+              o16[oi++] = cp
+              i += 2
+            }
+          }
+        }
+      }
+
       if (lead && i < end) decodeLead(arr[i++])
       while (i < end) {
         const b = arr[i++]
