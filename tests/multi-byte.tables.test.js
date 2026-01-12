@@ -2,6 +2,7 @@ import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { test, describe } from 'node:test'
 import { getTable, sizes } from '../fallback/multi-byte.table.js'
+import { multiByte, gb18030ranges } from './encoding/fixtures/indexes.cjs'
 
 const encodings = Object.keys(sizes)
 
@@ -106,4 +107,28 @@ describe('multi-byte ranges tables', () => {
       t.assert.deepStrictEqual(table, rows)
     })
   }
+})
+
+describe('multi-byte encodings index: WHATWG non-normative indexes.json', () => {
+  for (const [encoding, data] of Object.entries(multiByte)) {
+    test(encoding, (t) => {
+      t.assert.ok(!data.includes(0))
+      t.assert.ok(!data.includes(0xff_fd))
+
+      const m = [...getTable(encoding)].map((x) => (x === 0 ? null : x))
+      while (m.length < data.length) m.push(null)
+      if (encoding === 'big5') {
+        m[1133] = m[1135] = m[1164] = m[1166] = null // overriden in spec to multi-codepoint
+        for (let i = 0; i < m.length; i++) {
+          if (m[i] > 0xff_ff) m[i] = String.fromCharCode(m[i] >>> 16, m[i] & 0xff_ff).codePointAt(0)
+        }
+      }
+
+      t.assert.deepStrictEqual(m, data)
+    })
+  }
+
+  test('gb18030-ranges', (t) => {
+    t.assert.deepStrictEqual(getTable('gb18030-ranges'), gb18030ranges)
+  })
 })

@@ -218,13 +218,15 @@ describe('single-byte encodings index: WHATWG', () => {
 describe('single-byte encodings index: WHATWG non-normative indexes.json', () => {
   for (const [encoding, data] of Object.entries(singleByte)) {
     test(encoding, (t) => {
+      t.assert.ok(!data.includes(0))
+      t.assert.ok(!data.includes(0xff_fd))
+
       t.assert.ok(Object.hasOwn(encodingsObject, encoding))
-      const high = getEncoding(encoding)
-      while (high.length < 128) high.push(128 + high.length)
-      t.assert.deepStrictEqual(
-        high,
-        data.map((x) => (x === null ? 65_533 : x))
-      )
+      const m = getEncoding(encoding).map((x) => (x === 0xff_fd ? null : x))
+      while (m.length < 128) m.push(128 + m.length)
+
+      t.assert.deepStrictEqual(m, data)
+
       const decoder = createSinglebyteDecoder(encoding)
       const decoderLoose = createSinglebyteDecoder(encoding, true)
       const encoder = createSinglebyteEncoder(encoding)
