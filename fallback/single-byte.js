@@ -13,7 +13,7 @@ export const assertEncoding = (encoding) => {
 
 const r = 0xff_fd
 
-function getEncoding(encoding) {
+export function getEncoding(encoding) {
   assertEncoding(encoding)
   if (encoding === xUserDefined) return Array.from({ length: 128 }, (_, i) => 0xf7_80 + i)
   if (encoding === iso8i) encoding = 'iso-8859-8'

@@ -2,8 +2,9 @@ import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { test, describe } from 'node:test'
 import { createSinglebyteDecoder, createSinglebyteEncoder } from '@exodus/bytes/single-byte.js'
-import { encodingDecoder } from '../fallback/single-byte.js'
+import { encodingDecoder, getEncoding } from '../fallback/single-byte.js'
 import encodingsObject from '../fallback/single-byte.encodings.js'
+import { singleByte } from './encoding/fixtures/indexes.cjs'
 
 const encodings = Object.keys(encodingsObject)
 const nonWhatwg = new Set(['iso-8859-1', 'iso-8859-9', 'iso-8859-11'])
@@ -208,6 +209,42 @@ describe('single-byte encodings index: WHATWG', () => {
 
           t.assert.strictEqual(str.length, 1)
           t.assert.strictEqual(str.codePointAt(0), 0xff_fd)
+        }
+      }
+    })
+  }
+})
+
+describe('single-byte encodings index: WHATWG non-normative indexes.json', () => {
+  for (const [encoding, data] of Object.entries(singleByte)) {
+    test(encoding, (t) => {
+      t.assert.ok(Object.hasOwn(encodingsObject, encoding))
+      const high = getEncoding(encoding)
+      while (high.length < 128) high.push(128 + high.length)
+      t.assert.deepStrictEqual(
+        high,
+        data.map((x) => (x === null ? 65_533 : x))
+      )
+      const decoder = createSinglebyteDecoder(encoding)
+      const decoderLoose = createSinglebyteDecoder(encoding, true)
+      const encoder = createSinglebyteEncoder(encoding)
+
+      t.assert.strictEqual(data.length, 128)
+      for (let i = 0; i < data.length; i++) {
+        const byte = i + 128
+        t.assert.notEqual(data[i], 0)
+        t.assert.notEqual(data[i], 0xff_fd)
+        const str = data[i] === null ? null : String.fromCodePoint(data[i])
+
+        if (str) {
+          t.assert.ok(data[i] > 0)
+          t.assert.ok(data[i] <= 0xff_ff)
+          t.assert.strictEqual(decoder(Uint8Array.of(byte)), str)
+          t.assert.strictEqual(decoderLoose(Uint8Array.of(byte)), str)
+          t.assert.deepStrictEqual(encoder(str), Uint8Array.of(byte))
+        } else {
+          t.assert.throws(() => decoder(Uint8Array.of(byte)))
+          t.assert.strictEqual(decoderLoose(Uint8Array.of(byte)), '\uFFFD')
         }
       }
     })
