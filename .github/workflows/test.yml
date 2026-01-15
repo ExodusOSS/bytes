@@ -63,7 +63,7 @@ jobs:
 
     strategy:
       matrix:
-        servo-version: [0.0.2]
+        servo-version: [0.0.3]
 
     steps:
       - uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29
