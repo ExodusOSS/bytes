@@ -34,8 +34,11 @@ function encode(str, loose = false, format = 'uint16') {
   throw new Error('Unreachable')
 }
 
-const swapped = (x, swap) =>
-  swap ? Buffer.from(x).swap16() : Buffer.from(x.buffer, x.byteOffset, x.byteLength)
+// Convert to Buffer view or a swapped Buffer copy
+const swapped = (x, swap) => {
+  const b = Buffer.from(x.buffer, x.byteOffset, x.byteLength)
+  return swap ? Buffer.from(b).swap16() : b
+}
 
 // We skip TextDecoder on Node.js, as it's is somewhy significantly slower than Buffer for utf16
 // Also, it incorrectly misses replacements with Node.js is built without ICU, we fix that
