@@ -34,6 +34,7 @@ function encode(str, loose = false, format = 'uint16') {
 
   if (format === 'uint8-le' || format === 'uint8-be') return to8(u16) // Already swapped
   if (format === 'uint16') return u16
+  /* c8 ignore next */
   throw new Error('Unreachable')
 }
 

@@ -19,6 +19,7 @@ function encode(str, loose = false, format = 'uint32') {
     return u8
   }
 
+  /* c8 ignore next */
   throw new Error('Unreachable')
 }
 

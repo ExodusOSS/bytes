@@ -47,6 +47,7 @@ function shouldSkipBuiltins() {
     return /firefox/i.test(g.navigator.userAgent || '') // as simple as we can
   }
 
+  /* c8 ignore next */
   return false // eslint-disable-line no-unreachable
 }
 

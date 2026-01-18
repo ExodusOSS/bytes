@@ -30,6 +30,7 @@ function encode(str, loose = false, format = 'uint16') {
     return new Uint16Array(b.buffer, b.byteOffset, b.byteLength / 2)
   }
 
+  /* c8 ignore next */
   throw new Error('Unreachable')
 }
 

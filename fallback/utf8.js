@@ -191,7 +191,7 @@ export function encode(string, loose) {
 
     if (small) {
       // TODO: use resizable array buffers? will have to return a non-resizeable one
-      if (p !== i) throw new Error('Unreachable') // Here, p === i (only when small is still true)
+      if (p !== i) /* c8 ignore next */ throw new Error('Unreachable') // Here, p === i (only when small is still true)
       const bytesNew = new Uint8Array(p + (length - i) * 3) // maximium can be 3x of the string length in charcodes
       bytesNew.set(bytes)
       bytes = bytesNew

@@ -791,7 +791,8 @@ export function multibyteEncoder(enc, onError) {
       throw new TypeError(E_STRICT)
     }
 
-    if (!map || map.length < size) throw new Error('Unreachable') // Important for perf
+    if (!map || map.length < size) /* c8 ignore next */ throw new Error('Unreachable') // Important for perf
+
     if (enc === 'gb18030') {
       // Deduping this branch hurts other encoders perf
       const encode = (cp) => {

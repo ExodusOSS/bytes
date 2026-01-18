@@ -207,7 +207,7 @@ function fromBase58core(str, alphabet, codes, format = 'uint8') {
       }
 
       at = k + 1
-      if (c !== 0 || at < zeros) throw new Error('Unexpected') // unreachable
+      if (c !== 0 || at < zeros) /* c8 ignore next */ throw new Error('Unexpected') // unreachable
     }
   }
 

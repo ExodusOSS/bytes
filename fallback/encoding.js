@@ -163,6 +163,7 @@ export class TextDecoder {
         return u.byteLength >= 2 && u[0] === 0xfe && u[1] === 0xff ? 2 : 0
     }
 
+    /* c8 ignore next */
     throw new Error('Unreachable')
   }
 }
