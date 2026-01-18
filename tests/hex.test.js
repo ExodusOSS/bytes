@@ -1,4 +1,5 @@
 import { toHex, fromHex } from '@exodus/bytes/hex.js'
+import * as lib from '../hex.js'
 import * as js from '../fallback/hex.js'
 import { describe, test } from 'node:test'
 
@@ -63,6 +64,7 @@ describe('toHex', () => {
   test('invalid input', (t) => {
     for (const input of [null, undefined, [], [1, 2], 'string']) {
       t.assert.throws(() => toHex(input))
+      t.assert.throws(() => lib.toHex(input))
       t.assert.throws(() => js.toHex(input))
     }
   })
@@ -70,11 +72,13 @@ describe('toHex', () => {
   test('fixtures', (t) => {
     for (const [hex, uint8] of VALID) {
       t.assert.strictEqual(toHex(uint8), hex.toLowerCase(), 'uint8')
+      t.assert.strictEqual(lib.toHex(uint8), hex.toLowerCase(), 'uint8')
       for (const A of types) {
         t.assert.ok(Number.isSafeInteger(A.BYTES_PER_ELEMENT) && A.BYTES_PER_ELEMENT >= 1)
         if (uint8.byteLength % A.BYTES_PER_ELEMENT !== 0) continue
         const x = new A(uint8.buffer, uint8.byteOffset, uint8.byteLength / A.BYTES_PER_ELEMENT)
         t.assert.strictEqual(toHex(x), hex.toLowerCase(), A.name)
+        t.assert.strictEqual(lib.toHex(x), hex.toLowerCase(), A.name)
         t.assert.strictEqual(js.toHex(x), hex.toLowerCase(), A.name)
       }
     }
@@ -84,6 +88,8 @@ describe('toHex', () => {
     for (const { uint8, buffer, hex } of pool) {
       t.assert.strictEqual(toHex(uint8), hex)
       t.assert.strictEqual(toHex(buffer), hex)
+      t.assert.strictEqual(lib.toHex(uint8), hex)
+      t.assert.strictEqual(lib.toHex(buffer), hex)
       t.assert.strictEqual(js.toHex(uint8), hex)
     }
   })
@@ -94,9 +100,11 @@ describe('fromHex', () => {
     for (const input of INVALID) {
       if (Uint8Array.fromHex) t.assert.throws(() => Uint8Array.fromHex(input), 'coherence')
       t.assert.throws(() => fromHex(input))
+      t.assert.throws(() => lib.fromHex(input))
       t.assert.throws(() => js.fromHex(input))
       for (const form of ['uint8', 'buffer', 'hex']) {
         t.assert.throws(() => fromHex(input, form))
+        t.assert.throws(() => lib.fromHex(input, form))
       }
     }
   })
@@ -106,6 +114,8 @@ describe('fromHex', () => {
       if (Uint8Array.fromHex) t.assert.deepEqual(uint8, Uint8Array.fromHex(hex), 'coherence')
       t.assert.deepStrictEqual(fromHex(hex), uint8)
       t.assert.deepStrictEqual(fromHex(hex, 'uint8'), uint8)
+      t.assert.deepStrictEqual(lib.fromHex(hex), uint8)
+      t.assert.deepStrictEqual(lib.fromHex(hex, 'uint8'), uint8)
       t.assert.deepStrictEqual(js.fromHex(hex), uint8)
     }
   })
@@ -114,6 +124,8 @@ describe('fromHex', () => {
     for (const { hex, uint8 } of pool) {
       t.assert.deepStrictEqual(fromHex(hex), uint8)
       t.assert.deepStrictEqual(fromHex(hex, 'uint8'), uint8)
+      t.assert.deepStrictEqual(lib.fromHex(hex), uint8)
+      t.assert.deepStrictEqual(lib.fromHex(hex, 'uint8'), uint8)
       t.assert.deepStrictEqual(js.fromHex(hex), uint8)
     }
   })
@@ -122,12 +134,14 @@ describe('fromHex', () => {
     for (const [hex, uint8] of VALID) {
       t.assert.deepStrictEqual(Buffer.from(hex, 'hex'), Buffer.from(uint8), 'coherence')
       t.assert.deepStrictEqual(fromHex(hex, 'buffer'), Buffer.from(uint8))
+      t.assert.deepStrictEqual(lib.fromHex(hex, 'buffer'), Buffer.from(uint8))
     }
   })
 
   test('buffer, random', (t) => {
     for (const { hex, buffer } of pool) {
       t.assert.deepStrictEqual(fromHex(hex, 'buffer'), buffer)
+      t.assert.deepStrictEqual(lib.fromHex(hex, 'buffer'), buffer)
     }
   })
 })
