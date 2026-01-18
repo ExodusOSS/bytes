@@ -61,54 +61,79 @@ export function createSinglebyteDecoder(encoding, loose = false) {
 
 const NON_LATIN = /[^\x00-\xFF]/ // eslint-disable-line no-control-regex
 
-function encode(s, m) {
+function encode(s, m, loose) {
   const len = s.length
   let i = 0
   const b = Buffer.from(s, 'utf-16le') // aligned
   if (!isLE) b.swap16()
   const x = new Uint16Array(b.buffer, b.byteOffset, b.byteLength / 2)
-  for (const len3 = len - 3; i < len3; i += 4) {
+  if (!m || m.length < 256) return null // perf
+  const len3 = len - 3
+  while (i < len3) {
     const x0 = x[i], x1 = x[i + 1], x2 = x[i + 2], x3 = x[i + 3] // prettier-ignore
     const c0 = m[x0], c1 = m[x1], c2 = m[x2], c3 = m[x3] // prettier-ignore
-    if (!(c0 && c1 && c2 && c3) && ((!c0 && x0) || (!c1 && x1) || (!c2 && x2) || (!c3 && x3))) return null // prettier-ignore
+    if (!(c0 && c1 && c2 && c3) && ((!c0 && x0) || (!c1 && x1) || (!c2 && x2) || (!c3 && x3))) break
     x[i] = c0
     x[i + 1] = c1
     x[i + 2] = c2
     x[i + 3] = c3
+    i += 4
   }
 
+  const mlen = m.length
   for (; i < len; i++) {
     const x0 = x[i]
+    if (x0 >= mlen) break
     const c0 = m[x0]
-    if (!c0 && x0) return null
+    if (!c0 && x0) break
     x[i] = c0
   }
 
-  return new Uint8Array(x)
+  if (i === len) return new Uint8Array(x)
+  if (!loose) return null
+  let j = i
+  while (i < len) {
+    const x0 = x[i++]
+    if (x0 >= 0xd8_00 && x0 < 0xdc_00) {
+      if (i < len) {
+        const x1 = x[i]
+        if (x1 >= 0xdc_00 && x1 < 0xe0_00) i++
+      }
+      x[j++] = 63 // '?'
+    } else if (x0 >= mlen) {
+      x[j++] = 63 // '?'
+    } else {
+      const c0 = m[x0]
+      x[j++] = !c0 && x0 ? 63 : c0
+    }
+  }
+
+  return new Uint8Array(j === len ? x : x.subarray(0, j))
 }
 
 export function createSinglebyteEncoder(encoding, { mode = 'fatal' } = {}) {
-  // TODO: replacement, truncate (replacement will need varying length)
-  if (mode !== 'fatal') throw new Error('Unsupported mode')
+  const loose = mode === 'replacement'
+  if (mode !== 'fatal' && !loose) throw new Error('Unsupported mode')
   const m = encodeMap(encoding) // asserts
   const isLatin1 = encoding === 'iso-8859-1'
 
   return (s) => {
     if (typeof s !== 'string') throw new TypeError(E_STRING)
     if (isLatin1) {
-      if (NON_LATIN.test(s)) throw new TypeError(E_STRICT)
-      const b = Buffer.from(s, 'latin1')
-      return new Uint8Array(b.buffer, b.byteOffset, b.byteLength)
-    }
+      if (!NON_LATIN.test(s)) {
+        const b = Buffer.from(s, 'latin1')
+        return new Uint8Array(b.buffer, b.byteOffset, b.byteLength)
+      }
 
-    // Instead of an ASCII regex check, encode optimistically - this is faster
-    // Check for 8-bit string with a regex though, this is instant on 8-bit strings so doesn't hurt the ASCII fast path
-    if (!NON_LATIN.test(s)) {
+      if (!loose) throw new TypeError(E_STRICT)
+    } else if (!NON_LATIN.test(s)) {
+      // Instead of an ASCII regex check, encode optimistically - this is faster
+      // Check for 8-bit string with a regex though, this is instant on 8-bit strings so doesn't hurt the ASCII fast path
       const b = Buffer.from(s, 'utf8') // ascii/latin1 coerces, we need to check
       if (b.length === s.length) return new Uint8Array(b.buffer, b.byteOffset, b.byteLength)
     }
 
-    const res = encode(s, m)
+    const res = encode(s, m, loose)
     if (!res) throw new TypeError(E_STRICT)
     return res
   }

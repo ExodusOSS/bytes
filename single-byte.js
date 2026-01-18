@@ -61,38 +61,59 @@ export function createSinglebyteDecoder(encoding, loose = false) {
 
 const NON_LATIN = /[^\x00-\xFF]/ // eslint-disable-line no-control-regex
 
-function encode(s, m) {
+function encode(s, m, loose) {
   const len = s.length
   const x = new Uint8Array(len)
   let i = nativeEncoder ? 0 : encodeAsciiPrefix(x, s)
 
-  for (const len3 = len - 3; i < len3; i += 4) {
+  if (!m || m.length < 256) return null // perf
+  const len3 = len - 3
+  while (i < len3) {
     const x0 = s.charCodeAt(i), x1 = s.charCodeAt(i + 1), x2 = s.charCodeAt(i + 2), x3 = s.charCodeAt(i + 3) // prettier-ignore
     const c0 = m[x0], c1 = m[x1], c2 = m[x2], c3 = m[x3] // prettier-ignore
-    if ((!c0 && x0) || (!c1 && x1) || (!c2 && x2) || (!c3 && x3)) return null
+    if ((!c0 && x0) || (!c1 && x1) || (!c2 && x2) || (!c3 && x3)) break
 
     x[i] = c0
     x[i + 1] = c1
     x[i + 2] = c2
     x[i + 3] = c3
+    i += 4
   }
 
   for (; i < len; i++) {
     const x0 = s.charCodeAt(i)
     const c0 = m[x0]
-    if (!c0 && x0) return null
+    if (!c0 && x0) break
     x[i] = c0
   }
 
-  return x
+  if (i === len) return x
+  if (!loose) return null
+  let j = i
+  while (i < len) {
+    const x0 = s.charCodeAt(i++)
+    if (x0 >= 0xd8_00 && x0 < 0xdc_00) {
+      if (i < len) {
+        const x1 = s.charCodeAt(i)
+        if (x1 >= 0xdc_00 && x1 < 0xe0_00) i++
+      }
+      x[j++] = 63 // '?'
+    } else {
+      const c0 = m[x0]
+      x[j++] = !c0 && x0 ? 63 : c0
+    }
+
+  }
+
+  return j === len ? x : x.subarray(0, j)
 }
 
 // fromBase64+btoa path is faster on everything where fromBase64 is fast
 const useLatin1btoa = Uint8Array.fromBase64 && btoa && !skipWeb
 
 export function createSinglebyteEncoder(encoding, { mode = 'fatal' } = {}) {
-  // TODO: replacement, truncate (replacement will need varying length)
-  if (mode !== 'fatal') throw new Error('Unsupported mode')
+  const loose = mode === 'replacement'
+  if (mode !== 'fatal' && !loose) throw new Error('Unsupported mode')
   const m = encodeMap(encoding) // asserts
   const isLatin1 = encoding === 'iso-8859-1'
 
@@ -106,24 +127,21 @@ export function createSinglebyteEncoder(encoding, { mode = 'fatal' } = {}) {
       if (useLatin1btoa && s.length >= 1024 && s.length < 1e8) {
         try {
           return Uint8Array.fromBase64(btoa(s)) // fails on non-latin1
-        } catch {
-          throw new TypeError(E_STRICT)
-        }
+        } catch {}
+      } else if (!NON_LATIN.test(s)) {
+        return encodeLatin1(s)
       }
 
-      if (NON_LATIN.test(s)) throw new TypeError(E_STRICT)
-      return encodeLatin1(s)
-    }
-
-    // Instead of an ASCII regex check, encode optimistically - this is faster
-    // Check for 8-bit string with a regex though, this is instant on 8-bit strings so doesn't hurt the ASCII fast path
-    if (nativeEncoder && !NON_LATIN.test(s)) {
+      if (!loose) throw new TypeError(E_STRICT)
+    } else if (nativeEncoder && !NON_LATIN.test(s)) {
+      // Instead of an ASCII regex check, encode optimistically - this is faster
+      // Check for 8-bit string with a regex though, this is instant on 8-bit strings so doesn't hurt the ASCII fast path
       try {
         return encodeAscii(s, E_STRICT)
       } catch {}
     }
 
-    const res = encode(s, m)
+    const res = encode(s, m, loose)
     if (!res) throw new TypeError(E_STRICT)
     return res
   }

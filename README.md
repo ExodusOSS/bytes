@@ -257,6 +257,9 @@ Returns a function `encode(string)` that encodes a string to bytes.
 In `'fatal'` mode (default), will throw on non well-formed strings or any codepoints which could
 not be encoded in the target encoding.
 
+In `'replacement'` mode, all unmapped codepoints and unpaired surrogates will be replaced with
+`U+3F` (codepoint for '?').
+
 #### `latin1toString(arr)`
 
 Decode `iso-8859-1` bytes to a string.

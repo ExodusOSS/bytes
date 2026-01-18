@@ -75,14 +75,17 @@ export function createSinglebyteDecoder(
  * In `'fatal'` mode (default), will throw on non well-formed strings or any codepoints which could
  * not be encoded in the target encoding.
  *
+ * In `'replacement'` mode, all unmapped codepoints and unpaired surrogates will be replaced with
+ * `U+3F` (codepoint for '?').
+ *
  * @param encoding - The encoding name (e.g., 'iso-8859-1', 'windows-1252')
  * @param options - Encoding options
- * @param options.mode - Encoding mode (default: 'fatal'). Currently, only 'fatal' mode is supported.
+ * @param options.mode - Encoding mode (default: 'fatal')
  * @returns A function that encodes string to bytes
  */
 export function createSinglebyteEncoder(
   encoding: string,
-  options?: { mode?: 'fatal' }
+  options?: { mode?: 'fatal' | 'replacement' }
 ): (string: string) => Uint8ArrayBuffer;
 
 /**
