@@ -40,4 +40,4 @@
  * import { getBOMEncoding, legacyHookDecode, labelToName, normalizeEncoding } from '@exodus/bytes/encoding-browser.js'
  * ```
  */
-declare module "@exodus/bytes" {}
+declare module '@exodus/bytes' {}

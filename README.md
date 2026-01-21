@@ -99,6 +99,8 @@ See [the list of encodings](https://encoding.spec.whatwg.org/#names-and-labels).
 
 ### `@exodus/bytes/utf8.js`
 
+UTF-8 encoding/decoding
+
 ```js
 import { utf8fromString, utf8toString } from '@exodus/bytes/utf8.js'
 
@@ -106,12 +108,47 @@ import { utf8fromString, utf8toString } from '@exodus/bytes/utf8.js'
 import { utf8fromStringLoose, utf8toStringLoose } from '@exodus/bytes/utf8.js'
 ```
 
-##### `utf8fromString(str, format = 'uint8')`
-##### `utf8fromStringLoose(str, format = 'uint8')`
-##### `utf8toString(arr)`
-##### `utf8toStringLoose(arr)`
+_These methods by design encode/decode BOM (codepoint `U+FEFF` Byte Order Mark) as-is._\
+_If you need BOM handling or detection, use `@exodus/bytes/encoding.js`_
+
+#### `utf8fromString(string, format = 'uint8')`
+
+Encode a string to UTF-8 bytes (strict mode)
+
+Throws on invalid Unicode (unpaired surrogates)
+
+#### `utf8fromStringLoose(string, format = 'uint8')`
+
+Encode a string to UTF-8 bytes (loose mode)
+
+Replaces invalid Unicode (unpaired surrogates) with replacement codepoints `U+FFFD`
+per [WHATWG Encoding](https://encoding.spec.whatwg.org/) specification.
+
+_Such replacement is a non-injective function, is irreversable and causes collisions.\
+Prefer using strict throwing methods for cryptography applications._
+
+#### `utf8toString(arr)`
+
+Decode UTF-8 bytes to a string (strict mode)
+
+Throws on invalid UTF-8 byte sequences
+
+#### `utf8toStringLoose(arr)`
+
+Decode UTF-8 bytes to a string (loose mode)
+
+Replaces invalid UTF-8 byte sequences with replacement codepoints `U+FFFD`
+per [WHATWG Encoding](https://encoding.spec.whatwg.org/) specification.
+
+_Such replacement is a non-injective function, is irreversable and causes collisions.\
+Prefer using strict throwing methods for cryptography applications._
 
 ### `@exodus/bytes/utf16.js`
+
+UTF-16 encoding/decoding
+
+_These methods by design encode/decode BOM (codepoint `U+FEFF` Byte Order Mark) as-is._
+_If you need BOM handling or detection, use `@exodus/bytes/encoding.js`_
 
 ```js
 import { utf16fromString, utf16toString } from '@exodus/bytes/utf16.js'
@@ -120,10 +157,10 @@ import { utf16fromString, utf16toString } from '@exodus/bytes/utf16.js'
 import { utf16fromStringLoose, utf16toStringLoose } from '@exodus/bytes/utf16.js'
 ```
 
-##### `utf16fromString(str, format = 'uint16')`
-##### `utf16fromStringLoose(str, format = 'uint16')`
-##### `utf16toString(arr, 'uint16')`
-##### `utf16toStringLoose(arr, 'uint16')`
+#### `utf16fromString(string, format = 'uint16')`
+#### `utf16fromStringLoose(string, format = 'uint16')`
+#### `utf16toString(arr, 'uint16')`
+#### `utf16toStringLoose(arr, 'uint16')`
 
 ### `@exodus/bytes/single-byte.js`
 
@@ -174,13 +211,13 @@ corresponding [unicode.org encodings](https://unicode.org/Public/MAPPINGS/VENDOR
 they encode/decode all the old valid (non-replacement) strings / byte sequences identically, but can also support
 a wider range of inputs.
 
-##### `createSinglebyteDecoder(encoding, loose = false)`
+#### `createSinglebyteDecoder(encoding, loose = false)`
 
 Create a decoder for a supported one-byte `encoding`, given its lowercased name `encoding`.
 
 Returns a function `decode(arr)` that decodes bytes to a string.
 
-##### `createSinglebyteEncoder(encoding, { mode = 'fatal' })`
+#### `createSinglebyteEncoder(encoding, { mode = 'fatal' })`
 
 Create an encoder for a supported one-byte `encoding`, given its lowercased name `encoding`.
 
@@ -189,7 +226,7 @@ Returns a function `encode(string)` that encodes a string to bytes.
 In `'fatal'` mode (default), will throw on non well-formed strings or any codepoints which could
 not be encoded in the target encoding.
 
-##### `latin1toString(arr)`
+#### `latin1toString(arr)`
 
 Decode `iso-8859-1` bytes to a string.
 
@@ -203,7 +240,7 @@ const latin1toString = createSinglebyteDecoder('iso-8859-1')
 Note: this is different from `new TextDecoder('iso-8859-1')` and `new TextDecoder('latin1')`, as
 those alias to `new TextDecoder('windows-1252')`.
 
-##### `latin1fromString(string)`
+#### `latin1fromString(string)`
 
 Encode a string to `iso-8859-1` bytes.
 
@@ -214,7 +251,7 @@ Same as:
 const latin1fromString = createSinglebyteEncoder('iso-8859-1', { mode: 'fatal' })
 ```
 
-##### `windows1252toString(arr)`
+#### `windows1252toString(arr)`
 
 Decode `windows-1252` bytes to a string.
 
@@ -225,7 +262,7 @@ Same as:
 const windows1252toString = createSinglebyteDecoder('windows-1252')
 ```
 
-##### `windows1252fromString(string)`
+#### `windows1252fromString(string)`
 
 Encode a string to `windows-1252` bytes.
 
@@ -251,7 +288,7 @@ Decode the legacy multi-byte encodings according to the [Encoding standard](http
 Supports all legacy multi-byte encodings listed in the standard:
 `gbk`, `gb18030`, `big5`, `euc-jp`, `iso-2022-jp`, `shift_jis`, `euc-kr`.
 
-##### `createMultibyteDecoder(encoding, loose = false)`
+#### `createMultibyteDecoder(encoding, loose = false)`
 
 Create a decoder for a supported legacy multi-byte `encoding`, given its lowercased name `encoding`.
 
@@ -265,23 +302,32 @@ That function will have state while `stream = true` is used.
 import { fromBigInt, toBigInt } from '@exodus/bytes/bigint.js'
 ```
 
-##### `fromBigInt(bigint, { length, format = 'uint8' })`
-##### `toBigInt(arr)`
+#### `fromBigInt(bigint, { length, format = 'uint8' })`
+#### `toBigInt(arr)`
 
 ### `@exodus/bytes/hex.js`
 
-Implements Base16 from [RFC4648](https://datatracker.ietf.org/doc/html/rfc4648) (no differences from [RFC3548](https://datatracker.ietf.org/doc/html/rfc4648)).
+Implements Base16 from [RFC4648](https://datatracker.ietf.org/doc/html/rfc4648)
+(no differences from [RFC3548](https://datatracker.ietf.org/doc/html/rfc4648)).
 
 ```js
 import { fromHex, toHex } from '@exodus/bytes/hex.js'
 ```
 
-##### `fromHex(string)`
-##### `toHex(arr)`
+#### `fromHex(string, format = 'uint8')`
+
+Decode a hex string to bytes
+
+Unlike `Buffer.from()`, throws on invalid input
+
+#### `toHex(arr)`
+
+Encode a `Uint8Array` to a lowercase hex string
 
 ### `@exodus/bytes/base64.js`
 
-Implements Base64 from [RFC4648](https://datatracker.ietf.org/doc/html/rfc4648) (no differences from [RFC3548](https://datatracker.ietf.org/doc/html/rfc4648)).
+Implements Base64 from [RFC4648](https://datatracker.ietf.org/doc/html/rfc4648)
+(no differences from [RFC3548](https://datatracker.ietf.org/doc/html/rfc4648)).
 
 ```js
 import { fromBase64, toBase64 } from '@exodus/bytes/base64.js'
@@ -289,29 +335,51 @@ import { fromBase64url, toBase64url } from '@exodus/bytes/base64.js'
 import { fromBase64any } from '@exodus/bytes/base64.js'
 ```
 
-##### `fromBase64(str, { format = 'uint8', padding = 'both' })`
-##### `fromBase64url(str, { format = 'uint8', padding = false })`
-##### `fromBase64any(str, { format = 'uint8', padding = 'both' })`
-##### `toBase64(arr, { padding = true })`
-##### `toBase64url(arr, { padding = false })`
+#### `fromBase64(string, { format = 'uint8', padding = 'both' })`
+
+Decode a base64 string to bytes
+
+Operates in strict mode for last chunk, does not allow whitespace
+
+#### `fromBase64url(string, { format = 'uint8', padding = false })`
+
+Decode a base64url string to bytes
+
+Operates in strict mode for last chunk, does not allow whitespace
+
+#### `fromBase64any(string, { format = 'uint8', padding = 'both' })`
+
+Decode either base64 or base64url string to bytes
+
+Automatically detects the variant based on characters present
+
+#### `toBase64(arr, { padding = true })`
+
+Encode a `Uint8Array` to a base64 string (RFC 4648)
+
+#### `toBase64url(arr, { padding = false })`
+
+Encode a `Uint8Array` to a base64url string (RFC 4648)
 
 ### `@exodus/bytes/base32.js`
 
-Implements Base32 from [RFC4648](https://datatracker.ietf.org/doc/html/rfc4648) (no differences from [RFC3548](https://datatracker.ietf.org/doc/html/rfc4648)).
+Implements Base32 from [RFC4648](https://datatracker.ietf.org/doc/html/rfc4648)
+(no differences from [RFC3548](https://datatracker.ietf.org/doc/html/rfc4648)).
 
 ```js
 import { fromBase32, toBase32 } from '@exodus/bytes/base32.js'
 import { fromBase32hex, toBase32hex } from '@exodus/bytes/base32.js'
 ```
 
-##### `fromBase32(str, { format = 'uint8', padding = 'both' })`
-##### `fromBase32hex(str, { format = 'uint8', padding = 'both' })`
-##### `toBase32(arr, { padding = false })`
-##### `toBase32hex(arr, { padding = false })`
+#### `fromBase32(string, { format = 'uint8', padding = 'both' })`
+#### `fromBase32hex(string, { format = 'uint8', padding = 'both' })`
+#### `toBase32(arr, { padding = false })`
+#### `toBase32hex(arr, { padding = false })`
 
 ### `@exodus/bytes/bech32.js`
 
-Implements [BIP-0173](https://github.com/bitcoin/bips/blob/master/bip-0173.mediawiki#specification) and [BIP-0350](https://github.com/bitcoin/bips/blob/master/bip-0350.mediawiki#specification).
+Implements [BIP-0173](https://github.com/bitcoin/bips/blob/master/bip-0173.mediawiki#specification)
+and [BIP-0350](https://github.com/bitcoin/bips/blob/master/bip-0350.mediawiki#specification).
 
 ```js
 import { fromBech32, toBech32 } from '@exodus/bytes/bech32.js'
@@ -319,13 +387,13 @@ import { fromBech32m, toBech32m } from '@exodus/bytes/bech32.js'
 import { getPrefix } from '@exodus/bytes/bech32.js'
 ```
 
-##### `getPrefix(str, limit = 90)`
+#### `getPrefix(string, limit = 90)`
 
-##### `fromBech32(str, limit = 90)`
-##### `toBech32(prefix, bytes, limit = 90)`
+#### `fromBech32(string, limit = 90)`
+#### `toBech32(prefix, bytes, limit = 90)`
 
-##### `fromBech32m(str, limit = 90)`
-##### `toBech32m(prefix, bytes, limit = 90)`
+#### `fromBech32m(string, limit = 90)`
+#### `toBech32m(prefix, bytes, limit = 90)`
 
 ### `@exodus/bytes/base58.js`
 
@@ -334,11 +402,11 @@ import { fromBase58, toBase58 } from '@exodus/bytes/base58.js'
 import { fromBase58xrp, toBase58xrp } from '@exodus/bytes/base58.js'
 ```
 
-##### `fromBase58(str, format = 'uint8')`
-##### `toBase58(arr)`
+#### `fromBase58(string, format = 'uint8')`
+#### `toBase58(arr)`
 
-##### `fromBase58xrp(str, format = 'uint8')`
-##### `toBase58xrp(arr)`
+#### `fromBase58xrp(string, format = 'uint8')`
+#### `toBase58xrp(arr)`
 
 ### `@exodus/bytes/base58check.js`
 
@@ -350,11 +418,11 @@ import { makeBase58check } from '@exodus/bytes/base58check.js'
 
 On non-Node.js, requires peer dependency [@noble/hashes](https://www.npmjs.com/package/@noble/hashes) to be installed.
 
-##### `async fromBase58check(str, format = 'uint8')`
-##### `async toBase58check(arr)`
-##### `fromBase58checkSync(str, format = 'uint8')`
-##### `toBase58checkSync(arr)`
-##### `makeBase58check(hashAlgo, hashAlgoSync)`
+#### `async fromBase58check(string, format = 'uint8')`
+#### `async toBase58check(arr)`
+#### `fromBase58checkSync(string, format = 'uint8')`
+#### `toBase58checkSync(arr)`
+#### `makeBase58check(hashAlgo, hashAlgoSync)`
 
 ### `@exodus/bytes/wif.js`
 
@@ -365,10 +433,24 @@ import { fromWifStringSync, toWifStringSync } from '@exodus/bytes/wif.js'
 
 On non-Node.js, requires peer dependency [@noble/hashes](https://www.npmjs.com/package/@noble/hashes) to be installed.
 
-##### `async fromWifString(string, version)`
-##### `fromWifStringSync(string, version)`
-##### `async toWifString({ version, privateKey, compressed })`
-##### `toWifStringSync({ version, privateKey, compressed })`
+#### `async fromWifString(string, version)`
+#### `fromWifStringSync(string, version)`
+#### `async toWifString({ version, privateKey, compressed })`
+#### `toWifStringSync({ version, privateKey, compressed })`
+
+### `@exodus/bytes/array.js`
+
+TypedArray utils and conversions.
+
+```js
+import { typedView } from '@exodus/bytes/array.js'
+```
+
+#### `typedView(arr, format = 'uint8')`
+
+Create a view of a TypedArray in the specified format (`'uint8'` or `'buffer'`)
+
+Important: does not copy data, returns a view on the same underlying buffer
 
 ### `@exodus/bytes/encoding.js`
 
@@ -391,13 +473,19 @@ some [hooks](https://encoding.spec.whatwg.org/#specification-hooks) (see below).
 
 [TextDecoder](https://encoding.spec.whatwg.org/#interface-textdecoder) implementation/polyfill.
 
+Decode bytes to strings according to [WHATWG Encoding](https://encoding.spec.whatwg.org) specification.
+
 #### `new TextEncoder()`
 
 [TextEncoder](https://encoding.spec.whatwg.org/#interface-textencoder) implementation/polyfill.
 
+Encode strings to UTF-8 bytes according to [WHATWG Encoding](https://encoding.spec.whatwg.org) specification.
+
 #### `new TextDecoderStream(label = 'utf-8', { fatal = false, ignoreBOM = false })`
 
 [TextDecoderStream](https://encoding.spec.whatwg.org/#interface-textdecoderstream) implementation/polyfill.
+
+A [Streams](https://streams.spec.whatwg.org/) wrapper for `TextDecoder`.
 
 Requires [Streams](https://streams.spec.whatwg.org/) to be either supported by the platform or
 [polyfilled](https://npmjs.com/package/web-streams-polyfill).
@@ -406,6 +494,8 @@ Requires [Streams](https://streams.spec.whatwg.org/) to be either supported by t
 
 [TextEncoderStream](https://encoding.spec.whatwg.org/#interface-textencoderstream) implementation/polyfill.
 
+A [Streams](https://streams.spec.whatwg.org/) wrapper for `TextEncoder`.
+
 Requires [Streams](https://streams.spec.whatwg.org/) to be either supported by the platform or
 [polyfilled](https://npmjs.com/package/web-streams-polyfill).
 
@@ -413,7 +503,7 @@ Requires [Streams](https://streams.spec.whatwg.org/) to be either supported by t
 
 Implements [get an encoding from a string `label`](https://encoding.spec.whatwg.org/#concept-encoding-get).
 
-Converts an encoding [label](https://encoding.spec.whatwg.org/#names-and-labels) to its name,
+Convert an encoding [label](https://encoding.spec.whatwg.org/#names-and-labels) to its name,
 as a case-sensitive string.
 
 If an encoding with that label does not exist, returns `null`.
@@ -422,7 +512,7 @@ All encoding names are also valid labels for corresponding encodings.
 
 #### `normalizeEncoding(label)`
 
-Converts an encoding [label](https://encoding.spec.whatwg.org/#names-and-labels) to its name,
+Convert an encoding [label](https://encoding.spec.whatwg.org/#names-and-labels) to its name,
 as an ASCII-lowercased string.
 
 If an encoding with that label does not exist, returns `null`.
@@ -445,10 +535,10 @@ All encoding names are also valid labels for corresponding encodings.
 Implements [BOM sniff](https://encoding.spec.whatwg.org/#bom-sniff) legacy hook.
 
 Given a `TypedArray` or an `ArrayBuffer` instance `input`, returns either of:
-* `'utf-8'`, if `input` starts with UTF-8 byte order mark.
-* `'utf-16le'`, if `input` starts with UTF-16LE byte order mark.
-* `'utf-16be'`, if `input` starts with UTF-16BE byte order mark.
-* `null` otherwise.
+- `'utf-8'`, if `input` starts with UTF-8 byte order mark.
+- `'utf-16le'`, if `input` starts with UTF-16LE byte order mark.
+- `'utf-16be'`, if `input` starts with UTF-16BE byte order mark.
+- `null` otherwise.
 
 #### `legacyHookDecode(input, fallbackEncoding = 'utf-8')`
 
@@ -461,10 +551,10 @@ decodes the `input` using that encoding, skipping BOM if it was present.
 
 Notes:
 
- * BOM-sniffed encoding takes precedence over `fallbackEncoding` option per spec.
-   Use with care.
- * Always operates in non-fatal [mode](https://encoding.spec.whatwg.org/#textdecoder-error-mode),
-   aka replacement. It can convert different byte sequences to equal strings.
+- BOM-sniffed encoding takes precedence over `fallbackEncoding` option per spec.
+  Use with care.
+- Always operates in non-fatal [mode](https://encoding.spec.whatwg.org/#textdecoder-error-mode),
+  aka replacement. It can convert different byte sequences to equal strings.
 
 This method is similar to the following code, except that it doesn't support encoding labels and
 only expects lowercased encoding name:

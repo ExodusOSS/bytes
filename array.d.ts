@@ -1,3 +1,13 @@
+/**
+ * TypedArray utils and conversions.
+ *
+ * ```js
+ * import { typedView } from '@exodus/bytes/array.js'
+ * ```
+ *
+ * @module @exodus/bytes/array.js
+ */
+
 /// <reference types="node" />
 
 // >= TypeScript 5.9 made Uint8Array templated with <> and defaulted to ArrayBufferLike
@@ -12,10 +22,12 @@ export type Uint8ArrayBuffer = ReturnType<typeof Uint8Array.from>;
 export type OutputFormat = 'uint8' | 'buffer';
 
 /**
- * Creates a view of a TypedArray in the specified format
- * Note: This does not copy data - returns a view on the same underlying buffer
+ * Create a view of a TypedArray in the specified format (`'uint8'` or `'buffer'`)
+ *
+ * Important: does not copy data, returns a view on the same underlying buffer
+ *
  * @param arr - The input TypedArray
- * @param format - The desired output format ('uint8' or 'buffer')
+ * @param format - The desired output format (`'uint8'` or `'buffer'`)
  * @returns A view on the same underlying buffer
  */
 export function typedView(arr: ArrayBufferView, format: 'uint8'): Uint8Array;

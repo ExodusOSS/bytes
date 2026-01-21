@@ -1,3 +1,16 @@
+/**
+ * Implements Base64 from [RFC4648](https://datatracker.ietf.org/doc/html/rfc4648)
+ * (no differences from [RFC3548](https://datatracker.ietf.org/doc/html/rfc4648)).
+ *
+ * ```js
+ * import { fromBase64, toBase64 } from '@exodus/bytes/base64.js'
+ * import { fromBase64url, toBase64url } from '@exodus/bytes/base64.js'
+ * import { fromBase64any } from '@exodus/bytes/base64.js'
+ * ```
+ *
+ * @module @exodus/bytes/base64.js
+ */
+
 /// <reference types="node" />
 
 import type { OutputFormat, Uint8ArrayBuffer } from './array.js';
@@ -12,9 +25,9 @@ export interface ToBase64Options {
 
 /**
  * Padding mode for base64 decoding
- * - true: padding is required
- * - false: padding is not allowed
- * - 'both': padding is optional (default for base64)
+ * - `true`: padding is required
+ * - `false`: padding is not allowed
+ * - `'both'`: padding is optional (default for base64)
  */
 export type PaddingMode = boolean | 'both';
 
@@ -29,7 +42,8 @@ export interface FromBase64Options {
 }
 
 /**
- * Encodes a Uint8Array to a base64 string (RFC 4648)
+ * Encode a `Uint8Array` to a base64 string (RFC 4648)
+ *
  * @param arr - The input bytes
  * @param options - Encoding options
  * @returns The base64 encoded string
@@ -37,7 +51,8 @@ export interface FromBase64Options {
 export function toBase64(arr: Uint8ArrayBuffer, options?: ToBase64Options): string;
 
 /**
- * Encodes a Uint8Array to a base64url string (RFC 4648)
+ * Encode a `Uint8Array` to a base64url string (RFC 4648)
+ *
  * @param arr - The input bytes
  * @param options - Encoding options (padding defaults to false)
  * @returns The base64url encoded string
@@ -45,31 +60,37 @@ export function toBase64(arr: Uint8ArrayBuffer, options?: ToBase64Options): stri
 export function toBase64url(arr: Uint8ArrayBuffer, options?: ToBase64Options): string;
 
 /**
- * Decodes a base64 string to bytes
+ * Decode a base64 string to bytes
+ *
  * Operates in strict mode for last chunk, does not allow whitespace
- * @param str - The base64 encoded string
+ *
+ * @param string - The base64 encoded string
  * @param options - Decoding options
  * @returns The decoded bytes
  */
-export function fromBase64(str: string, options?: FromBase64Options): Uint8ArrayBuffer;
-export function fromBase64(str: string, options: FromBase64Options & { format: 'buffer' }): Buffer;
+export function fromBase64(string: string, options?: FromBase64Options): Uint8ArrayBuffer;
+export function fromBase64(string: string, options: FromBase64Options & { format: 'buffer' }): Buffer;
 
 /**
- * Decodes a base64url string to bytes
+ * Decode a base64url string to bytes
+ *
  * Operates in strict mode for last chunk, does not allow whitespace
- * @param str - The base64url encoded string
+ *
+ * @param string - The base64url encoded string
  * @param options - Decoding options (padding defaults to false)
  * @returns The decoded bytes
  */
-export function fromBase64url(str: string, options?: FromBase64Options): Uint8ArrayBuffer;
-export function fromBase64url(str: string, options: FromBase64Options & { format: 'buffer' }): Buffer;
+export function fromBase64url(string: string, options?: FromBase64Options): Uint8ArrayBuffer;
+export function fromBase64url(string: string, options: FromBase64Options & { format: 'buffer' }): Buffer;
 
 /**
- * Decodes either base64 or base64url string to bytes
+ * Decode either base64 or base64url string to bytes
+ *
  * Automatically detects the variant based on characters present
- * @param str - The base64 or base64url encoded string
+ *
+ * @param string - The base64 or base64url encoded string
  * @param options - Decoding options
  * @returns The decoded bytes
  */
-export function fromBase64any(str: string, options?: FromBase64Options): Uint8ArrayBuffer;
-export function fromBase64any(str: string, options: FromBase64Options & { format: 'buffer' }): Buffer;
+export function fromBase64any(string: string, options?: FromBase64Options): Uint8ArrayBuffer;
+export function fromBase64any(string: string, options: FromBase64Options & { format: 'buffer' }): Buffer;
