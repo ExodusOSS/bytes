@@ -6,7 +6,7 @@ import { utf8fromStringLoose, utf8toString, utf8toStringLoose } from '@exodus/by
 import { createSinglebyteDecoder } from '@exodus/bytes/single-byte.js'
 import labels from './encoding.labels.js'
 import { fromSource, getBOMEncoding, normalizeEncoding, E_ENCODING } from './encoding.api.js'
-import { unfinishedBytes } from './encoding.util.js'
+import { unfinishedBytes, mergePrefix } from './encoding.util.js'
 
 export { labelToName, getBOMEncoding, normalizeEncoding } from './encoding.api.js'
 
@@ -68,32 +68,13 @@ export class TextDecoder {
     if (this.#unicode) {
       let prefix
       if (this.#chunk) {
-        if (empty) {
-          u = this.#chunk // process as final chunk to handle errors and state changes
-        } else if (u.length < 3) {
-          // No reason to bruteforce offsets, also it's possible this doesn't yet end the sequence
-          const a = new Uint8Array(u.length + this.#chunk.length)
-          a.set(this.#chunk)
-          a.set(u, this.#chunk.length)
-          u = a
+        const merged = mergePrefix(u, this.#chunk, this.encoding)
+        if (u.length < 3) {
+          u = merged // might be unfinished, but fully consumed old u
         } else {
-          // Slice off a small portion of u into prefix chunk so we can decode them separately without extending array size
-          const t = new Uint8Array(this.#chunk.length + 3) // We have 1-3 bytes and need 1-3 more bytes
-          t.set(this.#chunk)
-          t.set(u.subarray(0, 3), this.#chunk.length)
-
-          // Stop at the first offset where unfinished bytes reaches 0 or fits into u
-          // If that doesn't happen (u too short), just concat chunk and u completely
-          for (let i = 1; i <= 3; i++) {
-            const unfinished = unfinishedBytes(t, this.#chunk.length + i, this.encoding) // 0-3
-            if (unfinished <= i) {
-              // Always reachable at 3, but we still need 'unfinished' value for it
-              const add = i - unfinished // 0-3
-              prefix = add > 0 ? t.subarray(0, this.#chunk.length + add) : this.#chunk
-              if (add > 0) u = u.subarray(add)
-              break
-            }
-          }
+          prefix = merged // stops at complete chunk
+          const add = prefix.length - this.#chunk.length
+          if (add > 0) u = u.subarray(add)
         }
 
         this.#chunk = null
