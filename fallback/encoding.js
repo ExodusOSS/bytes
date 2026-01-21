@@ -110,17 +110,19 @@ export class TextDecoder {
             u = u.subarray(bom)
           }
         }
+      } else if (!stream && !this.ignoreBOM) {
+        this.#canBOM = true
       }
 
       if (!this.#decode) this.#decode = unicodeDecoder(this.encoding, !this.fatal)
       try {
         const res = (prefix ? this.#decode(prefix) : '') + this.#decode(u) + suffix
         if (res.length > 0 && stream) this.#canBOM = false
-
-        if (!stream) this.#canBOM = !this.ignoreBOM
         return res
       } catch (err) {
         this.#chunk = null // reset unfinished chunk on errors
+        // The correct way per spec seems to be not destroying the decoder state (aka BOM here) in stream mode
+        // See also multi-byte.js
         throw err
       }
 

@@ -715,6 +715,23 @@ describe('Common implementation mistakes', () => {
       }
     })
 
+    test('utf-8 BOM handling', (t) => {
+      // Firefox fails on this
+      {
+        const d = new TextDecoder('utf-8', { fatal: true })
+        t.assert.strictEqual(d.decode(u(0xef, 0xbb, 0xbf), { stream: true }).length, 0) // BOM
+        t.assert.throws(() => d.decode(u(0xff)))
+        t.assert.strictEqual(d.decode(u(0xef, 0xbb, 0xbf)).length, 0)
+      }
+
+      {
+        const d = new TextDecoder('utf-8', { fatal: true })
+        t.assert.strictEqual(d.decode(u(0xef, 0xbb, 0xbf), { stream: true }).length, 0) // BOM
+        t.assert.throws(() => d.decode(u(0xff), { stream: true }))
+        t.assert.strictEqual(d.decode(u(0xef, 0xbb, 0xbf)).length, 1)
+      }
+    })
+
     // https://github.com/facebook/hermes/pull/1855#issuecomment-3632349129
     for (const encoding of ['utf-16le', 'utf-16be']) {
       test(encoding, (t) => {
