@@ -62,12 +62,13 @@ export class TextDecoder {
     if (typeof options !== 'object') throw new TypeError(E_OPTIONS)
     const stream = Boolean(options.stream)
     let u = input === undefined ? new Uint8Array() : fromSource(input)
+    const empty = u.length === 0 // also can't be streaming after next line
+    if (empty && stream) return '' // no state change
 
     if (this.#unicode) {
       let prefix
       if (this.#chunk) {
-        if (u.length === 0) {
-          if (stream) return '' // no change
+        if (empty) {
           u = this.#chunk // process as final chunk to handle errors and state changes
         } else if (u.length < 3) {
           // No reason to bruteforce offsets, also it's possible this doesn't yet end the sequence
@@ -96,8 +97,8 @@ export class TextDecoder {
         }
 
         this.#chunk = null
-      } else if (u.byteLength === 0) {
-        if (!stream) this.#canBOM = !this.ignoreBOM
+      } else if (empty) {
+        this.#canBOM = !this.ignoreBOM // not streaming
         return ''
       }
 
