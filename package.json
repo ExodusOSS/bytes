@@ -2,6 +2,22 @@
   "name": "@exodus/bytes",
   "version": "1.9.0",
   "description": "Various operations on Uint8Array data",
+  "keywords": [
+    "encoding",
+    "uint8array",
+    "textdecoder",
+    "textencoder",
+    "utf8",
+    "utf16",
+    "hex",
+    "base64",
+    "base32",
+    "base58",
+    "base58check",
+    "bech32",
+    "bech32m",
+    "wif"
+  ],
   "scripts": {
     "lint": "eslint .",
     "test:javascriptcore": "npm run test:jsc --",
