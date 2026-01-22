@@ -1,15 +1,15 @@
 /**
- * ```js
- * import { createSinglebyteDecoder, createSinglebyteEncoder } from '@exodus/bytes/single-byte.js'
- * import { windows1252toString, windows1252fromString } from '@exodus/bytes/single-byte.js'
- * import { latin1toString, latin1fromString } from '@exodus/bytes/single-byte.js'
- * ```
- *
  * Decode / encode the legacy single-byte encodings according to the
  * [Encoding standard](https://encoding.spec.whatwg.org/)
  * ([§9](https://encoding.spec.whatwg.org/#legacy-single-byte-encodings),
  * [§14.5](https://encoding.spec.whatwg.org/#x-user-defined)),
  * and [unicode.org](https://unicode.org/Public/MAPPINGS/ISO8859) `iso-8859-*` mappings.
+ *
+ * ```js
+ * import { createSinglebyteDecoder, createSinglebyteEncoder } from '@exodus/bytes/single-byte.js'
+ * import { windows1252toString, windows1252fromString } from '@exodus/bytes/single-byte.js'
+ * import { latin1toString, latin1fromString } from '@exodus/bytes/single-byte.js'
+ * ```
  *
  * Supports all single-byte encodings listed in the WHATWG Encoding standard:
  * `ibm866`, `iso-8859-2`, `iso-8859-3`, `iso-8859-4`, `iso-8859-5`, `iso-8859-6`, `iso-8859-7`, `iso-8859-8`,
