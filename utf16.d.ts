@@ -8,7 +8,7 @@
  * import { utf16fromStringLoose, utf16toStringLoose } from '@exodus/bytes/utf16.js'
  * ```
  *
- * _These methods by design encode/decode BOM (codepoint `U+FEFF` Byte Order Mark) as-is._\
+ * _These methods by design encode/decode BOM (codepoint `U+FEFF` Byte Order Mark) as-is._
  * _If you need BOM handling or detection, use `@exodus/bytes/encoding.js`_
  *
  * @module @exodus/bytes/utf16.js
@@ -43,8 +43,8 @@ export function utf16fromString(string: string, format?: Utf16Format): Uint16Arr
  * Replaces invalid Unicode (unpaired surrogates) with replacement codepoints `U+FFFD`
  * per [WHATWG Encoding](https://encoding.spec.whatwg.org/) specification.
  *
- * _Such replacement is a non-injective function, is irreversable and causes collisions.\
- * Prefer using strict throwing methods for cryptography applications._
+ * _Such replacement is a non-injective function, is irreversible and causes collisions._
+ * _Prefer using strict throwing methods for cryptography applications._
  *
  * @param string - The string to encode
  * @param format - Output format (default: 'uint16')
@@ -75,8 +75,8 @@ export function utf16toString(arr: Uint16Array | Uint8ArrayBuffer, format?: Utf1
  * Replaces invalid UTF-16 byte sequences with replacement codepoints `U+FFFD`
  * per [WHATWG Encoding](https://encoding.spec.whatwg.org/) specification.
  *
- * _Such replacement is a non-injective function, is irreversable and causes collisions.\
- * Prefer using strict throwing methods for cryptography applications._
+ * _Such replacement is a non-injective function, is irreversible and causes collisions._
+ * _Prefer using strict throwing methods for cryptography applications._
  *
  * @param arr - The bytes to decode
  * @param format - Input format (default: 'uint16')
