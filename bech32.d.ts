@@ -39,11 +39,11 @@ export function toBech32(prefix: string, bytes: Uint8ArrayBuffer, limit?: number
 /**
  * Decode a bech32 string to bytes
  *
- * @param str - The bech32 encoded string
+ * @param string - The bech32 encoded string
  * @param limit - Maximum length of the input string (default: 90)
  * @returns The decoded prefix and bytes
  */
-export function fromBech32(str: string, limit?: number): Bech32DecodeResult;
+export function fromBech32(string: string, limit?: number): Bech32DecodeResult;
 
 /**
  * Encode bytes to a bech32m string
@@ -58,19 +58,19 @@ export function toBech32m(prefix: string, bytes: Uint8ArrayBuffer, limit?: numbe
 /**
  * Decode a bech32m string to bytes
  *
- * @param str - The bech32m encoded string
+ * @param string - The bech32m encoded string
  * @param limit - Maximum length of the input string (default: 90)
  * @returns The decoded prefix and bytes
  */
-export function fromBech32m(str: string, limit?: number): Bech32DecodeResult;
+export function fromBech32m(string: string, limit?: number): Bech32DecodeResult;
 
 /**
  * Extract the prefix from a bech32 or bech32m string without full validation
  *
  * This is a quick check that skips most validation.
  *
- * @param str - The bech32/bech32m encoded string
+ * @param string - The bech32/bech32m encoded string
  * @param limit - Maximum length of the input string (default: 90)
  * @returns The lowercase prefix
  */
-export function getPrefix(str: string, limit?: number): string;
+export function getPrefix(string: string, limit?: number): string;

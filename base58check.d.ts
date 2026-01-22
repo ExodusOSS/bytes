@@ -41,13 +41,13 @@ export interface Base58CheckAsync {
   /**
    * Decode a base58check string to bytes asynchronously
    *
-   * @param str - The base58check encoded string
+   * @param string - The base58check encoded string
    * @param format - Output format (default: 'uint8')
    * @returns A Promise that resolves to the decoded bytes
    */
-  decode(str: string, format?: 'uint8'): Promise<Uint8ArrayBuffer>;
-  decode(str: string, format: 'buffer'): Promise<Buffer>;
-  decode(str: string, format?: OutputFormat): Promise<Uint8ArrayBuffer | Buffer>;
+  decode(string: string, format?: 'uint8'): Promise<Uint8ArrayBuffer>;
+  decode(string: string, format: 'buffer'): Promise<Buffer>;
+  decode(string: string, format?: OutputFormat): Promise<Uint8ArrayBuffer | Buffer>;
 }
 
 /**
@@ -65,13 +65,13 @@ export interface Base58CheckSync extends Base58CheckAsync {
   /**
    * Decode a base58check string to bytes synchronously
    *
-   * @param str - The base58check encoded string
+   * @param string - The base58check encoded string
    * @param format - Output format (default: 'uint8')
    * @returns The decoded bytes
    */
-  decodeSync(str: string, format?: 'uint8'): Uint8ArrayBuffer;
-  decodeSync(str: string, format: 'buffer'): Buffer;
-  decodeSync(str: string, format?: OutputFormat): Uint8ArrayBuffer | Buffer;
+  decodeSync(string: string, format?: 'uint8'): Uint8ArrayBuffer;
+  decodeSync(string: string, format: 'buffer'): Buffer;
+  decodeSync(string: string, format?: OutputFormat): Uint8ArrayBuffer | Buffer;
 }
 
 /**
@@ -99,13 +99,13 @@ export function toBase58check(arr: Uint8ArrayBuffer): Promise<string>;
  *
  * Validates the checksum using double SHA-256
  *
- * @param str - The base58check encoded string
+ * @param string - The base58check encoded string
  * @param format - Output format (default: 'uint8')
  * @returns A Promise that resolves to the decoded bytes
  */
-export function fromBase58check(str: string, format?: 'uint8'): Promise<Uint8ArrayBuffer>;
-export function fromBase58check(str: string, format: 'buffer'): Promise<Buffer>;
-export function fromBase58check(str: string, format?: OutputFormat): Promise<Uint8ArrayBuffer | Buffer>;
+export function fromBase58check(string: string, format?: 'uint8'): Promise<Uint8ArrayBuffer>;
+export function fromBase58check(string: string, format: 'buffer'): Promise<Buffer>;
+export function fromBase58check(string: string, format?: OutputFormat): Promise<Uint8ArrayBuffer | Buffer>;
 
 /**
  * Encode bytes to base58check string synchronously
@@ -122,10 +122,10 @@ export function toBase58checkSync(arr: Uint8ArrayBuffer): string;
  *
  * Validates the checksum using double SHA-256
  *
- * @param str - The base58check encoded string
+ * @param string - The base58check encoded string
  * @param format - Output format (default: 'uint8')
  * @returns The decoded bytes
  */
-export function fromBase58checkSync(str: string, format?: 'uint8'): Uint8ArrayBuffer;
-export function fromBase58checkSync(str: string, format: 'buffer'): Buffer;
-export function fromBase58checkSync(str: string, format?: OutputFormat): Uint8ArrayBuffer | Buffer;
+export function fromBase58checkSync(string: string, format?: 'uint8'): Uint8ArrayBuffer;
+export function fromBase58checkSync(string: string, format: 'buffer'): Buffer;
+export function fromBase58checkSync(string: string, format?: OutputFormat): Uint8ArrayBuffer | Buffer;
