@@ -558,6 +558,11 @@ Create a base58check encoder/decoder with custom hash functions
 
 ### `@exodus/bytes/wif.js`
 
+Wallet Import Format (WIF) encoding and decoding.
+
+Mostly matches npmjs.com/wif, but with extra checks + using our base58check.
+Also no inconsistent behavior on Buffer/Uint8Array input.
+
 ```js
 import { fromWifString, toWifString } from '@exodus/bytes/wif.js'
 import { fromWifStringSync, toWifStringSync } from '@exodus/bytes/wif.js'
@@ -565,10 +570,41 @@ import { fromWifStringSync, toWifStringSync } from '@exodus/bytes/wif.js'
 
 On non-Node.js, requires peer dependency [@noble/hashes](https://www.npmjs.com/package/@noble/hashes) to be installed.
 
-#### `async fromWifString(string, version)`
-#### `fromWifStringSync(string, version)`
+#### `async fromWifString(string, expectedVersion)`
+
+Decode a WIF string to WIF data.
+
+Returns a promise that resolves to an object with `{ version, privateKey, compressed }`.
+
+The optional `expectedVersion` parameter validates the version byte.
+
+Throws if the WIF string is invalid or version doesn't match.
+
+#### `fromWifStringSync(string, expectedVersion)`
+
+Decode a WIF string to WIF data (synchronous).
+
+Returns an object with `{ version, privateKey, compressed }`.
+
+The optional `expectedVersion` parameter validates the version byte.
+
+Throws if the WIF string is invalid or version doesn't match.
+
 #### `async toWifString({ version, privateKey, compressed })`
+
+Encode WIF data to a WIF string.
+
+Returns a promise that resolves to the WIF encoded string.
+
+Throws if the WIF data is invalid.
+
 #### `toWifStringSync({ version, privateKey, compressed })`
+
+Encode WIF data to a WIF string (synchronous).
+
+Returns the WIF encoded string.
+
+Throws if the WIF data is invalid.
 
 ### `@exodus/bytes/array.js`
 
