@@ -244,7 +244,7 @@ those alias to `new TextDecoder('windows-1252')`.
 
 Encode a string to `iso-8859-1` bytes.
 
-Will throw on non well-formed strings or any codepoints which could not be encoded in `iso-8859-1`.
+Throws on non well-formed strings or any codepoints which could not be encoded in `iso-8859-1`.
 
 Same as:
 ```js
@@ -266,7 +266,7 @@ const windows1252toString = createSinglebyteDecoder('windows-1252')
 
 Encode a string to `windows-1252` bytes.
 
-Will throw on non well-formed strings or any codepoints which could not be encoded in `windows-1252`.
+Throws on non well-formed strings or any codepoints which could not be encoded in `windows-1252`.
 
 Same as:
 ```js

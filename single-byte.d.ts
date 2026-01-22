@@ -100,7 +100,7 @@ export const latin1toString: (arr: Uint8ArrayBuffer) => string;
 /**
  * Encode a string to `iso-8859-1` bytes.
  *
- * Will throw on non well-formed strings or any codepoints which could not be encoded in `iso-8859-1`.
+ * Throws on non well-formed strings or any codepoints which could not be encoded in `iso-8859-1`.
  *
  * Same as:
  * ```js
@@ -130,7 +130,7 @@ export const windows1252toString: (arr: Uint8ArrayBuffer) => string;
 /**
  * Encode a string to `windows-1252` bytes.
  *
- * Will throw on non well-formed strings or any codepoints which could not be encoded in `windows-1252`.
+ * Throws on non well-formed strings or any codepoints which could not be encoded in `windows-1252`.
  *
  * Same as:
  * ```js
