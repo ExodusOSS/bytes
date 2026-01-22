@@ -1,5 +1,5 @@
 /**
- * Implements Base64 from [RFC4648](https://datatracker.ietf.org/doc/html/rfc4648)
+ * Implements base64 and base64url from [RFC4648](https://datatracker.ietf.org/doc/html/rfc4648)
  * (no differences from [RFC3548](https://datatracker.ietf.org/doc/html/rfc4648)).
  *
  * ```js
@@ -26,7 +26,7 @@ export interface ToBase64Options {
 /**
  * Padding mode for base64 decoding
  * - `true`: padding is required
- * - `false`: padding is not allowed
+ * - `false`: padding is not allowed (default for base64url)
  * - `'both'`: padding is optional (default for base64)
  */
 export type PaddingMode = boolean | 'both';

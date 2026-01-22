@@ -82,6 +82,7 @@
     "/array.d.ts",
     "/assert.js",
     "/base32.js",
+    "/base32.d.ts",
     "/base58.js",
     "/base58check.js",
     "/base58check.node.js",
@@ -125,7 +126,10 @@
       "types": "./array.d.ts",
       "default": "./array.js"
     },
-    "./base32.js": "./base32.js",
+    "./base32.js": {
+      "types": "./base32.d.ts",
+      "default": "./base32.js"
+    },
     "./base58.js": "./base58.js",
     "./base58check.js": {
       "node": "./base58check.node.js",

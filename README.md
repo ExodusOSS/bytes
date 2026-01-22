@@ -326,7 +326,7 @@ Encode a `Uint8Array` to a lowercase hex string
 
 ### `@exodus/bytes/base64.js`
 
-Implements Base64 from [RFC4648](https://datatracker.ietf.org/doc/html/rfc4648)
+Implements base64 and base64url from [RFC4648](https://datatracker.ietf.org/doc/html/rfc4648)
 (no differences from [RFC3548](https://datatracker.ietf.org/doc/html/rfc4648)).
 
 ```js
@@ -363,7 +363,7 @@ Encode a `Uint8Array` to a base64url string (RFC 4648)
 
 ### `@exodus/bytes/base32.js`
 
-Implements Base32 from [RFC4648](https://datatracker.ietf.org/doc/html/rfc4648)
+Implements base32 and base32hex from [RFC4648](https://datatracker.ietf.org/doc/html/rfc4648)
 (no differences from [RFC3548](https://datatracker.ietf.org/doc/html/rfc4648)).
 
 ```js
@@ -372,9 +372,24 @@ import { fromBase32hex, toBase32hex } from '@exodus/bytes/base32.js'
 ```
 
 #### `fromBase32(string, { format = 'uint8', padding = 'both' })`
+
+Decode a base32 string to bytes
+
+Operates in strict mode for last chunk, does not allow whitespace
+
 #### `fromBase32hex(string, { format = 'uint8', padding = 'both' })`
+
+Decode a base32hex string to bytes
+
+Operates in strict mode for last chunk, does not allow whitespace
+
 #### `toBase32(arr, { padding = false })`
+
+Encode a `Uint8Array` to a base32 string (RFC 4648)
+
 #### `toBase32hex(arr, { padding = false })`
+
+Encode a `Uint8Array` to a base32hex string (RFC 4648)
 
 ### `@exodus/bytes/bech32.js`
 
