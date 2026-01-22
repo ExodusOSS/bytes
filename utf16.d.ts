@@ -16,13 +16,7 @@
 
 /// <reference types="node" />
 
-import type { Uint8ArrayBuffer } from './array.js';
-
-// >= TypeScript 5.9 made Uint16Array templated with <> and defaulted to ArrayBufferLike
-// which would incorrectly accept SharedArrayBuffer instances.
-// < TypeScript 5.7 doesn't support templates for Uint16Array.
-// So this type is defined as a workaround to evaluate to Uint16Array<ArrayBuffer> on all versions of TypeScript.
-export type Uint16ArrayBuffer = ReturnType<typeof Uint16Array.from>;
+import type { Uint8ArrayBuffer, Uint16ArrayBuffer } from './array.js';
 
 /**
  * Output format for UTF-16 encoding
