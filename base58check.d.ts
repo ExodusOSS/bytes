@@ -1,0 +1,136 @@
+/**
+ * Base58Check encoding and decoding with checksum validation.
+ *
+ * Base58Check is a modified Base58 binary-to-text encoding used primarily in Bitcoin.
+ * It includes a checksum to detect errors in data transmission or storage.
+ *
+ * ```js
+ * import {
+ *   toBase58check,
+ *   fromBase58check,
+ *   toBase58checkSync,
+ *   fromBase58checkSync,
+ *   makeBase58check
+ * } from '@exodus/bytes/base58check.js'
+ * ```
+ *
+ * @module @exodus/bytes/base58check.js
+ */
+
+/// <reference types="node" />
+
+import type { OutputFormat, Uint8ArrayBuffer } from './array.js';
+
+/**
+ * Hash function type that takes Uint8Array and returns a Promise of Uint8Array
+ */
+export type HashFunction = (data: Uint8Array) => Promise<Uint8Array>;
+
+/**
+ * Synchronous hash function type that takes Uint8Array and returns Uint8Array
+ */
+export type HashFunctionSync = (data: Uint8Array) => Uint8Array;
+
+/**
+ * Base58Check encoder/decoder instance with async methods
+ */
+export interface Base58CheckAsync {
+  /**
+   * Encode bytes to base58check string asynchronously
+   *
+   * @param arr - The input bytes to encode
+   * @returns A Promise that resolves to the base58check encoded string
+   */
+  encode(arr: Uint8ArrayBuffer): Promise<string>;
+
+  /**
+   * Decode a base58check string to bytes asynchronously
+   *
+   * @param str - The base58check encoded string
+   * @param format - Output format (default: 'uint8')
+   * @returns A Promise that resolves to the decoded bytes
+   */
+  decode(str: string, format?: 'uint8'): Promise<Uint8Array>;
+  decode(str: string, format: 'buffer'): Promise<Buffer>;
+  decode(str: string, format?: OutputFormat): Promise<Uint8Array | Buffer>;
+}
+
+/**
+ * Base58Check encoder/decoder instance with both async and sync methods
+ */
+export interface Base58CheckSync extends Base58CheckAsync {
+  /**
+   * Encode bytes to base58check string synchronously
+   *
+   * @param arr - The input bytes to encode
+   * @returns The base58check encoded string
+   */
+  encodeSync(arr: Uint8ArrayBuffer): string;
+
+  /**
+   * Decode a base58check string to bytes synchronously
+   *
+   * @param str - The base58check encoded string
+   * @param format - Output format (default: 'uint8')
+   * @returns The decoded bytes
+   */
+  decodeSync(str: string, format?: 'uint8'): Uint8Array;
+  decodeSync(str: string, format: 'buffer'): Buffer;
+  decodeSync(str: string, format?: OutputFormat): Uint8Array | Buffer;
+}
+
+/**
+ * Create a base58check encoder/decoder with custom hash functions
+ *
+ * @param hashAlgo - Async hash function (typically double SHA-256)
+ * @param hashAlgoSync - Optional sync hash function
+ * @returns Base58Check encoder/decoder instance
+ */
+export function makeBase58check(hashAlgo: HashFunction, hashAlgoSync?: HashFunctionSync): Base58CheckSync;
+export function makeBase58check(hashAlgo: HashFunction): Base58CheckAsync;
+
+/**
+ * Encode bytes to base58check string asynchronously
+ *
+ * Uses double SHA-256 for checksum calculation
+ *
+ * @param arr - The input bytes to encode
+ * @returns A Promise that resolves to the base58check encoded string
+ */
+export function toBase58check(arr: Uint8ArrayBuffer): Promise<string>;
+
+/**
+ * Decode a base58check string to bytes asynchronously
+ *
+ * Validates the checksum using double SHA-256
+ *
+ * @param str - The base58check encoded string
+ * @param format - Output format (default: 'uint8')
+ * @returns A Promise that resolves to the decoded bytes
+ */
+export function fromBase58check(str: string, format?: 'uint8'): Promise<Uint8Array>;
+export function fromBase58check(str: string, format: 'buffer'): Promise<Buffer>;
+export function fromBase58check(str: string, format?: OutputFormat): Promise<Uint8Array | Buffer>;
+
+/**
+ * Encode bytes to base58check string synchronously
+ *
+ * Uses double SHA-256 for checksum calculation
+ *
+ * @param arr - The input bytes to encode
+ * @returns The base58check encoded string
+ */
+export function toBase58checkSync(arr: Uint8ArrayBuffer): string;
+
+/**
+ * Decode a base58check string to bytes synchronously
+ *
+ * Validates the checksum using double SHA-256
+ *
+ * @param str - The base58check encoded string
+ * @param format - Output format (default: 'uint8')
+ * @returns The decoded bytes
+ */
+export function fromBase58checkSync(str: string, format?: 'uint8'): Uint8Array;
+export function fromBase58checkSync(str: string, format: 'buffer'): Buffer;
+export function fromBase58checkSync(str: string, format?: OutputFormat): Uint8Array | Buffer;
