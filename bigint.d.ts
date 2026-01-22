@@ -26,11 +26,12 @@ export interface FromBigIntOptions {
  * Convert a BigInt to a Uint8Array or Buffer
  *
  * The BigInt is converted to a hex string and then padded to the specified length.
+ * The output bytes are in big-endian format.
  * Throws if the BigInt is negative or cannot fit into the specified length.
  *
  * @param x - The BigInt to convert (must be non-negative)
  * @param options - Conversion options
- * @returns The converted bytes
+ * @returns The converted bytes in big-endian format
  */
 export function fromBigInt(x: bigint, options: { length: number; format?: 'uint8' }): Uint8ArrayBuffer;
 export function fromBigInt(x: bigint, options: { length: number; format: 'buffer' }): Buffer;
