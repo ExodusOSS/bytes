@@ -45,4 +45,4 @@ export function fromBigInt(bigint: bigint, options: FromBigIntOptions): Uint8Arr
  * @param arr - The bytes to convert
  * @returns The BigInt representation
  */
-export function toBigInt(arr: ArrayBufferView): bigint;
+export function toBigInt(arr: Uint8ArrayBuffer): bigint;
