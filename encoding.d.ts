@@ -1,4 +1,11 @@
 /**
+ * Implements the [Encoding standard](https://encoding.spec.whatwg.org/):
+ * [TextDecoder](https://encoding.spec.whatwg.org/#interface-textdecoder),
+ * [TextEncoder](https://encoding.spec.whatwg.org/#interface-textencoder),
+ * [TextDecoderStream](https://encoding.spec.whatwg.org/#interface-textdecoderstream),
+ * [TextEncoderStream](https://encoding.spec.whatwg.org/#interface-textencoderstream),
+ * some [hooks](https://encoding.spec.whatwg.org/#specification-hooks).
+ *
  * ```js
  * import { TextDecoder, TextEncoder } from '@exodus/bytes/encoding.js'
  * import { TextDecoderStream, TextEncoderStream } from '@exodus/bytes/encoding.js' // Requires Streams
@@ -6,13 +13,6 @@
  * // Hooks for standards
  * import { getBOMEncoding, legacyHookDecode, labelToName, normalizeEncoding } from '@exodus/bytes/encoding.js'
  * ```
- *
- * Implements the [Encoding standard](https://encoding.spec.whatwg.org/):
- * [TextDecoder](https://encoding.spec.whatwg.org/#interface-textdecoder),
- * [TextEncoder](https://encoding.spec.whatwg.org/#interface-textencoder),
- * [TextDecoderStream](https://encoding.spec.whatwg.org/#interface-textdecoderstream),
- * [TextEncoderStream](https://encoding.spec.whatwg.org/#interface-textencoderstream),
- * some [hooks](https://encoding.spec.whatwg.org/#specification-hooks).
  *
  * @module @exodus/bytes/encoding.js
  */
