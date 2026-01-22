@@ -306,7 +306,8 @@ const windows1252fromString = createSinglebyteEncoder('windows-1252', { mode: 'f
 
 ### `@exodus/bytes/multi-byte.js`
 
-Decode / encode the legacy multi-byte encodings according to the [Encoding standard](https://encoding.spec.whatwg.org/)
+Decode / encode the legacy multi-byte encodings according to the
+[Encoding standard](https://encoding.spec.whatwg.org/)
 ([§10](https://encoding.spec.whatwg.org/#legacy-multi-byte-chinese-(simplified)-encodings),
 [§11](https://encoding.spec.whatwg.org/#legacy-multi-byte-chinese-(traditional)-encodings),
 [§12](https://encoding.spec.whatwg.org/#legacy-multi-byte-japanese-encodings),
