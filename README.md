@@ -298,12 +298,25 @@ That function will have state while `stream = true` is used.
 
 ### `@exodus/bytes/bigint.js`
 
+Convert between BigInt and Uint8Array
+
 ```js
 import { fromBigInt, toBigInt } from '@exodus/bytes/bigint.js'
 ```
 
 #### `fromBigInt(bigint, { length, format = 'uint8' })`
+
+Convert a BigInt to a Uint8Array or Buffer
+
+The output bytes are in big-endian format.
+
+Throws if the BigInt is negative or cannot fit into the specified length.
+
 #### `toBigInt(arr)`
+
+Convert a Uint8Array or Buffer to a BigInt
+
+The bytes are interpreted as a big-endian unsigned integer.
 
 ### `@exodus/bytes/hex.js`
 
