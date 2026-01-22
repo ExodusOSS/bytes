@@ -83,7 +83,7 @@ export function createSinglebyteEncoder(
  * @param arr - The bytes to decode
  * @returns The decoded string
  */
-export const latin1toString: (arr: Uint8ArrayBuffer) => string;
+export function latin1toString(arr: Uint8ArrayBuffer): string;
 
 /**
  * Encode a string to `iso-8859-1` bytes.
@@ -98,7 +98,7 @@ export const latin1toString: (arr: Uint8ArrayBuffer) => string;
  * @param string - The string to encode
  * @returns The encoded bytes
  */
-export const latin1fromString: (string: string) => Uint8ArrayBuffer;
+export function latin1fromString(string: string): Uint8ArrayBuffer;
 
 /**
  * Decode `windows-1252` bytes to a string.
@@ -113,7 +113,7 @@ export const latin1fromString: (string: string) => Uint8ArrayBuffer;
  * @param arr - The bytes to decode
  * @returns The decoded string
  */
-export const windows1252toString: (arr: Uint8ArrayBuffer) => string;
+export function windows1252toString(arr: Uint8ArrayBuffer): string;
 
 /**
  * Encode a string to `windows-1252` bytes.
@@ -128,4 +128,4 @@ export const windows1252toString: (arr: Uint8ArrayBuffer) => string;
  * @param string - The string to encode
  * @returns The encoded bytes
  */
-export const windows1252fromString: (string: string) => Uint8ArrayBuffer;
+export function windows1252fromString(string: string): Uint8ArrayBuffer;
