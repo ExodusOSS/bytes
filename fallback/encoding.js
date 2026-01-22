@@ -100,10 +100,11 @@ export class TextDecoder {
         }
       }
 
+      let seenBOM = false
       if (this.#canBOM) {
         const bom = this.#findBom(prefix ?? u)
         if (bom) {
-          if (stream) this.#canBOM = false
+          seenBOM = true
           if (prefix) {
             prefix = prefix.subarray(bom)
           } else {
@@ -117,7 +118,8 @@ export class TextDecoder {
       if (!this.#decode) this.#decode = unicodeDecoder(this.encoding, !this.fatal)
       try {
         const res = (prefix ? this.#decode(prefix) : '') + this.#decode(u) + suffix
-        if (res.length > 0 && stream) this.#canBOM = false
+        // "BOM seen" is set on the current decode call only if it did not error, in "serialize I/O queue" after decoding
+        if (stream && (seenBOM || res.length > 0)) this.#canBOM = false
         return res
       } catch (err) {
         this.#chunk = null // reset unfinished chunk on errors

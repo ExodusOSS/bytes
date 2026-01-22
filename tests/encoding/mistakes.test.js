@@ -713,6 +713,16 @@ describe('Common implementation mistakes', () => {
         t.assert.throws(() => fatal.decode(u(0xfd, 0xef), { stream: true }))
         t.assert.strictEqual(fatal.decode(), '')
       }
+
+      // Chrome fails
+      {
+        const d = new TextDecoder('utf-8', { fatal: true })
+        t.assert.strictEqual(d.decode(u(0xea, 0xaf, 0x8d)), '\uABCD')
+        t.assert.strictEqual(d.decode(u(0xea), { stream: true }).length, 0)
+        t.assert.throws(() => d.decode(u(0xea, 0xaf, 0x8d), { stream: true }))
+        t.assert.strictEqual(d.decode(u(0xea, 0xaf, 0x8d), { stream: true }), '\uABCD')
+        t.assert.strictEqual(d.decode(u(), { stream: true }).length, 0)
+      }
     })
 
     test('utf-8 BOM handling', (t) => {
@@ -724,11 +734,33 @@ describe('Common implementation mistakes', () => {
         t.assert.strictEqual(d.decode(u(0xef, 0xbb, 0xbf)).length, 0)
       }
 
+      // Bun fails
       {
         const d = new TextDecoder('utf-8', { fatal: true })
         t.assert.strictEqual(d.decode(u(0xef, 0xbb, 0xbf), { stream: true }).length, 0) // BOM
         t.assert.throws(() => d.decode(u(0xff), { stream: true }))
         t.assert.strictEqual(d.decode(u(0xef, 0xbb, 0xbf)).length, 1)
+      }
+
+      // WebKit, FireFox, Servo, Deno got this wrong. Chrome and Node.js pass
+      {
+        const d = new TextDecoder('utf-8', { fatal: true })
+        t.assert.throws(() => d.decode(u(0x20, 0xff), { stream: true }))
+        t.assert.strictEqual(d.decode(u(0xef, 0xbb, 0xbf)).length, 0)
+        t.assert.throws(() => d.decode(u(0xff), { stream: true }))
+        t.assert.strictEqual(d.decode(u(0xef, 0xbb, 0xbf)).length, 0)
+        t.assert.throws(() => d.decode(u(0xef, 0xbb, 0xbf, 0xff), { stream: true }))
+        t.assert.strictEqual(d.decode(u(0xef, 0xbb, 0xbf)).length, 0)
+      }
+
+      // Chrome has this wrong
+      {
+        const d = new TextDecoder('utf-8', { fatal: true })
+        t.assert.strictEqual(d.decode(u(0xef), { stream: true }).length, 0)
+        t.assert.throws(() => d.decode(u(0xef, 0xbb, 0xbf), { stream: true }))
+        t.assert.strictEqual(d.decode(u(0xef, 0xbb, 0xbf), { stream: true }).length, 0)
+        t.assert.strictEqual(d.decode(u(0xef, 0xbb, 0xbf), { stream: true }).length, 1)
+        t.assert.strictEqual(d.decode(u(), { stream: true }).length, 0)
       }
     })
 
