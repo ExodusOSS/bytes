@@ -317,7 +317,7 @@ Decode / encode the legacy multi-byte encodings according to the
 import { createMultibyteDecoder, createMultibyteEncoder } from '@exodus/bytes/multi-byte.js'
 ```
 
-Supports all legacy multi-byte encodings listed in the standard:
+Supports all legacy multi-byte encodings listed in the WHATWG Encoding standard:
 `gbk`, `gb18030`, `big5`, `euc-jp`, `iso-2022-jp`, `shift_jis`, `euc-kr`.
 
 #### `createMultibyteDecoder(encoding, loose = false)`
@@ -326,7 +326,9 @@ Create a decoder for a supported legacy multi-byte `encoding`, given its lowerca
 
 Returns a function `decode(arr, stream = false)` that decodes bytes to a string.
 
-That function will have state while `stream = true` is used.
+The returned function will maintain internal state while `stream = true` is used, allowing it to
+handle incomplete multi-byte sequences across multiple calls.
+State is reset when `stream = false` or when the function is called without the `stream` parameter.
 
 #### `createMultibyteEncoder(encoding, { mode = 'fatal' })`
 
