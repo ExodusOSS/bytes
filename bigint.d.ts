@@ -29,13 +29,13 @@ export interface FromBigIntOptions {
  *
  * Throws if the BigInt is negative or cannot fit into the specified length.
  *
- * @param x - The BigInt to convert (must be non-negative)
+ * @param bigint - The BigInt to convert (must be non-negative)
  * @param options - Conversion options
  * @returns The converted bytes in big-endian format
  */
-export function fromBigInt(x: bigint, options: { length: number; format?: 'uint8' }): Uint8ArrayBuffer;
-export function fromBigInt(x: bigint, options: { length: number; format: 'buffer' }): Buffer;
-export function fromBigInt(x: bigint, options: FromBigIntOptions): Uint8ArrayBuffer | Buffer;
+export function fromBigInt(bigint: bigint, options: { length: number; format?: 'uint8' }): Uint8ArrayBuffer;
+export function fromBigInt(bigint: bigint, options: { length: number; format: 'buffer' }): Buffer;
+export function fromBigInt(bigint: bigint, options: FromBigIntOptions): Uint8ArrayBuffer | Buffer;
 
 /**
  * Convert a Uint8Array or Buffer to a BigInt
