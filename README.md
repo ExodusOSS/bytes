@@ -307,10 +307,10 @@ const windows1252fromString = createSinglebyteEncoder('windows-1252', { mode: 'f
 ### `@exodus/bytes/multi-byte.js`
 
 ```js
-import { createMultibyteDecoder } from '@exodus/bytes/multi-byte.js'
+import { createMultibyteDecoder, createMultibyteEncoder } from '@exodus/bytes/multi-byte.js'
 ```
 
-Decode the legacy multi-byte encodings according to the [Encoding standard](https://encoding.spec.whatwg.org/)
+Decode / encode the legacy multi-byte encodings according to the [Encoding standard](https://encoding.spec.whatwg.org/)
 ([§10](https://encoding.spec.whatwg.org/#legacy-multi-byte-chinese-(simplified)-encodings),
 [§11](https://encoding.spec.whatwg.org/#legacy-multi-byte-chinese-(traditional)-encodings),
 [§12](https://encoding.spec.whatwg.org/#legacy-multi-byte-japanese-encodings),
@@ -326,6 +326,15 @@ Create a decoder for a supported legacy multi-byte `encoding`, given its lowerca
 Returns a function `decode(arr, stream = false)` that decodes bytes to a string.
 
 That function will have state while `stream = true` is used.
+
+#### `createMultibyteEncoder(encoding, { mode = 'fatal' })`
+
+Create an encoder for a supported legacy multi-byte `encoding`, given its lowercased name `encoding`.
+
+Returns a function `encode(string)` that encodes a string to bytes.
+
+In `'fatal'` mode (default), will throw on non well-formed strings or any codepoints which could
+not be encoded in the target encoding.
 
 ### `@exodus/bytes/bigint.js`
 
