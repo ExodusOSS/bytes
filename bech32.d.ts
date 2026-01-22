@@ -27,7 +27,7 @@ export interface Bech32DecodeResult {
 }
 
 /**
- * Encode bytes to a bech32 string (BIP 173)
+ * Encode bytes to a bech32 string
  *
  * @param prefix - The human-readable prefix (e.g., 'bc' for Bitcoin)
  * @param bytes - The input bytes to encode
@@ -37,7 +37,7 @@ export interface Bech32DecodeResult {
 export function toBech32(prefix: string, bytes: Uint8ArrayBuffer, limit?: number): string;
 
 /**
- * Decode a bech32 string to bytes (BIP 173)
+ * Decode a bech32 string to bytes
  *
  * @param str - The bech32 encoded string
  * @param limit - Maximum length of the input string (default: 90)
@@ -46,7 +46,7 @@ export function toBech32(prefix: string, bytes: Uint8ArrayBuffer, limit?: number
 export function fromBech32(str: string, limit?: number): Bech32DecodeResult;
 
 /**
- * Encode bytes to a bech32m string (BIP 350)
+ * Encode bytes to a bech32m string
  *
  * @param prefix - The human-readable prefix (e.g., 'bc' for Bitcoin)
  * @param bytes - The input bytes to encode
@@ -56,7 +56,7 @@ export function fromBech32(str: string, limit?: number): Bech32DecodeResult;
 export function toBech32m(prefix: string, bytes: Uint8ArrayBuffer, limit?: number): string;
 
 /**
- * Decode a bech32m string to bytes (BIP 350)
+ * Decode a bech32m string to bytes
  *
  * @param str - The bech32m encoded string
  * @param limit - Maximum length of the input string (default: 90)

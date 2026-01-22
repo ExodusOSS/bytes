@@ -461,11 +461,25 @@ import { getPrefix } from '@exodus/bytes/bech32.js'
 
 #### `getPrefix(string, limit = 90)`
 
+Extract the prefix from a bech32 or bech32m string without full validation
+
+This is a quick check that skips most validation.
+
 #### `fromBech32(string, limit = 90)`
+
+Decode a bech32 string to bytes
+
 #### `toBech32(prefix, bytes, limit = 90)`
 
+Encode bytes to a bech32 string
+
 #### `fromBech32m(string, limit = 90)`
+
+Decode a bech32m string to bytes
+
 #### `toBech32m(prefix, bytes, limit = 90)`
+
+Encode bytes to a bech32m string
 
 ### `@exodus/bytes/base58.js`
 
