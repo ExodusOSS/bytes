@@ -1,10 +1,12 @@
 /**
  * Implements bech32 and bech32m from
- * [BIP173](https://github.com/bitcoin/bips/blob/master/bip-0173.mediawiki)
- * and [BIP350](https://github.com/bitcoin/bips/blob/master/bip-0350.mediawiki).
+ * [BIP-0173](https://github.com/bitcoin/bips/blob/master/bip-0173.mediawiki#specification)
+ * and [BIP-0350](https://github.com/bitcoin/bips/blob/master/bip-0350.mediawiki#specification).
  *
  * ```js
- * import { fromBech32, toBech32, fromBech32m, toBech32m, getPrefix } from '@exodus/bytes/bech32.js'
+ * import { fromBech32, toBech32 } from '@exodus/bytes/bech32.js'
+ * import { fromBech32m, toBech32m } from '@exodus/bytes/bech32.js'
+ * import { getPrefix } from '@exodus/bytes/bech32.js'
  * ```
  *
  * @module @exodus/bytes/bech32.js
@@ -21,7 +23,7 @@ export interface Bech32DecodeResult {
   /** The human-readable prefix */
   prefix: string;
   /** The decoded bytes */
-  bytes: Uint8Array;
+  bytes: Uint8ArrayBuffer;
 }
 
 /**
