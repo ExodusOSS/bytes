@@ -25,7 +25,6 @@ export interface FromBigIntOptions {
 /**
  * Convert a BigInt to a Uint8Array or Buffer
  *
- * The BigInt is converted to a hex string and then padded to the specified length.
  * The output bytes are in big-endian format.
  * Throws if the BigInt is negative or cannot fit into the specified length.
  *
