@@ -5,7 +5,8 @@
  * Also no inconsistent behavior on Buffer/Uint8Array input.
  *
  * ```js
- * import { fromWifString, toWifString, fromWifStringSync, toWifStringSync } from '@exodus/bytes/wif.js'
+ * import { fromWifString, toWifString } from '@exodus/bytes/wif.js'
+ * import { fromWifStringSync, toWifStringSync } from '@exodus/bytes/wif.js'
  * ```
  *
  * @module @exodus/bytes/wif.js
