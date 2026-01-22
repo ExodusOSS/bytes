@@ -1,5 +1,5 @@
 /**
- * Utilities for converting between BigInt and Uint8Array.
+ * Convert between BigInt and Uint8Array
  *
  * ```js
  * import { fromBigInt, toBigInt } from '@exodus/bytes/bigint.js'
