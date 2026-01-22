@@ -154,13 +154,40 @@ import { utf16fromString, utf16toString } from '@exodus/bytes/utf16.js'
 import { utf16fromStringLoose, utf16toStringLoose } from '@exodus/bytes/utf16.js'
 ```
 
-_These methods by design encode/decode BOM (codepoint `U+FEFF` Byte Order Mark) as-is._
+_These methods by design encode/decode BOM (codepoint `U+FEFF` Byte Order Mark) as-is._\
 _If you need BOM handling or detection, use `@exodus/bytes/encoding.js`_
 
 #### `utf16fromString(string, format = 'uint16')`
+
+Encode a string to UTF-16 bytes (strict mode)
+
+Throws on invalid Unicode (unpaired surrogates)
+
 #### `utf16fromStringLoose(string, format = 'uint16')`
-#### `utf16toString(arr, 'uint16')`
-#### `utf16toStringLoose(arr, 'uint16')`
+
+Encode a string to UTF-16 bytes (loose mode)
+
+Replaces invalid Unicode (unpaired surrogates) with replacement codepoints `U+FFFD`
+per [WHATWG Encoding](https://encoding.spec.whatwg.org/) specification.
+
+_Such replacement is a non-injective function, is irreversible and causes collisions.\
+Prefer using strict throwing methods for cryptography applications._
+
+#### `utf16toString(arr, format = 'uint16')`
+
+Decode UTF-16 bytes to a string (strict mode)
+
+Throws on invalid UTF-16 byte sequences
+
+#### `utf16toStringLoose(arr, format = 'uint16')`
+
+Decode UTF-16 bytes to a string (loose mode)
+
+Replaces invalid UTF-16 byte sequences with replacement codepoints `U+FFFD`
+per [WHATWG Encoding](https://encoding.spec.whatwg.org/) specification.
+
+_Such replacement is a non-injective function, is irreversible and causes collisions.\
+Prefer using strict throwing methods for cryptography applications._
 
 ### `@exodus/bytes/single-byte.js`
 
