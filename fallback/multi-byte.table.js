@@ -104,6 +104,9 @@ export function getTable(id) {
     let a = 0, b = 0 // prettier-ignore
     const idx = indices[id]
     while (idx.length > 0) res.push([(a += idx.shift()), (b += idx.shift())]) // destroying, we remove it later anyway
+  } else if (id.endsWith('-katakana')) {
+    let a = -1
+    res = indices[id].map((x) => (a += x + 1))
   } else if (id === 'big5') {
     if (!Object.hasOwn(sizes, id)) throw new Error('Unknown encoding')
     res = new Uint32Array(sizes[id]) // array of strings or undefined

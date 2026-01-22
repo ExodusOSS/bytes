@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { test, describe } from 'node:test'
 import { getTable, sizes } from '../fallback/multi-byte.table.js'
-import { multiByte, gb18030ranges } from './encoding/fixtures/indexes.cjs'
+import { multiByte, gb18030ranges, katakana } from './encoding/fixtures/indexes.cjs'
 
 const encodings = Object.keys(sizes)
 
@@ -130,5 +130,9 @@ describe('multi-byte encodings index: WHATWG non-normative indexes.json', () => 
 
   test('gb18030-ranges', (t) => {
     t.assert.deepStrictEqual(getTable('gb18030-ranges'), gb18030ranges)
+  })
+
+  test('iso-2022-jp-katakana', (t) => {
+    t.assert.deepStrictEqual(getTable('iso-2022-jp-katakana'), katakana)
   })
 })
