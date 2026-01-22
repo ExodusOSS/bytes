@@ -26,6 +26,7 @@ export interface FromBigIntOptions {
  * Convert a BigInt to a Uint8Array or Buffer
  *
  * The output bytes are in big-endian format.
+ *
  * Throws if the BigInt is negative or cannot fit into the specified length.
  *
  * @param x - The BigInt to convert (must be non-negative)
