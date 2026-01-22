@@ -32,7 +32,7 @@ export interface FromBigIntOptions {
  * @param options - Conversion options
  * @returns The converted bytes
  */
-export function fromBigInt(x: bigint, options: FromBigIntOptions & { format: 'uint8' }): Uint8ArrayBuffer;
+export function fromBigInt(x: bigint, options: Omit<FromBigIntOptions, 'format'> & { format?: 'uint8' }): Uint8ArrayBuffer;
 export function fromBigInt(x: bigint, options: FromBigIntOptions & { format: 'buffer' }): Buffer;
 export function fromBigInt(x: bigint, options: FromBigIntOptions): Uint8ArrayBuffer | Buffer;
 
