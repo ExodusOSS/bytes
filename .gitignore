@@ -3,3 +3,4 @@ node_modules
 coverage
 playground
 *.tgz
+package-lock.json
