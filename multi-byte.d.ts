@@ -25,7 +25,9 @@ import type { Uint8ArrayBuffer } from './array.js';
  *
  * Returns a function `decode(arr, stream = false)` that decodes bytes to a string.
  *
- * The returned function will maintain state while `stream = true` is used.
+ * The returned function will maintain internal state while `stream = true` is used, allowing it to
+ * handle incomplete multi-byte sequences across multiple calls. State is reset when `stream = false`
+ * or when the function is called without the stream parameter.
  *
  * @param encoding - The encoding name (e.g., 'gbk', 'gb18030', 'big5', 'euc-jp', 'iso-2022-jp', 'shift_jis', 'euc-kr')
  * @param loose - If true, replaces unmapped bytes with replacement character instead of throwing (default: false)
@@ -41,8 +43,9 @@ export function createMultibyteDecoder(
  *
  * Returns a function `encode(string)` that encodes a string to bytes.
  *
- * In `'fatal'` mode (default), will throw on non well-formed strings or any codepoints which could
- * not be encoded in the target encoding.
+ * Currently, only `'fatal'` mode is supported. When `options` is undefined or `mode` is not specified,
+ * the encoder defaults to `'fatal'` mode, which will throw on non well-formed strings or any codepoints
+ * which could not be encoded in the target encoding.
  *
  * @param encoding - The encoding name (e.g., 'gbk', 'gb18030', 'big5', 'euc-jp', 'iso-2022-jp', 'shift_jis', 'euc-kr')
  * @param options - Encoding options
