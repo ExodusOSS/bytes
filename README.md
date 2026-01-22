@@ -636,6 +636,10 @@ new TextDecoder(getBOMEncoding(input) ?? fallbackEncoding).decode(input)
 
 ### `@exodus/bytes/encoding-lite.js`
 
+The exact same exports as `@exodus/bytes/encoding.js` are also exported as
+`@exodus/bytes/encoding-lite.js`, with the difference that the lite version does not load
+multi-byte `TextDecoder` encodings by default to reduce bundle size 10x.
+
 ```js
 import { TextDecoder, TextEncoder } from '@exodus/bytes/encoding-lite.js'
 import { TextDecoderStream, TextEncoderStream } from '@exodus/bytes/encoding-lite.js' // Requires Streams
@@ -643,10 +647,6 @@ import { TextDecoderStream, TextEncoderStream } from '@exodus/bytes/encoding-lit
 // Hooks for standards
 import { getBOMEncoding, legacyHookDecode, labelToName, normalizeEncoding } from '@exodus/bytes/encoding-lite.js'
 ```
-
-The exact same exports as `@exodus/bytes/encoding.js` are also exported as
-`@exodus/bytes/encoding-lite.js`, with the difference that the lite version does not load
-multi-byte `TextDecoder` encodings by default to reduce bundle size 10x.
 
 The only affected encodings are: `gbk`, `gb18030`, `big5`, `euc-jp`, `iso-2022-jp`, `shift_jis`
 and their [labels](https://encoding.spec.whatwg.org/#names-and-labels) when used with `TextDecoder`.
@@ -695,6 +695,9 @@ true
 
 ### `@exodus/bytes/encoding-browser.js`
 
+Same as `@exodus/bytes/encoding.js`, but in browsers instead of polyfilling just uses whatever the
+browser provides, drastically reducing the bundle size (to less than 2 KiB gzipped).
+
 ```js
 import { TextDecoder, TextEncoder } from '@exodus/bytes/encoding-browser.js'
 import { TextDecoderStream, TextEncoderStream } from '@exodus/bytes/encoding-browser.js' // Requires Streams
@@ -702,9 +705,6 @@ import { TextDecoderStream, TextEncoderStream } from '@exodus/bytes/encoding-bro
 // Hooks for standards
 import { getBOMEncoding, legacyHookDecode, labelToName, normalizeEncoding } from '@exodus/bytes/encoding-browser.js'
 ```
-
-Same as `@exodus/bytes/encoding.js`, but in browsers instead of polyfilling just uses whatever the
-browser provides, drastically reducing the bundle size (to less than 2 KiB gzipped).
 
 Under non-browser engines (Node.js, React Native, etc.) a full polyfill is used as those platforms
 do not provide sufficiently complete / non-buggy `TextDecoder` APIs.

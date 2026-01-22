@@ -68,6 +68,7 @@ export function getBOMEncoding(
  * decodes the `input` using that encoding, skipping BOM if it was present.
  *
  * Notes:
+ *
  * - BOM-sniffed encoding takes precedence over `fallbackEncoding` option per spec.
  *   Use with care.
  * - Always operates in non-fatal [mode](https://encoding.spec.whatwg.org/#textdecoder-error-mode),
