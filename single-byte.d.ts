@@ -28,6 +28,24 @@
  * > `createSinglebyteDecoder()` (unlike `TextDecoder` or `legacyHookDecode()`) does not do such mapping,
  * > so its results will differ from `TextDecoder` for those encoding names.
  *
+ * ```js
+ * > new TextDecoder('iso-8859-1').encoding
+ * 'windows-1252'
+ * > new TextDecoder('iso-8859-9').encoding
+ * 'windows-1254'
+ * > new TextDecoder('iso-8859-11').encoding
+ * 'windows-874'
+ * > new TextDecoder('iso-8859-9').decode(Uint8Array.of(0x80, 0x81, 0xd0))
+ * '€\x81Ğ' // this is actually decoded according to windows-1254 per TextDecoder spec
+ * > createSinglebyteDecoder('iso-8859-9')(Uint8Array.of(0x80, 0x81, 0xd0))
+ * '\x80\x81Ğ' // this is iso-8859-9 as defined at https://unicode.org/Public/MAPPINGS/ISO8859/8859-9.txt
+ * ```
+ *
+ * All WHATWG Encoding spec [`windows-*` encodings](https://encoding.spec.whatwg.org/#windows-874) are supersets of
+ * corresponding [unicode.org encodings](https://unicode.org/Public/MAPPINGS/VENDORS/MICSFT/WINDOWS/), meaning that
+ * they encode/decode all the old valid (non-replacement) strings / byte sequences identically, but can also support
+ * a wider range of inputs.
+ *
  * @module @exodus/bytes/single-byte.js
  */
 
