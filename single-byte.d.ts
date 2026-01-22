@@ -59,6 +59,7 @@ export function createSinglebyteDecoder(
  *
  * @param encoding - The encoding name (e.g., 'iso-8859-1', 'windows-1252')
  * @param options - Encoding options
+ * @param options.mode - Encoding mode (default: 'fatal'). Currently, only 'fatal' mode is supported.
  * @returns A function that encodes string to bytes
  */
 export function createSinglebyteEncoder(
