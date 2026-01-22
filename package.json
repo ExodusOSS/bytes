@@ -107,6 +107,7 @@
     "/multi-byte.js",
     "/multi-byte.node.js",
     "/single-byte.js",
+    "/single-byte.d.ts",
     "/single-byte.node.js",
     "/utf16.js",
     "/utf16.node.js",
@@ -155,6 +156,7 @@
       "default": "./multi-byte.js"
     },
     "./single-byte.js": {
+      "types": "./single-byte.d.ts",
       "node": "./single-byte.node.js",
       "default": "./single-byte.js"
     },
