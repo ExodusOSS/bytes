@@ -468,16 +468,38 @@ import { getPrefix } from '@exodus/bytes/bech32.js'
 
 ### `@exodus/bytes/base58.js`
 
+Implements base58 encoding as used in Bitcoin and other cryptocurrencies.
+
+Supports both standard base58 and XRP variant alphabets.
+
 ```js
 import { fromBase58, toBase58 } from '@exodus/bytes/base58.js'
 import { fromBase58xrp, toBase58xrp } from '@exodus/bytes/base58.js'
 ```
 
 #### `fromBase58(string, format = 'uint8')`
+
+Decode a base58 string to bytes
+
+Uses the standard Bitcoin base58 alphabet
+
 #### `toBase58(arr)`
 
+Encode a `Uint8Array` to a base58 string
+
+Uses the standard Bitcoin base58 alphabet
+
 #### `fromBase58xrp(string, format = 'uint8')`
+
+Decode a base58 string to bytes using XRP alphabet
+
+Uses the XRP variant base58 alphabet
+
 #### `toBase58xrp(arr)`
+
+Encode a `Uint8Array` to a base58 string using XRP alphabet
+
+Uses the XRP variant base58 alphabet
 
 ### `@exodus/bytes/base58check.js`
 
