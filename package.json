@@ -90,6 +90,7 @@
     "/base64.d.ts",
     "/bech32.js",
     "/bigint.js",
+    "/bigint.d.ts",
     "/encoding-browser.js",
     "/encoding-browser.browser.js",
     "/encoding-browser.native.js",
@@ -140,7 +141,10 @@
       "default": "./base64.js"
     },
     "./bech32.js": "./bech32.js",
-    "./bigint.js": "./bigint.js",
+    "./bigint.js": {
+      "types": "./bigint.d.ts",
+      "default": "./bigint.js"
+    },
     "./hex.js": {
       "types": "./hex.d.ts",
       "node": "./hex.node.js",
