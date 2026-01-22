@@ -560,9 +560,6 @@ Create a base58check encoder/decoder with custom hash functions
 
 Wallet Import Format (WIF) encoding and decoding.
 
-Mostly matches npmjs.com/wif, but with extra checks + using our base58check.
-Also no inconsistent behavior on Buffer/Uint8Array input.
-
 ```js
 import { fromWifString, toWifString } from '@exodus/bytes/wif.js'
 import { fromWifStringSync, toWifStringSync } from '@exodus/bytes/wif.js'
