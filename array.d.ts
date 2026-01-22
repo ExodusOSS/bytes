@@ -14,8 +14,33 @@
 // which would incorrectly accept SharedArrayBuffer instances.
 // < TypeScript 5.7 doesn't support templates for Uint8Array.
 // So this type is defined as a workaround to evaluate to Uint8Array<ArrayBuffer> on all versions of TypeScript.
+
+/**
+ * This is `Uint8Array<ArrayBuffer>`
+ * (as opposed to `Uint8Array<SharedArrayBuffer>` and `Uint8Array<ArrayBufferLike>`)
+ * on TypeScript versions that support that distinction.
+ *
+ * On TypeScript < 5.7, this is just `Uint8Array`, as it's not a template there.
+ */
 export type Uint8ArrayBuffer = ReturnType<typeof Uint8Array.from>;
+
+/**
+ * This is `Uint16Array<ArrayBuffer>`
+ * (as opposed to `Uint16Array<SharedArrayBuffer>` and `Uint16Array<ArrayBufferLike>`)
+ * on TypeScript versions that support that distinction.
+ *
+ * On TypeScript < 5.7, this is just `Uint16Array`, as it's not a template there.
+ */
 export type Uint16ArrayBuffer = ReturnType<typeof Uint16Array.from>;
+
+/**
+ * This is `Uint32Array<ArrayBuffer>`
+ * (as opposed to `Uint32Array<SharedArrayBuffer>` and `Uint32Array<ArrayBufferLike>`)
+ * on TypeScript versions that support that distinction.
+ *
+ * On TypeScript < 5.7, this is just `Uint32Array`, as it's not a template there.
+ */
+export type Uint32ArrayBuffer = ReturnType<typeof Uint32Array.from>;
 
 /**
  * Output format for typed array conversions
