@@ -558,6 +558,8 @@ Create a base58check encoder/decoder with custom hash functions
 
 ### `@exodus/bytes/wif.js`
 
+Wallet Import Format (WIF) encoding and decoding.
+
 ```js
 import { fromWifString, toWifString } from '@exodus/bytes/wif.js'
 import { fromWifStringSync, toWifStringSync } from '@exodus/bytes/wif.js'
@@ -565,10 +567,33 @@ import { fromWifStringSync, toWifStringSync } from '@exodus/bytes/wif.js'
 
 On non-Node.js, requires peer dependency [@noble/hashes](https://www.npmjs.com/package/@noble/hashes) to be installed.
 
-#### `async fromWifString(string, version)`
-#### `fromWifStringSync(string, version)`
+#### `async fromWifString(string[, version])`
+
+Decode a WIF string to WIF data
+
+Returns a promise that resolves to an object with `{ version, privateKey, compressed }`.
+
+The optional `version` parameter validates the version byte.
+
+Throws if the WIF string is invalid or version doesn't match.
+
+#### `fromWifStringSync(string[, version])`
+
+Decode a WIF string to WIF data (synchronous)
+
+Returns an object with `{ version, privateKey, compressed }`.
+
+The optional `version` parameter validates the version byte.
+
+Throws if the WIF string is invalid or version doesn't match.
+
 #### `async toWifString({ version, privateKey, compressed })`
+
+Encode WIF data to a WIF string
+
 #### `toWifStringSync({ version, privateKey, compressed })`
+
+Encode WIF data to a WIF string (synchronous)
 
 ### `@exodus/bytes/array.js`
 
