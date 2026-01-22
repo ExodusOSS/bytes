@@ -49,7 +49,9 @@ export interface SinglebyteEncoderOptions {
 }
 
 /**
- * Create a decoder function for a single-byte character encoding
+ * Create a decoder for a supported one-byte `encoding`, given its lowercased name `encoding`.
+ *
+ * Returns a function `decode(arr)` that decodes bytes to a string.
  *
  * @param encoding - The encoding name (e.g., 'iso-8859-1', 'windows-1252')
  * @param loose - If true, replaces unmapped bytes with replacement character instead of throwing (default: false)
@@ -61,7 +63,12 @@ export function createSinglebyteDecoder(
 ): (arr: Uint8ArrayBuffer) => string;
 
 /**
- * Create an encoder function for a single-byte character encoding
+ * Create an encoder for a supported one-byte `encoding`, given its lowercased name `encoding`.
+ *
+ * Returns a function `encode(string)` that encodes a string to bytes.
+ *
+ * In `'fatal'` mode (default), will throw on non well-formed strings or any codepoints which could
+ * not be encoded in the target encoding.
  *
  * @param encoding - The encoding name (e.g., 'iso-8859-1', 'windows-1252')
  * @param options - Encoding options
@@ -73,7 +80,17 @@ export function createSinglebyteEncoder(
 ): (string: string) => Uint8ArrayBuffer;
 
 /**
- * Decode ISO-8859-1 (Latin-1) bytes to a string
+ * Decode `iso-8859-1` bytes to a string.
+ *
+ * There is no loose variant for this encoding, all bytes can be decoded.
+ *
+ * Same as:
+ * ```js
+ * const latin1toString = createSinglebyteDecoder('iso-8859-1')
+ * ```
+ *
+ * Note: this is different from `new TextDecoder('iso-8859-1')` and `new TextDecoder('latin1')`, as
+ * those alias to `new TextDecoder('windows-1252')`.
  *
  * @param arr - The bytes to decode
  * @returns The decoded string
@@ -81,9 +98,14 @@ export function createSinglebyteEncoder(
 export const latin1toString: (arr: Uint8ArrayBuffer) => string;
 
 /**
- * Encode a string to ISO-8859-1 (Latin-1) bytes
+ * Encode a string to `iso-8859-1` bytes.
  *
- * Throws on characters that cannot be encoded in Latin-1
+ * Will throw on non well-formed strings or any codepoints which could not be encoded in `iso-8859-1`.
+ *
+ * Same as:
+ * ```js
+ * const latin1fromString = createSinglebyteEncoder('iso-8859-1', { mode: 'fatal' })
+ * ```
  *
  * @param string - The string to encode
  * @returns The encoded bytes
@@ -91,7 +113,14 @@ export const latin1toString: (arr: Uint8ArrayBuffer) => string;
 export const latin1fromString: (string: string) => Uint8ArrayBuffer;
 
 /**
- * Decode Windows-1252 bytes to a string
+ * Decode `windows-1252` bytes to a string.
+ *
+ * There is no loose variant for this encoding, all bytes can be decoded.
+ *
+ * Same as:
+ * ```js
+ * const windows1252toString = createSinglebyteDecoder('windows-1252')
+ * ```
  *
  * @param arr - The bytes to decode
  * @returns The decoded string
@@ -99,9 +128,14 @@ export const latin1fromString: (string: string) => Uint8ArrayBuffer;
 export const windows1252toString: (arr: Uint8ArrayBuffer) => string;
 
 /**
- * Encode a string to Windows-1252 bytes
+ * Encode a string to `windows-1252` bytes.
  *
- * Throws on characters that cannot be encoded in Windows-1252
+ * Will throw on non well-formed strings or any codepoints which could not be encoded in `windows-1252`.
+ *
+ * Same as:
+ * ```js
+ * const windows1252fromString = createSinglebyteEncoder('windows-1252', { mode: 'fatal' })
+ * ```
  *
  * @param string - The string to encode
  * @returns The encoded bytes
