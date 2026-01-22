@@ -147,15 +147,15 @@ Prefer using strict throwing methods for cryptography applications._
 
 UTF-16 encoding/decoding
 
-_These methods by design encode/decode BOM (codepoint `U+FEFF` Byte Order Mark) as-is._
-_If you need BOM handling or detection, use `@exodus/bytes/encoding.js`_
-
 ```js
 import { utf16fromString, utf16toString } from '@exodus/bytes/utf16.js'
 
 // loose
 import { utf16fromStringLoose, utf16toStringLoose } from '@exodus/bytes/utf16.js'
 ```
+
+_These methods by design encode/decode BOM (codepoint `U+FEFF` Byte Order Mark) as-is._
+_If you need BOM handling or detection, use `@exodus/bytes/encoding.js`_
 
 #### `utf16fromString(string, format = 'uint16')`
 #### `utf16fromStringLoose(string, format = 'uint16')`
@@ -164,17 +164,17 @@ import { utf16fromStringLoose, utf16toStringLoose } from '@exodus/bytes/utf16.js
 
 ### `@exodus/bytes/single-byte.js`
 
-```js
-import { createSinglebyteDecoder, createSinglebyteEncoder } from '@exodus/bytes/single-byte.js'
-import { windows1252toString, windows1252fromString } from '@exodus/bytes/single-byte.js'
-import { latin1toString, latin1fromString } from '@exodus/bytes/single-byte.js'
-```
-
 Decode / encode the legacy single-byte encodings according to the
 [Encoding standard](https://encoding.spec.whatwg.org/)
 ([§9](https://encoding.spec.whatwg.org/#legacy-single-byte-encodings),
 [§14.5](https://encoding.spec.whatwg.org/#x-user-defined)),
 and [unicode.org](https://unicode.org/Public/MAPPINGS/ISO8859) `iso-8859-*` mappings.
+
+```js
+import { createSinglebyteDecoder, createSinglebyteEncoder } from '@exodus/bytes/single-byte.js'
+import { windows1252toString, windows1252fromString } from '@exodus/bytes/single-byte.js'
+import { latin1toString, latin1fromString } from '@exodus/bytes/single-byte.js'
+```
 
 Supports all single-byte encodings listed in the WHATWG Encoding standard:
 `ibm866`, `iso-8859-2`, `iso-8859-3`, `iso-8859-4`, `iso-8859-5`, `iso-8859-6`, `iso-8859-7`, `iso-8859-8`,
