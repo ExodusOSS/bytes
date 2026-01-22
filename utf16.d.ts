@@ -8,7 +8,7 @@
  * import { utf16fromStringLoose, utf16toStringLoose } from '@exodus/bytes/utf16.js'
  * ```
  *
- * _These methods by design encode/decode BOM (codepoint `U+FEFF` Byte Order Mark) as-is._
+ * _These methods by design encode/decode BOM (codepoint `U+FEFF` Byte Order Mark) as-is._\
  * _If you need BOM handling or detection, use `@exodus/bytes/encoding.js`_
  *
  * @module @exodus/bytes/utf16.js
