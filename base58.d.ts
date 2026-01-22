@@ -34,8 +34,9 @@ export function toBase58(arr: Uint8ArrayBuffer): string;
  * @param format - Output format (default: 'uint8')
  * @returns The decoded bytes
  */
-export function fromBase58(string: string, format?: OutputFormat): Uint8ArrayBuffer;
+export function fromBase58(string: string, format?: 'uint8'): Uint8ArrayBuffer;
 export function fromBase58(string: string, format: 'buffer'): Buffer;
+export function fromBase58(string: string, format?: OutputFormat): Uint8ArrayBuffer | Buffer;
 
 /**
  * Encode a `Uint8Array` to a base58 string using XRP alphabet
@@ -56,5 +57,6 @@ export function toBase58xrp(arr: Uint8ArrayBuffer): string;
  * @param format - Output format (default: 'uint8')
  * @returns The decoded bytes
  */
-export function fromBase58xrp(string: string, format?: OutputFormat): Uint8ArrayBuffer;
+export function fromBase58xrp(string: string, format?: 'uint8'): Uint8ArrayBuffer;
 export function fromBase58xrp(string: string, format: 'buffer'): Buffer;
+export function fromBase58xrp(string: string, format?: OutputFormat): Uint8ArrayBuffer | Buffer;
