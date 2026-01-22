@@ -91,6 +91,7 @@
     "/base64.js",
     "/base64.d.ts",
     "/bech32.js",
+    "/bech32.d.ts",
     "/bigint.js",
     "/bigint.d.ts",
     "/encoding-browser.js",
@@ -149,7 +150,10 @@
       "types": "./base64.d.ts",
       "default": "./base64.js"
     },
-    "./bech32.js": "./bech32.js",
+    "./bech32.js": {
+      "types": "./bech32.d.ts",
+      "default": "./bech32.js"
+    },
     "./bigint.js": {
       "types": "./bigint.d.ts",
       "default": "./bigint.js"
