@@ -688,6 +688,7 @@ const preencoders = {
     const t = p % 188
     return ((l + (l < 0x1f ? 0x81 : 0xc1)) << 8) | ((t < 0x3f ? 0x40 : 0x41) + t)
   },
+  'iso-2022-jp': (p) => ((((p / 94) | 0) + 0x21) << 8) | ((p % 94) + 0x21),
   'euc-jp': (p) => ((((p / 94) | 0) + 0xa1) << 8) | ((p % 94) + 0xa1),
   'euc-kr': (p) => ((((p / 190) | 0) + 0x81) << 8) | ((p % 190) + 0x41),
   gb18030: (p) => ((((p / 190) | 0) + 0x81) << 8) | ((p % 190 < 0x3f ? 0x40 : 0x41) + (p % 190)),
@@ -697,11 +698,13 @@ preencoders.gbk = preencoders.gb18030
 
 // We accept that encoders use non-trivial amount of mem, for perf
 // most are are 128 KiB mem, big5 is 380 KiB, lazy-loaded at first use
-function getMap(id, size) {
+function getMap(id, size, ascii) {
   const cached = maps.get(id)
   if (cached) return cached
   let tname = id
   const sjis = id === 'shift_jis'
+  const iso2022jp = id === 'iso-2022-jp'
+  if (iso2022jp) tname = 'jis0208'
   if (id === 'gbk') tname = 'gb18030'
   if (id === 'euc-jp' || sjis) tname = 'jis0208'
   const table = getTable(tname)
@@ -738,7 +741,7 @@ function getMap(id, size) {
     }
   }
 
-  for (let i = 0; i < 0x80; i++) map[i] = i
+  if (ascii) for (let i = 0; i < 0x80; i++) map[i] = i
   if (sjis || id === 'euc-jp') {
     if (sjis) map[0x80] = 0x80
     const d = sjis ? 0xfe_c0 : 0x70_c0
@@ -757,32 +760,38 @@ function getMap(id, size) {
   return map
 }
 
-const encoders = new Set(['big5', 'euc-kr', 'euc-jp', 'shift_jis', 'gbk', 'gb18030'])
 const NON_LATIN = /[^\x00-\xFF]/ // eslint-disable-line no-control-regex
-let gb18030r
+let gb18030r, katakana
 
 export function multibyteEncoder(enc, onError) {
-  if (!encoders.has(enc)) throw new RangeError('Unsupported encoding')
+  if (!Object.hasOwn(mappers, enc)) throw new RangeError('Unsupported encoding')
   const size = enc === 'big5' ? 0x2_f8_a7 : 0x1_00_00 // for big5, max codepoint in table + 1
-  const width = enc === 'gb18030' ? 4 : 2
-  const map = getMap(enc, size)
-  if (enc === 'gb18030' && !gb18030r) gb18030r = getTable('gb18030-ranges')
-
+  const iso2022jp = enc === 'iso-2022-jp'
+  const gb18030 = enc === 'gb18030'
+  const ascii = isAsciiSuperset(enc)
+  const width = iso2022jp ? 5 : gb18030 ? 4 : 2
+  const tailsize = iso2022jp ? 3 : 0
+  const map = getMap(enc, size, ascii)
+  if (gb18030 && !gb18030r) gb18030r = getTable('gb18030-ranges')
+  if (iso2022jp && !katakana) katakana = getTable('iso-2022-jp-katakana')
   return (str) => {
     if (typeof str !== 'string') throw new TypeError(E_STRING)
-    if (!NON_LATIN.test(str)) {
+    if (ascii && !NON_LATIN.test(str)) {
       try {
         return encodeAscii(str, E_STRICT)
       } catch {}
     }
 
     const length = str.length
-    const u8 = new Uint8Array(length * width)
+    const u8 = new Uint8Array(length * width + tailsize)
     let i = 0
-    while (i < length) {
-      const x = str.charCodeAt(i)
-      if (x >= 128) break
-      u8[i++] = x
+
+    if (ascii) {
+      while (i < length) {
+        const x = str.charCodeAt(i)
+        if (x >= 128) break
+        u8[i++] = x
+      }
     }
 
     // eslint-disable-next-line unicorn/consistent-function-scoping
@@ -793,7 +802,69 @@ export function multibyteEncoder(enc, onError) {
 
     if (!map || map.length < size) /* c8 ignore next */ throw new Error('Unreachable') // Important for perf
 
-    if (enc === 'gb18030') {
+    if (iso2022jp) {
+      let state = 0 // 0 = ASCII, 1 = Roman, 2 = jis0208
+      const restore = () => {
+        state = 0
+        u8[i++] = 0x1b
+        u8[i++] = 0x28
+        u8[i++] = 0x42
+      }
+
+      for (let j = 0; j < length; j++) {
+        let x = str.charCodeAt(j)
+        if (x >= 0xd8_00 && x < 0xe0_00) {
+          if (state === 2) restore()
+          if (x >= 0xdc_00 || j + 1 === length) {
+            i += err(x) // lone
+          } else {
+            const x1 = str.charCodeAt(j + 1)
+            if (x1 < 0xdc_00 || x1 >= 0xe0_00) {
+              i += err(x) // lone
+            } else {
+              j++ // consume x1
+              i += err(0x1_00_00 + ((x1 & 0x3_ff) | ((x & 0x3_ff) << 10)))
+            }
+          }
+        } else if (x < 0x80) {
+          if (state === 2 || (state === 1 && (x === 0x5c || x === 0x7e))) restore()
+          if (x === 0xe || x === 0xf || x === 0x1b) {
+            i += err(0xff_fd) // 12.2.2. step 3: This returns U+FFFD rather than codePoint to prevent attacks
+          } else {
+            u8[i++] = x
+          }
+        } else if (x === 0xa5 || x === 0x20_3e) {
+          if (state !== 1) {
+            state = 1
+            u8[i++] = 0x1b
+            u8[i++] = 0x28
+            u8[i++] = 0x4a
+          }
+
+          u8[i++] = x === 0xa5 ? 0x5c : 0x7e
+        } else {
+          if (x === 0x22_12) x = 0xff_0d
+          if (x >= 0xff_61 && x <= 0xff_9f) x = katakana[x - 0xff_61]
+          const e = map[x]
+          if (e) {
+            if (state !== 2) {
+              state = 2
+              u8[i++] = 0x1b
+              u8[i++] = 0x24
+              u8[i++] = 0x42
+            }
+
+            u8[i++] = e >> 8
+            u8[i++] = e & 0xff
+          } else {
+            if (state === 2) restore()
+            i += err(x)
+          }
+        }
+      }
+
+      if (state) restore()
+    } else if (gb18030) {
       // Deduping this branch hurts other encoders perf
       const encode = (cp) => {
         let a = 0, b = 0 // prettier-ignore
