@@ -1,5 +1,6 @@
 /**
- * Implements bech32 and bech32m from [BIP173](https://github.com/bitcoin/bips/blob/master/bip-0173.mediawiki)
+ * Implements bech32 and bech32m from
+ * [BIP173](https://github.com/bitcoin/bips/blob/master/bip-0173.mediawiki)
  * and [BIP350](https://github.com/bitcoin/bips/blob/master/bip-0350.mediawiki).
  *
  * ```js

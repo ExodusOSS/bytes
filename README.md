@@ -449,7 +449,8 @@ Encode a `Uint8Array` to a base32hex string (RFC 4648)
 
 ### `@exodus/bytes/bech32.js`
 
-Implements [BIP-0173](https://github.com/bitcoin/bips/blob/master/bip-0173.mediawiki#specification)
+Implements bech32 and bech32m from
+[BIP-0173](https://github.com/bitcoin/bips/blob/master/bip-0173.mediawiki#specification)
 and [BIP-0350](https://github.com/bitcoin/bips/blob/master/bip-0350.mediawiki#specification).
 
 ```js
