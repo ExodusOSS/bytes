@@ -503,6 +503,8 @@ Uses the XRP variant base58 alphabet
 
 ### `@exodus/bytes/base58check.js`
 
+Implements [base58check](https://en.bitcoin.it/wiki/Base58Check_encoding) encoding.
+
 ```js
 import { fromBase58check, toBase58check } from '@exodus/bytes/base58check.js'
 import { fromBase58checkSync, toBase58checkSync } from '@exodus/bytes/base58check.js'
@@ -512,10 +514,32 @@ import { makeBase58check } from '@exodus/bytes/base58check.js'
 On non-Node.js, requires peer dependency [@noble/hashes](https://www.npmjs.com/package/@noble/hashes) to be installed.
 
 #### `async fromBase58check(string, format = 'uint8')`
+
+Decode a base58check string to bytes asynchronously
+
+Validates the checksum using double SHA-256
+
 #### `async toBase58check(arr)`
+
+Encode bytes to base58check string asynchronously
+
+Uses double SHA-256 for checksum calculation
+
 #### `fromBase58checkSync(string, format = 'uint8')`
+
+Decode a base58check string to bytes synchronously
+
+Validates the checksum using double SHA-256
+
 #### `toBase58checkSync(arr)`
+
+Encode bytes to base58check string synchronously
+
+Uses double SHA-256 for checksum calculation
+
 #### `makeBase58check(hashAlgo, hashAlgoSync)`
+
+Create a base58check encoder/decoder with custom hash functions
 
 ### `@exodus/bytes/wif.js`
 
