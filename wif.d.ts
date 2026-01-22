@@ -9,6 +9,8 @@
  * import { fromWifStringSync, toWifStringSync } from '@exodus/bytes/wif.js'
  * ```
  *
+ * On non-Node.js, requires peer dependency [@noble/hashes](https://www.npmjs.com/package/@noble/hashes) to be installed.
+ *
  * @module @exodus/bytes/wif.js
  */
 
@@ -31,6 +33,12 @@ export interface Wif {
 /**
  * Decode a WIF string to WIF data
  *
+ * Returns a promise that resolves to an object with `{ version, privateKey, compressed }`.
+ *
+ * The optional `version` parameter validates the version byte.
+ *
+ * Throws if the WIF string is invalid or version doesn't match.
+ *
  * @param string - The WIF encoded string
  * @param version - Optional expected version byte to validate against
  * @returns The decoded WIF data
@@ -40,6 +48,12 @@ export function fromWifString(string: string, version?: number): Promise<Wif>;
 
 /**
  * Decode a WIF string to WIF data (synchronous)
+ *
+ * Returns an object with `{ version, privateKey, compressed }`.
+ *
+ * The optional `version` parameter validates the version byte.
+ *
+ * Throws if the WIF string is invalid or version doesn't match.
  *
  * @param string - The WIF encoded string
  * @param version - Optional expected version byte to validate against
@@ -53,7 +67,6 @@ export function fromWifStringSync(string: string, version?: number): Wif;
  *
  * @param wif - The WIF data to encode
  * @returns The WIF encoded string
- * @throws Error if the WIF data is invalid
  */
 export function toWifString(wif: Wif): Promise<string>;
 
@@ -62,6 +75,5 @@ export function toWifString(wif: Wif): Promise<string>;
  *
  * @param wif - The WIF data to encode
  * @returns The WIF encoded string
- * @throws Error if the WIF data is invalid
  */
 export function toWifStringSync(wif: Wif): string;
