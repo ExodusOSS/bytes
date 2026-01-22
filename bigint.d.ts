@@ -42,7 +42,7 @@ export function fromBigInt(x: bigint, options: FromBigIntOptions): Uint8ArrayBuf
  *
  * The bytes are interpreted as a big-endian unsigned integer.
  *
- * @param a - The bytes to convert
+ * @param arr - The bytes to convert
  * @returns The BigInt representation
  */
-export function toBigInt(a: ArrayBufferView): bigint;
+export function toBigInt(arr: ArrayBufferView): bigint;
