@@ -105,6 +105,7 @@
     "/index.js",
     "/index.d.ts",
     "/multi-byte.js",
+    "/multi-byte.d.ts",
     "/multi-byte.node.js",
     "/single-byte.js",
     "/single-byte.d.ts",
@@ -153,6 +154,7 @@
       "default": "./hex.js"
     },
     "./multi-byte.js": {
+      "types": "./multi-byte.d.ts",
       "node": "./multi-byte.node.js",
       "default": "./multi-byte.js"
     },
