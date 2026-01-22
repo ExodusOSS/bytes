@@ -84,6 +84,7 @@
     "/base32.js",
     "/base32.d.ts",
     "/base58.js",
+    "/base58.d.ts",
     "/base58check.js",
     "/base58check.node.js",
     "/base64.js",
@@ -134,7 +135,10 @@
       "types": "./base32.d.ts",
       "default": "./base32.js"
     },
-    "./base58.js": "./base58.js",
+    "./base58.js": {
+      "types": "./base58.d.ts",
+      "default": "./base58.js"
+    },
     "./base58check.js": {
       "node": "./base58check.node.js",
       "default": "./base58check.js"
