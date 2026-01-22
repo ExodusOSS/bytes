@@ -110,7 +110,10 @@ describe('multi-byte ranges tables', () => {
 })
 
 describe('multi-byte encodings index: WHATWG non-normative indexes.json', () => {
-  for (const [encoding, data] of Object.entries(multiByte)) {
+  for (const [encoding, data] of Object.entries({
+    ...multiByte,
+    'iso-2022-jp-katakana': katakana,
+  })) {
     test(encoding, (t) => {
       t.assert.ok(!data.includes(0))
       t.assert.ok(!data.includes(0xff_fd))
@@ -130,9 +133,5 @@ describe('multi-byte encodings index: WHATWG non-normative indexes.json', () => 
 
   test('gb18030-ranges', (t) => {
     t.assert.deepStrictEqual(getTable('gb18030-ranges'), gb18030ranges)
-  })
-
-  test('iso-2022-jp-katakana', (t) => {
-    t.assert.deepStrictEqual(getTable('iso-2022-jp-katakana'), katakana)
   })
 })
