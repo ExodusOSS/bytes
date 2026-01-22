@@ -468,7 +468,7 @@ import { getPrefix } from '@exodus/bytes/bech32.js'
 
 ### `@exodus/bytes/base58.js`
 
-Implements base58 encoding as used in Bitcoin and other cryptocurrencies.
+Implements [base58](https://www.ietf.org/archive/id/draft-msporny-base58-03.txt) encoding.
 
 Supports both standard base58 and XRP variant alphabets.
 
