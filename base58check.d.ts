@@ -1,18 +1,13 @@
 /**
- * Base58Check encoding and decoding with checksum validation.
- *
- * Base58Check is a modified Base58 binary-to-text encoding used primarily in Bitcoin.
- * It includes a checksum to detect errors in data transmission or storage.
+ * Implements [base58check](https://en.bitcoin.it/wiki/Base58Check_encoding) encoding.
  *
  * ```js
- * import {
- *   toBase58check,
- *   fromBase58check,
- *   toBase58checkSync,
- *   fromBase58checkSync,
- *   makeBase58check
- * } from '@exodus/bytes/base58check.js'
+ * import { fromBase58check, toBase58check } from '@exodus/bytes/base58check.js'
+ * import { fromBase58checkSync, toBase58checkSync } from '@exodus/bytes/base58check.js'
+ * import { makeBase58check } from '@exodus/bytes/base58check.js'
  * ```
+ *
+ * On non-Node.js, requires peer dependency [@noble/hashes](https://www.npmjs.com/package/@noble/hashes) to be installed.
  *
  * @module @exodus/bytes/base58check.js
  */
