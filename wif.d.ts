@@ -31,21 +31,21 @@ export interface Wif {
  * Decode a WIF string to WIF data
  *
  * @param string - The WIF encoded string
- * @param expectedVersion - Optional expected version byte to validate against
+ * @param version - Optional expected version byte to validate against
  * @returns The decoded WIF data
  * @throws Error if the WIF string is invalid or version doesn't match
  */
-export function fromWifString(string: string, expectedVersion?: number): Promise<Wif>;
+export function fromWifString(string: string, version?: number): Promise<Wif>;
 
 /**
  * Decode a WIF string to WIF data (synchronous)
  *
  * @param string - The WIF encoded string
- * @param expectedVersion - Optional expected version byte to validate against
+ * @param version - Optional expected version byte to validate against
  * @returns The decoded WIF data
  * @throws Error if the WIF string is invalid or version doesn't match
  */
-export function fromWifStringSync(string: string, expectedVersion?: number): Wif;
+export function fromWifStringSync(string: string, version?: number): Wif;
 
 /**
  * Encode WIF data to a WIF string

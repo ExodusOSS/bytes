@@ -570,23 +570,23 @@ import { fromWifStringSync, toWifStringSync } from '@exodus/bytes/wif.js'
 
 On non-Node.js, requires peer dependency [@noble/hashes](https://www.npmjs.com/package/@noble/hashes) to be installed.
 
-#### `async fromWifString(string, expectedVersion)`
+#### `async fromWifString(string, version)`
 
 Decode a WIF string to WIF data.
 
 Returns a promise that resolves to an object with `{ version, privateKey, compressed }`.
 
-The optional `expectedVersion` parameter validates the version byte.
+The optional `version` parameter validates the version byte.
 
 Throws if the WIF string is invalid or version doesn't match.
 
-#### `fromWifStringSync(string, expectedVersion)`
+#### `fromWifStringSync(string, version)`
 
 Decode a WIF string to WIF data (synchronous).
 
 Returns an object with `{ version, privateKey, compressed }`.
 
-The optional `expectedVersion` parameter validates the version byte.
+The optional `version` parameter validates the version byte.
 
 Throws if the WIF string is invalid or version doesn't match.
 
