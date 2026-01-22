@@ -538,7 +538,7 @@ Implements the [Encoding standard](https://encoding.spec.whatwg.org/):
 [TextEncoder](https://encoding.spec.whatwg.org/#interface-textencoder),
 [TextDecoderStream](https://encoding.spec.whatwg.org/#interface-textdecoderstream),
 [TextEncoderStream](https://encoding.spec.whatwg.org/#interface-textencoderstream),
-some [hooks](https://encoding.spec.whatwg.org/#specification-hooks) (see below).
+some [hooks](https://encoding.spec.whatwg.org/#specification-hooks).
 
 #### `new TextDecoder(label = 'utf-8', { fatal = false, ignoreBOM = false })`
 
