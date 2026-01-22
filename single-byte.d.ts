@@ -21,8 +21,10 @@ import type { Uint8ArrayBuffer } from './array.js';
  */
 export interface SinglebyteEncoderOptions {
   /**
-   * Encoding mode
-   * - `'fatal'`: throw an error on unmapped characters (default)
+   * Encoding mode (default: 'fatal')
+   * - `'fatal'`: throw an error on unmapped characters
+   * 
+   * Note: Currently, only 'fatal' mode is supported. Other modes will throw an error.
    */
   mode?: 'fatal';
 }
