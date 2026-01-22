@@ -36,19 +36,6 @@
 import type { Uint8ArrayBuffer } from './array.js';
 
 /**
- * Options for single-byte encoding
- */
-export interface SinglebyteEncoderOptions {
-  /**
-   * Encoding mode (default: 'fatal')
-   * - `'fatal'`: throw an error on unmapped characters
-   * 
-   * Note: Currently, only 'fatal' mode is supported. Other modes will throw an error.
-   */
-  mode?: 'fatal';
-}
-
-/**
  * Create a decoder for a supported one-byte `encoding`, given its lowercased name `encoding`.
  *
  * Returns a function `decode(arr)` that decodes bytes to a string.
@@ -76,7 +63,7 @@ export function createSinglebyteDecoder(
  */
 export function createSinglebyteEncoder(
   encoding: string,
-  options?: SinglebyteEncoderOptions
+  options?: { mode?: 'fatal' }
 ): (string: string) => Uint8ArrayBuffer;
 
 /**
