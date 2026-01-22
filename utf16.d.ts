@@ -18,6 +18,12 @@
 
 import type { Uint8ArrayBuffer } from './array.js';
 
+// >= TypeScript 5.9 made Uint16Array templated with <> and defaulted to ArrayBufferLike
+// which would incorrectly accept SharedArrayBuffer instances.
+// < TypeScript 5.7 doesn't support templates for Uint16Array.
+// So this type is defined as a workaround to evaluate to Uint16Array<ArrayBuffer> on all versions of TypeScript.
+export type Uint16ArrayBuffer = ReturnType<typeof Uint16Array.from>;
+
 /**
  * Output format for UTF-16 encoding
  */
@@ -32,10 +38,10 @@ export type Utf16Format = 'uint16' | 'uint8-le' | 'uint8-be';
  * @param format - Output format (default: 'uint16')
  * @returns The encoded bytes
  */
-export function utf16fromString(string: string, format?: 'uint16'): Uint16Array;
+export function utf16fromString(string: string, format?: 'uint16'): Uint16ArrayBuffer;
 export function utf16fromString(string: string, format: 'uint8-le'): Uint8ArrayBuffer;
 export function utf16fromString(string: string, format: 'uint8-be'): Uint8ArrayBuffer;
-export function utf16fromString(string: string, format?: Utf16Format): Uint16Array | Uint8ArrayBuffer;
+export function utf16fromString(string: string, format?: Utf16Format): Uint16ArrayBuffer | Uint8ArrayBuffer;
 
 /**
  * Encode a string to UTF-16 bytes (loose mode)
@@ -50,10 +56,10 @@ export function utf16fromString(string: string, format?: Utf16Format): Uint16Arr
  * @param format - Output format (default: 'uint16')
  * @returns The encoded bytes
  */
-export function utf16fromStringLoose(string: string, format?: 'uint16'): Uint16Array;
+export function utf16fromStringLoose(string: string, format?: 'uint16'): Uint16ArrayBuffer;
 export function utf16fromStringLoose(string: string, format: 'uint8-le'): Uint8ArrayBuffer;
 export function utf16fromStringLoose(string: string, format: 'uint8-be'): Uint8ArrayBuffer;
-export function utf16fromStringLoose(string: string, format?: Utf16Format): Uint16Array | Uint8ArrayBuffer;
+export function utf16fromStringLoose(string: string, format?: Utf16Format): Uint16ArrayBuffer | Uint8ArrayBuffer;
 
 /**
  * Decode UTF-16 bytes to a string (strict mode)
@@ -64,10 +70,10 @@ export function utf16fromStringLoose(string: string, format?: Utf16Format): Uint
  * @param format - Input format (default: 'uint16')
  * @returns The decoded string
  */
-export function utf16toString(arr: Uint16Array, format?: 'uint16'): string;
+export function utf16toString(arr: Uint16ArrayBuffer, format?: 'uint16'): string;
 export function utf16toString(arr: Uint8ArrayBuffer, format: 'uint8-le'): string;
 export function utf16toString(arr: Uint8ArrayBuffer, format: 'uint8-be'): string;
-export function utf16toString(arr: Uint16Array | Uint8ArrayBuffer, format?: Utf16Format): string;
+export function utf16toString(arr: Uint16ArrayBuffer | Uint8ArrayBuffer, format?: Utf16Format): string;
 
 /**
  * Decode UTF-16 bytes to a string (loose mode)
@@ -82,7 +88,7 @@ export function utf16toString(arr: Uint16Array | Uint8ArrayBuffer, format?: Utf1
  * @param format - Input format (default: 'uint16')
  * @returns The decoded string
  */
-export function utf16toStringLoose(arr: Uint16Array, format?: 'uint16'): string;
+export function utf16toStringLoose(arr: Uint16ArrayBuffer, format?: 'uint16'): string;
 export function utf16toStringLoose(arr: Uint8ArrayBuffer, format: 'uint8-le'): string;
 export function utf16toStringLoose(arr: Uint8ArrayBuffer, format: 'uint8-be'): string;
-export function utf16toStringLoose(arr: Uint16Array | Uint8ArrayBuffer, format?: Utf16Format): string;
+export function utf16toStringLoose(arr: Uint16ArrayBuffer | Uint8ArrayBuffer, format?: Utf16Format): string;
