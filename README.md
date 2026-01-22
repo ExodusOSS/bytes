@@ -179,6 +179,8 @@ Decode UTF-16 bytes to a string (strict mode)
 
 Throws on invalid UTF-16 byte sequences
 
+Throws on non-even byte length.
+
 #### `utf16toStringLoose(arr, format = 'uint16')`
 
 Decode UTF-16 bytes to a string (loose mode)
@@ -188,6 +190,8 @@ per [WHATWG Encoding](https://encoding.spec.whatwg.org/) specification.
 
 _Such replacement is a non-injective function, is irreversible and causes collisions.\
 Prefer using strict throwing methods for cryptography applications._
+
+Throws on non-even byte length.
 
 ### `@exodus/bytes/single-byte.js`
 

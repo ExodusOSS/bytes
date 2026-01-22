@@ -60,6 +60,8 @@ export function utf16fromStringLoose(string: string, format?: Utf16Format): Uint
  *
  * Throws on invalid UTF-16 byte sequences
  *
+ * Throws on non-even byte length.
+ *
  * @param arr - The bytes to decode
  * @param format - Input format (default: 'uint16')
  * @returns The decoded string
@@ -77,6 +79,8 @@ export function utf16toString(arr: Uint16ArrayBuffer | Uint8ArrayBuffer, format?
  *
  * _Such replacement is a non-injective function, is irreversible and causes collisions.\
  * Prefer using strict throwing methods for cryptography applications._
+ *
+ * Throws on non-even byte length.
  *
  * @param arr - The bytes to decode
  * @param format - Input format (default: 'uint16')
