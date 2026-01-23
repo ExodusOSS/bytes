@@ -800,6 +800,10 @@ do not provide sufficiently complete / non-buggy `TextDecoder` APIs.
 > but they are fixing them and the expected update window is short.\
 > If you want to circumvent browser bugs, use full `@exodus/bytes/encoding.js` import.
 
+## Changelog
+
+See [GitHub Releases](https://github.com/ExodusOSS/bytes/releases) tab
+
 ## License
 
 [MIT](./LICENSE)
