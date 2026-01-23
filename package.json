@@ -71,6 +71,7 @@
     "/fallback/encoding.util.js",
     "/fallback/hex.js",
     "/fallback/latin1.js",
+    "/fallback/percent.js",
     "/fallback/multi-byte.encodings.cjs",
     "/fallback/multi-byte.encodings.json",
     "/fallback/multi-byte.js",
@@ -120,6 +121,8 @@
     "/utf8.js",
     "/utf8.d.ts",
     "/utf8.node.js",
+    "/whatwg.js",
+    "/whatwg.d.ts",
     "/wif.js",
     "/wif.d.ts"
   ],
@@ -199,6 +202,10 @@
       "types": "./utf8.d.ts",
       "node": "./utf8.node.js",
       "default": "./utf8.js"
+    },
+    "./whatwg.js": {
+      "types": "./whatwg.d.ts",
+      "default": "./whatwg.js"
     },
     "./wif.js": {
       "types": "./wif.d.ts",
