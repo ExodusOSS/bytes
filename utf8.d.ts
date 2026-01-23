@@ -59,7 +59,7 @@ export function utf8fromStringLoose(
  * @param arr - The bytes to decode
  * @returns The decoded string
  */
-export function utf8toString(arr: Uint8ArrayBuffer): string;
+export function utf8toString(arr: Uint8Array): string;
 
 /**
  * Decode UTF-8 bytes to a string (loose mode)
@@ -73,5 +73,4 @@ export function utf8toString(arr: Uint8ArrayBuffer): string;
  * @param arr - The bytes to decode
  * @returns The decoded string
  */
-export function utf8toStringLoose(arr: Uint8ArrayBuffer): string;
-
+export function utf8toStringLoose(arr: Uint8Array): string;

@@ -7,6 +7,13 @@ import { fromHex } from '@exodus/bytes/hex.js'
 import { randomValues } from '@exodus/crypto/randomBytes'
 import { describe, test } from 'node:test'
 
+const SharedArrayBuffer = globalThis.SharedArrayBuffer ?? ArrayBuffer
+const toShared = (u8) => {
+  const res = new Uint8Array(new SharedArrayBuffer(u8.length))
+  res.set(u8)
+  return res
+}
+
 // invalid bytes -> string
 const nonUtf8 = [
   { bytes: [0, 254, 255], charcodes: [0, 0xff_fd, 0xff_fd] },
@@ -72,6 +79,8 @@ describe('utf8toString', () => {
     for (const method of [
       utf8toString,
       utf8toStringLoose,
+      (x) => utf8toString(toShared(x)),
+      (x) => utf8toStringLoose(toShared(x)),
       (x) => js.decode(x, false),
       (x) => js.decode(x, true),
     ]) {
@@ -84,7 +93,11 @@ describe('utf8toString', () => {
   })
 
   test('non-utf8 bytes throw in utf8toString', (t) => {
-    for (const method of [utf8toString, (x) => js.decode(x, false)]) {
+    for (const method of [
+      utf8toString,
+      (x) => utf8toString(toShared(x)),
+      (x) => js.decode(x, false),
+    ]) {
       for (const { bytes } of nonUtf8) {
         t.assert.throws(() => method(Uint8Array.of(...bytes)))
 
@@ -102,7 +115,11 @@ describe('utf8toString', () => {
   })
 
   test('non-utf8 bytes get replaced in utf8toStringLoose', (t) => {
-    for (const method of [utf8toStringLoose, (x) => js.decode(x, true)]) {
+    for (const method of [
+      utf8toStringLoose,
+      (x) => utf8toStringLoose(toShared(x)),
+      (x) => js.decode(x, true),
+    ]) {
       for (const { bytes, charcodes } of nonUtf8) {
         const res = method(Uint8Array.of(...bytes))
         t.assert.strictEqual(res.length, charcodes.length)
@@ -195,6 +212,7 @@ describe('random data', () => {
     const NativeBuffer = globalThis.Buffer && !globalThis.Buffer.TYPED_ARRAY_SUPPORT ? Buffer : null
     for (const u8 of pool) {
       const str = utf8toStringLoose(u8)
+      t.assert.strictEqual(str, utf8toStringLoose(toShared(u8)))
       t.assert.strictEqual(str, js.decode(u8, true))
       if (textDecoder) t.assert.strictEqual(str, textDecoder.decode(u8))
       if (NativeBuffer) t.assert.strictEqual(str, NativeBuffer.from(u8).toString())
@@ -207,6 +225,8 @@ describe('random data', () => {
     for (const u8 of poolAscii) {
       const str = utf8toString(u8)
       t.assert.strictEqual(str, utf8toStringLoose(u8))
+      t.assert.strictEqual(str, utf8toString(toShared(u8)))
+      t.assert.strictEqual(str, utf8toStringLoose(toShared(u8)))
       t.assert.strictEqual(str, js.decode(u8, false))
       t.assert.strictEqual(str, js.decode(u8, true))
       if (textDecoder) t.assert.strictEqual(str, textDecoder.decode(u8))
@@ -228,11 +248,14 @@ describe('random data', () => {
       }
 
       if (str === undefined) {
+        t.assert.throws(() => utf8toString(toShared(u8)))
         t.assert.throws(() => js.decode(u8, false))
         if (textDecoder) t.assert.throws(() => textDecoder.decode(u8))
       } else {
         t.assert.strictEqual(str, strings[i])
         t.assert.strictEqual(str, utf8toStringLoose(u8))
+        t.assert.strictEqual(str, utf8toString(toShared(u8)))
+        t.assert.strictEqual(str, utf8toStringLoose(toShared(u8)))
         t.assert.strictEqual(str, js.decode(u8, false))
         t.assert.strictEqual(str, js.decode(u8, true))
         if (textDecoder) t.assert.strictEqual(str, textDecoder.decode(u8))
@@ -279,6 +302,8 @@ describe('random data', () => {
       const u8 = restored[i]
       t.assert.strictEqual(str, utf8toString(u8))
       t.assert.strictEqual(str, utf8toStringLoose(u8))
+      t.assert.strictEqual(str, utf8toString(toShared(u8)))
+      t.assert.strictEqual(str, utf8toStringLoose(toShared(u8)))
       t.assert.strictEqual(str, js.decode(u8, false))
       t.assert.strictEqual(str, js.decode(u8, true))
       if (textDecoder) t.assert.strictEqual(str, textDecoder.decode(u8))
