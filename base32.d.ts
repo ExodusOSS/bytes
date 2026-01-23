@@ -47,7 +47,7 @@ export interface FromBase32Options {
  * @param options - Encoding options
  * @returns The base32 encoded string
  */
-export function toBase32(arr: Uint8ArrayBuffer, options?: ToBase32Options): string;
+export function toBase32(arr: Uint8Array, options?: ToBase32Options): string;
 
 /**
  * Encode a `Uint8Array` to a base32hex string (RFC 4648)
@@ -56,7 +56,7 @@ export function toBase32(arr: Uint8ArrayBuffer, options?: ToBase32Options): stri
  * @param options - Encoding options (padding defaults to false)
  * @returns The base32hex encoded string
  */
-export function toBase32hex(arr: Uint8ArrayBuffer, options?: ToBase32Options): string;
+export function toBase32hex(arr: Uint8Array, options?: ToBase32Options): string;
 
 /**
  * Decode a base32 string to bytes

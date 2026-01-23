@@ -48,7 +48,7 @@ export interface FromBase64Options {
  * @param options - Encoding options
  * @returns The base64 encoded string
  */
-export function toBase64(arr: Uint8ArrayBuffer, options?: ToBase64Options): string;
+export function toBase64(arr: Uint8Array, options?: ToBase64Options): string;
 
 /**
  * Encode a `Uint8Array` to a base64url string (RFC 4648)
@@ -57,7 +57,7 @@ export function toBase64(arr: Uint8ArrayBuffer, options?: ToBase64Options): stri
  * @param options - Encoding options (padding defaults to false)
  * @returns The base64url encoded string
  */
-export function toBase64url(arr: Uint8ArrayBuffer, options?: ToBase64Options): string;
+export function toBase64url(arr: Uint8Array, options?: ToBase64Options): string;
 
 /**
  * Decode a base64 string to bytes

@@ -3,6 +3,8 @@ import { describe, test } from 'node:test'
 import base32js from 'base32.js'
 import hiBase32 from 'hi-base32'
 
+const SharedArrayBuffer = globalThis.SharedArrayBuffer ?? ArrayBuffer
+
 const raw = [new Uint8Array(), new Uint8Array([0]), new Uint8Array([1]), new Uint8Array([255])]
 for (let i = 0; i < 50; i++) {
   const size = Math.floor(Math.random() * 100)
@@ -19,7 +21,9 @@ const pool = raw.map((uint8) => {
   if (base32padded !== hiBase32.encode(uint8)) throw new Error('Unexpected mismatch with hiBase32')
   const base32hexPadded = pad(base32hex)
   const hex = buffer.toString('hex')
-  return { uint8, buffer, hex, base32, base32padded, base32hex, base32hexPadded }
+  const shared = new Uint8Array(new SharedArrayBuffer(buffer.length))
+  shared.set(uint8)
+  return { uint8, shared, buffer, hex, base32, base32padded, base32hex, base32hexPadded }
 })
 
 describe('toBase32', () => {
@@ -34,20 +38,22 @@ describe('toBase32', () => {
   })
 
   test('base32', (t) => {
-    for (const { uint8, buffer, base32, base32padded } of pool) {
-      t.assert.strictEqual(toBase32(uint8), base32)
-      t.assert.strictEqual(toBase32(buffer), base32)
-      t.assert.strictEqual(toBase32(uint8, { padding: false }), base32)
-      t.assert.strictEqual(toBase32(uint8, { padding: true }), base32padded)
+    for (const { uint8, shared, buffer, base32, base32padded } of pool) {
+      for (const arg of [uint8, shared, buffer]) {
+        t.assert.strictEqual(toBase32(arg), base32)
+        t.assert.strictEqual(toBase32(arg, { padding: false }), base32)
+        t.assert.strictEqual(toBase32(arg, { padding: true }), base32padded)
+      }
     }
   })
 
   test('base32hex', (t) => {
-    for (const { uint8, buffer, base32hex, base32hexPadded } of pool) {
-      t.assert.strictEqual(toBase32hex(uint8), base32hex)
-      t.assert.strictEqual(toBase32hex(buffer), base32hex)
-      t.assert.strictEqual(toBase32hex(uint8, { padding: false }), base32hex)
-      t.assert.strictEqual(toBase32hex(uint8, { padding: true }), base32hexPadded)
+    for (const { uint8, shared, buffer, base32hex, base32hexPadded } of pool) {
+      for (const arg of [uint8, shared, buffer]) {
+        t.assert.strictEqual(toBase32hex(arg), base32hex)
+        t.assert.strictEqual(toBase32hex(arg, { padding: false }), base32hex)
+        t.assert.strictEqual(toBase32hex(arg, { padding: true }), base32hexPadded)
+      }
     }
   })
 })

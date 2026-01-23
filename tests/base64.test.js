@@ -2,6 +2,8 @@ import { toBase64, toBase64url, fromBase64, fromBase64url } from '@exodus/bytes/
 import * as js from '../fallback/base64.js'
 import { describe, test } from 'node:test'
 
+const SharedArrayBuffer = globalThis.SharedArrayBuffer ?? ArrayBuffer
+
 const raw = [new Uint8Array(), new Uint8Array([0]), new Uint8Array([1]), new Uint8Array([255])]
 for (let i = 0; i < 50; i++) {
   const size = Math.floor(Math.random() * 100)
@@ -21,7 +23,9 @@ const pool = raw.map((uint8) => {
 
   if (base64url !== base64urlFallback) throw new Error('Unexpected base64url mismatch with Buffer')
   const hex = buffer.toString('hex')
-  return { uint8, buffer, hex, base64, base64nopad, base64url, base64urlPadded }
+  const shared = new Uint8Array(new SharedArrayBuffer(buffer.length))
+  shared.set(uint8)
+  return { uint8, shared, buffer, hex, base64, base64nopad, base64url, base64urlPadded }
 })
 
 describe('toBase64', () => {
@@ -36,32 +40,26 @@ describe('toBase64', () => {
   })
 
   test('base64', (t) => {
-    for (const { uint8, buffer, base64, base64nopad } of pool) {
-      t.assert.strictEqual(toBase64(uint8), base64)
-      t.assert.strictEqual(toBase64(uint8, { padding: true }), base64)
-      t.assert.strictEqual(toBase64(uint8, { padding: false }), base64nopad)
-      t.assert.strictEqual(js.toBase64(uint8, false, false), base64nopad)
-      t.assert.strictEqual(js.toBase64(uint8, false, true), base64)
-      t.assert.strictEqual(toBase64(buffer), base64)
-      t.assert.strictEqual(toBase64(buffer, { padding: true }), base64)
-      t.assert.strictEqual(toBase64(buffer, { padding: false }), base64nopad)
-      t.assert.strictEqual(js.toBase64(buffer, false, false), base64nopad)
-      t.assert.strictEqual(js.toBase64(buffer, false, true), base64)
+    for (const { uint8, shared, buffer, base64, base64nopad } of pool) {
+      for (const arg of [uint8, shared, buffer]) {
+        t.assert.strictEqual(toBase64(arg), base64)
+        t.assert.strictEqual(toBase64(arg, { padding: true }), base64)
+        t.assert.strictEqual(toBase64(arg, { padding: false }), base64nopad)
+        t.assert.strictEqual(js.toBase64(arg, false, false), base64nopad)
+        t.assert.strictEqual(js.toBase64(arg, false, true), base64)
+      }
     }
   })
 
   test('base64url', (t) => {
-    for (const { uint8, buffer, base64url, base64urlPadded } of pool) {
-      t.assert.strictEqual(toBase64url(uint8), base64url)
-      t.assert.strictEqual(toBase64url(uint8, { padding: false }), base64url)
-      t.assert.strictEqual(toBase64url(uint8, { padding: true }), base64urlPadded)
-      t.assert.strictEqual(js.toBase64(uint8, true, false), base64url)
-      t.assert.strictEqual(js.toBase64(uint8, true, true), base64urlPadded)
-      t.assert.strictEqual(toBase64url(buffer), base64url)
-      t.assert.strictEqual(toBase64url(buffer, { padding: false }), base64url)
-      t.assert.strictEqual(toBase64url(buffer, { padding: true }), base64urlPadded)
-      t.assert.strictEqual(js.toBase64(buffer, true, false), base64url)
-      t.assert.strictEqual(js.toBase64(buffer, true, true), base64urlPadded)
+    for (const { uint8, shared, buffer, base64url, base64urlPadded } of pool) {
+      for (const arg of [uint8, shared, buffer]) {
+        t.assert.strictEqual(toBase64url(arg), base64url)
+        t.assert.strictEqual(toBase64url(arg, { padding: false }), base64url)
+        t.assert.strictEqual(toBase64url(arg, { padding: true }), base64urlPadded)
+        t.assert.strictEqual(js.toBase64(arg, true, false), base64url)
+        t.assert.strictEqual(js.toBase64(arg, true, true), base64urlPadded)
+      }
     }
   })
 })
