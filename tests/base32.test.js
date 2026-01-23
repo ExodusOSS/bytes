@@ -21,7 +21,7 @@ const pool = raw.map((uint8) => {
   if (base32padded !== hiBase32.encode(uint8)) throw new Error('Unexpected mismatch with hiBase32')
   const base32hexPadded = pad(base32hex)
   const hex = buffer.toString('hex')
-  const shared = new Uint8Array(new SharedArrayBuffer(buffer.length))
+  const shared = new Uint8Array(new SharedArrayBuffer(uint8.length))
   shared.set(uint8)
   return { uint8, shared, buffer, hex, base32, base32padded, base32hex, base32hexPadded }
 })

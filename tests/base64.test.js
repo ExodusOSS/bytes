@@ -23,7 +23,7 @@ const pool = raw.map((uint8) => {
 
   if (base64url !== base64urlFallback) throw new Error('Unexpected base64url mismatch with Buffer')
   const hex = buffer.toString('hex')
-  const shared = new Uint8Array(new SharedArrayBuffer(buffer.length))
+  const shared = new Uint8Array(new SharedArrayBuffer(uint8.length))
   shared.set(uint8)
   return { uint8, shared, buffer, hex, base64, base64nopad, base64url, base64urlPadded }
 })

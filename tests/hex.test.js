@@ -3,6 +3,8 @@ import * as lib from '../hex.js'
 import * as js from '../fallback/hex.js'
 import { describe, test } from 'node:test'
 
+const SharedArrayBuffer = globalThis.SharedArrayBuffer ?? ArrayBuffer
+
 const raw = [new Uint8Array(), new Uint8Array([0]), new Uint8Array([1]), new Uint8Array([255])]
 for (let i = 0; i < 50; i++) {
   const size = Math.floor(Math.random() * 100)
@@ -11,7 +13,9 @@ for (let i = 0; i < 50; i++) {
 
 const pool = raw.map((uint8) => {
   const buffer = Buffer.from(uint8)
-  return { uint8, buffer, hex: buffer.toString('hex') }
+  const shared = new Uint8Array(new SharedArrayBuffer(uint8.length))
+  shared.set(uint8)
+  return { uint8, shared, buffer, hex: buffer.toString('hex') }
 })
 
 const INVALID = [
@@ -85,12 +89,12 @@ describe('toHex', () => {
   })
 
   test('random', (t) => {
-    for (const { uint8, buffer, hex } of pool) {
-      t.assert.strictEqual(toHex(uint8), hex)
-      t.assert.strictEqual(toHex(buffer), hex)
-      t.assert.strictEqual(lib.toHex(uint8), hex)
-      t.assert.strictEqual(lib.toHex(buffer), hex)
-      t.assert.strictEqual(js.toHex(uint8), hex)
+    for (const { uint8, shared, buffer, hex } of pool) {
+      for (const arg of [uint8, shared, buffer]) {
+        t.assert.strictEqual(toHex(arg), hex)
+        t.assert.strictEqual(lib.toHex(arg), hex)
+        t.assert.strictEqual(js.toHex(arg), hex)
+      }
     }
   })
 })

@@ -1,6 +1,8 @@
 import { fromBigInt, toBigInt } from '@exodus/bytes/bigint.js'
 import { describe, test } from 'node:test'
 
+const SharedArrayBuffer = globalThis.SharedArrayBuffer ?? ArrayBuffer
+
 const raw = [new Uint8Array(), new Uint8Array([0]), new Uint8Array([1]), new Uint8Array([255])]
 for (let i = 0; i < 50; i++) {
   const size = Math.floor(Math.random() * 100)
@@ -9,7 +11,9 @@ for (let i = 0; i < 50; i++) {
 
 const pool = raw.map((uint8) => {
   const buffer = Buffer.from(uint8)
-  return { uint8, buffer, big: BigInt(`0x${buffer.toString('hex') || '0'}`) }
+  const shared = new Uint8Array(new SharedArrayBuffer(uint8.length))
+  shared.set(uint8)
+  return { uint8, shared, buffer, big: BigInt(`0x${buffer.toString('hex') || '0'}`) }
 })
 
 const VALID = [
@@ -51,8 +55,9 @@ describe('toBigInt', () => {
   })
 
   test('random', (t) => {
-    for (const { big, uint8, buffer } of pool) {
+    for (const { big, shared, uint8, buffer } of pool) {
       t.assert.strictEqual(toBigInt(uint8), big)
+      t.assert.strictEqual(toBigInt(shared), big)
       t.assert.strictEqual(toBigInt(buffer), big)
     }
   })

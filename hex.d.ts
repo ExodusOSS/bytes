@@ -19,7 +19,7 @@ import type { OutputFormat, Uint8ArrayBuffer } from './array.js';
  * @param arr - The input bytes
  * @returns The hex encoded string
  */
-export function toHex(arr: Uint8ArrayBuffer): string;
+export function toHex(arr: Uint8Array): string;
 
 /**
  * Decode a hex string to bytes
