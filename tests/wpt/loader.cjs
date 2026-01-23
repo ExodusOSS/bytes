@@ -147,8 +147,7 @@ function loadTextDecoderHtml(fullName) {
     assert.ok(encoding && encoding.length > 0)
     const decoder = new globalThis.TextDecoder(encoding)
     const fatal = new globalThis.TextDecoder(encoding, { fatal: true })
-    const encode =
-      decoder.encoding === 'iso-2022-jp' ? null : createMultibyteEncoder(decoder.encoding) // TODO: iso-2022-jp
+    const encode = createMultibyteEncoder(decoder.encoding)
 
     if (fullName.endsWith('_errors.html')) {
       const sep0 = '<span>'
@@ -223,8 +222,7 @@ function loadTextDecoderHtml(fullName) {
         // This is limited, encoders are asymmetrical
         if (
           !(decoder.encoding === 'euc-jp' && bytes.length === 3) && // no jis0212 encoding in spec
-          !(decoder.encoding === 'big5' && bytes[0] > 0x7f && bytes[0] <= 0xa0) && // encoding excludes pointers less than (0xA1 - 0x81) × 157.
-          decoder.encoding !== 'iso-2022-jp' // Not implemented yet
+          !(decoder.encoding === 'big5' && bytes[0] > 0x7f && bytes[0] <= 0xa0) // encoding excludes pointers less than (0xA1 - 0x81) × 157.
         ) {
           t.assert.doesNotThrow(
             () => t.assert.deepEqual(encode(String.fromCodePoint(cp)), bytes),
