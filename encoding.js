@@ -1,7 +1,8 @@
-import { createMultibyteDecoder } from '@exodus/bytes/multi-byte.js' // eslint-disable-line @exodus/import/no-unresolved
-import { setMultibyteDecoder } from './fallback/encoding.js'
+import { createMultibyteDecoder } from '@exodus/bytes/multi-byte.js'
+import { multibyteEncoder } from './fallback/multi-byte.js'
+import { setMultibyte } from './fallback/encoding.js'
 
-setMultibyteDecoder(createMultibyteDecoder)
+setMultibyte(createMultibyteDecoder, multibyteEncoder)
 
 export {
   TextDecoder,

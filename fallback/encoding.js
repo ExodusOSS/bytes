@@ -10,15 +10,21 @@ import { unfinishedBytes, mergePrefix } from './encoding.util.js'
 
 export { labelToName, getBOMEncoding, normalizeEncoding } from './encoding.api.js'
 
+const E_MULTI = "import '@exodus/bytes/encoding.js' for legacy multi-byte encodings support"
 const E_OPTIONS = 'The "options" argument must be of type object'
-const E_MULTI =
-  'Legacy multi-byte encodings are disabled in /encoding-lite.js, use /encoding.js for full encodings range support'
 const replacementChar = '\uFFFD'
 const multibyteSet = new Set(['big5', 'euc-kr', 'euc-jp', 'iso-2022-jp', 'shift_jis', 'gbk', 'gb18030']) // prettier-ignore
-let createMultibyteDecoder
+let createMultibyteDecoder, multibyteEncoder
 
-export function setMultibyteDecoder(createDecoder) {
+export const isMultibyte = (enc) => multibyteSet.has(enc)
+export function setMultibyte(createDecoder, createEncoder) {
   createMultibyteDecoder = createDecoder
+  multibyteEncoder = createEncoder
+}
+
+export function getMultibyteEncoder() {
+  if (!multibyteEncoder) throw new Error(E_MULTI)
+  return multibyteEncoder
 }
 
 const define = (obj, key, value) => Object.defineProperty(obj, key, { value, writable: false })
@@ -50,7 +56,7 @@ export class TextDecoder {
     define(this, 'fatal', Boolean(options.fatal))
     define(this, 'ignoreBOM', Boolean(options.ignoreBOM))
     this.#unicode = enc === 'utf-8' || enc === 'utf-16le' || enc === 'utf-16be'
-    this.#multibyte = !this.#unicode && multibyteSet.has(enc)
+    this.#multibyte = !this.#unicode && isMultibyte(enc)
     this.#canBOM = this.#unicode && !this.ignoreBOM
   }
 
@@ -300,7 +306,7 @@ export function legacyHookDecode(input, fallbackEncoding = 'utf-8') {
 
   if (!Object.hasOwn(labels, enc)) throw new RangeError(E_ENCODING)
 
-  if (multibyteSet.has(enc)) {
+  if (isMultibyte(enc)) {
     if (!createMultibyteDecoder) throw new Error(E_MULTI)
     return createMultibyteDecoder(enc, true)(u8)
   }
