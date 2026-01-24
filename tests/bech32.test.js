@@ -3,6 +3,13 @@ import { randomValues } from '@exodus/crypto/randomBytes'
 import { test } from 'node:test'
 import bech32 from 'bech32'
 
+const SharedArrayBuffer = globalThis.SharedArrayBuffer ?? ArrayBuffer
+const toShared = (u8) => {
+  const res = new Uint8Array(new SharedArrayBuffer(u8.length))
+  res.set(u8)
+  return res
+}
+
 const alt = {
   toBech32: (prefix, bytes) => bech32.bech32.encode(prefix, bech32.bech32.toWords(bytes)),
   toBech32m: (prefix, bytes) => bech32.bech32m.encode(prefix, bech32.bech32m.toWords(bytes)),
@@ -21,40 +28,48 @@ const maxBytes = 46
 const round = (p, x) => fromBech32(toBech32(p, x))
 const roundM = (p, x) => fromBech32m(toBech32m(p, x))
 
-test('fromBech32 matches bech32, static data', (t) => {
+test('toBech32 matches bech32, static data', (t) => {
+  const r = (p, u8, desc) => {
+    const s8 = toShared(u8)
+    t.assert.strictEqual(toBech32(p, u8), alt.toBech32(p, u8), desc)
+    t.assert.strictEqual(toBech32m(p, u8), alt.toBech32m(p, u8), desc)
+    t.assert.strictEqual(toBech32(p, s8), alt.toBech32(p, u8), desc)
+    t.assert.strictEqual(toBech32m(p, s8), alt.toBech32m(p, u8), desc)
+  }
+
   for (let size = 0; size <= maxBytes; size++) {
     const zeros = new Uint8Array(size)
     const ones = new Uint8Array(size).fill(1)
     const mid = new Uint8Array(size).fill(42)
     const max = new Uint8Array(size).fill(255)
     for (const p of ['bc', 'whatever']) {
-      t.assert.strictEqual(toBech32(p, zeros), alt.toBech32(p, zeros), `[0] x${size}, ${p}`)
-      t.assert.strictEqual(toBech32m(p, zeros), alt.toBech32m(p, zeros), `[0] x${size}, ${p}`)
-      t.assert.strictEqual(toBech32(p, ones), alt.toBech32(p, ones), `[1] x${size}, ${p}`)
-      t.assert.strictEqual(toBech32m(p, ones), alt.toBech32m(p, ones), `[1] x${size}, ${p}`)
-      t.assert.strictEqual(toBech32(p, mid), alt.toBech32(p, mid), `[42] x${size}, ${p}`)
-      t.assert.strictEqual(toBech32m(p, mid), alt.toBech32m(p, mid), `[42] x${size}, ${p}`)
-      t.assert.strictEqual(toBech32(p, max), alt.toBech32(p, max), `[255] x${size}, ${p}`)
-      t.assert.strictEqual(toBech32m(p, max), alt.toBech32m(p, max), `[255] x${size}, ${p}`)
+      r(p, zeros, `[0] x${size}, ${p}`)
+      r(p, ones, `[1] x${size}, ${p}`)
+      r(p, mid, `[42] x${size}, ${p}`)
+      r(p, max, `[255] x${size}, ${p}`)
     }
   }
 })
 
 test('sizes roundtrip, static data', (t) => {
+  const r = (p, u8, desc) => {
+    const s8 = toShared(u8)
+    t.assert.deepStrictEqual(round(p, u8), { prefix: p, bytes: u8 }, desc)
+    t.assert.deepStrictEqual(roundM(p, u8), { prefix: p, bytes: u8 }, desc)
+    t.assert.deepStrictEqual(round(p, s8), { prefix: p, bytes: u8 }, desc)
+    t.assert.deepStrictEqual(roundM(p, s8), { prefix: p, bytes: u8 }, desc)
+  }
+
   for (let size = 0; size < 47; size++) {
     const zeros = new Uint8Array(size)
     const ones = new Uint8Array(size).fill(1)
     const mid = new Uint8Array(size).fill(42)
     const max = new Uint8Array(size).fill(255)
     for (const p of ['bc', 'whatever']) {
-      t.assert.deepStrictEqual(round(p, zeros), { prefix: p, bytes: zeros }, `[0] x${size}, ${p}`)
-      t.assert.deepStrictEqual(roundM(p, zeros), { prefix: p, bytes: zeros }, `[0] x${size}, ${p}`)
-      t.assert.deepStrictEqual(round(p, ones), { prefix: p, bytes: ones }, `[1] x${size}, ${p}`)
-      t.assert.deepStrictEqual(roundM(p, ones), { prefix: p, bytes: ones }, `[1] x${size}, ${p}`)
-      t.assert.deepStrictEqual(round(p, mid), { prefix: p, bytes: mid }, `[42] x${size}, ${p}`)
-      t.assert.deepStrictEqual(roundM(p, mid), { prefix: p, bytes: mid }, `[42] x${size}, ${p}`)
-      t.assert.deepStrictEqual(round(p, max), { prefix: p, bytes: max }, `[255] x${size}, ${p}`)
-      t.assert.deepStrictEqual(roundM(p, max), { prefix: p, bytes: max }, `[255] x${size}, ${p}`)
+      r(p, zeros, `[0] x${size}, ${p}`)
+      r(p, ones, `[1] x${size}, ${p}`)
+      r(p, mid, `[42] x${size}, ${p}`)
+      r(p, max, `[255] x${size}, ${p}`)
     }
   }
 })
@@ -66,8 +81,11 @@ test('toBech32 matches bech32, random data', (t) => {
     for (const p of ['bc', 'whatever']) {
       for (let start = 0, i = 0; start < seed.length - size && i < 100; start++, i++) {
         const bytes = seed.subarray(start, start + size)
+        const shared = toShared(bytes)
         t.assert.strictEqual(toBech32(p, bytes), alt.toBech32(p, bytes), `random x${size}, ${p}`)
         t.assert.strictEqual(toBech32m(p, bytes), alt.toBech32m(p, bytes), `random x${size}, ${p}`)
+        t.assert.strictEqual(toBech32(p, shared), alt.toBech32(p, bytes), `random x${size}, ${p}`)
+        t.assert.strictEqual(toBech32m(p, shared), alt.toBech32m(p, bytes), `random x${size}, ${p}`)
       }
     }
   }
@@ -81,8 +99,11 @@ test('sizes roundtrip, random data', (t) => {
     for (const p of ['bc', 'whatever']) {
       for (let start = 0, i = 0; start < seed.length - size && i < 100; start++, i++) {
         const bytes = seed.subarray(start, start + size)
+        const shared = toShared(bytes)
         t.assert.deepStrictEqual(round(p, bytes), { prefix: p, bytes }, `random x${size}`)
         t.assert.deepStrictEqual(roundM(p, bytes), { prefix: p, bytes }, `random x${size}`)
+        t.assert.deepStrictEqual(round(p, shared), { prefix: p, bytes }, `random x${size}`)
+        t.assert.deepStrictEqual(roundM(p, shared), { prefix: p, bytes }, `random x${size}`)
       }
     }
   }

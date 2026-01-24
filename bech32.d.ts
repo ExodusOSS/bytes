@@ -34,7 +34,7 @@ export interface Bech32DecodeResult {
  * @param limit - Maximum length of the encoded string (default: 90)
  * @returns The bech32 encoded string
  */
-export function toBech32(prefix: string, bytes: Uint8ArrayBuffer, limit?: number): string;
+export function toBech32(prefix: string, bytes: Uint8Array, limit?: number): string;
 
 /**
  * Decode a bech32 string to bytes
@@ -53,7 +53,7 @@ export function fromBech32(string: string, limit?: number): Bech32DecodeResult;
  * @param limit - Maximum length of the encoded string (default: 90)
  * @returns The bech32m encoded string
  */
-export function toBech32m(prefix: string, bytes: Uint8ArrayBuffer, limit?: number): string;
+export function toBech32m(prefix: string, bytes: Uint8Array, limit?: number): string;
 
 /**
  * Decode a bech32m string to bytes
