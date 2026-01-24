@@ -66,10 +66,10 @@ export function utf16fromStringLoose(string: string, format?: Utf16Format): Uint
  * @param format - Input format (default: 'uint16')
  * @returns The decoded string
  */
-export function utf16toString(arr: Uint16ArrayBuffer, format?: 'uint16'): string;
-export function utf16toString(arr: Uint8ArrayBuffer, format: 'uint8-le'): string;
-export function utf16toString(arr: Uint8ArrayBuffer, format: 'uint8-be'): string;
-export function utf16toString(arr: Uint16ArrayBuffer | Uint8ArrayBuffer, format?: Utf16Format): string;
+export function utf16toString(arr: Uint16Array, format?: 'uint16'): string;
+export function utf16toString(arr: Uint8Array, format: 'uint8-le'): string;
+export function utf16toString(arr: Uint8Array, format: 'uint8-be'): string;
+export function utf16toString(arr: Uint16Array | Uint8Array, format?: Utf16Format): string;
 
 /**
  * Decode UTF-16 bytes to a string (loose mode)
@@ -86,7 +86,7 @@ export function utf16toString(arr: Uint16ArrayBuffer | Uint8ArrayBuffer, format?
  * @param format - Input format (default: 'uint16')
  * @returns The decoded string
  */
-export function utf16toStringLoose(arr: Uint16ArrayBuffer, format?: 'uint16'): string;
-export function utf16toStringLoose(arr: Uint8ArrayBuffer, format: 'uint8-le'): string;
-export function utf16toStringLoose(arr: Uint8ArrayBuffer, format: 'uint8-be'): string;
-export function utf16toStringLoose(arr: Uint16ArrayBuffer | Uint8ArrayBuffer, format?: Utf16Format): string;
+export function utf16toStringLoose(arr: Uint16Array, format?: 'uint16'): string;
+export function utf16toStringLoose(arr: Uint8Array, format: 'uint8-le'): string;
+export function utf16toStringLoose(arr: Uint8Array, format: 'uint8-be'): string;
+export function utf16toStringLoose(arr: Uint16Array | Uint8Array, format?: Utf16Format): string;

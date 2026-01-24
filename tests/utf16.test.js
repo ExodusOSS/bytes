@@ -5,6 +5,13 @@ import { randomValues } from '@exodus/crypto/randomBytes'
 import * as js from '../fallback/utf16.js'
 import { describe, test } from 'node:test'
 
+const SharedArrayBuffer = globalThis.SharedArrayBuffer ?? ArrayBuffer
+const toShared = (u16) => {
+  const res = new Uint16Array(new SharedArrayBuffer(u16.byteLength))
+  res.set(u16)
+  return res
+}
+
 const orphans = [
   { invalid: [0x61, 0x62, 0xd8_00, 0x77, 0x78], replaced: [0x61, 0x62, 0xff_fd, 0x77, 0x78] },
   { invalid: [0xd8_00], replaced: [0xff_fd] },
@@ -33,7 +40,7 @@ const pool = [
   new Uint16Array(seed3.buffer, seed3.byteOffset, seed3.byteLength / 2),
 ]
 
-for (let i = 0; i < 500; i++) {
+for (let i = 0; i < 300; i++) {
   const offset = Math.floor((Math.random() * seed.length) / 2) * 2
   const u8 = seed.subarray(offset).map((x, j) => x + i * j)
   pool.push(new Uint16Array(u8.buffer, u8.byteOffset, u8.byteLength / 2))
@@ -66,7 +73,13 @@ describe('utf16toString', () => {
   })
 
   test('orphans throw in utf16toString', (t) => {
-    for (const utf16toString of [utf16.utf16toString, lib.utf16toString, js.decode]) {
+    for (const utf16toString of [
+      utf16.utf16toString,
+      lib.utf16toString,
+      (x) => utf16.utf16toString(toShared(x)),
+      (x) => lib.utf16toString(toShared(x)),
+      js.decode,
+    ]) {
       for (const { invalid } of orphans) {
         t.assert.throws(() => utf16toString(Uint16Array.of(...invalid)))
 
@@ -88,6 +101,8 @@ describe('utf16toString', () => {
       for (const utf16toStringLoose of [
         utf16.utf16toStringLoose,
         lib.utf16toStringLoose,
+        (x) => utf16.utf16toStringLoose(toShared(x)),
+        (x) => lib.utf16toStringLoose(toShared(x)),
         (u16) => js.decode(u16, true),
       ]) {
         const res = utf16toStringLoose(Uint16Array.of(...invalid))
@@ -172,7 +187,10 @@ describe('random data', () => {
     const decoderBE = nativeIsOk ? new TextDecoder('utf-16be', { ignoreBOM }) : null // polyfilled might be wrong
     for (const u16 of pool) {
       const str = utf16.utf16toStringLoose(u16)
+      const s16 = toShared(u16)
       t.assert.strictEqual(str, lib.utf16toStringLoose(u16))
+      t.assert.strictEqual(str, utf16.utf16toStringLoose(s16))
+      t.assert.strictEqual(str, lib.utf16toStringLoose(s16))
       t.assert.strictEqual(str, js.decode(u16, true))
       const u8 = new Uint8Array(u16.buffer, u16.byteOffset, u16.byteLength)
       const strLE = utf16.utf16toStringLoose(u8, 'uint8-le')
@@ -192,9 +210,14 @@ describe('random data', () => {
     const decoderBE = nativeIsOk ? new TextDecoder('utf-16be', { ignoreBOM }) : null
     for (const u16 of poolAscii) {
       const str = utf16.utf16toString(u16)
+      const s16 = toShared(u16)
       t.assert.strictEqual(str, utf16.utf16toStringLoose(u16))
       t.assert.strictEqual(str, lib.utf16toString(u16))
       t.assert.strictEqual(str, lib.utf16toStringLoose(u16))
+      t.assert.strictEqual(str, utf16.utf16toString(s16))
+      t.assert.strictEqual(str, utf16.utf16toStringLoose(s16))
+      t.assert.strictEqual(str, lib.utf16toString(s16))
+      t.assert.strictEqual(str, lib.utf16toStringLoose(s16))
       t.assert.strictEqual(str, js.decode(u16, false))
       t.assert.strictEqual(str, js.decode(u16, true))
       const u8 = new Uint8Array(u16.buffer, u16.byteOffset, u16.byteLength)
@@ -220,7 +243,9 @@ describe('random data', () => {
     t.assert.strictEqual(strings.length, pool.length)
     for (let i = 0; i < pool.length; i++) {
       const u16 = pool[i]
+      const s16 = toShared(u16)
       const u8 = new Uint8Array(u16.buffer, u16.byteOffset, u16.byteLength)
+      const s8 = new Uint8Array(s16.buffer, s16.byteOffset, s16.byteLength)
       let str
       try {
         str = utf16.utf16toString(u16)
@@ -233,9 +258,17 @@ describe('random data', () => {
         t.assert.throws(() => js.decode(u16, false))
         t.assert.throws(() => utf16.utf16toString(u8, isLE ? 'uint8-le' : 'uint8-be'))
         t.assert.throws(() => lib.utf16toString(u8, isLE ? 'uint8-le' : 'uint8-be'))
+
+        t.assert.throws(() => utf16.utf16toString(s16))
+        t.assert.throws(() => lib.utf16toString(s16))
+        t.assert.throws(() => js.decode(s16, false))
+        t.assert.throws(() => utf16.utf16toString(s8, isLE ? 'uint8-le' : 'uint8-be'))
+        t.assert.throws(() => lib.utf16toString(s8, isLE ? 'uint8-le' : 'uint8-be'))
+
         if (nativeIsOk) t.assert.throws(() => (isLE ? decoderLE : decoderBE).decode(u8))
       } else {
         t.assert.strictEqual(str, strings[i])
+
         t.assert.strictEqual(str, utf16.utf16toStringLoose(u16))
         t.assert.strictEqual(str, lib.utf16toString(u16))
         t.assert.strictEqual(str, lib.utf16toStringLoose(u16))
@@ -245,6 +278,18 @@ describe('random data', () => {
         t.assert.strictEqual(str, utf16.utf16toStringLoose(u8, isLE ? 'uint8-le' : 'uint8-be'))
         t.assert.strictEqual(str, lib.utf16toString(u8, isLE ? 'uint8-le' : 'uint8-be'))
         t.assert.strictEqual(str, lib.utf16toStringLoose(u8, isLE ? 'uint8-le' : 'uint8-be'))
+
+        t.assert.strictEqual(str, utf16.utf16toString(s16))
+        t.assert.strictEqual(str, utf16.utf16toStringLoose(s16))
+        t.assert.strictEqual(str, lib.utf16toString(s16))
+        t.assert.strictEqual(str, lib.utf16toStringLoose(s16))
+        t.assert.strictEqual(str, js.decode(s16, false))
+        t.assert.strictEqual(str, js.decode(s16, true))
+        t.assert.strictEqual(str, utf16.utf16toString(s8, isLE ? 'uint8-le' : 'uint8-be'))
+        t.assert.strictEqual(str, utf16.utf16toStringLoose(s8, isLE ? 'uint8-le' : 'uint8-be'))
+        t.assert.strictEqual(str, lib.utf16toString(s8, isLE ? 'uint8-le' : 'uint8-be'))
+        t.assert.strictEqual(str, lib.utf16toStringLoose(s8, isLE ? 'uint8-le' : 'uint8-be'))
+
         if (nativeIsOk) t.assert.strictEqual(str, (isLE ? decoderLE : decoderBE).decode(u8))
         if (Buffer && isLE) t.assert.strictEqual(str, Buffer.from(u8).toString('utf-16le'))
       }
@@ -298,7 +343,10 @@ describe('random data', () => {
     for (let i = 0; i < pool.length; i++) {
       const str = strings[i]
       const u16 = restored[i]
+      const s16 = toShared(u16)
       const u8 = new Uint8Array(u16.buffer, u16.byteOffset, u16.byteLength)
+      const s8 = new Uint8Array(s16.buffer, s16.byteOffset, s16.byteLength)
+
       t.assert.strictEqual(str, utf16.utf16toString(u16))
       t.assert.strictEqual(str, utf16.utf16toStringLoose(u16))
       t.assert.strictEqual(str, lib.utf16toString(u16))
@@ -309,6 +357,18 @@ describe('random data', () => {
       t.assert.strictEqual(str, utf16.utf16toStringLoose(u8, isLE ? 'uint8-le' : 'uint8-be'))
       t.assert.strictEqual(str, lib.utf16toString(u8, isLE ? 'uint8-le' : 'uint8-be'))
       t.assert.strictEqual(str, lib.utf16toStringLoose(u8, isLE ? 'uint8-le' : 'uint8-be'))
+
+      t.assert.strictEqual(str, utf16.utf16toString(s16))
+      t.assert.strictEqual(str, utf16.utf16toStringLoose(s16))
+      t.assert.strictEqual(str, lib.utf16toString(s16))
+      t.assert.strictEqual(str, lib.utf16toStringLoose(s16))
+      t.assert.strictEqual(str, js.decode(s16, false))
+      t.assert.strictEqual(str, js.decode(s16, true))
+      t.assert.strictEqual(str, utf16.utf16toString(s8, isLE ? 'uint8-le' : 'uint8-be'))
+      t.assert.strictEqual(str, utf16.utf16toStringLoose(s8, isLE ? 'uint8-le' : 'uint8-be'))
+      t.assert.strictEqual(str, lib.utf16toString(s8, isLE ? 'uint8-le' : 'uint8-be'))
+      t.assert.strictEqual(str, lib.utf16toStringLoose(s8, isLE ? 'uint8-le' : 'uint8-be'))
+
       if (nativeIsOk) t.assert.strictEqual(str, (isLE ? decoderLE : decoderBE).decode(u8))
       if (Buffer && isLE) t.assert.strictEqual(str, Buffer.from(u8).toString('utf-16le'))
     }

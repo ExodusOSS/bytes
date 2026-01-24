@@ -64,10 +64,10 @@ export function utf32fromStringLoose(string: string, format?: Utf32Format): Uint
  * @param format - Input format (default: 'uint32')
  * @returns The decoded string
  */
-export function utf32toString(arr: Uint32ArrayBuffer, format?: 'uint32'): string;
-export function utf32toString(arr: Uint8ArrayBuffer, format: 'uint8-le'): string;
-export function utf32toString(arr: Uint8ArrayBuffer, format: 'uint8-be'): string;
-export function utf32toString(arr: Uint32ArrayBuffer | Uint8ArrayBuffer, format?: Utf32Format): string;
+export function utf32toString(arr: Uint32Array, format?: 'uint32'): string;
+export function utf32toString(arr: Uint8Array, format: 'uint8-le'): string;
+export function utf32toString(arr: Uint8Array, format: 'uint8-be'): string;
+export function utf32toString(arr: Uint32Array | Uint8Array, format?: Utf32Format): string;
 
 /**
  * Decode UTF-32 bytes to a string (loose mode)
@@ -83,7 +83,7 @@ export function utf32toString(arr: Uint32ArrayBuffer | Uint8ArrayBuffer, format?
  * @param format - Input format (default: 'uint32')
  * @returns The decoded string
  */
-export function utf32toStringLoose(arr: Uint32ArrayBuffer, format?: 'uint32'): string;
-export function utf32toStringLoose(arr: Uint8ArrayBuffer, format: 'uint8-le'): string;
-export function utf32toStringLoose(arr: Uint8ArrayBuffer, format: 'uint8-be'): string;
-export function utf32toStringLoose(arr: Uint32ArrayBuffer | Uint8ArrayBuffer, format?: Utf32Format): string;
+export function utf32toStringLoose(arr: Uint32Array, format?: 'uint32'): string;
+export function utf32toStringLoose(arr: Uint8Array, format: 'uint8-le'): string;
+export function utf32toStringLoose(arr: Uint8Array, format: 'uint8-be'): string;
+export function utf32toStringLoose(arr: Uint32Array | Uint8Array, format?: Utf32Format): string;
