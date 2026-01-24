@@ -9,6 +9,13 @@ import { singleByte } from './encoding/fixtures/indexes.cjs'
 const encodings = Object.keys(encodingsObject)
 const nonWhatwg = new Set(['iso-8859-1', 'iso-8859-9', 'iso-8859-11'])
 
+const SharedArrayBuffer = globalThis.SharedArrayBuffer ?? ArrayBuffer
+const toShared = (u8) => {
+  const res = new Uint8Array(new SharedArrayBuffer(u8.length))
+  res.set(u8)
+  return res
+}
+
 // See also tests/encoding/single-byte.tables.test.js for similar TextDecoder tests
 
 describe('single-byte encodings are supersets of ascii', () => {
@@ -26,7 +33,7 @@ describe('single-byte encodings are supersets of ascii', () => {
 
         t.assert.strictEqual(str.length, 1, i)
         t.assert.strictEqual(str.codePointAt(0), i, i)
-
+        t.assert.strictEqual(decoder(toShared(Uint8Array.of(i))), str)
         t.assert.deepStrictEqual(encoder(str), Uint8Array.of(i))
       }
     })
@@ -41,6 +48,7 @@ describe('single-byte encodings match fallback', () => {
       const fallback = encodingDecoder(encoding)
       for (let i = 0; i < 256; i++) {
         const u8 = Uint8Array.of(i)
+        const s8 = toShared(u8)
         let found = false
         let str
         try {
@@ -52,14 +60,18 @@ describe('single-byte encodings match fallback', () => {
           t.assert.strictEqual(str.length, 1)
           t.assert.notEqual(str, '\uFFFD')
           t.assert.strictEqual(decoderLoose(u8), str)
+          t.assert.strictEqual(decoder(s8), str)
+          t.assert.strictEqual(decoderLoose(s8), str)
           t.assert.strictEqual(fallback(u8), str)
           t.assert.strictEqual(fallback(u8, true), str)
         } else {
           t.assert.ok(i >= 128)
+          t.assert.throws(() => decoder(s8))
           t.assert.throws(() => fallback(u8))
           str = decoderLoose(u8)
           t.assert.strictEqual(str.length, 1)
           t.assert.strictEqual(str, '\uFFFD')
+          t.assert.strictEqual(decoderLoose(s8), str)
           t.assert.strictEqual(fallback(u8, true), str)
         }
       }
@@ -125,6 +137,7 @@ describe('single-byte encodings index: Unicode', () => {
 
         if (code === undefined) {
           t.assert.throws(() => decoder(Uint8Array.of(byte)))
+          t.assert.throws(() => decoder(toShared(Uint8Array.of(byte))))
           try {
             str = decoderLoose(Uint8Array.of(byte))
           } catch (cause) {
@@ -133,6 +146,7 @@ describe('single-byte encodings index: Unicode', () => {
 
           t.assert.strictEqual(str.length, 1)
           t.assert.strictEqual(str.codePointAt(0), 0xff_fd)
+          t.assert.strictEqual(decoderLoose(toShared(Uint8Array.of(byte))), str)
         } else {
           try {
             str = decoder(Uint8Array.of(byte))
@@ -142,8 +156,9 @@ describe('single-byte encodings index: Unicode', () => {
 
           t.assert.strictEqual(str.length, 1, byte)
           t.assert.strictEqual(str.codePointAt(0), code, byte)
-          t.assert.strictEqual(str, decoderLoose(Uint8Array.of(byte)))
-
+          t.assert.strictEqual(decoderLoose(Uint8Array.of(byte)), str)
+          t.assert.strictEqual(decoder(toShared(Uint8Array.of(byte))), str)
+          t.assert.strictEqual(decoderLoose(toShared(Uint8Array.of(byte))), str)
           t.assert.deepStrictEqual(encoder(str), Uint8Array.of(byte))
         }
       }
@@ -197,10 +212,12 @@ describe('single-byte encodings index: WHATWG', () => {
           t.assert.strictEqual(str.length, 1, row.description)
           t.assert.strictEqual(str.codePointAt(0), row.code, row.description)
           t.assert.strictEqual(str, decoderLoose(Uint8Array.of(byte)))
-
+          t.assert.strictEqual(decoder(toShared(Uint8Array.of(byte))), str)
+          t.assert.strictEqual(decoderLoose(toShared(Uint8Array.of(byte))), str)
           t.assert.deepStrictEqual(encoder(str), Uint8Array.of(byte))
         } else {
           t.assert.throws(() => decoder(Uint8Array.of(byte)))
+          t.assert.throws(() => decoder(toShared(Uint8Array.of(byte))))
           try {
             str = decoderLoose(Uint8Array.of(byte))
           } catch (cause) {
@@ -209,6 +226,7 @@ describe('single-byte encodings index: WHATWG', () => {
 
           t.assert.strictEqual(str.length, 1)
           t.assert.strictEqual(str.codePointAt(0), 0xff_fd)
+          t.assert.strictEqual(decoderLoose(toShared(Uint8Array.of(byte))), str)
         }
       }
     })
@@ -243,10 +261,14 @@ describe('single-byte encodings index: WHATWG non-normative indexes.json', () =>
           t.assert.ok(data[i] <= 0xff_ff)
           t.assert.strictEqual(decoder(Uint8Array.of(byte)), str)
           t.assert.strictEqual(decoderLoose(Uint8Array.of(byte)), str)
+          t.assert.strictEqual(decoder(toShared(Uint8Array.of(byte))), str)
+          t.assert.strictEqual(decoderLoose(toShared(Uint8Array.of(byte))), str)
           t.assert.deepStrictEqual(encoder(str), Uint8Array.of(byte))
         } else {
           t.assert.throws(() => decoder(Uint8Array.of(byte)))
+          t.assert.throws(() => decoder(toShared(Uint8Array.of(byte))))
           t.assert.strictEqual(decoderLoose(Uint8Array.of(byte)), '\uFFFD')
+          t.assert.strictEqual(decoderLoose(toShared(Uint8Array.of(byte))), '\uFFFD')
         }
       }
     })
@@ -263,6 +285,8 @@ describe('x-user-defined', () => {
       const str = String.fromCodePoint(byte >= 0x80 ? 0xf7_80 + byte - 0x80 : byte)
       t.assert.strictEqual(decoder(Uint8Array.of(byte)), str, byte)
       t.assert.strictEqual(decoderLoose(Uint8Array.of(byte)), str, byte)
+      t.assert.strictEqual(decoder(toShared(Uint8Array.of(byte))), str, byte)
+      t.assert.strictEqual(decoderLoose(toShared(Uint8Array.of(byte))), str, byte)
     }
   })
 

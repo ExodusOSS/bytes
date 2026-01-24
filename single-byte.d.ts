@@ -65,7 +65,7 @@ import type { Uint8ArrayBuffer } from './array.js';
 export function createSinglebyteDecoder(
   encoding: string,
   loose?: boolean
-): (arr: Uint8ArrayBuffer) => string;
+): (arr: Uint8Array) => string;
 
 /**
  * Create an encoder for a supported one-byte `encoding`, given its lowercased name `encoding`.
@@ -101,7 +101,7 @@ export function createSinglebyteEncoder(
  * @param arr - The bytes to decode
  * @returns The decoded string
  */
-export function latin1toString(arr: Uint8ArrayBuffer): string;
+export function latin1toString(arr: Uint8Array): string;
 
 /**
  * Encode a string to `iso-8859-1` bytes.
@@ -131,7 +131,7 @@ export function latin1fromString(string: string): Uint8ArrayBuffer;
  * @param arr - The bytes to decode
  * @returns The decoded string
  */
-export function windows1252toString(arr: Uint8ArrayBuffer): string;
+export function windows1252toString(arr: Uint8Array): string;
 
 /**
  * Encode a string to `windows-1252` bytes.
