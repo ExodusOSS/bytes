@@ -1,9 +1,9 @@
 const { Buffer, TextEncoder, TextDecoder } = globalThis
 const haveNativeBuffer = Buffer && !Buffer.TYPED_ARRAY_SUPPORT
 export const nativeBuffer = haveNativeBuffer ? Buffer : null
-export const isHermes = Boolean(globalThis.HermesInternal)
-export const isDeno = Boolean(globalThis.Deno)
-export const isLE = new Uint8Array(Uint16Array.of(258).buffer)[0] === 2
+export const isHermes = !!globalThis.HermesInternal
+export const isDeno = !!globalThis.Deno
+export const isLE = /* @__PURE__ */ (() => new Uint8Array(Uint16Array.of(258).buffer)[0] === 2)()
 
 // We consider Node.js TextDecoder/TextEncoder native
 let isNative = (x) => x && (haveNativeBuffer || `${x}`.includes('[native code]'))
@@ -17,16 +17,19 @@ export const nativeDecoder = isNative(TextDecoder)
 // Actually windows-1252, compatible with ascii and latin1 decoding
 // Beware that on non-latin1, i.e. on windows-1252, this is broken in ~all Node.js versions released
 // in 2025 due to a regression, so we call it Latin1 as it's usable only for that
-let nativeDecoderLatin1impl = null
-if (nativeDecoder) {
+const getNativeLain1 = () => {
   // Not all barebone engines with TextDecoder support something except utf-8, detect
-  try {
-    nativeDecoderLatin1impl = new TextDecoder('latin1', { ignoreBOM: true })
-  } catch {}
+  if (!nativeDecoder) {
+    try {
+      return new TextDecoder('latin1', { ignoreBOM: true })
+    } catch {}
+  }
+
+  return null
 }
 
-export const nativeDecoderLatin1 = nativeDecoderLatin1impl
-export const canDecoders = Boolean(nativeDecoderLatin1impl)
+export const nativeDecoderLatin1 = /* @__PURE__ */ getNativeLain1()
+export const canDecoders = !!nativeDecoderLatin1
 
 // Block Firefox < 146 specifically from using native hex/base64, as it's very slow there
 // Refs: https://bugzilla.mozilla.org/show_bug.cgi?id=1994067 (and linked issues), fixed in 146
@@ -51,7 +54,7 @@ function shouldSkipBuiltins() {
   return false // eslint-disable-line no-unreachable
 }
 
-export const skipWeb = shouldSkipBuiltins()
+export const skipWeb = /* @__PURE__ */ shouldSkipBuiltins()
 
 function decodePartAddition(a, start, end, m) {
   let o = ''

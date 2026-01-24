@@ -9,7 +9,7 @@ if (Buffer.TYPED_ARRAY_SUPPORT) throw new Error('Unexpected Buffer polyfill')
 let decoderFatal
 const decoderLoose = new TextDecoder('utf-8', { ignoreBOM: true })
 const { isWellFormed } = String.prototype
-const isDeno = Boolean(globalThis.Deno)
+const isDeno = !!globalThis.Deno
 
 try {
   decoderFatal = new TextDecoder('utf-8', { ignoreBOM: true, fatal: true })

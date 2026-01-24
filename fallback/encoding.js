@@ -53,8 +53,8 @@ export class TextDecoder {
     const enc = normalizeEncoding(encoding)
     if (!enc || enc === 'replacement') throw new RangeError(E_ENCODING)
     define(this, 'encoding', enc)
-    define(this, 'fatal', Boolean(options.fatal))
-    define(this, 'ignoreBOM', Boolean(options.ignoreBOM))
+    define(this, 'fatal', !!options.fatal)
+    define(this, 'ignoreBOM', !!options.ignoreBOM)
     this.#unicode = enc === 'utf-8' || enc === 'utf-16le' || enc === 'utf-16be'
     this.#multibyte = !this.#unicode && isMultibyte(enc)
     this.#canBOM = this.#unicode && !this.ignoreBOM
@@ -66,7 +66,7 @@ export class TextDecoder {
 
   decode(input, options = {}) {
     if (typeof options !== 'object') throw new TypeError(E_OPTIONS)
-    const stream = Boolean(options.stream)
+    const stream = !!options.stream
     let u = input === undefined ? new Uint8Array() : fromSource(input)
     const empty = u.length === 0 // also can't be streaming after next line
     if (empty && stream) return '' // no state change
