@@ -15,7 +15,9 @@ describe('single-byte encodings are supersets of ascii', () => {
   for (const encoding of encodings) {
     test(encoding, (t) => {
       const decoder = createSinglebyteDecoder(encoding)
+      const decoderLoose = createSinglebyteDecoder(encoding, true)
       const encoder = createSinglebyteEncoder(encoding)
+      const encoderLoose = createSinglebyteEncoder(encoding, { mode: 'replacement' })
       for (let i = 0; i < 128; i++) {
         let str
         try {
@@ -27,7 +29,9 @@ describe('single-byte encodings are supersets of ascii', () => {
         t.assert.strictEqual(str.length, 1, i)
         t.assert.strictEqual(str.codePointAt(0), i, i)
 
+        t.assert.strictEqual(decoderLoose(Uint8Array.of(i)), str, i)
         t.assert.deepStrictEqual(encoder(str), Uint8Array.of(i))
+        t.assert.deepStrictEqual(encoderLoose(str), Uint8Array.of(i))
       }
     })
   }
@@ -84,6 +88,7 @@ describe('single-byte encodings index: Unicode', () => {
       const decoder = createSinglebyteDecoder(encoding)
       const decoderLoose = createSinglebyteDecoder(encoding, true)
       const encoder = createSinglebyteEncoder(encoding)
+      const encoderLoose = createSinglebyteEncoder(encoding, { mode: 'replacement' })
       const text = readFileSync(
         join(import.meta.dirname, 'encoding/fixtures/unicode/', fileName),
         'utf8'
@@ -145,6 +150,7 @@ describe('single-byte encodings index: Unicode', () => {
           t.assert.strictEqual(str, decoderLoose(Uint8Array.of(byte)))
 
           t.assert.deepStrictEqual(encoder(str), Uint8Array.of(byte))
+          t.assert.deepStrictEqual(encoderLoose(str), Uint8Array.of(byte))
         }
       }
     })
@@ -158,6 +164,7 @@ describe('single-byte encodings index: WHATWG', () => {
       const decoder = createSinglebyteDecoder(encoding)
       const decoderLoose = createSinglebyteDecoder(encoding, true)
       const encoder = createSinglebyteEncoder(encoding)
+      const encoderLoose = createSinglebyteEncoder(encoding, { mode: 'replacement' })
       const text = readFileSync(
         join(import.meta.dirname, 'encoding/fixtures/single-byte', `index-${encoding}.txt`),
         'utf8'
@@ -199,6 +206,7 @@ describe('single-byte encodings index: WHATWG', () => {
           t.assert.strictEqual(str, decoderLoose(Uint8Array.of(byte)))
 
           t.assert.deepStrictEqual(encoder(str), Uint8Array.of(byte))
+          t.assert.deepStrictEqual(encoderLoose(str), Uint8Array.of(byte))
         } else {
           t.assert.throws(() => decoder(Uint8Array.of(byte)))
           try {
@@ -230,6 +238,7 @@ describe('single-byte encodings index: WHATWG non-normative indexes.json', () =>
       const decoder = createSinglebyteDecoder(encoding)
       const decoderLoose = createSinglebyteDecoder(encoding, true)
       const encoder = createSinglebyteEncoder(encoding)
+      const encoderLoose = createSinglebyteEncoder(encoding, { mode: 'replacement' })
 
       t.assert.strictEqual(data.length, 128)
       for (let i = 0; i < data.length; i++) {
@@ -244,6 +253,7 @@ describe('single-byte encodings index: WHATWG non-normative indexes.json', () =>
           t.assert.strictEqual(decoder(Uint8Array.of(byte)), str)
           t.assert.strictEqual(decoderLoose(Uint8Array.of(byte)), str)
           t.assert.deepStrictEqual(encoder(str), Uint8Array.of(byte))
+          t.assert.deepStrictEqual(encoderLoose(str), Uint8Array.of(byte))
         } else {
           t.assert.throws(() => decoder(Uint8Array.of(byte)))
           t.assert.strictEqual(decoderLoose(Uint8Array.of(byte)), '\uFFFD')
@@ -268,13 +278,16 @@ describe('x-user-defined', () => {
 
   test('encode', (t) => {
     const encoder = createSinglebyteEncoder(encoding)
+    const encoderLoose = createSinglebyteEncoder(encoding, { mode: 'replacement' })
     for (let byte = 0; byte < 256; byte++) {
       const str = String.fromCodePoint(byte >= 0x80 ? 0xf7_80 + byte - 0x80 : byte)
       t.assert.deepStrictEqual(encoder(str), Uint8Array.of(byte), byte)
+      t.assert.deepStrictEqual(encoderLoose(str), Uint8Array.of(byte), byte)
     }
 
     for (let i = 128; i < 512; i++) {
       t.assert.throws(() => encoder(String.fromCodePoint(i)), /Input is not well-formed/)
+      t.assert.deepStrictEqual(encoderLoose(String.fromCodePoint(i)), Uint8Array.of(0x3f), i)
     }
   })
 })
@@ -284,10 +297,15 @@ describe('codes above 0x7F are non-ASCII', () => {
   for (const encoding of ['iso-8859-2', 'iso-8859-16']) {
     test(encoding, (t) => {
       const encoder = createSinglebyteEncoder(encoding)
+      const encoderLoose = createSinglebyteEncoder(encoding, { mode: 'replacement' })
       t.assert.deepStrictEqual(encoder('\x80'), new Uint8Array(1).fill(0x80))
       t.assert.deepStrictEqual(encoder('\x80'.repeat(4)), new Uint8Array(4).fill(0x80))
       t.assert.deepStrictEqual(encoder('\x80'.repeat(8)), new Uint8Array(8).fill(0x80))
       t.assert.deepStrictEqual(encoder('\x80'.repeat(16)), new Uint8Array(16).fill(0x80))
+      t.assert.deepStrictEqual(encoderLoose('\x80'), new Uint8Array(1).fill(0x80))
+      t.assert.deepStrictEqual(encoderLoose('\x80'.repeat(4)), new Uint8Array(4).fill(0x80))
+      t.assert.deepStrictEqual(encoderLoose('\x80'.repeat(8)), new Uint8Array(8).fill(0x80))
+      t.assert.deepStrictEqual(encoderLoose('\x80'.repeat(16)), new Uint8Array(16).fill(0x80))
     })
   }
 
@@ -295,10 +313,15 @@ describe('codes above 0x7F are non-ASCII', () => {
   for (const encoding of ['windows-1250', 'windows-1252', 'x-user-defined']) {
     test(encoding, (t) => {
       const encoder = createSinglebyteEncoder(encoding)
+      const encoderLoose = createSinglebyteEncoder(encoding, { mode: 'replacement' })
       t.assert.throws(() => encoder('\x80'))
       t.assert.throws(() => encoder('\x80'.repeat(4)))
       t.assert.throws(() => encoder('\x80'.repeat(8)))
       t.assert.throws(() => encoder('\x80'.repeat(16)))
+      t.assert.deepStrictEqual(encoderLoose('\x80'), new Uint8Array(1).fill(0x3f))
+      t.assert.deepStrictEqual(encoderLoose('\x80'.repeat(4)), new Uint8Array(4).fill(0x3f))
+      t.assert.deepStrictEqual(encoderLoose('\x80'.repeat(8)), new Uint8Array(8).fill(0x3f))
+      t.assert.deepStrictEqual(encoderLoose('\x80'.repeat(16)), new Uint8Array(16).fill(0x3f))
     })
   }
 })
