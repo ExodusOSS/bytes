@@ -3,6 +3,13 @@ import { test, describe } from 'node:test'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 
+const SharedArrayBuffer = globalThis.SharedArrayBuffer ?? ArrayBuffer
+const toShared = (u8) => {
+  const res = new Uint8Array(new SharedArrayBuffer(u8.length))
+  res.set(u8)
+  return res
+}
+
 describe('multi-byte encodings are supersets of ascii', () => {
   // Except iso-2022-jp
   for (const encoding of ['big5', 'euc-kr', 'euc-jp', 'shift_jis', 'gbk', 'gb18030']) {
@@ -19,7 +26,7 @@ describe('multi-byte encodings are supersets of ascii', () => {
 
         t.assert.strictEqual(str.length, 1, i)
         t.assert.strictEqual(str.codePointAt(0), i, i)
-
+        t.assert.strictEqual(decoder(toShared(Uint8Array.of(i))), str)
         t.assert.deepStrictEqual(encoder(str), Uint8Array.of(i))
       }
     })
@@ -222,6 +229,7 @@ describe('roundtrip, tables', () => {
         }
 
         t.assert.doesNotThrow(() => t.assert.strictEqual(dec(enc(str)), str), description)
+        t.assert.doesNotThrow(() => t.assert.strictEqual(dec(toShared(enc(str))), str), description)
       }
     })
   }

@@ -36,7 +36,7 @@ import type { Uint8ArrayBuffer } from './array.js';
 export function createMultibyteDecoder(
   encoding: string,
   loose?: boolean
-): (arr: Uint8ArrayBuffer, stream?: boolean) => string;
+): (arr: Uint8Array, stream?: boolean) => string;
 
 /**
  * Create an encoder for a supported legacy multi-byte `encoding`, given its lowercased name `encoding`.
