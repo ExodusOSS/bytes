@@ -23,7 +23,7 @@ import type { OutputFormat, Uint8ArrayBuffer } from './array.js';
  * @param arr - The input bytes
  * @returns The base58 encoded string
  */
-export function toBase58(arr: Uint8ArrayBuffer): string;
+export function toBase58(arr: Uint8Array): string;
 
 /**
  * Decode a base58 string to bytes
@@ -46,7 +46,7 @@ export function fromBase58(string: string, format?: OutputFormat): Uint8ArrayBuf
  * @param arr - The input bytes
  * @returns The base58 encoded string
  */
-export function toBase58xrp(arr: Uint8ArrayBuffer): string;
+export function toBase58xrp(arr: Uint8Array): string;
 
 /**
  * Decode a base58 string to bytes using XRP alphabet

@@ -6,6 +6,13 @@ import { describe, test } from 'node:test'
 import bs58 from 'bs58'
 import xAddressCodecFixtures from './vendor/x-address-codec/fixtures/base58.cjs'
 
+const SharedArrayBuffer = globalThis.SharedArrayBuffer ?? ArrayBuffer
+const toShared = (u8) => {
+  const res = new Uint8Array(new SharedArrayBuffer(u8.length))
+  res.set(u8)
+  return res
+}
+
 // https://en.bitcoin.it/wiki/Base58Check_encoding#Creating_a_Base58Check_string
 const toChecked = (version, pub) => {
   const data = [Uint8Array.of(version), pub]
@@ -23,6 +30,7 @@ describe('static vectors', () => {
     for (const [string, u8] of fixtures) {
       t.assert.deepStrictEqual(fromBase58(string), u8, string)
       t.assert.strictEqual(toBase58(u8), string)
+      t.assert.strictEqual(toBase58(toShared(u8)), string)
     }
   })
 
@@ -41,6 +49,7 @@ describe('static vectors', () => {
     for (const [string, u8] of fixtures) {
       t.assert.deepStrictEqual(fromBase58xrp(string), u8, string)
       t.assert.strictEqual(toBase58xrp(u8), string)
+      t.assert.strictEqual(toBase58xrp(toShared(u8)), string)
     }
   })
 })
@@ -50,6 +59,7 @@ describe('x-address-codec fixtures', () => {
     for (const { hex, string } of xAddressCodecFixtures.bitcoin) {
       const u8 = fromHex(hex)
       t.assert.strictEqual(toBase58(u8), string)
+      t.assert.strictEqual(toBase58(toShared(u8)), string)
       t.assert.deepStrictEqual(fromBase58(string), u8, string)
     }
   })
@@ -58,6 +68,7 @@ describe('x-address-codec fixtures', () => {
     for (const { hex, string } of xAddressCodecFixtures.ripple) {
       const u8 = fromHex(hex)
       t.assert.strictEqual(toBase58xrp(u8), string)
+      t.assert.strictEqual(toBase58xrp(toShared(u8)), string)
       t.assert.deepStrictEqual(fromBase58xrp(string), u8, string)
     }
   })
@@ -75,6 +86,7 @@ test('zeros', (t) => {
     const zeros = new Uint8Array(size)
     const expected = '1'.repeat(size)
     t.assert.strictEqual(toBase58(zeros), expected, `[0] x${size} toBase58`)
+    t.assert.strictEqual(toBase58(toShared(zeros)), expected, `[0] x${size} toBase58`)
     t.assert.strictEqual(bs58.encode(zeros), expected, `[0] x${size} bs58.encode`) // matches bs58
     t.assert.deepStrictEqual(fromBase58(expected), zeros, `[0] x${size} fromBase58`)
   }
