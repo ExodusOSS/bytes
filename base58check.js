@@ -4,7 +4,8 @@ import { makeBase58check } from './fallback/base58check.js'
 // Note: while API is async, we use hashSync for now until we improve webcrypto perf for hash256
 // Inputs to base58 are typically very small, and that makes a difference
 
-// eslint-disable-next-line @exodus/import/no-deprecated
+// Note: using native WebCrypto will have to have account for SharedArrayBuffer
+
 const hash256sync = (x) => sha256(sha256(x))
 const hash256 = hash256sync // See note at the top
 const {

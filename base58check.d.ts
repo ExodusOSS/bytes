@@ -36,7 +36,7 @@ export interface Base58CheckAsync {
    * @param arr - The input bytes to encode
    * @returns A Promise that resolves to the base58check encoded string
    */
-  encode(arr: Uint8ArrayBuffer): Promise<string>;
+  encode(arr: Uint8Array): Promise<string>;
 
   /**
    * Decode a base58check string to bytes asynchronously
@@ -60,7 +60,7 @@ export interface Base58CheckSync extends Base58CheckAsync {
    * @param arr - The input bytes to encode
    * @returns The base58check encoded string
    */
-  encodeSync(arr: Uint8ArrayBuffer): string;
+  encodeSync(arr: Uint8Array): string;
 
   /**
    * Decode a base58check string to bytes synchronously
@@ -92,7 +92,7 @@ export function makeBase58check(hashAlgo: HashFunction): Base58CheckAsync;
  * @param arr - The input bytes to encode
  * @returns A Promise that resolves to the base58check encoded string
  */
-export function toBase58check(arr: Uint8ArrayBuffer): Promise<string>;
+export function toBase58check(arr: Uint8Array): Promise<string>;
 
 /**
  * Decode a base58check string to bytes asynchronously
@@ -115,7 +115,7 @@ export function fromBase58check(string: string, format?: OutputFormat): Promise<
  * @param arr - The input bytes to encode
  * @returns The base58check encoded string
  */
-export function toBase58checkSync(arr: Uint8ArrayBuffer): string;
+export function toBase58checkSync(arr: Uint8Array): string;
 
 /**
  * Decode a base58check string to bytes synchronously

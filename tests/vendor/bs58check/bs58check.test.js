@@ -6,6 +6,13 @@ import { toHex as bytesToHex, fromHex as hexToBytes } from '@exodus/bytes/hex.js
 import { test } from 'node:test'
 import fixtures from './fixtures.cjs'
 
+const SharedArrayBuffer = globalThis.SharedArrayBuffer ?? ArrayBuffer
+const toShared = (u8) => {
+  const res = new Uint8Array(new SharedArrayBuffer(u8.length))
+  res.set(u8)
+  return res
+}
+
 const libs = [auto]
 if (js.toBase58check !== auto.toBase58check) libs.push(js)
 
@@ -36,8 +43,10 @@ for (const f of fixtures.valid) {
     for (const lib of libs) {
       t.assert.strictEqual(await lib.toBase58check(u8), f.string)
       t.assert.strictEqual(await lib.toBase58check(buffer), f.string)
+      t.assert.strictEqual(await lib.toBase58check(toShared(u8)), f.string)
       t.assert.strictEqual(lib.toBase58checkSync(u8), f.string)
       t.assert.strictEqual(lib.toBase58checkSync(buffer), f.string)
+      t.assert.strictEqual(lib.toBase58checkSync(toShared(u8)), f.string)
     }
   })
 }
