@@ -35,8 +35,13 @@ function deLoose(str, loose, res) {
     start = pos + 1
     if (res[pos + 1] === 0xbf && res[pos + 2] === 0xbd) {
       // Found a replacement char in output, need to recheck if we encoded the input correctly
-      if (str !== decode(res)) throw new TypeError(E_STRICT_UNICODE)
-      return res
+      if (!nativeDecoder && str.length < 1e7) {
+        // This is ~2x faster than decode in Hermes
+        try {
+          if (encodeURI(str) !== null) return res // guard against optimizing out
+        } catch {}
+      } else if (str === decode(res)) return res
+      throw new TypeError(E_STRICT_UNICODE)
     }
   }
 
