@@ -10,6 +10,8 @@
 
 And a [`TextEncoder` / `TextDecoder` polyfill](#textencoder--textdecoder-polyfill)
 
+See [documentation](https://exodusoss.github.io/bytes).
+
 ## Strict
 
 Performs proper input validation, ensures no garbage-in-garbage-out
