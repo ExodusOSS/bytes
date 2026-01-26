@@ -1,0 +1,17 @@
+{
+  "excludeNotDocumented": true,
+  "excludeNotDocumentedKinds": ["Module"],
+  "navigation": {
+    "includeFolders": false
+  },
+  "outputs": [
+    {
+        "name": "html",
+        "path": "./doc"
+    },
+    {
+        "name": "json",
+        "path": "./doc/index.json"
+    }
+  ]
+}
