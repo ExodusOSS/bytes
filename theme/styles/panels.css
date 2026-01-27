@@ -1,0 +1,14 @@
+@layer typedoc {
+  .tsd-panel {
+    border-color: #3f3f46;
+  }
+
+  .tsd-signature {
+    border-color: #3f3f46;
+  }
+
+  .tsd-theme-toggle,
+  .tsd-navigation.settings {
+    display: none !important;
+  }
+}

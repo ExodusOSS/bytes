@@ -1,0 +1,45 @@
+@layer typedoc {
+  html {
+    background: #000000 !important;
+  }
+
+  body {
+    position: relative;
+    overflow-x: hidden;
+    font-family: "Inter", system-ui, "Roboto", "Segoe UI", sans-serif;
+    background: #000000 !important;
+  }
+
+  body::before {
+    content: "";
+    position: fixed;
+    bottom: -20%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 200%;
+    height: 90vh;
+    z-index: 0;
+    background: radial-gradient(
+      ellipse at center,
+      rgba(131, 103, 231, 0.5) 0%,
+      rgba(96, 66, 199, 0.35) 25%,
+      rgba(131, 103, 231, 0.15) 45%,
+      transparent 70%
+    );
+    pointer-events: none;
+  }
+
+  .tsd-page-content,
+  main,
+  .container {
+    position: relative;
+    z-index: 1;
+  }
+
+  .container,
+  .container-fluid,
+  .tsd-page-content,
+  main {
+    background: transparent !important;
+  }
+}

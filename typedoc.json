@@ -13,5 +13,7 @@
         "name": "json",
         "path": "./doc/index.json"
     }
-  ]
+  ],
+  "customCss": "./theme/custom.css",
+  "favicon": "./theme/favicon.ico"
 }
