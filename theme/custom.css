@@ -58,14 +58,21 @@
     body::before {
         content: '';
         position: fixed;
-        bottom: -10%;
+        bottom: -20%;
         left: 50%;
         transform: translateX(-50%);
-        width: 150%;
-        height: 80vh;
-        z-index: -1;
-        background: radial-gradient(ellipse at center, rgba(131, 103, 231, 0.4) 0%, rgba(96, 66, 199, 0.25) 30%, transparent 65%);
+        width: 200%;
+        height: 90vh;
+        z-index: 0;
+        background: radial-gradient(ellipse at center, rgba(131, 103, 231, 0.5) 0%, rgba(96, 66, 199, 0.35) 25%, rgba(131, 103, 231, 0.15) 45%, transparent 70%);
         pointer-events: none;
+    }
+
+    .tsd-page-content,
+    main,
+    .container {
+        position: relative;
+        z-index: 1;
     }
 
     html {
@@ -87,6 +94,13 @@
     .tsd-page-content,
     main {
         background: transparent !important;
+    }
+
+    header,
+    .tsd-page-toolbar,
+    .tsd-header {
+        background: #000000 !important;
+        border-bottom: 1px solid #3f3f46;
     }
 
     h1,
