@@ -1,181 +1,20 @@
-@layer typedoc {
-    :root {
-        --color-background: #000000;
-        --color-background-secondary: #000000;
-        --color-background-active: #27272a;
-        --color-background-warning: #ebd43e;
-        --color-warning-text: #111111;
-        --color-accent: #3f3f46;
-        --color-active-menu-item: #27272a;
-        --color-text: #e3e7fb;
-        --color-contrast-text: #ffffff;
-        --color-text-aside: #a1a1aa;
-        --color-icon-background: #111111;
-        --color-icon-text: #e3e7fb;
-        --color-comment-tag-text: #e3e7fb;
-        --color-comment-tag: #27272a;
-        --color-link: #8367e7;
-        --color-focus-outline: #b19dff;
-        --color-ts-keyword: #b19dff;
-        --color-ts-project: #8367e7;
-        --color-ts-module: #8367e7;
-        --color-ts-namespace: #8367e7;
-        --color-ts-enum: #ebd43e;
-        --color-ts-enum-member: #ebd43e;
-        --color-ts-variable: #3ec7eb;
-        --color-ts-function: #2ecf95;
-        --color-ts-class: #8367e7;
-        --color-ts-interface: #2ecf95;
-        --color-ts-constructor: #8367e7;
-        --color-ts-property: #eb7c3e;
-        --color-ts-method: #b19dff;
-        --color-ts-reference: #8367e7;
-        --color-ts-call-signature: #b19dff;
-        --color-ts-index-signature: #eb7c3e;
-        --color-ts-constructor-signature: #8367e7;
-        --color-ts-parameter: #3ec7eb;
-        --color-ts-type-parameter: #eb7c3e;
-        --color-ts-accessor: #eb7c3e;
-        --color-ts-get-signature: #eb7c3e;
-        --color-ts-set-signature: #eb7c3e;
-        --color-ts-type-alias: #8367e7;
-        --color-document: #e3e7fb;
-        --color-alert-note: #3ec7eb;
-        --color-alert-tip: #2ecf95;
-        --color-alert-important: #8367e7;
-        --color-alert-warning: #ebd43e;
-        --color-alert-caution: #eb7c3e;
-        --external-icon: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' width='10' height='10'><path fill-opacity='0' stroke='%23e3e7fb' stroke-width='10' d='m43,35H5v60h60V57M45,5v10l10,10-30,30 20,20 30-30 10,10h10V5z'/></svg>");
-        color-scheme: dark;
-        --code-background: #000000;
-    }
+/* CSS Variables and Base Settings */
+@import './styles/variables.css';
 
-    body {
-        position: relative;
-        overflow-x: hidden;
-    }
+/* Layout and Background */
+@import './styles/layout.css';
 
-    body::before {
-        content: '';
-        position: fixed;
-        bottom: -20%;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 200%;
-        height: 90vh;
-        z-index: 0;
-        background: radial-gradient(ellipse at center, rgba(131, 103, 231, 0.5) 0%, rgba(96, 66, 199, 0.35) 25%, rgba(131, 103, 231, 0.15) 45%, transparent 70%);
-        pointer-events: none;
-    }
+/* Header and Navigation */
+@import './styles/header.css';
 
-    .tsd-page-content,
-    main,
-    .container {
-        position: relative;
-        z-index: 1;
-    }
+/* Typography */
+@import './styles/typography.css';
 
-    html {
-        background: #000000 !important;
-    }
+/* Links and Navigation */
+@import './styles/links.css';
 
-    body {
-        font-family:
-            'Inter',
-            system-ui,
-            'Roboto',
-            'Segoe UI',
-            sans-serif;
-        background: #000000 !important;
-    }
+/* Panels and Containers */
+@import './styles/panels.css';
 
-    .container,
-    .container-fluid,
-    .tsd-page-content,
-    main {
-        background: transparent !important;
-    }
-
-    header,
-    .tsd-page-toolbar,
-    .tsd-header {
-        background: #000000 !important;
-        border-bottom: 1px solid #3f3f46;
-    }
-
-    h1,
-    h2,
-    h3,
-    h4,
-    h5,
-    h6 {
-        font-family:
-            'Eudoxus Sans',
-            system-ui,
-            'Roboto',
-            'Segoe UI',
-            sans-serif;
-    }
-
-    a {
-        color: #8367e7 !important;
-    }
-
-    a:hover {
-        color: #b19dff !important;
-    }
-
-    .tsd-navigation a,
-    .tsd-navigation a:visited {
-        color: #e3e7fb !important;
-    }
-
-    .tsd-navigation a:hover,
-    .tsd-navigation a.current {
-        color: #b19dff !important;
-    }
-
-    .tsd-kind-icon {
-        color: inherit !important;
-    }
-
-    .tsd-panel {
-        border-color: #3f3f46;
-    }
-
-    .tsd-signature {
-        border-color: #3f3f46;
-    }
-
-    code {
-        background: #27272a !important;
-        color: #e3e7fb;
-        padding: 0.15em 0.35em;
-        border-radius: 0.25rem;
-        font-size: 0.9em;
-    }
-
-    pre {
-        background: #000000 !important;
-        border: 1px solid #3f3f46 !important;
-        border-radius: 0.5rem !important;
-        padding: 1.25rem !important;
-        margin: 1.25rem 0 !important;
-        overflow-x: auto;
-        line-height: 1.6;
-    }
-
-    pre code {
-        background: transparent !important;
-        color: #e3e7fb !important;
-        padding: 0 !important;
-        display: block;
-        font-size: 0.875rem;
-        font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
-    }
-
-    .tsd-theme-toggle,
-    .tsd-navigation.settings {
-        display: none !important;
-    }
-}
+/* Code Blocks and Syntax Highlighting */
+@import './styles/code.css';
