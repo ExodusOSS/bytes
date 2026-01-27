@@ -1,2 +1,3 @@
 tests/wpt/fixtures/** linguist-vendored
 tests/** linguist-documentation
+theme/** linguist-documentation
