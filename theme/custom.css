@@ -116,4 +116,9 @@
         font-size: 0.875rem;
         font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
     }
+
+    .tsd-theme-toggle,
+    .tsd-navigation.settings {
+        display: none !important;
+    }
 }
