@@ -91,17 +91,6 @@ function conseqStart(str, start) {
   return p - start
 }
 
-const stats = new Map()
-
-function encode(count, relcodepoint) {
-  // Extend negative encoding to cover more (1, offset) patterns
-  // Use -1 to -99 for (1, 1) through (1, 99)
-  if (count === 1 && relcodepoint >= 1 && relcodepoint <= 99) return `${-relcodepoint}`
-  const res = `${count},${relcodepoint}`
-  stats.set(res, (stats.get(res) || 0) + 1)
-  return res
-}
-
 function encodeString(s, lastconseq) {
   // s is split by codepoints
   const u8 = utf16fromString(s.join(''), 'uint8-le')
@@ -117,23 +106,30 @@ function encodeString(s, lastconseq) {
     u8x[u8.length / 2 + i / 2] = u8[i + 1]
   }
 
-  const str = `"${toBase64url(u8x)}"`
+  const str = toBase64url(u8x)
   let i = 0
   const parts = []
   let ll = lastconseq
   while (i < s.length) {
     const start = s[i].codePointAt(0)
     const p = conseqStart(s, i)
-    parts.push(encode(p, start - ll))
+    const relcp = start - ll
+    // Use negative for (1, N) patterns
+    if (p === 1 && relcp >= 1 && relcp <= 99) {
+      parts.push(-relcp)
+    } else {
+      parts.push(p, relcp)
+    }
     ll = start + p
     i += p
   }
 
-  const partsstr = parts.join(',')
-  return str.length * 1.5 < partsstr.length && str.length < partsstr.length - 3 ? [str] : parts
+  // Calculate size - each number roughly 2 chars, plus commas
+  const partsSize = parts.reduce((sum, n) => sum + String(n).length + 1, 0)
+  return str.length * 1.5 < partsSize && str.length < partsSize - 3 ? [str] : parts
 }
 
-let final = ''
+let final = '{'
 for (const [encoding, chars] of Object.entries(encodings)) {
   const list = []
   let str = chars
@@ -142,7 +138,7 @@ for (const [encoding, chars] of Object.entries(encodings)) {
     if (str[0] === '\uFFFD') {
       let skip = 0
       while (str[skip] === '\uFFFD') skip++
-      list.push(`0,${skip}`)
+      list.push(0, skip)
       str = str.slice(skip)
     }
 
@@ -151,7 +147,7 @@ for (const [encoding, chars] of Object.entries(encodings)) {
       for (const [name, v] of reusable) {
         if (name === encoding) continue
         if (str.startsWith(v)) {
-          list.push(JSON.stringify(name))
+          list.push(name)
           str = str.slice(v.length)
           foundReusable = true
           break
@@ -164,7 +160,7 @@ for (const [encoding, chars] of Object.entries(encodings)) {
     const lastIsStr =
       list.length > 0 &&
       typeof list[list.length - 1] === 'string' &&
-      list[list.length - 1].endsWith('"')
+      !list[list.length - 1].startsWith('$')
     let minConseq = lastIsStr ? 3 : 2 // don't collapse too small chunks
 
     let strsplit = [...str]
@@ -172,7 +168,13 @@ for (const [encoding, chars] of Object.entries(encodings)) {
       const p = conseqStart(strsplit, 0)
       if (p >= minConseq) {
         const first = strsplit[0].codePointAt(0)
-        list.push(encode(p, first - lastconseq))
+        const relcp = first - lastconseq
+        // Use negative for (1, N) patterns
+        if (p === 1 && relcp >= 1 && relcp <= 99) {
+          list.push(-relcp)
+        } else {
+          list.push(p, relcp)
+        }
         lastconseq = first + p
         strsplit = strsplit.slice(p)
         str = strsplit.join('')
@@ -183,15 +185,11 @@ for (const [encoding, chars] of Object.entries(encodings)) {
     minConseq = 3
 
     const index = strsplit.indexOf('\uFFFD')
-    // const is96 = list.length > 0 && list[list.length - 1].length > 80
     let end = index === -1 ? strsplit.length : index
-    // if (splitChunks.has(encoding)) {
-    //   end = index > 96 && index <= 152 && !is96 ? 76 : Math.min(96, end)
-    // }
 
     for (const [name, v] of reusable) {
       if (name === encoding) continue
-      const idx = str.indexOf(v) // FIXME
+      const idx = str.indexOf(v)
       assert.ok(idx !== 0)
       if (idx > 0) {
         const idxu = [...str.slice(0, idx)].length // eslint-disable-line unicorn/no-useless-spread
@@ -213,24 +211,9 @@ for (const [encoding, chars] of Object.entries(encodings)) {
     str = str.slice(strsplit.join('').length)
   }
 
-  const list2 = []
-  let tmp = ''
-  for (const x of list) {
-    if (tmp.length === 0) {
-      tmp = '' + x
-    } else if (visibleLength(tmp + x) > LINELENGTH - 6) {
-      list2.push(tmp)
-      tmp = x
-    } else {
-      tmp += ',' + x
-    }
-  }
-
-  if (tmp.length > 0) list2.push(tmp)
-
-  const dump = list2.join(',\n    ')
-  final += final ? ',\n' : '{\n'
-  final += `  ${JSON.stringify(encoding)}: [\n    ${dump}\n  ]\n`
+  // Output as compact JSON array instead of formatted
+  if (final !== '{') final += ','
+  final += `"${encoding}":${JSON.stringify(list)}`
 }
 
 final += '}'
