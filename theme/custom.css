@@ -1,20 +1,20 @@
 /* CSS Variables and Base Settings */
-@import './styles/variables.css';
+@import "./styles/variables.css";
 
 /* Layout and Background */
-@import './styles/layout.css';
+@import "./styles/layout.css";
 
 /* Header and Navigation */
-@import './styles/header.css';
+@import "./styles/header.css";
 
 /* Typography */
-@import './styles/typography.css';
+@import "./styles/typography.css";
 
 /* Links and Navigation */
-@import './styles/links.css';
+@import "./styles/links.css";
 
 /* Panels and Containers */
-@import './styles/panels.css';
+@import "./styles/panels.css";
 
 /* Code Blocks and Syntax Highlighting */
-@import './styles/code.css';
+@import "./styles/code.css";

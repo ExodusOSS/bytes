@@ -1,28 +1,28 @@
 @layer typedoc {
-    code {
-        background: #27272a !important;
-        color: #e3e7fb;
-        padding: 0.15em 0.35em;
-        border-radius: 0.25rem;
-        font-size: 0.9em;
-    }
+  code {
+    background: #27272a !important;
+    color: #e3e7fb;
+    padding: 0.15em 0.35em;
+    border-radius: 0.25rem;
+    font-size: 0.9em;
+  }
 
-    pre {
-        background: #000000 !important;
-        border: 1px solid #3f3f46 !important;
-        border-radius: 0.5rem !important;
-        padding: 1.25rem !important;
-        margin: 1.25rem 0 !important;
-        overflow-x: auto;
-        line-height: 1.6;
-    }
+  pre {
+    background: #000000 !important;
+    border: 1px solid #3f3f46 !important;
+    border-radius: 0.5rem !important;
+    padding: 1.25rem !important;
+    margin: 1.25rem 0 !important;
+    overflow-x: auto;
+    line-height: 1.6;
+  }
 
-    pre code {
-        background: transparent !important;
-        color: #e3e7fb !important;
-        padding: 0 !important;
-        display: block;
-        font-size: 0.875rem;
-        font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
-    }
+  pre code {
+    background: transparent !important;
+    color: #e3e7fb !important;
+    padding: 0 !important;
+    display: block;
+    font-size: 0.875rem;
+    font-family: "Consolas", "Monaco", "Courier New", monospace;
+  }
 }

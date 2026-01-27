@@ -1,23 +1,23 @@
 @layer typedoc {
-    a {
-        color: #8367e7 !important;
-    }
+  a {
+    color: #8367e7 !important;
+  }
 
-    a:hover {
-        color: #b19dff !important;
-    }
+  a:hover {
+    color: #b19dff !important;
+  }
 
-    .tsd-navigation a,
-    .tsd-navigation a:visited {
-        color: #e3e7fb !important;
-    }
+  .tsd-navigation a,
+  .tsd-navigation a:visited {
+    color: #e3e7fb !important;
+  }
 
-    .tsd-navigation a:hover,
-    .tsd-navigation a.current {
-        color: #b19dff !important;
-    }
+  .tsd-navigation a:hover,
+  .tsd-navigation a.current {
+    color: #b19dff !important;
+  }
 
-    .tsd-kind-icon {
-        color: inherit !important;
-    }
+  .tsd-kind-icon {
+    color: inherit !important;
+  }
 }
