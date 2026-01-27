@@ -1,7 +1,7 @@
 @layer typedoc {
     :root {
-        --color-background: #07060d;
-        --color-background-secondary: #111111;
+        --color-background: #000000;
+        --color-background-secondary: #000000;
         --color-background-active: #27272a;
         --color-background-warning: #ebd43e;
         --color-warning-text: #111111;
@@ -51,12 +51,42 @@
     }
 
     body {
+        position: relative;
+        overflow-x: hidden;
+    }
+
+    body::before {
+        content: '';
+        position: fixed;
+        bottom: -10%;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 150%;
+        height: 80vh;
+        z-index: -1;
+        background: radial-gradient(ellipse at center, rgba(131, 103, 231, 0.4) 0%, rgba(96, 66, 199, 0.25) 30%, transparent 65%);
+        pointer-events: none;
+    }
+
+    html {
+        background: #000000 !important;
+    }
+
+    body {
         font-family:
             'Inter',
             system-ui,
             'Roboto',
             'Segoe UI',
             sans-serif;
+        background: #000000 !important;
+    }
+
+    .container,
+    .container-fluid,
+    .tsd-page-content,
+    main {
+        background: transparent !important;
     }
 
     h1,
@@ -73,13 +103,26 @@
             sans-serif;
     }
 
+    a {
+        color: #8367e7 !important;
+    }
+
     a:hover {
-        color: #b19dff;
+        color: #b19dff !important;
+    }
+
+    .tsd-navigation a,
+    .tsd-navigation a:visited {
+        color: #e3e7fb !important;
     }
 
     .tsd-navigation a:hover,
     .tsd-navigation a.current {
-        color: #b19dff;
+        color: #b19dff !important;
+    }
+
+    .tsd-kind-icon {
+        color: inherit !important;
     }
 
     .tsd-panel {
@@ -100,7 +143,7 @@
 
     pre {
         background: #000000 !important;
-        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        border: 1px solid #3f3f46 !important;
         border-radius: 0.5rem !important;
         padding: 1.25rem !important;
         margin: 1.25rem 0 !important;
