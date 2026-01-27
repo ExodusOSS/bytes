@@ -223,11 +223,11 @@ for (const [encoding, chars] of Object.entries(encodings)) {
 
   if (tmp.length > 0) list2.push(tmp)
 
-  const dump = list2.join(',\n    ')
-  final += `  ${JSON.stringify(encoding)}: [\n    ${dump}\n  ],\n`
+  const dump = list2.join(',')
+  final += ` ${JSON.stringify(encoding)}:[${dump}],`
 }
 
-final += '}'
+final = final.slice(0, -1) + '}'
 
 // console.error([...stats].sort((a, b) => b[1] - a[1]))
 
