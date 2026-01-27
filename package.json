@@ -20,7 +20,7 @@
   ],
   "scripts": {
     "lint": "eslint .",
-    "typedoc": "typedoc",
+    "typedoc": "typedoc && mkdir -p doc/assets && cp -r theme/styles doc/assets/",
     "test:javascriptcore": "npm run test:jsc --",
     "test:v8": "exodus-test --engine=v8:bundle",
     "test:jsc": "exodus-test --engine=jsc:bundle",
