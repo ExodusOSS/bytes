@@ -7,6 +7,7 @@ import { gzipSync } from 'node:zlib'
 
 // const splitChunks = new Set(['jis0208', 'jis0212', 'big5']) // pretty-print into chunks, non-continious anyway
 
+// references must start with `$` so that parser know which ones to expand
 const reusable = Object.entries({
   $C: ['АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ'], // [[1040, 6], "Ё", [1046, 26]],
   $c: ['абвгдеёжзийклмнопрстуфхцчшщъыьэюя'], // [[1072, 6], "ё", [1078, 26]],
@@ -128,7 +129,7 @@ function encodeString(s, lastconseq) {
   return str.length * 1.5 < partsstr.length && str.length < partsstr.length - 3 ? [str] : parts
 }
 
-let final = '{\n'
+let final = ''
 for (const [encoding, chars] of Object.entries(encodings)) {
   const list = []
   let str = chars
@@ -224,7 +225,8 @@ for (const [encoding, chars] of Object.entries(encodings)) {
   if (tmp.length > 0) list2.push(tmp)
 
   const dump = list2.join(',\n    ')
-  final += `  ${JSON.stringify(encoding)}: [\n    ${dump}\n  ],\n`
+  final += final ? ',\n' : '{\n'
+  final += `  ${JSON.stringify(encoding)}: [\n    ${dump}\n  ]\n`
 }
 
 final += '}'
@@ -232,5 +234,6 @@ final += '}'
 // console.error([...stats].sort((a, b) => b[1] - a[1]))
 
 console.log(final)
-console.error(`Raw size: ${final.length}`)
-console.error(`Gzip size: ${gzipSync(final).length}`)
+const json = JSON.stringify(JSON.parse(final)) // report minified size
+console.error(`Raw size: ${json.length}`)
+console.error(`Gzip size: ${gzipSync(json).length}`)
