@@ -3,6 +3,7 @@ import { toBase64url } from '@exodus/bytes/base64.js'
 import { utf16fromString } from '@exodus/bytes/utf16.js'
 import { join } from 'node:path'
 import assert from 'node:assert/strict'
+import { gzipSync } from 'node:zlib'
 
 // const splitChunks = new Set(['jis0208', 'jis0212', 'big5']) // pretty-print into chunks, non-continious anyway
 
@@ -42,7 +43,7 @@ for (const file of readdirSync(import.meta.dirname)) {
   const match = file.match(/^index-([a-z0-9-]+)\.txt$/u)
   if (!match) continue
   const encoding = match[1]
-  if (encoding.endsWith('-ranges')) continue
+  if (encoding.endsWith('-ranges') || encoding === 'iso-2022-jp-katakana ') continue
   const non16bit = encoding === 'big5'
   const text = readFileSync(join(import.meta.dirname, file), 'utf8')
   let max = 0
@@ -127,6 +128,7 @@ function encodeString(s, lastconseq) {
   return str.length * 1.5 < partsstr.length && str.length < partsstr.length - 3 ? [str] : parts
 }
 
+let final = '{\n'
 for (const [encoding, chars] of Object.entries(encodings)) {
   const list = []
   let str = chars
@@ -222,7 +224,13 @@ for (const [encoding, chars] of Object.entries(encodings)) {
   if (tmp.length > 0) list2.push(tmp)
 
   const dump = list2.join(',\n    ')
-  console.log(`const ${encoding} = [\n    ${dump}\n]\n`)
+  final += `  ${JSON.stringify(encoding)}: [\n    ${dump}\n  ],\n`
 }
 
-console.error([...stats].sort((a, b) => b[1] - a[1]))
+final += '}'
+
+// console.error([...stats].sort((a, b) => b[1] - a[1]))
+
+console.log(final)
+console.error(`Raw size: ${final.length}`)
+console.error(`Gzip size: ${gzipSync(final).length}`)
