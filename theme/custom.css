@@ -1,162 +1,53 @@
 @layer typedoc {
     :root {
-        --dark-color-background: #07060d;
-        --dark-color-background-secondary: #111111;
-        --dark-color-background-active: #27272a;
-        --dark-color-background-warning: #ebd43e;
-        --dark-color-warning-text: #111111;
-        --dark-color-accent: #3f3f46;
-        --dark-color-active-menu-item: #27272a;
-        --dark-color-text: #e3e7fb;
-        --dark-color-contrast-text: #ffffff;
-        --dark-color-text-aside: #a1a1aa;
-
-        --dark-color-icon-background: #111111;
-        --dark-color-icon-text: #e3e7fb;
-
-        --dark-color-comment-tag-text: #e3e7fb;
-        --dark-color-comment-tag: #27272a;
-
-        --dark-color-link: #8367e7;
-        --dark-color-focus-outline: #b19dff;
-
-        --dark-color-ts-keyword: #b19dff;
-        --dark-color-ts-project: #8367e7;
-        --dark-color-ts-module: #8367e7;
-        --dark-color-ts-namespace: #8367e7;
-        --dark-color-ts-enum: #ebd43e;
-        --dark-color-ts-enum-member: #ebd43e;
-        --dark-color-ts-variable: #3ec7eb;
-        --dark-color-ts-function: #2ecf95;
-        --dark-color-ts-class: #8367e7;
-        --dark-color-ts-interface: #2ecf95;
-        --dark-color-ts-constructor: #8367e7;
-        --dark-color-ts-property: #eb7c3e;
-        --dark-color-ts-method: #b19dff;
-        --dark-color-ts-reference: #8367e7;
-        --dark-color-ts-call-signature: #b19dff;
-        --dark-color-ts-index-signature: #eb7c3e;
-        --dark-color-ts-constructor-signature: #8367e7;
-        --dark-color-ts-parameter: #3ec7eb;
-        --dark-color-ts-type-parameter: #eb7c3e;
-        --dark-color-ts-accessor: #eb7c3e;
-        --dark-color-ts-get-signature: #eb7c3e;
-        --dark-color-ts-set-signature: #eb7c3e;
-        --dark-color-ts-type-alias: #8367e7;
-        --dark-color-document: #e3e7fb;
-
-        --dark-color-alert-note: #3ec7eb;
-        --dark-color-alert-tip: #2ecf95;
-        --dark-color-alert-important: #8367e7;
-        --dark-color-alert-warning: #ebd43e;
-        --dark-color-alert-caution: #eb7c3e;
-
-        --dark-external-icon: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' width='10' height='10'><path fill-opacity='0' stroke='%23e3e7fb' stroke-width='10' d='m43,35H5v60h60V57M45,5v10l10,10-30,30 20,20 30-30 10,10h10V5z'/></svg>");
-        --dark-color-scheme: dark;
-    }
-
-    :root[data-theme="os"] {
-        --color-background: var(--dark-color-background);
-        --color-background-secondary: var(--dark-color-background-secondary);
-        --color-background-active: var(--dark-color-background-active);
-        --color-background-warning: var(--dark-color-background-warning);
-        --color-warning-text: var(--dark-color-warning-text);
-        --color-accent: var(--dark-color-accent);
-        --color-active-menu-item: var(--dark-color-active-menu-item);
-        --color-text: var(--dark-color-text);
-        --color-contrast-text: var(--dark-color-contrast-text);
-        --color-text-aside: var(--dark-color-text-aside);
-        --color-icon-background: var(--dark-color-icon-background);
-        --color-icon-text: var(--dark-color-icon-text);
-        --color-comment-tag-text: var(--dark-color-comment-tag-text);
-        --color-comment-tag: var(--dark-color-comment-tag);
-        --color-link: var(--dark-color-link);
-        --color-focus-outline: var(--dark-color-focus-outline);
-        --color-ts-keyword: var(--dark-color-ts-keyword);
-        --color-ts-project: var(--dark-color-ts-project);
-        --color-ts-module: var(--dark-color-ts-module);
-        --color-ts-namespace: var(--dark-color-ts-namespace);
-        --color-ts-enum: var(--dark-color-ts-enum);
-        --color-ts-enum-member: var(--dark-color-ts-enum-member);
-        --color-ts-variable: var(--dark-color-ts-variable);
-        --color-ts-function: var(--dark-color-ts-function);
-        --color-ts-class: var(--dark-color-ts-class);
-        --color-ts-interface: var(--dark-color-ts-interface);
-        --color-ts-constructor: var(--dark-color-ts-constructor);
-        --color-ts-property: var(--dark-color-ts-property);
-        --color-ts-method: var(--dark-color-ts-method);
-        --color-ts-reference: var(--dark-color-ts-reference);
-        --color-ts-call-signature: var(--dark-color-ts-call-signature);
-        --color-ts-index-signature: var(--dark-color-ts-index-signature);
-        --color-ts-constructor-signature: var(
-            --dark-color-ts-constructor-signature
-        );
-        --color-ts-parameter: var(--dark-color-ts-parameter);
-        --color-ts-type-parameter: var(--dark-color-ts-type-parameter);
-        --color-ts-accessor: var(--dark-color-ts-accessor);
-        --color-ts-get-signature: var(--dark-color-ts-get-signature);
-        --color-ts-set-signature: var(--dark-color-ts-set-signature);
-        --color-ts-type-alias: var(--dark-color-ts-type-alias);
-        --color-document: var(--dark-color-document);
-        --color-alert-note: var(--dark-color-alert-note);
-        --color-alert-tip: var(--dark-color-alert-tip);
-        --color-alert-important: var(--dark-color-alert-important);
-        --color-alert-warning: var(--dark-color-alert-warning);
-        --color-alert-caution: var(--dark-color-alert-caution);
-        --external-icon: var(--dark-external-icon);
-        color-scheme: var(--dark-color-scheme);
-    }
-
-    :root[data-theme="dark"] {
-        --color-background: var(--dark-color-background);
-        --color-background-secondary: var(--dark-color-background-secondary);
-        --color-background-active: var(--dark-color-background-active);
-        --color-background-warning: var(--dark-color-background-warning);
-        --color-warning-text: var(--dark-color-warning-text);
-        --color-accent: var(--dark-color-accent);
-        --color-active-menu-item: var(--dark-color-active-menu-item);
-        --color-text: var(--dark-color-text);
-        --color-contrast-text: var(--dark-color-contrast-text);
-        --color-text-aside: var(--dark-color-text-aside);
-        --color-icon-background: var(--dark-color-icon-background);
-        --color-icon-text: var(--dark-color-icon-text);
-        --color-comment-tag-text: var(--dark-color-comment-tag-text);
-        --color-comment-tag: var(--dark-color-comment-tag);
-        --color-link: var(--dark-color-link);
-        --color-focus-outline: var(--dark-color-focus-outline);
-        --color-ts-keyword: var(--dark-color-ts-keyword);
-        --color-ts-project: var(--dark-color-ts-project);
-        --color-ts-module: var(--dark-color-ts-module);
-        --color-ts-namespace: var(--dark-color-ts-namespace);
-        --color-ts-enum: var(--dark-color-ts-enum);
-        --color-ts-enum-member: var(--dark-color-ts-enum-member);
-        --color-ts-variable: var(--dark-color-ts-variable);
-        --color-ts-function: var(--dark-color-ts-function);
-        --color-ts-class: var(--dark-color-ts-class);
-        --color-ts-interface: var(--dark-color-ts-interface);
-        --color-ts-constructor: var(--dark-color-ts-constructor);
-        --color-ts-property: var(--dark-color-ts-property);
-        --color-ts-method: var(--dark-color-ts-method);
-        --color-ts-reference: var(--dark-color-ts-reference);
-        --color-ts-call-signature: var(--dark-color-ts-call-signature);
-        --color-ts-index-signature: var(--dark-color-ts-index-signature);
-        --color-ts-constructor-signature: var(
-            --dark-color-ts-constructor-signature
-        );
-        --color-ts-parameter: var(--dark-color-ts-parameter);
-        --color-ts-type-parameter: var(--dark-color-ts-type-parameter);
-        --color-ts-accessor: var(--dark-color-ts-accessor);
-        --color-ts-get-signature: var(--dark-color-ts-get-signature);
-        --color-ts-set-signature: var(--dark-color-ts-set-signature);
-        --color-ts-type-alias: var(--dark-color-ts-type-alias);
-        --color-document: var(--dark-color-document);
-        --color-alert-note: var(--dark-color-alert-note);
-        --color-alert-tip: var(--dark-color-alert-tip);
-        --color-alert-important: var(--dark-color-alert-important);
-        --color-alert-warning: var(--dark-color-alert-warning);
-        --color-alert-caution: var(--dark-color-alert-caution);
-        --external-icon: var(--dark-external-icon);
-        color-scheme: var(--dark-color-scheme);
+        --color-background: #07060d;
+        --color-background-secondary: #111111;
+        --color-background-active: #27272a;
+        --color-background-warning: #ebd43e;
+        --color-warning-text: #111111;
+        --color-accent: #3f3f46;
+        --color-active-menu-item: #27272a;
+        --color-text: #e3e7fb;
+        --color-contrast-text: #ffffff;
+        --color-text-aside: #a1a1aa;
+        --color-icon-background: #111111;
+        --color-icon-text: #e3e7fb;
+        --color-comment-tag-text: #e3e7fb;
+        --color-comment-tag: #27272a;
+        --color-link: #8367e7;
+        --color-focus-outline: #b19dff;
+        --color-ts-keyword: #b19dff;
+        --color-ts-project: #8367e7;
+        --color-ts-module: #8367e7;
+        --color-ts-namespace: #8367e7;
+        --color-ts-enum: #ebd43e;
+        --color-ts-enum-member: #ebd43e;
+        --color-ts-variable: #3ec7eb;
+        --color-ts-function: #2ecf95;
+        --color-ts-class: #8367e7;
+        --color-ts-interface: #2ecf95;
+        --color-ts-constructor: #8367e7;
+        --color-ts-property: #eb7c3e;
+        --color-ts-method: #b19dff;
+        --color-ts-reference: #8367e7;
+        --color-ts-call-signature: #b19dff;
+        --color-ts-index-signature: #eb7c3e;
+        --color-ts-constructor-signature: #8367e7;
+        --color-ts-parameter: #3ec7eb;
+        --color-ts-type-parameter: #eb7c3e;
+        --color-ts-accessor: #eb7c3e;
+        --color-ts-get-signature: #eb7c3e;
+        --color-ts-set-signature: #eb7c3e;
+        --color-ts-type-alias: #8367e7;
+        --color-document: #e3e7fb;
+        --color-alert-note: #3ec7eb;
+        --color-alert-tip: #2ecf95;
+        --color-alert-important: #8367e7;
+        --color-alert-warning: #ebd43e;
+        --color-alert-caution: #eb7c3e;
+        --external-icon: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' width='10' height='10'><path fill-opacity='0' stroke='%23e3e7fb' stroke-width='10' d='m43,35H5v60h60V57M45,5v10l10,10-30,30 20,20 30-30 10,10h10V5z'/></svg>");
+        color-scheme: dark;
+        --code-background: #000000;
     }
 
     body {
@@ -199,27 +90,30 @@
         border-color: #3f3f46;
     }
 
-    :root[data-theme="os"] {
-        --light-code-background: #1e1e1e;
-        --dark-code-background: #1e1e1e;
-        --code-background: #1e1e1e;
-    }
-
-    :root[data-theme="dark"] {
-        --code-background: #1e1e1e;
-    }
-
     code {
         background: #27272a !important;
         color: #e3e7fb;
         padding: 0.15em 0.35em;
         border-radius: 0.25rem;
+        font-size: 0.9em;
+    }
+
+    pre {
+        background: #000000 !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        border-radius: 0.5rem !important;
+        padding: 1.25rem !important;
+        margin: 1.25rem 0 !important;
+        overflow-x: auto;
+        line-height: 1.6;
     }
 
     pre code {
-        background: #111111 !important;
-        color: #e3e7fb;
-        padding: 1rem;
+        background: transparent !important;
+        color: #e3e7fb !important;
+        padding: 0 !important;
         display: block;
+        font-size: 0.875rem;
+        font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
     }
 }
