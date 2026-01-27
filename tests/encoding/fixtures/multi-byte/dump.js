@@ -94,7 +94,9 @@ function conseqStart(str, start) {
 const stats = new Map()
 
 function encode(count, relcodepoint) {
-  if (count === 1 && relcodepoint >= 1 && relcodepoint <= 3) return `${-relcodepoint}`
+  // Extend negative encoding to cover more (1, offset) patterns
+  // Use -1 to -99 for (1, 1) through (1, 99)
+  if (count === 1 && relcodepoint >= 1 && relcodepoint <= 99) return `${-relcodepoint}`
   const res = `${count},${relcodepoint}`
   stats.set(res, (stats.get(res) || 0) + 1)
   return res
