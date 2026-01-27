@@ -198,4 +198,28 @@
     .tsd-signature {
         border-color: #3f3f46;
     }
+
+    :root[data-theme="os"] {
+        --light-code-background: #1e1e1e;
+        --dark-code-background: #1e1e1e;
+        --code-background: #1e1e1e;
+    }
+
+    :root[data-theme="dark"] {
+        --code-background: #1e1e1e;
+    }
+
+    code {
+        background: #27272a !important;
+        color: #e3e7fb;
+        padding: 0.15em 0.35em;
+        border-radius: 0.25rem;
+    }
+
+    pre code {
+        background: #111111 !important;
+        color: #e3e7fb;
+        padding: 1rem;
+        display: block;
+    }
 }
