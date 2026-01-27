@@ -1,6 +1,8 @@
 import { readFileSync, readdirSync } from 'node:fs'
-import { toBase64url } from '@exodus/bytes/base64.js'
-import { utf16fromString } from '@exodus/bytes/utf16.js'
+import { fromBase64url, toBase64url } from '@exodus/bytes/base64.js'
+import { utf16fromString, utf16toString } from '@exodus/bytes/utf16.js'
+import { to16input } from './../../../../fallback/utf16.js'
+import { raw } from '../indexes.cjs' // for revalidation only
 import { join } from 'node:path'
 import assert from 'node:assert/strict'
 import { gzipSync } from 'node:zlib'
@@ -237,3 +239,94 @@ console.log(final)
 const json = JSON.stringify(JSON.parse(final)) // report minified size
 console.error(`Raw size: ${json.length}`)
 console.error(`Gzip size: ${gzipSync(json).length}`)
+
+// The data in this file is then copied manually into fallback/multi-byte.encodings.json
+
+/* eslint-disable @exodus/mutable/no-param-reassign-prop-only, no-inner-declarations */
+
+// Extractor algorithm, similar to the one in fallback/multi-byte.table.js but doesn't do extra post-processing
+// The algo there is based on this one, any changes to format should be first introduced and tested here
+{
+  const indices = JSON.parse(final)
+
+  function loadBase64(str) {
+    const x = fromBase64url(str)
+    const len = x.length
+    const len2 = len >> 1
+    const y = new Uint8Array(len)
+    let a = -1, b = 0 // prettier-ignore
+    for (let i = 0, j = 0; i < len; i += 2, j++) {
+      a = (a + x[j] + 1) & 0xff
+      b = (b + x[len2 + j]) & 0xff
+      y[i] = a
+      y[i + 1] = b
+    }
+
+    return y
+  }
+
+  function unwrap(res, t, pos, highMode = false) {
+    let code = 0
+    for (let i = 0; i < t.length; i++) {
+      let x = t[i]
+      if (typeof x === 'number') {
+        if (x === 0) {
+          pos += t[++i]
+        } else {
+          if (x < 0) {
+            code -= x
+            x = 1
+          } else {
+            code += t[++i]
+          }
+
+          if (highMode) {
+            for (let k = 0; k < x; k++, pos++, code++) {
+              res[pos] = code // this is different in fallback/multi-byte.table.js as it pre-processes high codepoints
+            }
+          } else {
+            for (let k = 0; k < x; k++, pos++, code++) res[pos] = code
+          }
+        }
+      } else if (x[0] === '$' && Object.hasOwn(indices, x)) {
+        pos = unwrap(res, indices[x], pos, highMode) // self-reference using shared chunks
+      } else if (highMode) {
+        const s = [...utf16toString(loadBase64(x), 'uint8-le')] // splits by codepoints
+        let c
+        for (let i = 0; i < s.length; ) {
+          c = s[i++]
+          res[pos++] = c.codePointAt(0) // this is different in fallback/multi-byte.table.js as it pre-processes high codepoints
+        }
+
+        code = c.codePointAt(0) + 1
+      } else {
+        const u16 = to16input(loadBase64(x), true) // data is little-endian
+        res.set(u16, pos)
+        pos += u16.length
+        code = u16[u16.length - 1] + 1
+      }
+    }
+
+    return pos
+  }
+
+  // Revalidation that we can unpack correctly
+  const sizes = {
+    jis0208: 11_104,
+    jis0212: 7211,
+    'euc-kr': 23_750,
+    gb18030: 23_940,
+    big5: 19_782,
+  }
+  for (const [id, size] of Object.entries(sizes)) {
+    const C = id === 'big5' ? Uint32Array : Uint16Array
+    const u = new C(size)
+    unwrap(u, indices[id], 0, u instanceof Uint32Array)
+    const arr = Array.from(u, (x) => (x === 0 ? null : x))
+    assert.ok(Object.hasOwn(raw, id))
+    const expected = raw[id]
+    // we don't save useless nulls
+    while (arr.length < expected.length) arr.push(null)
+    assert.deepStrictEqual(arr, expected)
+  }
+}
