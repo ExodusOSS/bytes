@@ -29,6 +29,9 @@ importers:
       '@exodus/test':
         specifier: ^1.0.0-rc.109
         version: 1.0.0-rc.109(electron@36.5.0)
+      '@hexagon/base64':
+        specifier: ^2.0.4
+        version: 2.0.4
       '@noble/hashes':
         specifier: ^2.0.1
         version: 2.0.1
@@ -667,6 +670,9 @@ packages:
 
   '@gerrit0/mini-shiki@3.21.0':
     resolution: {integrity: sha512-9PrsT5DjZA+w3lur/aOIx3FlDeHdyCEFlv9U+fmsVyjPZh61G5SYURQ/1ebe2U63KbDmI2V8IhIUegWb8hjOyg==, tarball: https://registry.npmjs.org/@gerrit0/mini-shiki/-/mini-shiki-3.21.0.tgz}
+
+  '@hexagon/base64@2.0.4':
+    resolution: {integrity: sha512-H/ZY6rGyaEuk0mwQgZ3BVi9hMjFTYpBNFbmtOuec/pPibuGhCMXd8fGtwBaO0h44FkWMurysMsDrpkJsBRmoWQ==, tarball: https://registry.npmjs.org/@hexagon/base64/-/base64-2.0.4.tgz}
 
   '@humanwhocodes/config-array@0.13.0':
     resolution: {integrity: sha512-DZLEEqFWQFiyK6h5YIeynKx7JlvCYWL0cImfSRXZ9l4Sg2efkFGTuFf6vzXjK1cq6IYkU+Eg/JizXw+TD2vRNw==, tarball: https://registry.npmjs.org/@humanwhocodes/config-array/-/config-array-0.13.0.tgz}
@@ -3896,6 +3902,8 @@ snapshots:
       '@shikijs/themes': 3.21.0
       '@shikijs/types': 3.21.0
       '@shikijs/vscode-textmate': 10.0.2
+
+  '@hexagon/base64@2.0.4': {}
 
   '@humanwhocodes/config-array@0.13.0':
     dependencies:

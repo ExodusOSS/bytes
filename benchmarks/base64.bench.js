@@ -4,6 +4,7 @@ import * as stablelib from '@stablelib/base64'
 import { benchmark } from '@exodus/test/benchmark' // eslint-disable-line @exodus/import/no-unresolved
 import { base64 as scure } from '@scure/base'
 import * as oslo from '@oslojs/encoding'
+import * as hexagon from '@hexagon/base64'
 import base64js from 'base64-js'
 import fastBase64Decode from 'fast-base64-decode'
 import fastBase64Encode from 'fast-base64-encode'
@@ -26,6 +27,7 @@ const columns = [
   'fast-base64-encode',
   'uint8array-tools',
   'oslo',
+  'hexagon',
   'Buffer.from',
 ]
 const columnsOld = [
@@ -39,6 +41,7 @@ const columnsOld = [
   'fast-base64-encode',
   'uint8array-tools',
   'oslo',
+  'hexagon',
   'Buffer.from',
 ]
 
@@ -133,8 +136,9 @@ describe('benchmarks: base64', async () => {
     ['@stablelib', (x) => stablelib.decode(x)],
     ['hextreme', (x) => hextreme.fromBase64(x)],
     ['hextreme, no native', (x) => hextremeJS.fromBase64(x), !hextremeJS, true], // uses TextEncoder
-    ['uint8array-tools', (x) => uint8arraytools.fromBase64(x)],
+    ['uint8array-tools', (x) => uint8arraytools.fromBase64(x), !globalThis.atob],
     ['oslo', (x) => oslo.decodeBase64(x)],
+    ['hexagon', (x) => new Uint8Array(hexagon.toArrayBuffer(x))],
   ]
 
   test('toBase64 coherence', (t) => {
