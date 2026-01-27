@@ -235,7 +235,7 @@ for (const [encoding, chars] of Object.entries(encodings)) {
 
 final += '}'
 
-console.error([...stats].sort((a, b) => b[1] - a[1]).slice(0, 50))
+// console.error([...stats].sort((a, b) => b[1] - a[1]).slice(0, 50))
 
 console.log(final)
 const json = JSON.stringify(JSON.parse(final)) // report minified size
