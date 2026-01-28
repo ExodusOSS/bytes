@@ -20,15 +20,11 @@ export function unfinishedBytes(u, len, enc) {
     case 'utf-16le':
     case 'utf-16be': {
       // 0-3
-      let p = 0
-      if (len % 2 !== 0) p++ // uneven bytes
+      const p = len % 2 // uneven byte length adds 1
+      if (len < 2) return p
       const l = len - p - 1
-      if (len - p >= 2) {
-        const last = enc === 'utf-16le' ? (u[l] << 8) ^ u[l - 1] : (u[l - 1] << 8) ^ u[l]
-        if (last >= 0xd8_00 && last < 0xdc_00) p += 2 // lone lead
-      }
-
-      return p
+      const last = enc === 'utf-16le' ? (u[l] << 8) ^ u[l - 1] : (u[l - 1] << 8) ^ u[l]
+      return last >= 0xd8_00 && last < 0xdc_00 ? p + 2 : p // lone lead adds 2
     }
   }
 
