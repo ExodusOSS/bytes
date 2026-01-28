@@ -73,3 +73,30 @@ test('sizes roundtrip, random data', async (t) => {
     }
   }
 })
+
+test('invalid array lengths', async (t) => {
+  // Test that arrays with invalid lengths throw "Invalid WIF length" error
+  // Valid WIF arrays must be exactly 33 bytes (uncompressed) or 34 bytes (compressed)
+  const { toBase58checkSync } = await import('@exodus/bytes/base58check.js')
+  
+  // Test various invalid lengths
+  const invalidLengths = [0, 1, 4, 10, 32, 35, 50]
+  
+  for (const length of invalidLengths) {
+    const arr = new Uint8Array(length).fill(128) // Fill with non-zero to make it a valid base58check payload
+    const encoded = toBase58checkSync(arr)
+    
+    // Both sync and async versions should reject with "Invalid WIF length"
+    await t.assert.rejects(
+      async () => await lib.fromWifString(encoded),
+      { message: 'Invalid WIF length' },
+      `fromWifString should reject length ${length}`
+    )
+    
+    t.assert.throws(
+      () => lib.fromWifStringSync(encoded),
+      { message: 'Invalid WIF length' },
+      `fromWifStringSync should reject length ${length}`
+    )
+  }
+})
