@@ -32,12 +32,12 @@ function decode(input, loose = false, format = 'uint32') {
       break
     case 'uint8-le':
       if (!(input instanceof Uint8Array)) throw new TypeError('Expected an Uint8Array')
-      if (input.byteLength % 4 !== 0) throw new TypeError('Expected even number of bytes')
+      if (input.byteLength % 4 !== 0) throw new TypeError('Expected length to be a multiple of 4')
       u32 = js.to32input(input, true)
       break
     case 'uint8-be':
       if (!(input instanceof Uint8Array)) throw new TypeError('Expected an Uint8Array')
-      if (input.byteLength % 4 !== 0) throw new TypeError('Expected even number of bytes')
+      if (input.byteLength % 4 !== 0) throw new TypeError('Expected length to be a multiple of 4')
       u32 = js.to32input(input, false)
       break
     default:
