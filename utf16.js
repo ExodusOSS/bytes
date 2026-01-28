@@ -8,7 +8,7 @@ const decoderLooseLE = canDecoders ? new TextDecoder('utf-16le', { ignoreBOM }) 
 const decoderFatalBE = canDecoders ? new TextDecoder('utf-16be', { ignoreBOM, fatal: true }) : null
 const decoderLooseBE = canDecoders ? new TextDecoder('utf-16be', { ignoreBOM }) : null
 const decoderFatal16 = isLE ? decoderFatalLE : decoderFatalBE
-const decoderLoose16 = isLE ? decoderLooseLE : decoderFatalBE
+const decoderLoose16 = isLE ? decoderLooseLE : decoderLooseBE
 const { isWellFormed, toWellFormed } = String.prototype
 
 const { E_STRICT, E_STRICT_UNICODE } = js
