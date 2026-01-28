@@ -58,7 +58,7 @@ export function utf32fromStringLoose(string: string, format?: Utf32Format): Uint
  *
  * Throws on invalid UTF-32 byte sequences
  *
- * Throws on non-even byte length.
+ * Throws on byte length not a multiple of 4.
  *
  * @param arr - The bytes to decode
  * @param format - Input format (default: 'uint32')
@@ -77,7 +77,7 @@ export function utf32toString(arr: Uint32Array | Uint8Array, format?: Utf32Forma
  * _Such replacement is a non-injective function, is irreversible and causes collisions.\
  * Prefer using strict throwing methods for cryptography applications._
  *
- * Throws on non-even byte length.
+ * Throws on byte length not a multiple of 4.
  *
  * @param arr - The bytes to decode
  * @param format - Input format (default: 'uint32')
