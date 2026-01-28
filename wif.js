@@ -1,4 +1,9 @@
-import { toBase58checkSync, fromBase58checkSync } from '@exodus/bytes/base58check.js'
+import {
+  toBase58checkSync,
+  fromBase58checkSync,
+  toBase58check,
+  fromBase58check,
+} from '@exodus/bytes/base58check.js'
 import { assertUint8 } from './assert.js'
 
 // Mostly matches npmjs.com/wif, but with extra checks + using our base58check
