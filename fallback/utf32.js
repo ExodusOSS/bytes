@@ -51,18 +51,10 @@ export function toWellFormed(u32) {
   for (let i = 0; i < length; i++) {
     const x = u32[i]
     if (x >= 0xd8_00) {
+      // In UTF-32, all surrogate codepoints (0xD800-0xDFFF) are invalid
+      // Unlike UTF-16, there are no surrogate pairs in UTF-32
       if (x < 0xe0_00) {
-        // An unexpected trail or a lead at the very end of input
-        if (x > 0xdb_ff || i + 1 >= length) {
-          u32[i] = replacementCodepoint
-        } else {
-          const next = u32[i + 1] // Process valid pairs immediately
-          if (next < 0xdc_00 || next >= 0xe0_00) {
-            u32[i] = replacementCodepoint
-          } else {
-            i++ // consume next
-          }
-        }
+        u32[i] = replacementCodepoint
       } else if (x >= 0x11_00_00) {
         // also fix out-of-range in the same pass, both are unlikely
         u32[i] = replacementCodepoint
