@@ -1,4 +1,5 @@
 import * as lib from '@exodus/bytes/wif.js'
+import { toBase58checkSync } from '@exodus/bytes/base58check.js'
 import { randomValues } from '@exodus/crypto/randomBytes'
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
@@ -71,5 +72,28 @@ test('sizes roundtrip, random data', async (t) => {
         t.assert.deepStrictEqual(await round(x), x, `random, v=${version}`)
       }
     }
+  }
+})
+
+test('invalid length throws before version check', async (t) => {
+  // Regression test: length validation before version check
+  // Old: threw "Invalid network version" for invalid length with wrong expectedVersion
+  // New: throws "Invalid WIF length" regardless of expectedVersion
+
+  const invalidLengths = [0, 1, 4, 10, 32, 35, 50]
+
+  for (const len of invalidLengths) {
+    const arr = new Uint8Array(len).fill(128)
+    arr[0] = 42
+    const encoded = toBase58checkSync(arr)
+    const wrongVersion = 99
+
+    await t.assert.rejects(async () => lib.fromWifString(encoded, wrongVersion), {
+      message: 'Invalid WIF length',
+    })
+
+    t.assert.throws(() => lib.fromWifStringSync(encoded, wrongVersion), {
+      message: 'Invalid WIF length',
+    })
   }
 })
