@@ -23,6 +23,13 @@ import type { OutputFormat, Uint8ArrayBuffer } from './array.js';
  *
  * Throws on invalid Unicode (unpaired surrogates)
  *
+ * This is similar to the following snippet (but works on all engines):
+ * ```js
+ * // Strict encode, requiring Unicode codepoints to be valid
+ * if (typeof string !== 'string' || !string.isWellFormed()) throw new TypeError()
+ * return new TextEncoder().encode(string)
+ * ```
+ *
  * @param string - The string to encode
  * @param format - Output format (default: 'uint8')
  * @returns The encoded bytes
@@ -40,6 +47,13 @@ export function utf8fromString(string: string, format?: OutputFormat): Uint8Arra
  * _Such replacement is a non-injective function, is irreversable and causes collisions.\
  * Prefer using strict throwing methods for cryptography applications._
  *
+ * This is similar to the following snippet (but works on all engines):
+ * ```js
+ * // Loose encode, replacing invalid Unicode codepoints with U+FFFD
+ * if (typeof string !== 'string') throw new TypeError()
+ * return new TextEncoder().encode(string)
+ * ```
+ *
  * @param string - The string to encode
  * @param format - Output format (default: 'uint8')
  * @returns The encoded bytes
@@ -56,6 +70,9 @@ export function utf8fromStringLoose(
  *
  * Throws on invalid UTF-8 byte sequences
  *
+ * This is similar to `new TextDecoder('utf-8', { fatal: true, ignoreBOM: true }).decode(arr)`,
+ * but works on all engines.
+ *
  * @param arr - The bytes to decode
  * @returns The decoded string
  */
@@ -69,6 +86,9 @@ export function utf8toString(arr: Uint8Array): string;
  *
  * _Such replacement is a non-injective function, is irreversable and causes collisions.\
  * Prefer using strict throwing methods for cryptography applications._
+ *
+ * This is similar to `new TextDecoder('utf-8', { ignoreBOM: true }).decode(arr)`,
+ * but works on all engines.
  *
  * @param arr - The bytes to decode
  * @returns The decoded string

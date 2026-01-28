@@ -50,7 +50,8 @@ export type OutputFormat = 'uint8' | 'buffer';
 /**
  * Create a view of a TypedArray in the specified format (`'uint8'` or `'buffer'`)
  *
- * Important: does not copy data, returns a view on the same underlying buffer
+ * > [!IMPORTANT]
+ * > Does not copy data, returns a view on the same underlying buffer
  *
  * @param arr - The input TypedArray
  * @param format - The desired output format (`'uint8'` or `'buffer'`)

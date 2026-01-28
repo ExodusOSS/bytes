@@ -120,6 +120,13 @@ Encode a string to UTF-8 bytes (strict mode)
 
 Throws on invalid Unicode (unpaired surrogates)
 
+This is similar to the following snippet (but works on all engines):
+```js
+// Strict encode, requiring Unicode codepoints to be valid
+if (typeof string !== 'string' || !string.isWellFormed()) throw new TypeError()
+return new TextEncoder().encode(string)
+```
+
 #### `utf8fromStringLoose(string, format = 'uint8')`
 
 Encode a string to UTF-8 bytes (loose mode)
@@ -130,11 +137,21 @@ per [WHATWG Encoding](https://encoding.spec.whatwg.org/) specification.
 _Such replacement is a non-injective function, is irreversable and causes collisions.\
 Prefer using strict throwing methods for cryptography applications._
 
+This is similar to the following snippet (but works on all engines):
+```js
+// Loose encode, replacing invalid Unicode codepoints with U+FFFD
+if (typeof string !== 'string') throw new TypeError()
+return new TextEncoder().encode(string)
+```
+
 #### `utf8toString(arr)`
 
 Decode UTF-8 bytes to a string (strict mode)
 
 Throws on invalid UTF-8 byte sequences
+
+This is similar to `new TextDecoder('utf-8', { fatal: true, ignoreBOM: true }).decode(arr)`,
+but works on all engines.
 
 #### `utf8toStringLoose(arr)`
 
@@ -145,6 +162,9 @@ per [WHATWG Encoding](https://encoding.spec.whatwg.org/) specification.
 
 _Such replacement is a non-injective function, is irreversable and causes collisions.\
 Prefer using strict throwing methods for cryptography applications._
+
+This is similar to `new TextDecoder('utf-8', { ignoreBOM: true }).decode(arr)`,
+but works on all engines.
 
 ### `@exodus/bytes/utf16.js`
 
@@ -271,8 +291,9 @@ Same as:
 const latin1toString = createSinglebyteDecoder('iso-8859-1')
 ```
 
-Note: this is different from `new TextDecoder('iso-8859-1')` and `new TextDecoder('latin1')`, as
-those alias to `new TextDecoder('windows-1252')`.
+> [!NOTE]
+> This is different from `new TextDecoder('iso-8859-1')` and `new TextDecoder('latin1')`, as those
+> alias to `new TextDecoder('windows-1252')`.
 
 #### `latin1fromString(string)`
 
@@ -610,7 +631,8 @@ import { typedView } from '@exodus/bytes/array.js'
 
 Create a view of a TypedArray in the specified format (`'uint8'` or `'buffer'`)
 
-Important: does not copy data, returns a view on the same underlying buffer
+> [!IMPORTANT]
+> Does not copy data, returns a view on the same underlying buffer
 
 ### `@exodus/bytes/encoding.js`
 

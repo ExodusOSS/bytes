@@ -95,8 +95,9 @@ export function createSinglebyteEncoder(
  * const latin1toString = createSinglebyteDecoder('iso-8859-1')
  * ```
  *
- * Note: this is different from `new TextDecoder('iso-8859-1')` and `new TextDecoder('latin1')`, as
- * those alias to `new TextDecoder('windows-1252')`.
+ * > [!NOTE]
+ * > This is different from `new TextDecoder('iso-8859-1')` and `new TextDecoder('latin1')`, as those
+ * > alias to `new TextDecoder('windows-1252')`.
  *
  * @param arr - The bytes to decode
  * @returns The decoded string
