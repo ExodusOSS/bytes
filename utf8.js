@@ -27,11 +27,11 @@ function deLoose(str, loose, res) {
 
   // Recheck if the string was encoded correctly
   let start = 0
-  const last = res.length - 2
-  // Search for EFBFBD
-  while (start < last) {
+  const last = res.length - 3
+  // Search for EFBFBD (3-byte sequence)
+  while (start <= last) {
     const pos = res.indexOf(0xef, start)
-    if (pos === -1) break
+    if (pos === -1 || pos > last) break
     start = pos + 1
     if (res[pos + 1] === 0xbf && res[pos + 2] === 0xbd) {
       // Found a replacement char in output, need to recheck if we encoded the input correctly
