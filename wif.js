@@ -34,9 +34,7 @@ function to({ version: v, privateKey, compressed }) {
 // ./base58check is sync internally anyway for now, so doesn't matter until that is changed
 
 export const fromWifStringSync = (string, version) => from(fromBase58checkSync(string), version)
-// export const fromWifString = async (string, version) => from(await fromBase58check(string), version)
-export const fromWifString = async (string, version) => from(fromBase58checkSync(string), version)
+export const fromWifString = async (string, version) => from(await fromBase58check(string), version)
 
 export const toWifStringSync = (wif) => toBase58checkSync(to(wif))
-// export const toWifString = async (wif) => toBase58check(to(wif))
-export const toWifString = async (wif) => toBase58checkSync(to(wif))
+export const toWifString = async (wif) => toBase58check(to(wif))
