@@ -70,7 +70,7 @@ function encode(s, m) {
   for (const len3 = len - 3; i < len3; i += 4) {
     const x0 = x[i], x1 = x[i + 1], x2 = x[i + 2], x3 = x[i + 3] // prettier-ignore
     const c0 = m[x0], c1 = m[x1], c2 = m[x2], c3 = m[x3] // prettier-ignore
-    if (c0 === undefined || c1 === undefined || c2 === undefined || c3 === undefined) return null
+    if (c0 === undefined || c1 === undefined || c2 === undefined || c3 === undefined) return null // prettier-ignore
     x[i] = c0
     x[i + 1] = c1
     x[i + 2] = c2
