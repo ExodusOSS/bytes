@@ -42,4 +42,4 @@ export const fromWifStringSync = (string, version) => from(fromBase58checkSync(s
 export const fromWifString = async (string, version) => from(await fromBase58check(string), version)
 
 export const toWifStringSync = (wif) => toBase58checkSync(to(wif))
-export const toWifString = async (wif) => toBase58check(to(wif))
+export const toWifString = async (wif) => await toBase58check(to(wif))
