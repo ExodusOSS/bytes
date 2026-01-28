@@ -79,23 +79,21 @@ test('invalid length throws before version check', async (t) => {
   // Regression test: length validation before version check
   // Old: threw "Invalid network version" for invalid length with wrong expectedVersion
   // New: throws "Invalid WIF length" regardless of expectedVersion
-  
+
   const invalidLengths = [0, 1, 4, 10, 32, 35, 50]
-  
+
   for (const len of invalidLengths) {
     const arr = new Uint8Array(len).fill(128)
     arr[0] = 42
     const encoded = toBase58checkSync(arr)
     const wrongVersion = 99
-    
-    await t.assert.rejects(
-      async () => await lib.fromWifString(encoded, wrongVersion),
-      { message: 'Invalid WIF length' }
-    )
-    
-    t.assert.throws(
-      () => lib.fromWifStringSync(encoded, wrongVersion),
-      { message: 'Invalid WIF length' }
-    )
+
+    await t.assert.rejects(async () => lib.fromWifString(encoded, wrongVersion), {
+      message: 'Invalid WIF length',
+    })
+
+    t.assert.throws(() => lib.fromWifStringSync(encoded, wrongVersion), {
+      message: 'Invalid WIF length',
+    })
   }
 })
