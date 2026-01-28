@@ -82,8 +82,8 @@ test('invalid length throws before version check', async (t) => {
   
   const invalidLengths = [0, 1, 4, 10, 32, 35, 50]
   
-  for (const length of invalidLengths) {
-    const arr = new Uint8Array(length).fill(128)
+  for (const len of invalidLengths) {
+    const arr = new Uint8Array(len).fill(128)
     arr[0] = 42
     const encoded = toBase58checkSync(arr)
     const wrongVersion = 99
