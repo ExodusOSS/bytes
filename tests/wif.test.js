@@ -1,9 +1,9 @@
 import * as lib from '@exodus/bytes/wif.js'
+import { toBase58checkSync } from '@exodus/bytes/base58check.js'
 import { randomValues } from '@exodus/crypto/randomBytes'
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import * as wif from 'wif'
-import { toBase58checkSync } from '@exodus/bytes/base58check.js'
 
 async function fromWifString(str) {
   const a = await lib.fromWifString(str)
