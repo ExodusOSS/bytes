@@ -1,9 +1,4 @@
-import {
-  toBase58checkSync,
-  fromBase58checkSync,
-  toBase58check,
-  fromBase58check,
-} from '@exodus/bytes/base58check.js'
+import { toBase58checkSync, fromBase58checkSync } from '@exodus/bytes/base58check.js'
 import { assertUint8 } from './assert.js'
 
 // Mostly matches npmjs.com/wif, but with extra checks + using our base58check
@@ -39,7 +34,9 @@ function to({ version: v, privateKey, compressed }) {
 // ./base58check is sync internally anyway for now, so doesn't matter until that is changed
 
 export const fromWifStringSync = (string, version) => from(fromBase58checkSync(string), version)
-export const fromWifString = async (string, version) => from(await fromBase58check(string), version)
+// export const fromWifString = async (string, version) => from(await fromBase58check(string), version)
+export const fromWifString = async (string, version) => from(fromBase58checkSync(string), version)
 
 export const toWifStringSync = (wif) => toBase58checkSync(to(wif))
-export const toWifString = async (wif) => await toBase58check(to(wif))
+// export const toWifString = async (wif) => toBase58check(to(wif))
+export const toWifString = async (wif) => toBase58checkSync(to(wif))
