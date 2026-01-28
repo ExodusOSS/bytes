@@ -144,7 +144,7 @@ function toBech32enc(prefix, bytes, limit, encoding) {
   let value = 0, bits = 0 // prettier-ignore
   for (; i < bytesLength; i++) {
     value = ((value & 0xf) << 8) | bytes[i]
-    bits += 3
+    bits += 8
     const x = (value >> bits) & 0x1f
     chk = p(chk) ^ x
     out[j++] = x2c[x]
