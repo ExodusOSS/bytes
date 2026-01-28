@@ -1,12 +1,14 @@
 import { isLE } from './_utils.js'
 
 export const E_STRICT = 'Input is not well-formed utf32'
-const replacementCodepoint = 0xff_fd
 
 export const to8 = (a) => new Uint8Array(a.buffer, a.byteOffset, a.byteLength)
 const to32 = (a) => new Uint32Array(a.buffer, a.byteOffset, a.byteLength / 4) // Requires checked length and alignment!
 
 /* eslint-disable @exodus/mutable/no-param-reassign-prop-only */
+
+// Surrogates are an UTF-16 thing and can not be represented in UTF-32, iconv-lite got it wrong
+// See https://unicode.org/faq/utf_bom#utf32-7
 
 // Assumes checked length % 4 === 0, otherwise does not swap tail
 export function swap32(u8) {
@@ -31,12 +33,8 @@ export function to32input(u8, le) {
   return to32(swap32(Uint8Array.from(u8)))
 }
 
-export function decode(u32) {
-  return String.fromCodePoint.apply(String, u32) // TODO: max len
-}
-
 // No surrogates (paired or unpaired), no out of range codepoints
-export function isStrict(u32) {
+export function isWellFormed(u32) {
   const length = u32.length
   for (let i = 0; i < length; i++) {
     const x = u32[i]
@@ -50,27 +48,13 @@ export function toWellFormed(u32) {
   const length = u32.length
   for (let i = 0; i < length; i++) {
     const x = u32[i]
-    if (x >= 0xd8_00) {
-      if (x < 0xe0_00) {
-        // An unexpected trail or a lead at the very end of input
-        if (x > 0xdb_ff || i + 1 >= length) {
-          u32[i] = replacementCodepoint
-        } else {
-          const next = u32[i + 1] // Process valid pairs immediately
-          if (next < 0xdc_00 || next >= 0xe0_00) {
-            u32[i] = replacementCodepoint
-          } else {
-            i++ // consume next
-          }
-        }
-      } else if (x >= 0x11_00_00) {
-        // also fix out-of-range in the same pass, both are unlikely
-        u32[i] = replacementCodepoint
-      }
-    }
+    if (x >= 0xd8_00 && (x < 0xe0_00 || x >= 0x11_00_00)) u32[i] = 0xff_fd
   }
+}
 
-  return u32
+// Only defined on valid input
+export function decode(u32) {
+  return String.fromCodePoint.apply(String, u32) // TODO: max len
 }
 
 // Only defined on valid input
