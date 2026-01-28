@@ -3,6 +3,7 @@ import { randomValues } from '@exodus/crypto/randomBytes'
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import * as wif from 'wif'
+import { toBase58checkSync } from '@exodus/bytes/base58check.js'
 
 async function fromWifString(str) {
   const a = await lib.fromWifString(str)
@@ -74,29 +75,53 @@ test('sizes roundtrip, random data', async (t) => {
   }
 })
 
-test('invalid array lengths', async (t) => {
+test('invalid array lengths throw before version check', async (t) => {
   // Test that arrays with invalid lengths throw "Invalid WIF length" error
-  // Valid WIF arrays must be exactly 33 bytes (uncompressed) or 34 bytes (compressed)
-  const { toBase58checkSync } = await import('@exodus/bytes/base58check.js')
+  // BEFORE checking the version, even when expectedVersion is provided.
+  // This is a regression test for the bounds check fix.
+  //
+  // Before fix: For invalid length arrays, arr[0] was read first, then:
+  //   - If expectedVersion was provided and didn't match arr[0], threw "Invalid network version"
+  //   - Otherwise, threw "Invalid WIF length" later
+  // After fix: Length validation happens first, always throwing "Invalid WIF length"
+  //   for invalid lengths, regardless of expectedVersion
   
   // Test various invalid lengths
   const invalidLengths = [0, 1, 4, 10, 32, 35, 50]
   
   for (const length of invalidLengths) {
-    const arr = new Uint8Array(length).fill(128) // Fill with non-zero to make it a valid base58check payload
+    const arr = new Uint8Array(length).fill(128)
+    arr[0] = 42 // Set a specific version byte
     const encoded = toBase58checkSync(arr)
     
-    // Both sync and async versions should reject with "Invalid WIF length"
+    // Without expectedVersion: both old and new throw "Invalid WIF length"
     await t.assert.rejects(
       async () => await lib.fromWifString(encoded),
       { message: 'Invalid WIF length' },
-      `fromWifString should reject length ${length}`
+      `fromWifString should reject length ${length} without expectedVersion`
     )
     
     t.assert.throws(
       () => lib.fromWifStringSync(encoded),
       { message: 'Invalid WIF length' },
-      `fromWifStringSync should reject length ${length}`
+      `fromWifStringSync should reject length ${length} without expectedVersion`
+    )
+    
+    // With expectedVersion that doesn't match:
+    // - Old code would throw "Invalid network version" (after reading arr[0])
+    // - New code throws "Invalid WIF length" (before reading arr[0])
+    const wrongVersion = 99 // Different from arr[0] which is 42
+    
+    await t.assert.rejects(
+      async () => await lib.fromWifString(encoded, wrongVersion),
+      { message: 'Invalid WIF length' },
+      `fromWifString should reject length ${length} with wrong expectedVersion, throwing length error not version error`
+    )
+    
+    t.assert.throws(
+      () => lib.fromWifStringSync(encoded, wrongVersion),
+      { message: 'Invalid WIF length' },
+      `fromWifStringSync should reject length ${length} with wrong expectedVersion, throwing length error not version error`
     )
   }
 })
