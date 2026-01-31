@@ -10,6 +10,13 @@
  * import { createMultibyteDecoder, createMultibyteEncoder } from '@exodus/bytes/multi-byte.js'
  * ```
  *
+ * > [!WARNING]
+ * > This is a lower-level API for legacy multi-byte encodings.
+ * >
+ * > For a safe WHATWG Encoding-compatible API, see `@exodus/bytes/encoding.js` import (and variants of it).
+ * >
+ * > Be sure to know what you are doing and check documentation when directly using encodings from this file.
+ *
  * Supports all legacy multi-byte encodings listed in the WHATWG Encoding standard:
  * `gbk`, `gb18030`, `big5`, `euc-jp`, `iso-2022-jp`, `shift_jis`, `euc-kr`.
  *

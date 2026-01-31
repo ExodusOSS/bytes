@@ -230,6 +230,15 @@ import { windows1252toString, windows1252fromString } from '@exodus/bytes/single
 import { latin1toString, latin1fromString } from '@exodus/bytes/single-byte.js'
 ```
 
+> [!WARNING]
+> This is a lower-level API for single-byte encodings.
+> It might not match what you expect, as it supports both WHATWG and unicode.org encodings under
+> different names, with the main intended usecase for the latter being either non-web or legacy contexts.
+>
+> For a safe WHATWG Encoding-compatible API, see `@exodus/bytes/encoding.js` import (and variants of it).
+>
+> Be sure to know what you are doing and check documentation when directly using encodings from this file.
+
 Supports all single-byte encodings listed in the WHATWG Encoding standard:
 `ibm866`, `iso-8859-2`, `iso-8859-3`, `iso-8859-4`, `iso-8859-5`, `iso-8859-6`, `iso-8859-7`, `iso-8859-8`,
 `iso-8859-8-i`, `iso-8859-10`, `iso-8859-13`, `iso-8859-14`, `iso-8859-15`, `iso-8859-16`, `koi8-r`, `koi8-u`,
@@ -340,6 +349,13 @@ Decode / encode the legacy multi-byte encodings according to the
 ```js
 import { createMultibyteDecoder, createMultibyteEncoder } from '@exodus/bytes/multi-byte.js'
 ```
+
+> [!WARNING]
+> This is a lower-level API for legacy multi-byte encodings.
+>
+> For a safe WHATWG Encoding-compatible API, see `@exodus/bytes/encoding.js` import (and variants of it).
+>
+> Be sure to know what you are doing and check documentation when directly using encodings from this file.
 
 Supports all legacy multi-byte encodings listed in the WHATWG Encoding standard:
 `gbk`, `gb18030`, `big5`, `euc-jp`, `iso-2022-jp`, `shift_jis`, `euc-kr`.
