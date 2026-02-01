@@ -14,14 +14,14 @@ const component = ' "#$%&+,/:;<=>?@[\\]^`{|}' // https://url.spec.whatwg.org/#co
 const form = ' !"#$%&\'()+,/:;<=>?@[\\]^`{|}~' // https://url.spec.whatwg.org/#application-x-www-form-urlencoded-percent-encode-set
 
 const sets = ['', userinfo, jsuri, jsuricomponent]
-const invalid = ['replacement', 'utf-16le', 'utf-16be'] // https://encoding.spec.whatwg.org/#get-an-encoder
+const invalid = new Set(['replacement', 'utf-16le', 'utf-16be']) // https://encoding.spec.whatwg.org/#get-an-encoder
 
 const slowEngine =
   process.env.EXODUS_TEST_PLATFORM === 'quickjs' ||
   process.env.EXODUS_TEST_PLATFORM === 'xs' ||
   process.env.EXODUS_TEST_PLATFORM === 'engine262'
 
-test('perncent-encode sets coherence', (t) => {
+test('percent-encode sets coherence', (t) => {
   const eq = (a, b) => t.assert.deepStrictEqual([...a], [...b].sort())
   // https://tc39.es/ecma262/#sec-encodeuri-uri step 2
   eq(jsuricomponent, jsuri + ';/?:@&=+$,#')
@@ -90,7 +90,7 @@ describe('percent-encode after encoding', () => {
 
   describe('all valid encodings are recognized', () => {
     for (const encoding of labels) {
-      if (invalid.includes(encoding)) continue
+      if (invalid.has(encoding)) continue
       test(encoding, (t) => {
         for (const set of sets) {
           t.assert.strictEqual(f(encoding, '', set), '')
@@ -104,7 +104,7 @@ describe('percent-encode after encoding', () => {
 
   describe('replaces non-scalarvalue', () => {
     for (const encoding of labels) {
-      if (invalid.includes(encoding)) continue
+      if (invalid.has(encoding)) continue
       test(encoding, (t) => {
         const a = f(encoding, '\uFFFD', userinfo)
         const b = f(encoding, '\uFFFD', jsuri)
@@ -121,7 +121,7 @@ describe('percent-encode after encoding', () => {
     describe('ASCII supersets', (t) => {
       const ascii = Array.from({ length: 128 }, (_, i) => String.fromCharCode(i)).join('')
       for (const encoding of labels) {
-        if (invalid.includes(encoding)) continue
+        if (invalid.has(encoding)) continue
         if (encoding === 'iso-2022-jp') continue // not an ASCII superset
         test(encoding, (t) => {
           t.assert.strictEqual(f(encoding, ascii, jsuricomponent), encodeURIComponent(ascii))
