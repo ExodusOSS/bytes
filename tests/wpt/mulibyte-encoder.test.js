@@ -1,28 +1,14 @@
 import { createMultibyteEncoder } from '@exodus/bytes/multi-byte.js'
-import { multibyteEncoder } from '../../fallback/multi-byte.js'
+import { percentEncodeAfterEncoding } from '@exodus/bytes/whatwg.js'
+import '@exodus/bytes/encoding.js'
 import { encodeLatin1 } from '../../fallback/latin1.js'
 import { describe, test } from 'node:test'
+import { readFileSync } from 'node:fs'
+import { join } from 'node:path'
+
+const specialquery = ` "#'<>` // https://url.spec.whatwg.org/#special-query-percent-encode-set
 
 const { unescape } = globalThis
-
-// query percent-encode set
-const querySet = (x) => x < 0x21 || x > 0x7e || x === 0x22 || x === 0x23 || x === 0x3c || x === 0x3e
-const esc1 = (x) => '%' + x.toString(16).padStart(2, '0').toUpperCase()
-const escArr = (u) => [...u].map((x) => (querySet(x) ? esc1(x) : String.fromCharCode(x))).join('')
-
-function toUrl(encoding, input) {
-  let encoded = ''
-  let last = 0
-  const escaping = multibyteEncoder(encoding, (cp, u, i) => {
-    encoded += `${escArr(u.subarray(last, i))}%26%23${cp}%3B` // &#cp;
-    last = i
-    return 0 // no bytes emitted
-  })
-
-  const u = escaping(input)
-  encoded += escArr(u.subarray(last))
-  return encoded
-}
 
 function testEncoder(encoding, fn) {
   describe(encoding, () => {
@@ -38,7 +24,7 @@ function testEncoder(encoding, fn) {
         }
 
         // Full check
-        t.assert.strictEqual(toUrl(encoding, input), escaped)
+        t.assert.strictEqual(percentEncodeAfterEncoding(encoding, input, specialquery), escaped)
       })
     })
   })
@@ -108,4 +94,21 @@ testEncoder('iso-2022-jp', (encode) => {
   encode('\u203E\uFFFD', '%1B(J~%26%2365533%3B%1B(B', 'Roman U+FFFD')
   encode('\uFF61\uFFFD', '%1B$B!%23%1B(B%26%2365533%3B', 'Katakana U+FFFD')
   encode('\u0393\uFFFD', '%1B$B&%23%1B(B%26%2365533%3B', 'jis0208 U+FFFD')
+})
+
+test('url/resources/percent-encoding.json', (t) => {
+  const data = JSON.parse(
+    readFileSync(join(import.meta.dirname, `fixtures/url/resources/percent-encoding.json`), 'utf8')
+  )
+
+  // Doc: https://github.com/web-platform-tests/wpt/blob/master/url/README.md
+  // > _percentEncodeSet_ set to special-query percent-encode set and _spaceAsPlus_ set to false.
+  const set = specialquery
+  const spaceAsPlus = false
+  for (const { input, output } of data) {
+    if (!input && !output) continue // comment
+    for (const [encoding, escaped] of Object.entries(output)) {
+      t.assert.strictEqual(percentEncodeAfterEncoding(encoding, input, set, spaceAsPlus), escaped)
+    }
+  }
 })
