@@ -17,9 +17,9 @@ export const nativeDecoder = isNative(TextDecoder)
 // Actually windows-1252, compatible with ascii and latin1 decoding
 // Beware that on non-latin1, i.e. on windows-1252, this is broken in ~all Node.js versions released
 // in 2025 due to a regression, so we call it Latin1 as it's usable only for that
-const getNativeLain1 = () => {
+const getNativeLatin1 = () => {
   // Not all barebone engines with TextDecoder support something except utf-8, detect
-  if (!nativeDecoder) {
+  if (nativeDecoder) {
     try {
       return new TextDecoder('latin1', { ignoreBOM: true })
     } catch {}
@@ -28,7 +28,7 @@ const getNativeLain1 = () => {
   return null
 }
 
-export const nativeDecoderLatin1 = /* @__PURE__ */ getNativeLain1()
+export const nativeDecoderLatin1 = /* @__PURE__ */ getNativeLatin1()
 export const canDecoders = !!nativeDecoderLatin1
 
 // Block Firefox < 146 specifically from using native hex/base64, as it's very slow there
