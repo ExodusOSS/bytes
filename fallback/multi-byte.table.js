@@ -1,7 +1,6 @@
 import { fromBase64url } from '@exodus/bytes/base64.js'
 import { utf16toString } from '@exodus/bytes/utf16.js'
 import loadEncodings from './multi-byte.encodings.cjs'
-import { to16input } from './utf16.js'
 
 export const sizes = {
   jis0208: 11_104,
@@ -40,7 +39,7 @@ function loadBase64(str) {
   return y
 }
 
-function unwrap(res, t, pos, highMode = false) {
+function unwrap(res, t, pos) {
   let code = 0
   for (let i = 0; i < t.length; i++) {
     let x = t[i]
@@ -55,35 +54,26 @@ function unwrap(res, t, pos, highMode = false) {
           code += t[++i]
         }
 
-        if (highMode) {
-          for (let k = 0; k < x; k++, pos++, code++) {
-            if (code <= 0xff_ff) {
-              res[pos] = code
-            } else {
-              const c = String.fromCodePoint(code)
-              res[pos] = (c.charCodeAt(0) << 16) | c.charCodeAt(1)
-            }
+        for (let k = 0; k < x; k++, pos++, code++) {
+          if (code <= 0xff_ff) {
+            res[pos] = code
+          } else {
+            const c = String.fromCodePoint(code)
+            res[pos] = (c.charCodeAt(0) << 16) | c.charCodeAt(1)
           }
-        } else {
-          for (let k = 0; k < x; k++, pos++, code++) res[pos] = code
         }
       }
     } else if (x[0] === '$' && Object.hasOwn(indices, x)) {
-      pos = unwrap(res, indices[x], pos, highMode) // self-reference using shared chunks
-    } else if (highMode) {
-      const s = [...utf16toString(loadBase64(x), 'uint8-le')] // splits by codepoints
-      let c
-      for (let i = 0; i < s.length; ) {
-        c = s[i++]
+      pos = unwrap(res, indices[x], pos) // self-reference using shared chunks
+    } else {
+      let last
+      // splits by codepoints
+      for (const c of utf16toString(loadBase64(x), 'uint8-le')) {
+        last = c
         res[pos++] = c.length === 1 ? c.charCodeAt(0) : (c.charCodeAt(0) << 16) | c.charCodeAt(1)
       }
 
-      code = c.codePointAt(0) + 1
-    } else {
-      const u16 = to16input(loadBase64(x), true) // data is little-endian
-      res.set(u16, pos)
-      pos += u16.length
-      code = u16[u16.length - 1] + 1
+      code = last.codePointAt(0) + 1
     }
   }
 
@@ -108,9 +98,8 @@ export function getTable(id) {
     let a = -1
     res = new Uint16Array(indices[id].map((x) => (a += x + 1)))
   } else if (id === 'big5') {
-    if (!Object.hasOwn(sizes, id)) throw new Error('Unknown encoding')
-    res = new Uint32Array(sizes[id]) // array of strings or undefined
-    unwrap(res, indices[id], 0, true)
+    res = new Uint32Array(sizes[id]) // single or double charcodes
+    unwrap(res, indices[id], 0)
     // Pointer code updates are embedded into the table
     // These are skipped in encoder as encoder uses only pointers >= (0xA1 - 0x81) * 157
     res[1133] = 0xca_03_04
@@ -120,7 +109,7 @@ export function getTable(id) {
   } else {
     if (!Object.hasOwn(sizes, id)) throw new Error('Unknown encoding')
     res = new Uint16Array(sizes[id])
-    unwrap(res, indices[id], 0, false)
+    unwrap(res, indices[id], 0)
   }
 
   indices[id] = null // gc
