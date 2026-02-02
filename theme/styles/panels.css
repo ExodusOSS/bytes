@@ -11,4 +11,13 @@
   .tsd-navigation.settings {
     display: none !important;
   }
+
+  .tsd-accordion-summary,
+  .tsd-panel > h1.tsd-anchor-link:has(code) {
+    display: none;
+  }
+
+  footer {
+    display: none;
+  }
 }

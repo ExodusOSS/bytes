@@ -12,6 +12,10 @@
     color: #e3e7fb !important;
   }
 
+  .tsd-navigation > a:first-child {
+    display: none;
+  }
+
   .tsd-navigation a:hover,
   .tsd-navigation a.current {
     color: #b19dff !important;
@@ -19,5 +23,10 @@
 
   .tsd-kind-icon {
     color: inherit !important;
+  }
+
+  a.external:has(img) {
+    background-image: none !important;
+    padding: 0 !important;
   }
 }

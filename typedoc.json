@@ -1,6 +1,7 @@
 {
   "excludeNotDocumented": true,
   "excludeNotDocumentedKinds": ["Module"],
+  "includeHierarchySummary": false,
   "navigation": {
     "includeFolders": false
   },
@@ -14,6 +15,12 @@
         "path": "./doc/index.json"
     }
   ],
+  "hostedBaseUrl": "https://exodusoss.github.io/bytes/",
+  "navigationLinks": {
+    "npm": "https://www.npmjs.com/package/@exodus/bytes",
+    "GitHub": "https://github.com/ExodusOSS/bytes"
+  },
+  "hideGenerator": true,
   "customCss": "./theme/custom.css",
   "favicon": "./theme/favicon.ico"
 }
