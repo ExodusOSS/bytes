@@ -4,9 +4,9 @@
   "description": "Various operations on Uint8Array data",
   "keywords": [
     "encoding",
-    "uint8array",
-    "textdecoder",
-    "textencoder",
+    "Uint8Array",
+    "TextDecoder",
+    "TextEncoder",
     "utf8",
     "utf16",
     "hex",
