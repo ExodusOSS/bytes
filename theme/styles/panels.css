@@ -12,8 +12,11 @@
     display: none !important;
   }
 
-  .tsd-accordion-summary,
-  .tsd-panel > h1.tsd-anchor-link:has(code) {
+  .page-menu li:has(> a:first-child > span:first-child:empty) {
+    display: none;
+  }
+
+  .tsd-accordion-summary {
     display: none;
   }
 
