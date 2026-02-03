@@ -6,12 +6,12 @@
   body {
     position: relative;
     overflow-x: hidden;
-    font-family: "Inter", system-ui, "Roboto", "Segoe UI", sans-serif;
+    font-family: 'Inter', system-ui, 'Roboto', 'Segoe UI', sans-serif;
     background: #000000 !important;
   }
 
   body::before {
-    content: "";
+    content: '';
     position: fixed;
     bottom: -20%;
     left: 50%;

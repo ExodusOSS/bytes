@@ -10,12 +10,12 @@
   },
   "outputs": [
     {
-        "name": "html",
-        "path": "./doc"
+      "name": "html",
+      "path": "./doc"
     },
     {
-        "name": "json",
-        "path": "./doc/index.json"
+      "name": "json",
+      "path": "./doc/index.json"
     }
   ],
   "hostedBaseUrl": "https://exodusoss.github.io/bytes/",
