@@ -170,7 +170,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        deno-version: ['v2.6.5']
+        deno-version: ['v2']
     steps:
       - uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29
       - uses: pnpm/action-setup@a7487c7e89a18df4991f7f222e4898a00d66ddda
