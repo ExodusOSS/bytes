@@ -176,11 +176,14 @@ describe('random data', () => {
   const restored = []
   const ignoreBOM = true
 
-  let nativeIsOk = nativeDecoder
+  let nativeIsOk = false
   // Non-native might be wrong
   // Also, Node.js without ICU has native not performing replacement, so we can't compare against that
-  nativeIsOk &=
-    TextDecoder && new TextDecoder('utf-16le').decode(Uint8Array.of(0x00, 0xd8)) === '\uFFFD'
+  // XS might throw
+  try {
+    nativeIsOk =
+      nativeDecoder && new TextDecoder('utf-16le').decode(Uint8Array.of(0x00, 0xd8)) === '\uFFFD'
+  } catch {}
 
   test('utf16toStringLoose', (t) => {
     const decoderLE = nativeIsOk ? new TextDecoder('utf-16le', { ignoreBOM }) : null // polyfilled might be wrong
