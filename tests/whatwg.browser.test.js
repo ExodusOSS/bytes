@@ -128,9 +128,11 @@ describe('percent-encode after encoding matches browser', { skip }, () => {
   }
 })
 
+const skipLarge = process.env.EXODUS_TEST_PLATFORM === 'engine262'
+
 // Ensures that behavior mathches everywhere with snapshots
 // Combined with the above check, we know that snapshots match reference browser platforms
-describe('percent-encode after encoding matches snapshot', () => {
+describe('percent-encode after encoding matches snapshot', { skip: skipLarge }, () => {
   for (const encoding of labels) {
     if (invalid.has(encoding)) continue
     test(encoding, async (t) => {
