@@ -10,7 +10,7 @@
 
 And a [`TextEncoder` / `TextDecoder` polyfill](#textencoder--textdecoder-polyfill)
 
-See [documentation](https://exodusoss.github.io/bytes).
+See [documentation](https://exodusoss.github.io/bytes/).
 
 ## Strict
 
