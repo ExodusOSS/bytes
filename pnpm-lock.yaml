@@ -27,8 +27,8 @@ importers:
         specifier: ^1.0.0
         version: 1.0.0(prettier@3.6.2)
       '@exodus/test':
-        specifier: 1.0.0-rc.110
-        version: 1.0.0-rc.110(@noble/hashes@2.0.1)(electron@36.5.0)
+        specifier: 1.0.0-rc.111
+        version: 1.0.0-rc.111(@noble/hashes@2.0.1)(electron@36.5.0)
       '@hexagon/base64':
         specifier: ^2.0.4
         version: 2.0.4
@@ -497,16 +497,16 @@ packages:
   '@exodus/replay@1.0.0-rc.9':
     resolution: {integrity: sha512-16nwUaYRg00/50MF+RDlEqymBQIq6xUEfskCbOmXqqbzylZDErfMHN1ApNWB3yxeFVZaHRSpA49e9mOQ10y0dg==, tarball: https://registry.npmjs.org/@exodus/replay/-/replay-1.0.0-rc.9.tgz}
 
-  '@exodus/test-bundler@1.0.0-rc.11':
-    resolution: {integrity: sha512-NTLlN8S7Jo8fFYwLegP+WqwiLraHbemnjVN73B4xmXsHWZ4o+3AF/+FYc4XCRXCKM6pFEz3AyZoOaTBuWu90Pg==, tarball: https://registry.npmjs.org/@exodus/test-bundler/-/test-bundler-1.0.0-rc.11.tgz}
+  '@exodus/test-bundler@1.0.0-rc.12':
+    resolution: {integrity: sha512-WPQ1L1WNYtUo/al00rgTlSFGEDkjceVQTZ19F2eapHoMVX/mVd99dmLo5uh/ybJp/94WsYCoc+4TznUkitAnCA==, tarball: https://registry.npmjs.org/@exodus/test-bundler/-/test-bundler-1.0.0-rc.12.tgz}
     peerDependencies:
       crypto-browserify: ^3.12.0
     peerDependenciesMeta:
       crypto-browserify:
         optional: true
 
-  '@exodus/test@1.0.0-rc.110':
-    resolution: {integrity: sha512-g8DeMEebd2Zzf+vLMsvpHPxnzbGqMwOsDcQJaqefyRDc3fqyjnAYucWsPKHyJsmExocRXVSIm0Qvk2XxUG5/qw==, tarball: https://registry.npmjs.org/@exodus/test/-/test-1.0.0-rc.110.tgz}
+  '@exodus/test@1.0.0-rc.111':
+    resolution: {integrity: sha512-4FN/SDtkOOEBxPRDOgEB0VsxM9hO32rxkgW0APhiHey5GiBZsTIG4W1joeED/RdSRrJs7l4vjSy+YvrWudQKWg==, tarball: https://registry.npmjs.org/@exodus/test/-/test-1.0.0-rc.111.tgz}
     engines: {node: ^20.19.0 || ^22.12.0 || >=24.0.0}
     hasBin: true
     peerDependencies:
@@ -3626,7 +3626,7 @@ snapshots:
   '@exodus/replay@1.0.0-rc.9':
     optional: true
 
-  '@exodus/test-bundler@1.0.0-rc.11(@noble/hashes@2.0.1)':
+  '@exodus/test-bundler@1.0.0-rc.12(@noble/hashes@2.0.1)':
     dependencies:
       '@exodus/bytes': 1.11.0(@noble/hashes@2.0.1)
       '@ungap/url-search-params': 0.2.2
@@ -3652,11 +3652,11 @@ snapshots:
       - supports-color
     optional: true
 
-  '@exodus/test@1.0.0-rc.110(@noble/hashes@2.0.1)(electron@36.5.0)':
+  '@exodus/test@1.0.0-rc.111(@noble/hashes@2.0.1)(electron@36.5.0)':
     optionalDependencies:
       '@chalker/queue': 1.0.1
       '@exodus/replay': 1.0.0-rc.9
-      '@exodus/test-bundler': 1.0.0-rc.11(@noble/hashes@2.0.1)
+      '@exodus/test-bundler': 1.0.0-rc.12(@noble/hashes@2.0.1)
       electron: 36.5.0
       expect: 30.2.0
       fast-glob: 3.3.3
