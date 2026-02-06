@@ -1,5 +1,5 @@
 import { assertUint8 } from './assert.js'
-import { canDecoders, nativeEncoder, skipWeb, E_STRING } from './fallback/_utils.js'
+import { nativeDecoderLatin1, nativeEncoder, skipWeb, E_STRING } from './fallback/_utils.js'
 import { encodeAscii, encodeAsciiPrefix, encodeLatin1 } from './fallback/latin1.js'
 import { assertEncoding, encodingDecoder, encodeMap, E_STRICT } from './fallback/single-byte.js'
 
@@ -39,7 +39,7 @@ export function createSinglebyteDecoder(encoding, loose = false) {
   if (typeof loose !== 'boolean') throw new TypeError('loose option should be boolean')
   assertEncoding(encoding)
 
-  if (canDecoders && shouldUseNative(encoding)) {
+  if (nativeDecoderLatin1 && shouldUseNative(encoding)) {
     // In try, as not all encodings might be implemented in all engines which have native TextDecoder
     try {
       const decoder = new TextDecoder(encoding, { fatal: !loose })

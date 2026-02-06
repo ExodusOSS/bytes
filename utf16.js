@@ -1,7 +1,22 @@
 import * as js from './fallback/utf16.js'
-import { canDecoders, isLE, E_STRING } from './fallback/_utils.js'
+import { nativeDecoder, isLE, E_STRING } from './fallback/_utils.js'
 
-const { TextDecoder } = globalThis // Buffer is optional
+const { TextDecoder } = globalThis
+
+function checkDecoders() {
+  // Not all barebone engines with TextDecoder support something except utf-8
+  // Also workerd specifically has a broken utf-16le implementation
+  if (!nativeDecoder) return false
+  try {
+    const a = new TextDecoder('utf-16le').decode(Uint8Array.of(1, 2, 3, 0xd8))
+    const b = new TextDecoder('utf-16be').decode(Uint8Array.of(2, 1, 0xd8, 3))
+    return a === b && a === '\u0201\uFFFD'
+  } catch {}
+
+  return false
+}
+
+const canDecoders = checkDecoders()
 const ignoreBOM = true
 const decoderFatalLE = canDecoders ? new TextDecoder('utf-16le', { ignoreBOM, fatal: true }) : null
 const decoderLooseLE = canDecoders ? new TextDecoder('utf-16le', { ignoreBOM }) : null

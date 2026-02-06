@@ -29,7 +29,6 @@ const getNativeLatin1 = () => {
 }
 
 export const nativeDecoderLatin1 = /* @__PURE__ */ getNativeLatin1()
-export const canDecoders = !!nativeDecoderLatin1
 
 // Block Firefox < 146 specifically from using native hex/base64, as it's very slow there
 // Refs: https://bugzilla.mozilla.org/show_bug.cgi?id=1994067 (and linked issues), fixed in 146
