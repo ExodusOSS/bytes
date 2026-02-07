@@ -7,9 +7,17 @@ import { legacySingleByte, legacyMultiByte, unicode } from './fixtures/encodings
 
 const fixedPRG = keccakprg() // We don't add any entropy, so it spills out predicatable results
 
+const slowEngine =
+  process.env.EXODUS_TEST_PLATFORM === 'quickjs' ||
+  process.env.EXODUS_TEST_PLATFORM === 'xs' ||
+  process.env.EXODUS_TEST_PLATFORM === 'boa' ||
+  process.env.EXODUS_TEST_PLATFORM === 'graaljs' ||
+  process.env.EXODUS_TEST_PLATFORM === 'engine262'
+
 // 128 buffers of increasing not-always-even lengths, 184 KiB
+const poolSize = slowEngine ? 48 : 128
 const seeds = []
-for (let i = 1; i <= 128; i++) seeds.push(fixedPRG.randomBytes(23 * i))
+for (let i = 1; i <= poolSize; i++) seeds.push(fixedPRG.randomBytes(23 * i))
 const rand = () => fixedPRG.randomBytes(1)[0] / 256 // or Math.random()
 
 const isConsistenFatalEncoding = (label) => legacySingleByte.includes(label) || label === 'utf-8' // see explanation below

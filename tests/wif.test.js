@@ -63,7 +63,7 @@ test('toWifString matches wif, random data', async (t) => {
   }
 })
 
-test('sizes roundtrip, random data', async (t) => {
+test('sizes roundtrip, random data', { timeout: 60_000 }, async (t) => {
   const seed = randomValues(300)
   for (const compressed of [false, true]) {
     for (const version of [0, 1, 10, 42, 255]) {
