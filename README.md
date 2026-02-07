@@ -16,7 +16,7 @@ See [documentation](https://exodusoss.github.io/bytes/).
 
 Performs proper input validation, ensures no garbage-in-garbage-out
 
-Tested in CI on:
+Tested in CI with [@exodus/test](https://github.com/ExodusMovement/test#exodustest) on:
 
 [![Node.js](https://img.shields.io/badge/Node.js-338750?style=for-the-badge&logo=Node.js&logoColor=FFF)](https://nodejs.org/api/test.html)
 [![Deno](https://img.shields.io/badge/Deno-121417?style=for-the-badge&logo=Deno&logoColor=FFF)](https://deno.com/)
