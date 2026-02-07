@@ -16,7 +16,7 @@ See [documentation](https://exodusoss.github.io/bytes/).
 
 Performs proper input validation, ensures no garbage-in-garbage-out
 
-Tested on Node.js, Deno, Bun, browsers (including Servo), Hermes, QuickJS and barebone engines in CI [(how?)](https://github.com/ExodusMovement/test#exodustest)
+Tested on Node.js, Deno, Bun, browsers (including Servo), Hermes, workerd, QuickJS and barebone engines in CI [(how?)](https://github.com/ExodusMovement/test#exodustest)
 
 ## Fast
 
