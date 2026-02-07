@@ -147,7 +147,8 @@ export function encodeAsciiPrefix(x, s) {
 export const encodeLatin1 = (str) => encodeCharcodes(str, new Uint8Array(str.length))
 
 // Expects nativeEncoder to be present
-export const encodeAscii = isHermes
+const useEncodeInto = isHermes && nativeEncoder?.encodeInto
+export const encodeAscii = useEncodeInto
   ? (str, ERR) => {
       // Much faster in Hermes
       const codes = new Uint8Array(str.length + 4) // overshoot by a full utf8 char
