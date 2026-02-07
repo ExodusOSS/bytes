@@ -31,6 +31,7 @@
     "test:engine262": "exodus-test --engine=engine262:bundle",
     "test:deno": "exodus-test --engine=deno:pure",
     "test:bun": "exodus-test --engine=bun:pure",
+    "test:workerd": "exodus-test --engine=workerd:bundle",
     "test:electron:bundle": "exodus-test --engine=electron:bundle",
     "test:electron:as-node": "exodus-test --engine=electron-as-node:test",
     "test:chrome:puppeteer": "exodus-test --engine=chrome:puppeteer",
@@ -265,7 +266,8 @@
     "uint8array-tools": "^0.0.9",
     "utf8": "^3.0.0",
     "web-streams-polyfill": "^4.2.0",
-    "wif": "^5.0.0"
+    "wif": "^5.0.0",
+    "workerd": "^1.20260206.0"
   },
   "prettier": "@exodus/prettier",
   "packageManager": "pnpm@10.12.1+sha256.889bac470ec93ccc3764488a19d6ba8f9c648ad5e50a9a6e4be3768a5de387a3"
