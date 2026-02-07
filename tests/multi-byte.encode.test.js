@@ -238,6 +238,7 @@ describe('roundtrip, tables', () => {
 const slowEngine =
   process.env.EXODUS_TEST_PLATFORM === 'quickjs' ||
   process.env.EXODUS_TEST_PLATFORM === 'xs' ||
+  process.env.EXODUS_TEST_PLATFORM === 'boa' ||
   process.env.EXODUS_TEST_PLATFORM === 'engine262'
 describe('roundtrip, full Unicode', () => {
   const MAX = slowEngine ? 0x1_ff_ff : 0x10_ff_ff // Max Unicode codepoint

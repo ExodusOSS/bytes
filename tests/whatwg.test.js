@@ -19,6 +19,7 @@ const invalid = new Set(['replacement', 'utf-16le', 'utf-16be']) // https://enco
 const slowEngine =
   process.env.EXODUS_TEST_PLATFORM === 'quickjs' ||
   process.env.EXODUS_TEST_PLATFORM === 'xs' ||
+  process.env.EXODUS_TEST_PLATFORM === 'boa' ||
   process.env.EXODUS_TEST_PLATFORM === 'engine262'
 
 test('percent-encode sets coherence', (t) => {

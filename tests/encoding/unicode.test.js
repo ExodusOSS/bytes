@@ -11,6 +11,7 @@ const labels = ['utf-8', 'utf-16le', 'utf-16be']
 const skipLarge =
   process.env.EXODUS_TEST_PLATFORM === 'quickjs' ||
   process.env.EXODUS_TEST_PLATFORM === 'xs' ||
+  process.env.EXODUS_TEST_PLATFORM === 'boa' ||
   process.env.EXODUS_TEST_PLATFORM === 'engine262'
 
 describe('Unicode encodings snapshot tests', { skip: skipLarge }, () => {
