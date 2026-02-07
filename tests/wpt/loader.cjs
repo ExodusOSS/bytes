@@ -16,9 +16,20 @@ if (!globalThis.Float16Array) {
   Object.assign(globalThis, { Float16Array })
 }
 
+function haveMessageChannelTransfer() {
+  if (!globalThis.MessageChannel) return false
+  try {
+    const a = new ArrayBuffer(2)
+    new MessageChannel().port1.postMessage(a, [a])
+    return true
+  } catch {}
+
+  return false
+}
+
 // MessageChannel is used to test detached ArrayBuffer instances
 // We can polyfill that on modern barebone engines except Hermes
-if (!globalThis.MessageChannel && ArrayBuffer.prototype.transfer) {
+if (!haveMessageChannelTransfer() && ArrayBuffer.prototype.transfer) {
   const MessageChannel = class {
     port1 = { postMessage: (_, transfer = []) => transfer.forEach((x) => x.transfer()) }
   }

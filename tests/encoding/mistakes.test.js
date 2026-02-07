@@ -877,7 +877,8 @@ describe('Common implementation mistakes', () => {
   // text-encoding is wrong, naive whatwg-encoding usage fails too
   // https://webidl.spec.whatwg.org/#dfn-get-buffer-source-copy
   // 7. If IsDetachedBuffer(jsArrayBuffer) is true, then return the empty byte sequence.
-  test('decoding detached returns empty data', { skip: !globalThis.MessageChannel }, (t) => {
+  const canDetach = ArrayBuffer.prototype.transfer || globalThis.MessageChannel
+  test('decoding detached returns empty data', { skip: !canDetach }, (t) => {
     for (const fatal of [false, true]) {
       const decoder = new TextDecoder('utf-8', { fatal })
       const a = new ArrayBuffer(2)
@@ -889,7 +890,12 @@ describe('Common implementation mistakes', () => {
       // second time
       t.assert.strictEqual(decoder.decode(a), '$%')
       t.assert.strictEqual(decoder.decode(b), '$%')
-      new MessageChannel().port1.postMessage(a, [a])
+      if (a.transfer) {
+        a.transfer()
+      } else {
+        new MessageChannel().port1.postMessage(a, [a])
+      }
+
       // but not anymore
       t.assert.strictEqual(decoder.decode(a), '')
       t.assert.strictEqual(decoder.decode(b), '')
