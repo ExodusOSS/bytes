@@ -16,7 +16,23 @@ See [documentation](https://exodusoss.github.io/bytes/).
 
 Performs proper input validation, ensures no garbage-in-garbage-out
 
-Tested on Node.js, Deno, Bun, browsers (including Servo), Hermes, workerd, QuickJS and barebone engines in CI [(how?)](https://github.com/ExodusMovement/test#exodustest)
+Tested in CI on:
+
+[![Node.js](https://img.shields.io/badge/Node.js-338750?style=for-the-badge&logo=Node.js&logoColor=FFF)](https://nodejs.org/api/test.html)
+[![Deno](https://img.shields.io/badge/Deno-121417?style=for-the-badge&logo=Deno&logoColor=FFF)](https://deno.com/)
+[![Bun](https://img.shields.io/badge/Bun-F472B6?style=for-the-badge&logo=Bun&logoColor=FFF)](https://bun.sh/)
+[![Electron](https://img.shields.io/badge/Electron-2F3242?style=for-the-badge&logo=Electron&logoColor=A2ECFB)](http://electronjs.org/)
+[![workerd](https://img.shields.io/badge/workerd-F38020?style=for-the-badge&logo=cloudflareworkers&logoColor=FFF)](https://github.com/cloudflare/workerd)\
+[![Chrome](https://img.shields.io/badge/Chrome-4285F4?style=for-the-badge&logo=GoogleChrome&logoColor=FFF)](https://www.chromium.org/Home/)
+[![WebKit](https://img.shields.io/badge/WebKit-006CFF?style=for-the-badge&logo=Safari&logoColor=FFF)](http://webkit.org/)
+[![Firefox](https://img.shields.io/badge/Firefox-FF7139?style=for-the-badge&logo=Firefox&logoColor=FFF)](https://github.com/mozilla-firefox)
+[![Servo](https://img.shields.io/badge/Servo-009D9A?style=for-the-badge)](https://servo.org/)\
+[![Hermes](https://img.shields.io/badge/Hermes-282C34?style=for-the-badge&logo=React)](https://hermesengine.dev)
+[![V8](https://img.shields.io/badge/V8-4285F4?style=for-the-badge&logo=V8&logoColor=white)](https://v8.dev/docs/d8)
+[![JavaScriptCore](https://img.shields.io/badge/JavaScriptCore-006CFF?style=for-the-badge)](https://docs.webkit.org/Deep%20Dive/JSC/JavaScriptCore.html)
+[![SpiderMonkey](https://img.shields.io/badge/SpiderMonkey-FFD681?style=for-the-badge)](https://spidermonkey.dev/)
+[![QuickJS](https://img.shields.io/badge/QuickJS-E58200?style=for-the-badge)](https://github.com/quickjs-ng/quickjs)
+[![XS](https://img.shields.io/badge/XS-0B307A?style=for-the-badge)](https://github.com/Moddable-OpenSource/moddable-xst)
 
 ## Fast
 
