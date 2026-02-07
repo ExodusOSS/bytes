@@ -32,7 +32,7 @@ Tested in CI on:
 [![JavaScriptCore](https://img.shields.io/badge/JavaScriptCore-006CFF?style=for-the-badge)](https://docs.webkit.org/Deep%20Dive/JSC/JavaScriptCore.html)
 [![SpiderMonkey](https://img.shields.io/badge/SpiderMonkey-FFD681?style=for-the-badge)](https://spidermonkey.dev/)
 [![QuickJS](https://img.shields.io/badge/QuickJS-E58200?style=for-the-badge)](https://github.com/quickjs-ng/quickjs)
-[![XS](https://img.shields.io/badge/XS-0B307A?style=for-the-badge)](https://github.com/Moddable-OpenSource/moddable-xst)
+[![XS](https://img.shields.io/badge/XS-0B307A?style=for-the-badge)](https://github.com/Moddable-OpenSource/moddable)
 
 ## Fast
 
