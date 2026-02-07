@@ -319,6 +319,7 @@ const skipLarge =
   process.env.EXODUS_TEST_PLATFORM === 'quickjs' ||
   process.env.EXODUS_TEST_PLATFORM === 'xs' ||
   process.env.EXODUS_TEST_PLATFORM === 'boa' ||
+  process.env.EXODUS_TEST_PLATFORM === 'graaljs' ||
   process.env.EXODUS_TEST_PLATFORM === 'engine262'
 test('large strings', { skip: skipLarge }, (t) => {
   const s = 'abcde01234'.repeat(12e6) // 120e6 total
