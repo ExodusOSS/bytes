@@ -107,8 +107,17 @@ import { TextDecoderStream, TextEncoderStream } from '@exodus/bytes/encoding-lit
 ```
 
 This reduces the bundle size 9x:\
-from 90 KiB gzipped for `@exodus/bytes/encoding.js` to 10 KiB gzipped for `@exodus/bytes/encoding-lite.js`.\
-(For comparison, `text-encoding` module is 190 KiB gzipped, and `iconv-lite` is 194 KiB gzipped):
+from 94 KiB gzipped for `@exodus/bytes/encoding.js` to 10 KiB gzipped for `@exodus/bytes/encoding-lite.js`.\
+(For comparison, `text-encoding` and `iconv-lite` are each over 195 KiB gzipped):
+
+| import | size |
+| - | - |
+| `@exodus/bytes/encoding-browser.js` | <sub>![](https://img.shields.io/bundlejs/size/@exodus/bytes/encoding-browser.js?style=flat-square)</sub> |
+| `@exodus/bytes/encoding-lite.js` | <sub>![](https://img.shields.io/bundlejs/size/@exodus/bytes/encoding-lite.js?style=flat-square)</sub> |
+| `@exodus/bytes/encoding.js` | <sub>![](https://img.shields.io/bundlejs/size/@exodus/bytes/encoding.js?style=flat-square)</sub> |
+| `text-encoding` | <sub>![](https://img.shields.io/bundlejs/size/text-encoding?style=flat-square)</sub> |
+| `iconv-lite` | <sub>![](https://img.shields.io/bundlejs/size/iconv-lite?style=flat-square)</sub> |
+| `whatwg-encoding` | <sub>![](https://img.shields.io/bundlejs/size/whatwg-encoding?style=flat-square)</sub> |
 
 It still supports `utf-8`, `utf-16le`, `utf-16be` and all single-byte encodings specified by the spec,
 the only difference is support for legacy multi-byte encodings.
@@ -667,7 +676,7 @@ Create a view of a TypedArray in the specified format (`'uint8'` or `'buffer'`)
 > [!IMPORTANT]
 > Does not copy data, returns a view on the same underlying buffer
 
-### @exodus/bytes/encoding.js
+### @exodus/bytes/encoding.js <sub>![](https://img.shields.io/bundlejs/size/@exodus/bytes/encoding.js?style=flat-square)</sub>
 
 Implements the [Encoding standard](https://encoding.spec.whatwg.org/):
 [TextDecoder](https://encoding.spec.whatwg.org/#interface-textdecoder),
@@ -778,7 +787,7 @@ only expects lowercased encoding name:
 new TextDecoder(getBOMEncoding(input) ?? fallbackEncoding).decode(input)
 ```
 
-### @exodus/bytes/encoding-lite.js
+### @exodus/bytes/encoding-lite.js <sub>![](https://img.shields.io/bundlejs/size/@exodus/bytes/encoding-lite.js?style=flat-square)</sub>
 
 The exact same exports as `@exodus/bytes/encoding.js` are also exported as
 `@exodus/bytes/encoding-lite.js`, with the difference that the lite version does not load
@@ -837,7 +846,7 @@ true
 '%'
 ```
 
-### @exodus/bytes/encoding-browser.js
+### @exodus/bytes/encoding-browser.js <sub>![](https://img.shields.io/bundlejs/size/@exodus/bytes/encoding-browser.js?style=flat-square)<sub>
 
 Same as `@exodus/bytes/encoding.js`, but in browsers instead of polyfilling just uses whatever the
 browser provides, drastically reducing the bundle size (to less than 2 KiB gzipped).
