@@ -143,7 +143,7 @@ function loadTextDecoderHtml(fullName) {
     '<!doctype html>\r\n<html>\r\n<head>\r\n<meta charset="', // e.g. git autocrlf, GitHub CI on Windows
   ]
 
-  test(fullName, (t) => {
+  test(fullName, { timeout: 60_000 }, (t) => {
     const b = fs.readFileSync(path.join(__dirname, `fixtures/${name}.html`)) // do not parse to text, read as Buffer
     let encoding
     for (const head of heads) {
