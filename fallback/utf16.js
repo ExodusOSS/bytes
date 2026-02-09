@@ -1,8 +1,7 @@
 import { decodeUCS2, encodeCharcodes } from './latin1.js'
-import { isLE } from './_utils.js'
+import { isLE, E_STRICT_UNICODE } from './_utils.js'
 
 export const E_STRICT = 'Input is not well-formed utf16'
-export const E_STRICT_UNICODE = 'Input is not well-formed Unicode'
 
 const replacementCodepoint = 0xff_fd
 const replacementCodepointSwapped = 0xfd_ff

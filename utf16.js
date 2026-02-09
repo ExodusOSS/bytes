@@ -1,5 +1,5 @@
 import * as js from './fallback/utf16.js'
-import { nativeDecoder, isLE, E_STRING } from './fallback/_utils.js'
+import { nativeDecoder, isLE, E_STRING, E_STRICT_UNICODE } from './fallback/_utils.js'
 
 const { TextDecoder } = globalThis
 
@@ -26,7 +26,7 @@ const decoderFatal16 = isLE ? decoderFatalLE : decoderFatalBE
 const decoderLoose16 = isLE ? decoderLooseLE : decoderLooseBE
 const { isWellFormed, toWellFormed } = String.prototype
 
-const { E_STRICT, E_STRICT_UNICODE } = js
+const { E_STRICT } = js
 
 // Unlike utf8, operates on Uint16Arrays by default
 
