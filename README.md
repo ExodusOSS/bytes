@@ -30,7 +30,7 @@ Tested in CI with [@exodus/test](https://github.com/ExodusMovement/test#exoduste
 [![Hermes](https://img.shields.io/badge/Hermes-282C34?style=for-the-badge&logo=React)](https://hermesengine.dev)
 [![V8](https://img.shields.io/badge/V8-4285F4?style=for-the-badge&logo=V8&logoColor=white)](https://v8.dev/docs/d8)
 [![JavaScriptCore](https://img.shields.io/badge/JavaScriptCore-006CFF?style=for-the-badge)](https://docs.webkit.org/Deep%20Dive/JSC/JavaScriptCore.html)
-[![SpiderMonkey](https://img.shields.io/badge/SpiderMonkey-FFD681?style=for-the-badge)](https://spidermonkey.dev/)
+[![SpiderMonkey](https://img.shields.io/badge/SpiderMonkey-FFD681?style=for-the-badge)](https://spidermonkey.dev/)\
 [![QuickJS](https://img.shields.io/badge/QuickJS-E58200?style=for-the-badge)](https://github.com/quickjs-ng/quickjs)
 [![XS](https://img.shields.io/badge/XS-0B307A?style=for-the-badge)](https://github.com/Moddable-OpenSource/moddable)
 [![GraalJS](https://img.shields.io/badge/GraalJS-C74634?style=for-the-badge)](https://github.com/oracle/graaljs)
