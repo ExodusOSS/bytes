@@ -75,12 +75,8 @@ for (let i = 1; i <= 32; i++) {
   strings.push(...chunk)
 }
 
-// Passes on Chromium, Servo. Webkit is incorrect. Firefox somewhy fails on CI only
-const skip =
-  !document ||
-  !window ||
-  process.env.EXODUS_TEST_PLATFORM === 'webkit' ||
-  process.env.EXODUS_TEST_PLATFORM === 'firefox'
+// Passes on Chromium, Firefox, Servo. Webkit is incorrect
+const skip = !document || !window || process.env.EXODUS_TEST_PLATFORM === 'webkit'
 
 describe('percent-encode after encoding matches browser', { skip }, () => {
   let handle
@@ -99,7 +95,7 @@ describe('percent-encode after encoding matches browser', { skip }, () => {
 
   for (const encoding of labels) {
     if (invalid.has(encoding)) continue
-    test(encoding, async (t) => {
+    test(encoding, { timeout: 60_000 }, async (t) => {
       let ok = 0
       const loaded = new Promise((resolve) => (handle = resolve))
       const html = `
