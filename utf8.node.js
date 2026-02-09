@@ -1,7 +1,7 @@
 import { assertUint8 } from './assert.js'
 import { typedView } from './array.js'
-import { E_STRING } from './fallback/_utils.js'
-import { E_STRICT, E_STRICT_UNICODE } from './fallback/utf8.js'
+import { E_STRING, E_STRICT_UNICODE } from './fallback/_utils.js'
+import { E_STRICT } from './fallback/utf8.js'
 import { isAscii } from 'node:buffer'
 
 if (Buffer.TYPED_ARRAY_SUPPORT) throw new Error('Unexpected Buffer polyfill')

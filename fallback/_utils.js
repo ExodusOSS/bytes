@@ -4,6 +4,7 @@ export const nativeBuffer = haveNativeBuffer ? Buffer : null
 export const isHermes = !!globalThis.HermesInternal
 export const isDeno = !!globalThis.Deno
 export const isLE = /* @__PURE__ */ (() => new Uint8Array(Uint16Array.of(258).buffer)[0] === 2)()
+export const E_STRICT_UNICODE = 'Input is not well-formed Unicode'
 
 // We consider Node.js TextDecoder/TextEncoder native
 let isNative = (x) => x && (haveNativeBuffer || `${x}`.includes('[native code]'))

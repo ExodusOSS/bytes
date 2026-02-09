@@ -1,9 +1,30 @@
-import { encodeAsciiPrefix } from './latin1.js'
+import { isHermes, E_STRICT_UNICODE } from './_utils.js'
+import { asciiPrefix, decodeLatin1, encodeAsciiPrefix } from './latin1.js'
 
 export const E_STRICT = 'Input is not well-formed utf8'
-export const E_STRICT_UNICODE = 'Input is not well-formed Unicode'
 
 const replacementPoint = 0xff_fd
+const shouldUseEscapePath = isHermes // faster only on Hermes, js path beats it on normal engines
+const { decodeURIComponent, escape } = globalThis
+
+export function decodeFast(arr, loose) {
+  // Fast path for ASCII prefix, this is faster than all alternatives below
+  const prefix = decodeLatin1(arr, 0, asciiPrefix(arr)) // No native decoder to use, so decodeAscii is useless here
+  if (prefix.length === arr.length) return prefix
+
+  // This codepath gives a ~3x perf boost on Hermes
+  if (shouldUseEscapePath && escape && decodeURIComponent) {
+    const o = escape(decodeLatin1(arr, prefix.length, arr.length))
+    try {
+      return prefix + decodeURIComponent(o) // Latin1 to utf8
+    } catch {
+      if (!loose) throw new TypeError(E_STRICT)
+      // Ok, we have to use manual implementation for loose decoder
+    }
+  }
+
+  return prefix + decode(arr, loose, prefix.length)
+}
 
 // https://encoding.spec.whatwg.org/#utf-8-decoder
 // We are most likely in loose mode, for non-loose escape & decodeURIComponent solved everything
@@ -27,7 +48,7 @@ export function decode(arr, loose, start = 0) {
     const byte = arr[i]
     if (byte < 0x80) {
       tmp[ti++] = byte
-      // ascii fast path is in ../utf8.js, this is called only on non-ascii input
+      // ascii fast path is in decodeFast(), this is called only on non-ascii input
       // so we don't unroll this anymore
     } else if (byte < 0xc2) {
       if (!loose) throw new TypeError(E_STRICT)
