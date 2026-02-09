@@ -126,7 +126,7 @@ See [the list of encodings](https://encoding.spec.whatwg.org/#names-and-labels).
 
 ## API
 
-### @exodus/bytes/utf8.js
+### @exodus/bytes/utf8.js <sub>![](https://img.shields.io/bundlejs/size/@exodus/bytes/utf8.js?style=flat-square)<sub>
 
 UTF-8 encoding/decoding
 
@@ -192,7 +192,7 @@ Prefer using strict throwing methods for cryptography applications._
 This is similar to `new TextDecoder('utf-8', { ignoreBOM: true }).decode(arr)`,
 but works on all engines.
 
-### @exodus/bytes/utf16.js
+### @exodus/bytes/utf16.js <sub>![](https://img.shields.io/bundlejs/size/@exodus/bytes/utf16.js?style=flat-square)<sub>
 
 UTF-16 encoding/decoding
 
