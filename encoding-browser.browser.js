@@ -1,10 +1,4 @@
-import {
-  fromSource,
-  getBOMEncoding,
-  normalizeEncoding,
-  E_ENCODING,
-} from './fallback/encoding.api.js'
-import labels from './fallback/encoding.labels.js'
+import { getBOMEncoding } from './fallback/encoding.api.js'
 
 // Lite-weight version which re-exports existing implementations on browsers,
 // while still being aliased to the full impl in RN and Node.js
@@ -13,17 +7,49 @@ import labels from './fallback/encoding.labels.js'
 
 const { TextDecoder, TextEncoder, TextDecoderStream, TextEncoderStream } = globalThis
 
-export { normalizeEncoding, getBOMEncoding, labelToName } from './fallback/encoding.api.js'
+export { getBOMEncoding } from './fallback/encoding.api.js'
 export { TextDecoder, TextEncoder, TextDecoderStream, TextEncoderStream }
 
-// https://encoding.spec.whatwg.org/#decode
+export function normalizeEncoding(label) {
+  if (label === 'utf-8' || label === 'utf8' || label === 'UTF-8' || label === 'UTF8') return 'utf-8'
+  if (label === 'windows-1252' || label === 'ascii' || label === 'latin1') return 'windows-1252'
+  if (/[^\w\t\n\f\r .:-]/i.test(label)) return null
+  const l = `${label}`.trim().toLowerCase()
+  try {
+    return new TextDecoder(l).encoding
+  } catch {}
+
+  if (l === 'x-user-defined') return l
+  if (
+    l === 'replacement' ||
+    l === 'csiso2022kr' ||
+    l === 'hz-gb-2312' ||
+    l === 'iso-2022-cn' ||
+    l === 'iso-2022-cn-ext' ||
+    l === 'iso-2022-kr'
+  ) {
+    return 'replacement'
+  }
+
+  return null
+}
+
 export function legacyHookDecode(input, fallbackEncoding = 'utf-8') {
-  let u8 = fromSource(input)
-  const bomEncoding = getBOMEncoding(u8)
-  if (bomEncoding) u8 = u8.subarray(bomEncoding === 'utf-8' ? 3 : 2)
-  const enc = bomEncoding ?? normalizeEncoding(fallbackEncoding) // "the byte order mark is more authoritative than anything else"
-  if (enc === 'utf-8') return new TextDecoder('utf-8', { ignoreBOM: true }).decode(u8) // fast path
-  if (enc === 'replacement') return u8.byteLength > 0 ? '\uFFFD' : ''
-  if (!Object.hasOwn(labels, enc)) throw new RangeError(E_ENCODING)
-  return new TextDecoder(enc, { ignoreBOM: true }).decode(u8)
+  const enc = getBOMEncoding(input) ?? normalizeEncoding(fallbackEncoding)
+  if (enc === 'replacement') return input.byteLength > 0 ? '\uFFFD' : ''
+  return new TextDecoder(enc).decode(input)
+}
+
+export function labelToName(label) {
+  const enc = normalizeEncoding(label)
+  if (enc === 'utf-8') return 'UTF-8'
+  if (!enc) return enc
+  const p = enc.slice(0, 3)
+  if (p === 'utf' || p === 'iso' || p === 'koi' || p === 'euc' || p === 'ibm' || p === 'gbk') {
+    return enc.toUpperCase()
+  }
+
+  if (enc === 'big5') return 'Big5'
+  if (enc === 'shift_jis') return 'Shift_JIS'
+  return enc
 }
