@@ -77,6 +77,8 @@
     "/fallback/latin1.js",
     "/fallback/percent.js",
     "/fallback/platform.js",
+    "/fallback/platform.browser.js",
+    "/fallback/platform.native.js",
     "/fallback/multi-byte.encodings.cjs",
     "/fallback/multi-byte.encodings.json",
     "/fallback/multi-byte.js",
@@ -226,11 +228,13 @@
   },
   "browser": {
     "./utf16.js": "./utf16.browser.js",
+    "./fallback/platform.js": "./fallback/platform.browser.js",
     "./fallback/utf8.auto.js": "./fallback/utf8.auto.browser.js"
   },
   "react-native": {
     "./encoding-browser.js": "./encoding-browser.native.js",
     "./utf16.js": "./utf16.native.js",
+    "./fallback/platform.js": "./fallback/platform.native.js",
     "./fallback/utf8.auto.js": "./fallback/utf8.auto.native.js"
   },
   "peerDependencies": {

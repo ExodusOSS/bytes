@@ -1,5 +1,5 @@
 Buffer.TYPED_ARRAY_SUPPORT = true
-delete globalThis.TextDecoder
+if (!process.env.EXODUS_TEST_IS_BROWSER) delete globalThis.TextDecoder
 delete Uint8Array.prototype.toBase64
 delete Uint8Array.fromBase64
 
