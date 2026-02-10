@@ -29,8 +29,6 @@ export const nativeDecoderLatin1 = /* @__PURE__ */ (() => {
   return null
 })()
 
-export const skipWeb = false
-
 export function decodePartAddition(a, start, end, m) {
   let o = ''
   let i = start

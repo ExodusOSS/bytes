@@ -6,7 +6,6 @@ import {
   isHermes,
   isDeno,
   isLE,
-  skipWeb,
 } from './platform.js'
 
 const atob = /* @__PURE__ */ (() => globalThis.atob)()
@@ -17,7 +16,7 @@ const web64 = /* @__PURE__ */ (() => Uint8Array.prototype.toBase64)()
 const maxFunctionArgs = 0x20_00
 
 // toBase64+atob path is faster on everything where fromBase64 is fast
-const useLatin1atob = web64 && atob && !skipWeb
+const useLatin1atob = web64 && atob
 
 export function asciiPrefix(arr) {
   let p = 0 // verified ascii bytes

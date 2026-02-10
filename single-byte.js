@@ -1,6 +1,6 @@
 import { assertUint8 } from './assert.js'
 import { E_STRING } from './fallback/_utils.js'
-import { nativeDecoderLatin1, nativeEncoder, skipWeb } from './fallback/platform.js'
+import { nativeDecoderLatin1, nativeEncoder } from './fallback/platform.js'
 import { encodeAscii, encodeAsciiPrefix, encodeLatin1 } from './fallback/latin1.js'
 import { assertEncoding, encodingDecoder, encodeMap, E_STRICT } from './fallback/single-byte.js'
 
@@ -89,7 +89,7 @@ function encode(s, m) {
 }
 
 // fromBase64+btoa path is faster on everything where fromBase64 is fast
-const useLatin1btoa = Uint8Array.fromBase64 && btoa && !skipWeb
+const useLatin1btoa = Uint8Array.fromBase64 && btoa
 
 export function createSinglebyteEncoder(encoding, { mode = 'fatal' } = {}) {
   // TODO: replacement, truncate (replacement will need varying length)

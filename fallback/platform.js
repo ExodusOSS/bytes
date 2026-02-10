@@ -1,2 +1,2 @@
-// it's safe even if bundler does not follow browser resolution for browser and skipWeb misdetects
+// platform.native actually hosts Node.js / Deno detection too
 export * from './platform.native.js'
