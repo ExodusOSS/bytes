@@ -1,4 +1,3 @@
-import { assertUint8 } from './assert.js'
 import { typedView } from './array.js'
 import { nativeDecoder, nativeEncoder, E_STRING, E_STRICT_UNICODE } from './fallback/_utils.js'
 import * as js from './fallback/utf8.js'
@@ -52,7 +51,7 @@ function encode(str, loose = false) {
 }
 
 function decode(arr, loose = false) {
-  assertUint8(arr)
+  if (!(arr instanceof Uint8Array)) throw new TypeError('Expected an Uint8Array')
   if (arr.byteLength === 0) return ''
   if (nativeDecoder || !js.decodeFast) {
     return loose ? decoderLoose.decode(arr) : decoderFatal.decode(arr) // Node.js and browsers
