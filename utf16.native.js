@@ -1,5 +1,5 @@
-import * as js from './fallback/utf16.js'
-import { nativeDecoder, isLE } from './fallback/_utils.js'
+import { encodeApi, decodeApiDecoders, decodeApiJS } from './fallback/utf16.js'
+import { nativeDecoder } from './fallback/_utils.js'
 
 function checkDecoders() {
   // Not all barebone engines with TextDecoder support something except utf-8
@@ -14,52 +14,9 @@ function checkDecoders() {
   return false
 }
 
-const canDecoders = checkDecoders()
-const ignoreBOM = true
-const decoderFatalLE = canDecoders ? new TextDecoder('utf-16le', { ignoreBOM, fatal: true }) : null
-const decoderLooseLE = canDecoders ? new TextDecoder('utf-16le', { ignoreBOM }) : null
-const decoderFatalBE = canDecoders ? new TextDecoder('utf-16be', { ignoreBOM, fatal: true }) : null
-const decoderLooseBE = canDecoders ? new TextDecoder('utf-16be', { ignoreBOM }) : null
-const decoderFatal16 = isLE ? decoderFatalLE : decoderFatalBE
-const decoderLoose16 = isLE ? decoderLooseLE : decoderLooseBE
-const { isWellFormed, toWellFormed } = String.prototype
+const decode = checkDecoders() ? decodeApiDecoders : decodeApiJS
 
-const { E_STRICT } = js
-
-// Unlike utf8, operates on Uint16Arrays by default
-
-function decode(input, loose = false, format = 'uint16') {
-  let u16
-  switch (format) {
-    case 'uint16':
-      if (!(input instanceof Uint16Array)) throw new TypeError('Expected an Uint16Array')
-      if (canDecoders) return loose ? decoderLoose16.decode(input) : decoderFatal16.decode(input)
-      u16 = input
-      break
-    case 'uint8-le':
-      if (!(input instanceof Uint8Array)) throw new TypeError('Expected an Uint8Array')
-      if (input.byteLength % 2 !== 0) throw new TypeError('Expected even number of bytes')
-      if (canDecoders) return loose ? decoderLooseLE.decode(input) : decoderFatalLE.decode(input)
-      u16 = js.to16input(input, true)
-      break
-    case 'uint8-be':
-      if (!(input instanceof Uint8Array)) throw new TypeError('Expected an Uint8Array')
-      if (input.byteLength % 2 !== 0) throw new TypeError('Expected even number of bytes')
-      if (canDecoders) return loose ? decoderLooseBE.decode(input) : decoderFatalBE.decode(input)
-      u16 = js.to16input(input, false)
-      break
-    default:
-      throw new TypeError('Unknown format')
-  }
-
-  const str = js.decode(u16, loose, (!loose && isWellFormed) || (loose && toWellFormed))
-  if (!loose && isWellFormed && !isWellFormed.call(str)) throw new TypeError(E_STRICT)
-  if (loose && toWellFormed) return toWellFormed.call(str)
-
-  return str
-}
-
-export const utf16fromString = (str, format = 'uint16') => js.encodeApi(str, false, format)
-export const utf16fromStringLoose = (str, format = 'uint16') => js.encodeApi(str, true, format)
+export const utf16fromString = (str, format = 'uint16') => encodeApi(str, false, format)
+export const utf16fromStringLoose = (str, format = 'uint16') => encodeApi(str, true, format)
 export const utf16toString = (arr, format = 'uint16') => decode(arr, false, format)
 export const utf16toStringLoose = (arr, format = 'uint16') => decode(arr, true, format)

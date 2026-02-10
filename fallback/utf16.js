@@ -1,9 +1,9 @@
 import { decodeUCS2, encodeCharcodes } from './latin1.js'
-import { isLE, E_STRING, E_STRICT_UNICODE } from './_utils.js'
+import { nativeDecoder, isLE, E_STRING, E_STRICT_UNICODE } from './_utils.js'
 
 export const E_STRICT = 'Input is not well-formed utf16'
-const { TextDecoder } = globalThis
 const isWellFormedStr = String.prototype.isWellFormed
+const toWellFormedStr = /* @__PURE__ */ (() => String.prototype.toWellFormed)()
 
 const replacementCodepoint = 0xff_fd
 const replacementCodepointSwapped = 0xfd_ff
@@ -28,6 +28,11 @@ export function encodeApi(str, loose, format) {
   return format === 'uint16' ? u16 : new Uint8Array(u16.buffer, u16.byteOffset, u16.byteLength)
 }
 
+const fatalLE = nativeDecoder ? new TextDecoder('utf-16le', { ignoreBOM: true, fatal: true }) : null
+const looseLE = nativeDecoder ? new TextDecoder('utf-16le', { ignoreBOM: true }) : null
+const fatalBE = nativeDecoder ? new TextDecoder('utf-16be', { ignoreBOM: true, fatal: true }) : null
+const looseBE = nativeDecoder ? new TextDecoder('utf-16be', { ignoreBOM: true }) : null
+
 export function decodeApiDecoders(input, loose, format) {
   if (format === 'uint16') {
     if (!(input instanceof Uint16Array)) throw new TypeError('Expected an Uint16Array')
@@ -38,8 +43,36 @@ export function decodeApiDecoders(input, loose, format) {
     throw new TypeError('Unknown format')
   }
 
-  const encoding = format === 'uint8-le' || (format === 'uint16' && isLE) ? 'utf-16le' : 'utf-16be'
-  return new TextDecoder(encoding, { ignoreBOM: true, fatal: !loose }).decode(input)
+  const le = format === 'uint8-le' || (format === 'uint16' && isLE)
+  return (le ? (loose ? looseLE : fatalLE) : loose ? looseBE : fatalBE).decode(input)
+}
+
+export function decodeApiJS(input, loose, format) {
+  let u16
+  switch (format) {
+    case 'uint16':
+      if (!(input instanceof Uint16Array)) throw new TypeError('Expected an Uint16Array')
+      u16 = input
+      break
+    case 'uint8-le':
+      if (!(input instanceof Uint8Array)) throw new TypeError('Expected an Uint8Array')
+      if (input.byteLength % 2 !== 0) throw new TypeError('Expected even number of bytes')
+      u16 = to16input(input, true)
+      break
+    case 'uint8-be':
+      if (!(input instanceof Uint8Array)) throw new TypeError('Expected an Uint8Array')
+      if (input.byteLength % 2 !== 0) throw new TypeError('Expected even number of bytes')
+      u16 = to16input(input, false)
+      break
+    default:
+      throw new TypeError('Unknown format')
+  }
+
+  const str = decode(u16, loose, (!loose && isWellFormedStr) || (loose && toWellFormedStr))
+  if (!loose && isWellFormedStr && !isWellFormedStr.call(str)) throw new TypeError(E_STRICT)
+  if (loose && toWellFormedStr) return toWellFormedStr.call(str)
+
+  return str
 }
 
 export function to16input(u8, le) {
