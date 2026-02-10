@@ -7,7 +7,7 @@ import {
   isDeno,
   isLE,
   skipWeb,
-} from './_utils.js'
+} from './platform.js'
 
 const atob = /* @__PURE__ */ (() => globalThis.atob)()
 const web64 = /* @__PURE__ */ (() => Uint8Array.prototype.toBase64)()

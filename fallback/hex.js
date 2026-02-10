@@ -1,5 +1,6 @@
 import { assertUint8 } from '../assert.js'
-import { nativeDecoder, nativeEncoder, decode2string, E_STRING } from './_utils.js'
+import { E_STRING } from './_utils.js'
+import { nativeDecoder, nativeEncoder, decode2string } from './platform.js'
 import { encodeAscii, decodeAscii } from './latin1.js'
 
 let hexArray // array of 256 bytes converted to two-char hex strings

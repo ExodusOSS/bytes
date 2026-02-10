@@ -1,4 +1,4 @@
-import { isLE } from './_utils.js'
+import { isLE } from './platform.js'
 
 export const E_STRICT = 'Input is not well-formed utf32'
 

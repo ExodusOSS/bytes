@@ -1,6 +1,7 @@
 import { assertUint8 } from './assert.js'
 import { isAscii } from 'node:buffer'
-import { isDeno, isLE, toBuf, E_STRING } from './fallback/_utils.js'
+import { toBuf, E_STRING } from './fallback/_utils.js'
+import { isDeno, isLE } from './fallback/platform.js'
 import { asciiPrefix } from './fallback/latin1.js'
 import { encodingMapper, encodingDecoder, encodeMap, E_STRICT } from './fallback/single-byte.js'
 

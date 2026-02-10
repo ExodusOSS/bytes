@@ -1,5 +1,5 @@
 import { assertUint8 } from '../assert.js'
-import { nativeEncoder, nativeDecoder, isHermes } from './_utils.js'
+import { nativeEncoder, nativeDecoder, isHermes } from './platform.js'
 import { encodeAscii, decodeAscii } from './latin1.js'
 
 // See https://datatracker.ietf.org/doc/html/rfc4648

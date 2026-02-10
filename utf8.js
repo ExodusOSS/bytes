@@ -1,5 +1,6 @@
 import { typedView } from './array.js'
-import { nativeDecoder, nativeEncoder, E_STRING, E_STRICT_UNICODE } from './fallback/_utils.js'
+import { E_STRING, E_STRICT_UNICODE } from './fallback/_utils.js'
+import { nativeDecoder, nativeEncoder } from './fallback/platform.js'
 import * as js from './fallback/utf8.auto.js'
 
 // ignoreBOM: true means that BOM will be left as-is, i.e. will be present in the output

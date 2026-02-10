@@ -1,4 +1,5 @@
-import { isHermes, isLE, E_STRING } from './fallback/_utils.js'
+import { E_STRING } from './fallback/_utils.js'
+import { isHermes, isLE } from './fallback/platform.js'
 import * as js from './fallback/utf32.js'
 import * as utf16 from '@exodus/bytes/utf16.js'
 

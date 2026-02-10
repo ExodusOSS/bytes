@@ -1,5 +1,6 @@
 import { assertUint8 } from './assert.js'
-import { isDeno, toBuf } from './fallback/_utils.js'
+import { toBuf } from './fallback/_utils.js'
+import { isDeno } from './fallback/platform.js'
 import { isAsciiSuperset, multibyteDecoder, multibyteEncoder } from './fallback/multi-byte.js'
 import { isAscii } from 'node:buffer'
 

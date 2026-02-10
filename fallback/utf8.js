@@ -1,4 +1,5 @@
-import { isHermes, E_STRICT_UNICODE } from './_utils.js'
+import { E_STRICT_UNICODE } from './_utils.js'
+import { isHermes } from './platform.js'
 import { asciiPrefix, decodeLatin1, encodeAsciiPrefix } from './latin1.js'
 
 export const E_STRICT = 'Input is not well-formed utf8'

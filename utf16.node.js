@@ -1,4 +1,5 @@
-import { isDeno, isLE, E_STRING, E_STRICT_UNICODE } from './fallback/_utils.js'
+import { E_STRING, E_STRICT_UNICODE } from './fallback/_utils.js'
+import { isDeno, isLE } from './fallback/platform.js'
 import { E_STRICT, decodeApiDecoders } from './fallback/utf16.js'
 
 if (Buffer.TYPED_ARRAY_SUPPORT) throw new Error('Unexpected Buffer polyfill')

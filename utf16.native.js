@@ -1,5 +1,5 @@
 import { encodeApi, decodeApiDecoders, decodeApiJS } from './fallback/utf16.js'
-import { nativeDecoder } from './fallback/_utils.js'
+import { nativeDecoder } from './fallback/platform.js'
 
 function checkDecoders() {
   // Not all barebone engines with TextDecoder support something except utf-8

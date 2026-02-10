@@ -1,5 +1,5 @@
 import { decodeAscii, encodeLatin1 } from './latin1.js'
-import { decode2string } from './_utils.js'
+import { decode2string } from './platform.js'
 
 const ERR = 'percentEncodeSet must be a string of unique increasing codepoints in range 0x20 - 0x7e'
 const percentMap = new Map()

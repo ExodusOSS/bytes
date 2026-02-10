@@ -76,6 +76,7 @@
     "/fallback/hex.js",
     "/fallback/latin1.js",
     "/fallback/percent.js",
+    "/fallback/platform.js",
     "/fallback/multi-byte.encodings.cjs",
     "/fallback/multi-byte.encodings.json",
     "/fallback/multi-byte.js",

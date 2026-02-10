@@ -1,6 +1,7 @@
 import { typedView } from './array.js'
 import { assertUint8 } from './assert.js'
-import { nativeDecoder, nativeEncoder, isHermes, E_STRING } from './fallback/_utils.js'
+import { E_STRING } from './fallback/_utils.js'
+import { nativeDecoder, nativeEncoder, isHermes } from './fallback/platform.js'
 import { encodeAscii, decodeAscii } from './fallback/latin1.js'
 
 const alphabet58 = [...'123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz']

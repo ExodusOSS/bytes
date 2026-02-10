@@ -1,6 +1,7 @@
 import { assertUint8, assertEmptyRest } from './assert.js'
 import { typedView } from './array.js'
-import { isHermes, skipWeb, E_STRING } from './fallback/_utils.js'
+import { E_STRING } from './fallback/_utils.js'
+import { isHermes, skipWeb } from './fallback/platform.js'
 import { decodeLatin1, encodeLatin1 } from './fallback/latin1.js'
 import * as js from './fallback/base64.js'
 

@@ -1,5 +1,6 @@
 import { decodeUCS2, encodeCharcodes } from './latin1.js'
-import { nativeDecoder, isLE, E_STRING, E_STRICT_UNICODE } from './_utils.js'
+import { E_STRING, E_STRICT_UNICODE } from './_utils.js'
+import { nativeDecoder, isLE } from './platform.js'
 
 export const E_STRICT = 'Input is not well-formed utf16'
 const isWellFormedStr = String.prototype.isWellFormed

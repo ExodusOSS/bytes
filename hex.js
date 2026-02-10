@@ -1,6 +1,6 @@
 import { assertUint8 } from './assert.js'
 import { typedView } from './array.js'
-import { skipWeb } from './fallback/_utils.js'
+import { skipWeb } from './fallback/platform.js'
 import * as js from './fallback/hex.js'
 
 const { toHex: webHex } = Uint8Array.prototype // Modern engines have this

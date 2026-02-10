@@ -1,5 +1,6 @@
 import { assertUint8 } from './assert.js'
-import { nativeDecoderLatin1, nativeEncoder, skipWeb, E_STRING } from './fallback/_utils.js'
+import { E_STRING } from './fallback/_utils.js'
+import { nativeDecoderLatin1, nativeEncoder, skipWeb } from './fallback/platform.js'
 import { encodeAscii, encodeAsciiPrefix, encodeLatin1 } from './fallback/latin1.js'
 import { assertEncoding, encodingDecoder, encodeMap, E_STRICT } from './fallback/single-byte.js'
 

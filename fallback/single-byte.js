@@ -1,6 +1,6 @@
 import { asciiPrefix, decodeAscii, decodeLatin1 } from './latin1.js'
 import encodings from './single-byte.encodings.js'
-import { decode2string, nativeDecoder } from './_utils.js'
+import { decode2string, nativeDecoder } from './platform.js'
 
 export const E_STRICT = 'Input is not well-formed for this encoding'
 const xUserDefined = 'x-user-defined'
