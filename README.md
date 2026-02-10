@@ -102,9 +102,6 @@ _These are only provided as a compatibility layer, prefer hardened APIs instead 
 
 Alternate exports exist that can help reduce bundle size:
 
-  * `@exodus/bytes/encoding-browser.js` - resolves to a tiny import in browser bundles, preferring native `TextDecoder` / `TextEncoder`.
-    For non-browsers (Node.js, React Native), loads a full implementation.
-
   * `@exodus/bytes/encoding-lite.js` - if you don't need support for legacy multi-byte encodings.
 
     Reduces the bundle size 10x, while still keeping `utf-8`, `utf-16le`, `utf-16be` and all single-byte encodings specified by the spec.
@@ -114,6 +111,14 @@ Alternate exports exist that can help reduce bundle size:
 
     This can be useful for example in React Native global TextDecoder polyfill,
     if you are sure that you don't need legacy multi-byte encodings support.
+
+  * `@exodus/bytes/encoding-browser.js` - resolves to a tiny import in browser bundles, preferring native `TextDecoder` / `TextEncoder`.
+
+    For non-browsers (Node.js, React Native), loads a full implementation.
+
+    > [!NOTE]
+    > This is not the default behavior for `@exodus/bytes/encoding.js` because all major browser implementations have bugs,
+    > which `@exodus/bytes/encoding.js` fixes. Only use if you are ok with that.
 
 Libraries are advised to use single-purpose hardened `@exodus/bytes/utf8.js` / `@exodus/bytes/utf16.js` APIs for Unicode.
 
