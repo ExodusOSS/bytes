@@ -100,40 +100,43 @@ _These are only provided as a compatibility layer, prefer hardened APIs instead 
 
 ### Lite version
 
-Alternate exports exist that can help reduce bundle size:
+Alternate exports exist that can help reduce bundle size, see comparison:
 
-  * `@exodus/bytes/encoding-lite.js` - if you don't need support for legacy multi-byte encodings.
-
-    Reduces the bundle size 10x, while still keeping `utf-8`, `utf-16le`, `utf-16be` and all single-byte encodings specified by the spec.
-    The only difference is support for legacy multi-byte encodings.
-
-    See [the list of encodings](https://encoding.spec.whatwg.org/#names-and-labels).
-
-    This can be useful for example in React Native global TextDecoder polyfill,
-    if you are sure that you don't need legacy multi-byte encodings support.
-
-  * `@exodus/bytes/encoding-browser.js` - resolves to a tiny import in browser bundles, preferring native `TextDecoder` / `TextEncoder`.
-
-    For non-browsers (Node.js, React Native), loads a full implementation.
-
-    > [!NOTE]
-    > This is not the default behavior for `@exodus/bytes/encoding.js` because all major browser implementations have bugs,
-    > which `@exodus/bytes/encoding.js` fixes. Only use if you are ok with that.
+| import | size |
+| - | - |
+| [@exodus/bytes/encoding-browser.js](#exodusbytesencoding-browserjs-) | <sub>![](https://img.shields.io/bundlejs/size/@exodus/bytes/encoding-browser.js?style=flat-square)</sub> |
+| [@exodus/bytes/encoding-lite.js](#exodusbytesencoding-litejs-) | <sub>![](https://img.shields.io/bundlejs/size/@exodus/bytes/encoding-lite.js?style=flat-square)</sub> |
+| [@exodus/bytes/encoding.js](#exodusbytesencodingjs-) | <sub>![](https://img.shields.io/bundlejs/size/@exodus/bytes/encoding.js?style=flat-square)</sub> |
+| `text-encoding` | <sub>![](https://img.shields.io/bundlejs/size/text-encoding?style=flat-square)</sub> |
+| `iconv-lite` | <sub>![](https://img.shields.io/bundlejs/size/iconv-lite/lib/index.js?style=flat-square)</sub> |
+| `whatwg-encoding` | <sub>![](https://img.shields.io/bundlejs/size/whatwg-encoding?style=flat-square)</sub> |
 
 Libraries are advised to use single-purpose hardened `@exodus/bytes/utf8.js` / `@exodus/bytes/utf16.js` APIs for Unicode.
 
 Applications (including React Native apps) are advised to load either `@exodus/bytes/encoding-lite.js` or `@exodus/bytes/encoding.js`
 (depending on whether legacy multi-byte support is needed) and use that as a global polyfill.
 
-Bundle size comparison:
-| import | size |
-| - | - |
-| `@exodus/bytes/encoding-browser.js` | <sub>![](https://img.shields.io/bundlejs/size/@exodus/bytes/encoding-browser.js?style=flat-square)</sub> |
-| `@exodus/bytes/encoding-lite.js` | <sub>![](https://img.shields.io/bundlejs/size/@exodus/bytes/encoding-lite.js?style=flat-square)</sub> |
-| `@exodus/bytes/encoding.js` | <sub>![](https://img.shields.io/bundlejs/size/@exodus/bytes/encoding.js?style=flat-square)</sub> |
-| `text-encoding` | <sub>![](https://img.shields.io/bundlejs/size/text-encoding?style=flat-square)</sub> |
-| `iconv-lite` | <sub>![](https://img.shields.io/bundlejs/size/iconv-lite/lib/index.js?style=flat-square)</sub> |
-| `whatwg-encoding` | <sub>![](https://img.shields.io/bundlejs/size/whatwg-encoding?style=flat-square)</sub> |
+#### `@exodus/bytes/encoding-lite.js`
+
+If you don't need support for legacy multi-byte encodings.
+
+Reduces the bundle size 10x, while still keeping `utf-8`, `utf-16le`, `utf-16be` and all single-byte encodings specified by the spec.
+The only difference is support for legacy multi-byte encodings.
+
+See [the list of encodings](https://encoding.spec.whatwg.org/#names-and-labels).
+
+This can be useful for example in React Native global TextDecoder polyfill,
+if you are sure that you don't need legacy multi-byte encodings support.
+
+#### `@exodus/bytes/encoding-browser.js`
+
+Resolves to a tiny import in browser bundles, preferring native `TextDecoder` / `TextEncoder`.
+
+For non-browsers (Node.js, React Native), loads a full implementation.
+
+> [!NOTE]
+> This is not the default behavior for `@exodus/bytes/encoding.js` because all major browser implementations have bugs,
+> which `@exodus/bytes/encoding.js` fixes. Only use if you are ok with that.
 
 ## API
 
