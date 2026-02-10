@@ -2,7 +2,6 @@ import { typedView } from './array.js'
 import { nativeDecoder, nativeEncoder, E_STRING, E_STRICT_UNICODE } from './fallback/_utils.js'
 import * as js from './fallback/utf8.auto.js'
 
-const { TextDecoder } = globalThis
 // ignoreBOM: true means that BOM will be left as-is, i.e. will be present in the output
 // We don't want to strip anything unexpectedly
 const decoderLoose = nativeDecoder

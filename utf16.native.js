@@ -1,8 +1,6 @@
 import * as js from './fallback/utf16.js'
 import { nativeDecoder, isLE, E_STRING, E_STRICT_UNICODE } from './fallback/_utils.js'
 
-const { TextDecoder } = globalThis
-
 function checkDecoders() {
   // Not all barebone engines with TextDecoder support something except utf-8
   // Also workerd specifically has a broken utf-16le implementation
