@@ -1,8 +1,8 @@
 const { Buffer, TextEncoder, TextDecoder } = globalThis
 const haveNativeBuffer = Buffer && !Buffer.TYPED_ARRAY_SUPPORT
 export const nativeBuffer = haveNativeBuffer ? Buffer : null
-export const isHermes = !!globalThis.HermesInternal
-export const isDeno = !!globalThis.Deno
+export const isHermes = /* @__PURE__ */ (() => !!globalThis.HermesInternal)()
+export const isDeno = /* @__PURE__ */ (() => !!globalThis.Deno)()
 export const isLE = /* @__PURE__ */ (() => new Uint8Array(Uint16Array.of(258).buffer)[0] === 2)()
 export const E_STRICT_UNICODE = 'Input is not well-formed Unicode'
 
