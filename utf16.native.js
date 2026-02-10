@@ -28,27 +28,22 @@ const { E_STRICT } = js
 
 // Unlike utf8, operates on Uint16Arrays by default
 
-const to8 = (a) => new Uint8Array(a.buffer, a.byteOffset, a.byteLength)
-
 function encode(str, loose = false, format = 'uint16') {
   if (typeof str !== 'string') throw new TypeError(E_STRING)
   if (format !== 'uint16' && format !== 'uint8-le' && format !== 'uint8-be') {
     throw new TypeError('Unknown format')
   }
 
-  const shouldSwap = (isLE && format === 'uint8-be') || (!isLE && format === 'uint8-le')
-
   // On v8 and SpiderMonkey, check via isWellFormed is faster than js
   // On JSC, check during loop is faster than isWellFormed
   // If isWellFormed is available, we skip check during decoding and recheck after
   // If isWellFormed is unavailable, we check in js during decoding
   if (!loose && isWellFormed && !isWellFormed.call(str)) throw new TypeError(E_STRICT_UNICODE)
+  const shouldSwap = (isLE && format === 'uint8-be') || (!isLE && format === 'uint8-le')
   const u16 = js.encode(str, loose, !loose && isWellFormed, shouldSwap)
 
-  if (format === 'uint8-le' || format === 'uint8-be') return to8(u16) // Already swapped
-  if (format === 'uint16') return u16
-  /* c8 ignore next */
-  throw new Error('Unreachable')
+  // Bytes are already swapped and format is already checked, we need to just cast the view
+  return format === 'uint16' ? u16 : new Uint8Array(u16.buffer, u16.byteOffset, u16.byteLength)
 }
 
 function decode(input, loose = false, format = 'uint16') {
