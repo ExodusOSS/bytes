@@ -1,5 +1,5 @@
 import * as js from './fallback/utf16.js'
-import { nativeDecoder, isLE, E_STRING, E_STRICT_UNICODE } from './fallback/_utils.js'
+import { nativeDecoder, isLE } from './fallback/_utils.js'
 
 function checkDecoders() {
   // Not all barebone engines with TextDecoder support something except utf-8
@@ -27,24 +27,6 @@ const { isWellFormed, toWellFormed } = String.prototype
 const { E_STRICT } = js
 
 // Unlike utf8, operates on Uint16Arrays by default
-
-function encode(str, loose = false, format = 'uint16') {
-  if (typeof str !== 'string') throw new TypeError(E_STRING)
-  if (format !== 'uint16' && format !== 'uint8-le' && format !== 'uint8-be') {
-    throw new TypeError('Unknown format')
-  }
-
-  // On v8 and SpiderMonkey, check via isWellFormed is faster than js
-  // On JSC, check during loop is faster than isWellFormed
-  // If isWellFormed is available, we skip check during decoding and recheck after
-  // If isWellFormed is unavailable, we check in js during decoding
-  if (!loose && isWellFormed && !isWellFormed.call(str)) throw new TypeError(E_STRICT_UNICODE)
-  const shouldSwap = (isLE && format === 'uint8-be') || (!isLE && format === 'uint8-le')
-  const u16 = js.encode(str, loose, !loose && isWellFormed, shouldSwap)
-
-  // Bytes are already swapped and format is already checked, we need to just cast the view
-  return format === 'uint16' ? u16 : new Uint8Array(u16.buffer, u16.byteOffset, u16.byteLength)
-}
 
 function decode(input, loose = false, format = 'uint16') {
   let u16
@@ -77,7 +59,7 @@ function decode(input, loose = false, format = 'uint16') {
   return str
 }
 
-export const utf16fromString = (str, format = 'uint16') => encode(str, false, format)
-export const utf16fromStringLoose = (str, format = 'uint16') => encode(str, true, format)
+export const utf16fromString = (str, format = 'uint16') => js.encodeApi(str, false, format)
+export const utf16fromStringLoose = (str, format = 'uint16') => js.encodeApi(str, true, format)
 export const utf16toString = (arr, format = 'uint16') => decode(arr, false, format)
 export const utf16toStringLoose = (arr, format = 'uint16') => decode(arr, true, format)

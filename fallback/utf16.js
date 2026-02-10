@@ -1,12 +1,46 @@
 import { decodeUCS2, encodeCharcodes } from './latin1.js'
-import { isLE, E_STRICT_UNICODE } from './_utils.js'
+import { isLE, E_STRING, E_STRICT_UNICODE } from './_utils.js'
 
 export const E_STRICT = 'Input is not well-formed utf16'
+const { TextDecoder } = globalThis
+const isWellFormedStr = String.prototype.isWellFormed
 
 const replacementCodepoint = 0xff_fd
 const replacementCodepointSwapped = 0xfd_ff
 
 const to16 = (a) => new Uint16Array(a.buffer, a.byteOffset, a.byteLength / 2) // Requires checked length and alignment!
+
+export function encodeApi(str, loose, format) {
+  if (typeof str !== 'string') throw new TypeError(E_STRING)
+  if (format !== 'uint16' && format !== 'uint8-le' && format !== 'uint8-be') {
+    throw new TypeError('Unknown format')
+  }
+
+  // On v8 and SpiderMonkey, check via isWellFormed is faster than js
+  // On JSC, check during loop is faster than isWellFormed
+  // If isWellFormed is available, we skip check during decoding and recheck after
+  // If isWellFormed is unavailable, we check in js during decoding
+  if (!loose && isWellFormedStr && !isWellFormedStr.call(str)) throw new TypeError(E_STRICT_UNICODE)
+  const shouldSwap = (isLE && format === 'uint8-be') || (!isLE && format === 'uint8-le')
+  const u16 = encode(str, loose, !loose && isWellFormedStr, shouldSwap)
+
+  // Bytes are already swapped and format is already checked, we need to just cast the view
+  return format === 'uint16' ? u16 : new Uint8Array(u16.buffer, u16.byteOffset, u16.byteLength)
+}
+
+export function decodeApiDecoders(input, loose, format) {
+  if (format === 'uint16') {
+    if (!(input instanceof Uint16Array)) throw new TypeError('Expected an Uint16Array')
+  } else if (format === 'uint8-le' || format === 'uint8-be') {
+    if (!(input instanceof Uint8Array)) throw new TypeError('Expected an Uint8Array')
+    if (input.byteLength % 2 !== 0) throw new TypeError('Expected even number of bytes')
+  } else {
+    throw new TypeError('Unknown format')
+  }
+
+  const encoding = format === 'uint8-le' || (format === 'uint16' && isLE) ? 'utf-16le' : 'utf-16be'
+  return new TextDecoder(encoding, { ignoreBOM: true, fatal: !loose }).decode(input)
+}
 
 export function to16input(u8, le) {
   // Assume even number of bytes
