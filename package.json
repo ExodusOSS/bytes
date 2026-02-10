@@ -122,8 +122,8 @@
     "/single-byte.js",
     "/single-byte.d.ts",
     "/single-byte.node.js",
-    "/utf16.js",
     "/utf16.d.ts",
+    "/utf16.native.js",
     "/utf16.node.js",
     "/utf8.js",
     "/utf8.d.ts",
@@ -203,7 +203,8 @@
     "./utf16.js": {
       "types": "./utf16.d.ts",
       "node": "./utf16.node.js",
-      "default": "./utf16.js"
+      "react-native": "./utf16.native.js",
+      "default": "./utf16.native.js"
     },
     "./utf8.js": {
       "types": "./utf8.d.ts",
