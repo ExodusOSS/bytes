@@ -3,6 +3,7 @@ import { E_STRICT } from './fallback/utf16.js'
 
 if (Buffer.TYPED_ARRAY_SUPPORT) throw new Error('Unexpected Buffer polyfill')
 
+const { TextDecoder } = globalThis
 const { isWellFormed, toWellFormed } = String.prototype
 const to8 = (a) => new Uint8Array(a.buffer, a.byteOffset, a.byteLength)
 
@@ -62,18 +63,16 @@ function decodeNode(input, loose = false, format = 'uint16') {
 }
 
 function decodeDecoder(input, loose = false, format = 'uint16') {
-  let encoding
   if (format === 'uint16') {
     if (!(input instanceof Uint16Array)) throw new TypeError('Expected an Uint16Array')
-    encoding = isLE ? 'utf-16le' : 'utf-16be'
   } else if (format === 'uint8-le' || format === 'uint8-be') {
     if (!(input instanceof Uint8Array)) throw new TypeError('Expected an Uint8Array')
     if (input.byteLength % 2 !== 0) throw new TypeError('Expected even number of bytes')
-    encoding = format === 'uint8-le' ? 'utf-16le' : 'utf-16be'
   } else {
     throw new TypeError('Unknown format')
   }
 
+  const encoding = format === 'uint8-le' || (format === 'uint16' && isLE) ? 'utf-16le' : 'utf-16be'
   return new TextDecoder(encoding, { ignoreBOM: true, fatal: !loose }).decode(input) // TODO: cache decoder?
 }
 
