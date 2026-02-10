@@ -1,4 +1,4 @@
-const { Buffer, TextEncoder, TextDecoder } = globalThis
+const { Buffer } = globalThis
 const haveNativeBuffer = Buffer && !Buffer.TYPED_ARRAY_SUPPORT
 export const nativeBuffer = haveNativeBuffer ? Buffer : null
 export const isHermes = /* @__PURE__ */ (() => !!globalThis.HermesInternal)()
@@ -11,14 +11,14 @@ let isNative = (x) => x && (haveNativeBuffer || `${x}`.includes('[native code]')
 if (!haveNativeBuffer && isNative(() => {})) isNative = () => false // e.g. XS, we don't want false positives
 
 export const nativeEncoder = /* @__PURE__ */ (() =>
-  isNative(TextEncoder) ? new TextEncoder() : null)()
+  isNative(globalThis.TextEncoder) ? new TextEncoder() : null)()
 export const nativeDecoder = /* @__PURE__ */ (() =>
-  isNative(TextDecoder) ? new TextDecoder('utf-8', { ignoreBOM: true }) : null)()
+  isNative(globalThis.TextDecoder) ? new TextDecoder('utf-8', { ignoreBOM: true }) : null)()
 
 // Actually windows-1252, compatible with ascii and latin1 decoding
 // Beware that on non-latin1, i.e. on windows-1252, this is broken in ~all Node.js versions released
 // in 2025 due to a regression, so we call it Latin1 as it's usable only for that
-const getNativeLatin1 = () => {
+export const nativeDecoderLatin1 = /* @__PURE__ */ (() => {
   // Not all barebone engines with TextDecoder support something except utf-8, detect
   if (nativeDecoder) {
     try {
@@ -27,9 +27,7 @@ const getNativeLatin1 = () => {
   }
 
   return null
-}
-
-export const nativeDecoderLatin1 = /* @__PURE__ */ getNativeLatin1()
+})()
 
 // Block Firefox < 146 specifically from using native hex/base64, as it's very slow there
 // Refs: https://bugzilla.mozilla.org/show_bug.cgi?id=1994067 (and linked issues), fixed in 146
