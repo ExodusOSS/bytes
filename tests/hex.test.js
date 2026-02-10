@@ -69,7 +69,6 @@ describe('toHex', () => {
     for (const input of [null, undefined, [], [1, 2], 'string']) {
       t.assert.throws(() => toHex(input))
       t.assert.throws(() => lib.toHex(input))
-      t.assert.throws(() => js.toHex(input))
     }
   })
 

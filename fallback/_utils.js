@@ -6,6 +6,10 @@ export function assert(condition, msg) {
   if (!condition) throw new Error(msg)
 }
 
+export function assertU8(arg) {
+  if (!(arg instanceof Uint8Array)) throw new TypeError('Expected an Uint8Array')
+}
+
 // On arrays in heap (<= 64) it's cheaper to copy into a pooled buffer than lazy-create the ArrayBuffer storage
 export const toBuf = (x) =>
   x.byteLength <= 64 && x.BYTES_PER_ELEMENT === 1

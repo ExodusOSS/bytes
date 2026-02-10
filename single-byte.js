@@ -1,5 +1,4 @@
-import { assertUint8 } from './assert.js'
-import { E_STRING } from './fallback/_utils.js'
+import { assertU8, E_STRING } from './fallback/_utils.js'
 import { nativeDecoderLatin1, nativeEncoder } from './fallback/platform.js'
 import { encodeAscii, encodeAsciiPrefix, encodeLatin1 } from './fallback/latin1.js'
 import { assertEncoding, encodingDecoder, encodeMap, E_STRICT } from './fallback/single-byte.js'
@@ -45,7 +44,7 @@ export function createSinglebyteDecoder(encoding, loose = false) {
     try {
       const decoder = new TextDecoder(encoding, { fatal: !loose })
       return (arr) => {
-        assertUint8(arr)
+        assertU8(arr)
         if (arr.byteLength === 0) return ''
         return decoder.decode(arr)
       }
@@ -54,7 +53,7 @@ export function createSinglebyteDecoder(encoding, loose = false) {
 
   const jsDecoder = encodingDecoder(encoding)
   return (arr) => {
-    assertUint8(arr)
+    assertU8(arr)
     if (arr.byteLength === 0) return ''
     return jsDecoder(arr, loose)
   }

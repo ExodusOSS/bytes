@@ -1,4 +1,3 @@
-import { assertUint8 } from '../assert.js'
 import { E_STRING } from './_utils.js'
 import { nativeDecoder, nativeEncoder, decode2string } from './platform.js'
 import { encodeAscii, decodeAscii } from './latin1.js'
@@ -12,9 +11,8 @@ const allowed = '0123456789ABCDEFabcdef'
 
 export const E_HEX = 'Input is not a hex string'
 
+// Expects a checked Uint8Array
 export function toHex(arr) {
-  assertUint8(arr)
-
   if (!hexArray) hexArray = Array.from({ length: 256 }, (_, i) => i.toString(16).padStart(2, '0'))
   const length = arr.length // this helps Hermes
 

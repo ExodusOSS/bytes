@@ -1,4 +1,4 @@
-import { assertUint8 } from '../assert.js'
+import { assertU8 } from './_utils.js'
 import { nativeEncoder, nativeDecoder, isHermes } from './platform.js'
 import { encodeAscii, decodeAscii } from './latin1.js'
 
@@ -18,7 +18,7 @@ const useTemplates = isHermes // Faster on Hermes and JSC, but we use it only on
 
 // We construct output by concatenating chars, this seems to be fine enough on modern JS engines
 export function toBase32(arr, isBase32Hex, padding) {
-  assertUint8(arr)
+  assertU8(arr)
   const fullChunks = Math.floor(arr.length / 5)
   const fullChunksBytes = fullChunks * 5
   let o = ''

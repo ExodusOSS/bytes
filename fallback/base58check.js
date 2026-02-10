@@ -1,6 +1,6 @@
 import { typedView } from '@exodus/bytes/array.js'
 import { toBase58, fromBase58 } from '@exodus/bytes/base58.js'
-import { assertUint8 } from '../assert.js'
+import { assertU8 } from './_utils.js'
 
 const E_CHECKSUM = 'Invalid checksum'
 
@@ -28,7 +28,7 @@ function assertChecksum(c, r) {
 export const makeBase58check = (hashAlgo, hashAlgoSync) => {
   const apis = {
     async encode(arr) {
-      assertUint8(arr)
+      assertU8(arr)
       return encodeWithChecksum(arr, await hashAlgo(arr))
     },
     async decode(str, format = 'uint8') {
@@ -41,7 +41,7 @@ export const makeBase58check = (hashAlgo, hashAlgoSync) => {
   return {
     ...apis,
     encodeSync(arr) {
-      assertUint8(arr)
+      assertU8(arr)
       return encodeWithChecksum(arr, hashAlgoSync(arr))
     },
     decodeSync(str, format = 'uint8') {

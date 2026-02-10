@@ -1,11 +1,11 @@
-import { assertUint8 } from './assert.js'
 import { typedView } from './array.js'
+import { assertU8 } from './fallback/_utils.js'
 import * as js from './fallback/hex.js'
 
 const { toHex: webHex } = Uint8Array.prototype // Modern engines have this
 
 export function toHex(arr) {
-  assertUint8(arr)
+  assertU8(arr)
   if (arr.length === 0) return ''
   if (webHex && arr.toHex === webHex) return arr.toHex()
   return js.toHex(arr)

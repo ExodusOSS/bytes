@@ -30,7 +30,7 @@ const pool = raw.map((uint8) => {
 
 describe('toBase64', () => {
   describe('invalid input', () => {
-    for (const method of [toBase64, toBase64url, js.toBase64]) {
+    for (const method of [toBase64, toBase64url]) {
       test(method.name, (t) => {
         for (const input of [null, undefined, [], [1, 2], new Uint16Array(1), 'string']) {
           t.assert.throws(() => method(input))

@@ -1,5 +1,5 @@
 import { typedView } from './array.js'
-import { E_STRING, E_STRICT_UNICODE } from './fallback/_utils.js'
+import { assertU8, E_STRING, E_STRICT_UNICODE } from './fallback/_utils.js'
 import { nativeDecoder, nativeEncoder } from './fallback/platform.js'
 import * as js from './fallback/utf8.auto.js'
 
@@ -51,7 +51,7 @@ function encode(str, loose = false) {
 }
 
 function decode(arr, loose = false) {
-  if (!(arr instanceof Uint8Array)) throw new TypeError('Expected an Uint8Array')
+  assertU8(arr)
   if (arr.byteLength === 0) return ''
   if (nativeDecoder || !js.decodeFast) {
     return loose ? decoderLoose.decode(arr) : decoderFatal.decode(arr) // Node.js and browsers

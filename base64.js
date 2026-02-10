@@ -1,6 +1,6 @@
-import { assertUint8, assertEmptyRest } from './assert.js'
+import { assertEmptyRest } from './assert.js'
 import { typedView } from './array.js'
-import { E_STRING } from './fallback/_utils.js'
+import { assertU8, E_STRING } from './fallback/_utils.js'
 import { isHermes } from './fallback/platform.js'
 import { decodeLatin1, encodeLatin1 } from './fallback/latin1.js'
 import * as js from './fallback/base64.js'
@@ -38,7 +38,7 @@ const toUrl = (x) => x.replaceAll('+', '-').replaceAll('/', '_')
 const haveWeb = (x) => web64 && x.toBase64 === web64
 
 export function toBase64(x, { padding = true } = {}) {
-  assertUint8(x)
+  assertU8(x)
   if (haveWeb(x)) return padding ? x.toBase64() : x.toBase64({ omitPadding: !padding }) // Modern, optionless is slightly faster
   if (haveNativeBuffer) return maybeUnpad(toBuffer(x).base64Slice(0, x.byteLength), padding) // Older Node.js
   if (shouldUseBtoa) return maybeUnpad(btoa(decodeLatin1(x)), padding)
@@ -47,7 +47,7 @@ export function toBase64(x, { padding = true } = {}) {
 
 // NOTE: base64url omits padding by default
 export function toBase64url(x, { padding = false } = {}) {
-  assertUint8(x)
+  assertU8(x)
   if (haveWeb(x)) return x.toBase64({ alphabet: 'base64url', omitPadding: !padding }) // Modern
   if (haveNativeBuffer) return maybePad(toBuffer(x).base64urlSlice(0, x.byteLength), padding) // Older Node.js
   if (shouldUseBtoa) return maybeUnpad(toUrl(btoa(decodeLatin1(x))), padding)

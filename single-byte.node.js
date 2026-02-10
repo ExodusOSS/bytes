@@ -1,6 +1,5 @@
-import { assertUint8 } from './assert.js'
 import { isAscii } from 'node:buffer'
-import { toBuf, E_STRING } from './fallback/_utils.js'
+import { assertU8, toBuf, E_STRING } from './fallback/_utils.js'
 import { isDeno, isLE } from './fallback/platform.js'
 import { asciiPrefix } from './fallback/latin1.js'
 import { encodingMapper, encodingDecoder, encodeMap, E_STRICT } from './fallback/single-byte.js'
@@ -27,7 +26,7 @@ export function createSinglebyteDecoder(encoding, loose = false) {
   if (isDeno) {
     const jsDecoder = encodingDecoder(encoding) // asserts
     return (arr) => {
-      assertUint8(arr)
+      assertU8(arr)
       if (arr.byteLength === 0) return ''
       if (isAscii(arr)) return toBuf(arr).toString()
       return jsDecoder(arr, loose) // somewhy faster on Deno anyway, TODO: optimize?
@@ -38,7 +37,7 @@ export function createSinglebyteDecoder(encoding, loose = false) {
   const latin1path = encoding === 'windows-1252'
   const { incomplete, mapper } = encodingMapper(encoding) // asserts
   return (arr) => {
-    assertUint8(arr)
+    assertU8(arr)
     if (arr.byteLength === 0) return ''
     if (isLatin1 || isAscii(arr)) return toBuf(arr).latin1Slice() // .latin1Slice is faster than .asciiSlice
 

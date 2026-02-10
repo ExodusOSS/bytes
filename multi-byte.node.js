@@ -1,5 +1,4 @@
-import { assertUint8 } from './assert.js'
-import { toBuf } from './fallback/_utils.js'
+import { assertU8, toBuf } from './fallback/_utils.js'
 import { isDeno } from './fallback/platform.js'
 import { isAsciiSuperset, multibyteDecoder, multibyteEncoder } from './fallback/multi-byte.js'
 import { isAscii } from 'node:buffer'
@@ -9,7 +8,7 @@ export function createMultibyteDecoder(encoding, loose = false) {
   let streaming = false
   const asciiSuperset = isAsciiSuperset(encoding)
   return (arr, stream = false) => {
-    assertUint8(arr)
+    assertU8(arr)
     if (!streaming) {
       if (arr.byteLength === 0) return ''
       if (asciiSuperset && isAscii(arr)) {

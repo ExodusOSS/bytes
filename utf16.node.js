@@ -1,4 +1,4 @@
-import { E_STRING, E_STRICT_UNICODE } from './fallback/_utils.js'
+import { assertU8, E_STRING, E_STRICT_UNICODE } from './fallback/_utils.js'
 import { isDeno, isLE } from './fallback/platform.js'
 import { E_STRICT, decodeApiDecoders } from './fallback/utf16.js'
 
@@ -49,7 +49,7 @@ function decodeNode(input, loose = false, format = 'uint16') {
     if (!(input instanceof Uint16Array)) throw new TypeError('Expected an Uint16Array')
     ble = swapped(input, !isLE)
   } else if (format === 'uint8-le' || format === 'uint8-be') {
-    if (!(input instanceof Uint8Array)) throw new TypeError('Expected an Uint8Array')
+    assertU8(input)
     if (input.byteLength % 2 !== 0) throw new TypeError('Expected even number of bytes')
     ble = swapped(input, format === 'uint8-be')
   } else {

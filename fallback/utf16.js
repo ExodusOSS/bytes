@@ -1,5 +1,5 @@
 import { decodeUCS2, encodeCharcodes } from './latin1.js'
-import { E_STRING, E_STRICT_UNICODE } from './_utils.js'
+import { assertU8, E_STRING, E_STRICT_UNICODE } from './_utils.js'
 import { nativeDecoder, isLE } from './platform.js'
 
 export const E_STRICT = 'Input is not well-formed utf16'
@@ -38,7 +38,7 @@ export function decodeApiDecoders(input, loose, format) {
   if (format === 'uint16') {
     if (!(input instanceof Uint16Array)) throw new TypeError('Expected an Uint16Array')
   } else if (format === 'uint8-le' || format === 'uint8-be') {
-    if (!(input instanceof Uint8Array)) throw new TypeError('Expected an Uint8Array')
+    assertU8(input)
     if (input.byteLength % 2 !== 0) throw new TypeError('Expected even number of bytes')
   } else {
     throw new TypeError('Unknown format')
@@ -56,12 +56,12 @@ export function decodeApiJS(input, loose, format) {
       u16 = input
       break
     case 'uint8-le':
-      if (!(input instanceof Uint8Array)) throw new TypeError('Expected an Uint8Array')
+      assertU8(input)
       if (input.byteLength % 2 !== 0) throw new TypeError('Expected even number of bytes')
       u16 = to16input(input, true)
       break
     case 'uint8-be':
-      if (!(input instanceof Uint8Array)) throw new TypeError('Expected an Uint8Array')
+      assertU8(input)
       if (input.byteLength % 2 !== 0) throw new TypeError('Expected even number of bytes')
       u16 = to16input(input, false)
       break

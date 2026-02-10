@@ -1,4 +1,4 @@
-import { E_STRING } from './fallback/_utils.js'
+import { assertU8, E_STRING } from './fallback/_utils.js'
 import { isHermes, isLE } from './fallback/platform.js'
 import * as js from './fallback/utf32.js'
 import * as utf16 from '@exodus/bytes/utf16.js'
@@ -32,12 +32,12 @@ function decode(input, loose = false, format = 'uint32') {
       u32 = input
       break
     case 'uint8-le':
-      if (!(input instanceof Uint8Array)) throw new TypeError('Expected an Uint8Array')
+      assertU8(input)
       if (input.byteLength % 4 !== 0) throw new TypeError('Expected length to be a multiple of 4')
       u32 = js.to32input(input, true)
       break
     case 'uint8-be':
-      if (!(input instanceof Uint8Array)) throw new TypeError('Expected an Uint8Array')
+      assertU8(input)
       if (input.byteLength % 4 !== 0) throw new TypeError('Expected length to be a multiple of 4')
       u32 = js.to32input(input, false)
       break

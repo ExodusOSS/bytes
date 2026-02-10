@@ -1,6 +1,5 @@
 import { typedView } from './array.js'
-import { assertUint8 } from './assert.js'
-import { E_STRING } from './fallback/_utils.js'
+import { assertU8, E_STRING } from './fallback/_utils.js'
 import { nativeDecoder, nativeEncoder, isHermes } from './fallback/platform.js'
 import { encodeAscii, decodeAscii } from './fallback/latin1.js'
 
@@ -24,7 +23,7 @@ const E_CHAR = 'Invalid character in base58 input'
 const shouldUseBigIntFrom = isHermes // faster only on Hermes, numbers path beats it on normal engines
 
 function toBase58core(arr, alphabet, codes) {
-  assertUint8(arr)
+  assertU8(arr)
   const length = arr.length
   if (length === 0) return ''
 
