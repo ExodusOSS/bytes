@@ -84,6 +84,9 @@
     "/fallback/single-byte.js",
     "/fallback/utf16.js",
     "/fallback/utf8.js",
+    "/fallback/utf8.auto.js",
+    "/fallback/utf8.auto.browser.js",
+    "/fallback/utf8.auto.native.js",
     "/array.js",
     "/array.d.ts",
     "/assert.js",
@@ -216,8 +219,12 @@
       "default": "./wif.js"
     }
   },
+  "browser": {
+    "./fallback/utf8.auto.js": "./fallback/utf8.auto.browser.js"
+  },
   "react-native": {
-    "./encoding-browser.js": "./encoding-browser.native.js"
+    "./encoding-browser.js": "./encoding-browser.native.js",
+    "./fallback/utf8.auto.js": "./fallback/utf8.auto.native.js"
   },
   "peerDependencies": {
     "@noble/hashes": "^1.8.0 || ^2.0.0"

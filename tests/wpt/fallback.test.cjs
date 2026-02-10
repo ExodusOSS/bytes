@@ -1,6 +1,7 @@
 // Drop available native implementations so fallbacks will be used
-// The only exception is *.node.js impls, but tests in other contexts cover that
-if (!globalThis.Buffer || globalThis.Buffer.TYPED_ARRAY_SUPPORT) {
+// The exceptions for that are *.node.js impls and browser bundles, but tests in other contexts cover that
+const isNode = globalThis.Buffer && !globalThis.Buffer.TYPED_ARRAY_SUPPORT
+if (!process.env.EXODUS_TEST_IS_BROWSER && !isNode) {
   delete globalThis.TextEncoder
   delete globalThis.TextDecoder
 }

@@ -1,4 +1,4 @@
-delete globalThis.TextDecoder
+if (!process.env.EXODUS_TEST_IS_BROWSER) delete globalThis.TextDecoder
 delete String.prototype.isWellFormed
 delete String.prototype.toWellFormed
 

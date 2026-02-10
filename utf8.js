@@ -1,6 +1,6 @@
 import { typedView } from './array.js'
 import { nativeDecoder, nativeEncoder, E_STRING, E_STRICT_UNICODE } from './fallback/_utils.js'
-import * as js from './fallback/utf8.js'
+import * as js from './fallback/utf8.auto.js'
 
 const { TextDecoder } = globalThis
 // ignoreBOM: true means that BOM will be left as-is, i.e. will be present in the output
@@ -29,7 +29,7 @@ function deLoose(str, loose, res) {
     start = pos + 1
     if (res[pos + 1] === 0xbf && res[pos + 2] === 0xbd) {
       // Found a replacement char in output, need to recheck if we encoded the input correctly
-      if (!nativeDecoder && str.length < 1e7) {
+      if (js.decodeFast && !nativeDecoder && str.length < 1e7) {
         // This is ~2x faster than decode in Hermes
         try {
           if (encodeURI(str) !== null) return res // guard against optimizing out
