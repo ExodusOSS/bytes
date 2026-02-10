@@ -124,6 +124,7 @@
     "/single-byte.node.js",
     "/utf16.js",
     "/utf16.d.ts",
+    "/utf16.browser.js",
     "/utf16.native.js",
     "/utf16.node.js",
     "/utf8.js",
@@ -205,6 +206,7 @@
       "types": "./utf16.d.ts",
       "node": "./utf16.node.js",
       "react-native": "./utf16.native.js",
+      "browser": "./utf16.browser.js",
       "default": "./utf16.js"
     },
     "./utf8.js": {
@@ -222,6 +224,7 @@
     }
   },
   "browser": {
+    "./utf16.js": "./utf16.browser.js",
     "./fallback/utf8.auto.js": "./fallback/utf8.auto.browser.js"
   },
   "react-native": {
