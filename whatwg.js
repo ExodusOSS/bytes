@@ -1,7 +1,11 @@
 import { utf8fromStringLoose } from '@exodus/bytes/utf8.js'
 import { createSinglebyteEncoder } from '@exodus/bytes/single-byte.js'
-import { isMultibyte, getMultibyteEncoder } from './fallback/encoding.js'
-import { normalizeEncoding, E_ENCODING } from './fallback/encoding.api.js'
+import {
+  isMultibyte,
+  getMultibyteEncoder,
+  normalizeEncoding,
+  E_ENCODING,
+} from './fallback/encoding.js'
 import { percentEncoder } from './fallback/percent.js'
 import { encodeMap } from './fallback/single-byte.js'
 import { E_STRING } from './fallback/_utils.js'

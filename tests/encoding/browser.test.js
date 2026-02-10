@@ -3,10 +3,9 @@ import {
   TextEncoder,
   getBOMEncoding,
   legacyHookDecode,
-} from '@exodus/bytes/encoding.js'
+} from '@exodus/bytes/encoding-browser.js'
 import { fromHex } from '@exodus/bytes/hex.js'
 import { test, describe } from 'node:test'
-import { labels } from './fixtures/encodings.cjs'
 import unfinishedBytesFixtures from './fixtures/unfinishedBytes.js'
 
 test('Unfinished bytes', (t) => {
@@ -83,21 +82,6 @@ test('not all ISO-8859 encodings are present in TextDecoder', (t) => {
   t.assert.strictEqual(new TextDecoder('iso-8859-13').encoding, 'iso-8859-13') // present
 })
 
-describe('encodings are ASCII supersets, except utf-16 and iso-2022-jp', () => {
-  for (const label of labels) {
-    if (label === 'replacement' || label === 'utf-16le' || label === 'utf-16be') continue
-    test(label, (t) => {
-      const loose = new TextDecoder(label)
-      const fatal = new TextDecoder(label, { fatal: true })
-      for (let i = 0; i < 128; i++) {
-        if (label === 'iso-2022-jp' && [0x0e, 0x0f, 0x1b].includes(i)) continue
-        t.assert.strictEqual(loose.decode(Uint8Array.of(i)), String.fromCodePoint(i))
-        t.assert.strictEqual(fatal.decode(Uint8Array.of(i)), String.fromCodePoint(i))
-      }
-    })
-  }
-})
-
 describe('legacyHookDecode', () => {
   const fixtures = {
     replacement: [
@@ -168,74 +152,3 @@ test('getBOMEncoding', (t) => {
     t.assert.strictEqual(getBOMEncoding(fromHex(hex)), enc, `${hex} -> ${enc}`)
   }
 })
-
-describe('BOM handling', () => {
-  const fixtures = [
-    ['utf-16le', 'fffe', ''],
-    ['utf-16le', 'fffefffe', '\uFEFF'],
-    ['utf-16le', 'fffefffefffe', '\uFEFF\uFEFF'],
-    ['utf-16le', 'feff', '\uFFFE'],
-    ['utf-16le', 'fefffeff', '\uFFFE\uFFFE'],
-    ['utf-16le', 'fefffefffeff', '\uFFFE\uFFFE\uFFFE'],
-
-    ['utf-16be', 'feff', ''],
-    ['utf-16be', 'fefffeff', '\uFEFF'],
-    ['utf-16be', 'fefffefffeff', '\uFEFF\uFEFF'],
-    ['utf-16be', 'fffe', '\uFFFE'],
-    ['utf-16be', 'fffefffe', '\uFFFE\uFFFE'],
-    ['utf-16be', 'fffefffefffe', '\uFFFE\uFFFE\uFFFE'],
-  ]
-
-  test('fixtures', (t) => {
-    for (const [enc, hex, string] of fixtures) {
-      const res = new TextDecoder(enc).decode(fromHex(hex))
-      t.assert.strictEqual(res.length, string.length, `${enc}(${hex}).length`)
-      t.assert.strictEqual(res, string, `${enc}(${hex})`)
-    }
-  })
-
-  test('stateless', (t) => {
-    let decoder
-    for (const [enc, hex, string] of fixtures) {
-      if (!decoder || decoder.encoding !== enc) decoder = new TextDecoder(enc)
-      const res = decoder.decode(fromHex(hex))
-      t.assert.strictEqual(res.length, string.length, `${enc}(${hex}).length`)
-      t.assert.strictEqual(res, string, `${enc}(${hex})`)
-    }
-  })
-
-  // https://bugzilla.mozilla.org/show_bug.cgi?id=2005419
-  test('throwing clears state', (t) => {
-    for (const [enc, hex, string] of fixtures) {
-      for (const prefix of ['ff', 'ffff', 'ffffff']) {
-        const decoder = new TextDecoder(enc, { fatal: true })
-        try {
-          decoder.decode(fromHex(prefix))
-        } catch {}
-
-        const res = decoder.decode(fromHex(hex))
-        t.assert.strictEqual(res.length, string.length, `${enc}(${hex}).length, prefix=${prefix}`)
-        t.assert.strictEqual(res, string, `${enc}(${hex}), prefix=${prefix}`)
-      }
-    }
-  })
-})
-
-test('euc-kr encoding', (t) => {
-  t.assert.throws(() => new TextDecoder('euc-kr', { fatal: true }).decode(Uint8Array.of(0x80)))
-  t.assert.strictEqual(new TextDecoder('euc-kr').decode(Uint8Array.of(0x80)), '\uFFFD')
-
-  // TODO: more tests
-})
-
-test('big5 encoding', (t) => {
-  t.assert.throws(() => new TextDecoder('big5', { fatal: true }).decode(Uint8Array.of(0x80)))
-  t.assert.strictEqual(new TextDecoder('big5').decode(Uint8Array.of(0x80)), '\uFFFD')
-
-  const loose = new TextDecoder('big5')
-  t.assert.strictEqual(loose.decode(Uint8Array.of(0x83, 0x5c)), String.fromCodePoint(0xff_fd, 0x5c)) // https://github.com/nodejs/node/issues/40091
-
-  // TODO: more tests
-})
-
-// TODO: test more encodings

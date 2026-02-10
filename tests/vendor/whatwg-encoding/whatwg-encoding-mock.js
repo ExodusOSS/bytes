@@ -1,4 +1,4 @@
-import * as api from '@exodus/bytes/encoding.js'
+import * as api from '@exodus/bytes/encoding-browser.js'
 
 // prettier-ignore
 const supported = new Set([

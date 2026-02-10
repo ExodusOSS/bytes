@@ -5,16 +5,55 @@ import { utf16toString, utf16toStringLoose } from '@exodus/bytes/utf16.js'
 import { utf8fromStringLoose, utf8toString, utf8toStringLoose } from '@exodus/bytes/utf8.js'
 import { createSinglebyteDecoder } from '@exodus/bytes/single-byte.js'
 import labels from './encoding.labels.js'
-import { fromSource, getBOMEncoding, normalizeEncoding, E_ENCODING } from './encoding.api.js'
+import { fromSource, getBOMEncoding } from './encoding.api.js'
 import { unfinishedBytes, mergePrefix } from './encoding.util.js'
 
-export { labelToName, getBOMEncoding, normalizeEncoding } from './encoding.api.js'
+export { getBOMEncoding } from './encoding.api.js'
 
+export const E_ENCODING = 'Unknown encoding'
 const E_MULTI = "import '@exodus/bytes/encoding.js' for legacy multi-byte encodings support"
 const E_OPTIONS = 'The "options" argument must be of type object'
 const replacementChar = '\uFFFD'
 const multibyteSet = new Set(['big5', 'euc-kr', 'euc-jp', 'iso-2022-jp', 'shift_jis', 'gbk', 'gb18030']) // prettier-ignore
 let createMultibyteDecoder, multibyteEncoder
+
+let labelsMap
+// Warning: unlike whatwg-encoding, returns lowercased labels
+// Those are case-insensitive and that's how TextDecoder encoding getter normalizes them
+// https://encoding.spec.whatwg.org/#names-and-labels
+export function normalizeEncoding(label) {
+  // fast path
+  if (label === 'utf-8' || label === 'utf8' || label === 'UTF-8' || label === 'UTF8') return 'utf-8'
+  if (label === 'windows-1252' || label === 'ascii' || label === 'latin1') return 'windows-1252'
+  // full map
+  if (/[^\w\t\n\f\r .:-]/i.test(label)) return null // must be ASCII (with ASCII whitespace)
+  const low = `${label}`.trim().toLowerCase()
+  if (Object.hasOwn(labels, low)) return low
+  if (!labelsMap) {
+    labelsMap = new Map()
+    for (const [name, aliases] of Object.entries(labels)) {
+      for (const alias of aliases) labelsMap.set(alias, name)
+    }
+  }
+
+  const mapped = labelsMap.get(low)
+  if (mapped) return mapped
+  return null
+}
+
+const uppercasePrefixes = new Set(['utf', 'iso', 'koi', 'euc', 'ibm', 'gbk'])
+
+// Unlike normalizeEncoding, case-sensitive
+// https://encoding.spec.whatwg.org/#names-and-labels
+export function labelToName(label) {
+  const enc = normalizeEncoding(label)
+  if (enc === 'utf-8') return 'UTF-8' // fast path
+  if (!enc) return enc
+  if (uppercasePrefixes.has(enc.slice(0, 3))) return enc.toUpperCase()
+  if (enc === 'big5') return 'Big5'
+  if (enc === 'shift_jis') return 'Shift_JIS'
+  return enc
+}
 
 export const isMultibyte = (enc) => multibyteSet.has(enc)
 export function setMultibyte(createDecoder, createEncoder) {
