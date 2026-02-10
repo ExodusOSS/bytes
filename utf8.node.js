@@ -1,4 +1,3 @@
-import { assertUint8 } from './assert.js'
 import { typedView } from './array.js'
 import { E_STRING, E_STRICT_UNICODE } from './fallback/_utils.js'
 import { E_STRICT } from './fallback/utf8.js'
@@ -40,7 +39,7 @@ function encode(str, loose = false) {
 }
 
 function decode(arr, loose = false) {
-  assertUint8(arr)
+  if (!(arr instanceof Uint8Array)) throw new TypeError('Expected an Uint8Array')
   const byteLength = arr.byteLength
   if (byteLength === 0) return ''
   if (byteLength > 0x6_00 && !(isDeno && loose) && isAscii(arr)) {
