@@ -10,10 +10,10 @@ export const E_STRICT_UNICODE = 'Input is not well-formed Unicode'
 let isNative = (x) => x && (haveNativeBuffer || `${x}`.includes('[native code]'))
 if (!haveNativeBuffer && isNative(() => {})) isNative = () => false // e.g. XS, we don't want false positives
 
-export const nativeEncoder = isNative(TextEncoder) ? new TextEncoder() : null
-export const nativeDecoder = isNative(TextDecoder)
-  ? new TextDecoder('utf-8', { ignoreBOM: true })
-  : null
+export const nativeEncoder = /* @__PURE__ */ (() =>
+  isNative(TextEncoder) ? new TextEncoder() : null)()
+export const nativeDecoder = /* @__PURE__ */ (() =>
+  isNative(TextDecoder) ? new TextDecoder('utf-8', { ignoreBOM: true }) : null)()
 
 // Actually windows-1252, compatible with ascii and latin1 decoding
 // Beware that on non-latin1, i.e. on windows-1252, this is broken in ~all Node.js versions released

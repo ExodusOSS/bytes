@@ -9,8 +9,8 @@ import {
   skipWeb,
 } from './_utils.js'
 
-const { atob } = globalThis
-const { toBase64: web64 } = Uint8Array.prototype
+const atob = /* @__PURE__ */ (() => globalThis.atob)()
+const web64 = /* @__PURE__ */ (() => Uint8Array.prototype.toBase64)()
 
 // See http://stackoverflow.com/a/22747272/680742, which says that lowest limit is in Chrome, with 0xffff args
 // On Hermes, actual max is 0x20_000 minus current stack depth, 1/16 of that should be safe
@@ -147,7 +147,7 @@ export function encodeAsciiPrefix(x, s) {
 export const encodeLatin1 = (str) => encodeCharcodes(str, new Uint8Array(str.length))
 
 // Expects nativeEncoder to be present
-const useEncodeInto = isHermes && nativeEncoder?.encodeInto
+const useEncodeInto = /* @__PURE__ */ (() => isHermes && nativeEncoder?.encodeInto)()
 export const encodeAscii = useEncodeInto
   ? (str, ERR) => {
       // Much faster in Hermes
