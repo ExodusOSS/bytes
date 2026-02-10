@@ -31,8 +31,8 @@ export function normalizeEncoding(label) {
   if (Object.hasOwn(labels, low)) return low
   if (!labelsMap) {
     labelsMap = new Map()
-    for (const [label, aliases] of Object.entries(labels)) {
-      for (const alias of aliases) labelsMap.set(alias, label)
+    for (const [name, aliases] of Object.entries(labels)) {
+      for (const alias of aliases) labelsMap.set(alias, name)
     }
   }
 
