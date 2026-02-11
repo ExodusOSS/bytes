@@ -256,7 +256,7 @@ Prefer using strict throwing methods for cryptography applications._
 
 Throws on non-even byte length.
 
-### @exodus/bytes/single-byte.js
+### @exodus/bytes/single-byte.js <sub>![](https://img.shields.io/bundlejs/size/@exodus/bytes/single-byte.js?style=flat-square)</sub>
 
 Decode / encode the legacy single-byte encodings according to the
 [Encoding standard](https://encoding.spec.whatwg.org/)
@@ -377,7 +377,7 @@ Same as:
 const windows1252fromString = createSinglebyteEncoder('windows-1252', { mode: 'fatal' })
 ```
 
-### @exodus/bytes/multi-byte.js
+### @exodus/bytes/multi-byte.js <sub>![](https://img.shields.io/bundlejs/size/@exodus/bytes/multi-byte.js?style=flat-square)</sub>
 
 Decode / encode the legacy multi-byte encodings according to the
 [Encoding standard](https://encoding.spec.whatwg.org/)
@@ -419,7 +419,7 @@ Returns a function `encode(string)` that encodes a string to bytes.
 In `'fatal'` mode (default), will throw on non well-formed strings or any codepoints which could
 not be encoded in the target encoding.
 
-### @exodus/bytes/bigint.js
+### @exodus/bytes/bigint.js <sub>![](https://img.shields.io/bundlejs/size/@exodus/bytes/bigint.js?style=flat-square)</sub>
 
 Convert between BigInt and Uint8Array
 
@@ -441,7 +441,7 @@ Convert a Uint8Array or Buffer to a BigInt
 
 The bytes are interpreted as a big-endian unsigned integer.
 
-### @exodus/bytes/hex.js
+### @exodus/bytes/hex.js <sub>![](https://img.shields.io/bundlejs/size/@exodus/bytes/hex.js?style=flat-square)</sub>
 
 Implements Base16 from [RFC4648](https://datatracker.ietf.org/doc/html/rfc4648)
 (no differences from [RFC3548](https://datatracker.ietf.org/doc/html/rfc4648)).
@@ -460,7 +460,7 @@ Unlike `Buffer.from()`, throws on invalid input
 
 Encode a `Uint8Array` to a lowercase hex string
 
-### @exodus/bytes/base64.js
+### @exodus/bytes/base64.js <sub>![](https://img.shields.io/bundlejs/size/@exodus/bytes/base64.js?style=flat-square)</sub>
 
 Implements base64 and base64url from [RFC4648](https://datatracker.ietf.org/doc/html/rfc4648)
 (no differences from [RFC3548](https://datatracker.ietf.org/doc/html/rfc4648)).
@@ -497,7 +497,7 @@ Encode a `Uint8Array` to a base64 string (RFC 4648)
 
 Encode a `Uint8Array` to a base64url string (RFC 4648)
 
-### @exodus/bytes/base32.js
+### @exodus/bytes/base32.js <sub>![](https://img.shields.io/bundlejs/size/@exodus/bytes/base32.js?style=flat-square)</sub>
 
 Implements base32 and base32hex from [RFC4648](https://datatracker.ietf.org/doc/html/rfc4648)
 (no differences from [RFC3548](https://datatracker.ietf.org/doc/html/rfc4648)).
@@ -527,7 +527,7 @@ Encode a `Uint8Array` to a base32 string (RFC 4648)
 
 Encode a `Uint8Array` to a base32hex string (RFC 4648)
 
-### @exodus/bytes/bech32.js
+### @exodus/bytes/bech32.js <sub>![](https://img.shields.io/bundlejs/size/@exodus/bytes/bech32.js?style=flat-square)</sub>
 
 Implements bech32 and bech32m from
 [BIP-0173](https://github.com/bitcoin/bips/blob/master/bip-0173.mediawiki#specification)
@@ -561,7 +561,7 @@ Decode a bech32m string to bytes
 
 Encode bytes to a bech32m string
 
-### @exodus/bytes/base58.js
+### @exodus/bytes/base58.js <sub>![](https://img.shields.io/bundlejs/size/@exodus/bytes/base58.js?style=flat-square)</sub>
 
 Implements [base58](https://www.ietf.org/archive/id/draft-msporny-base58-03.txt) encoding.
 
@@ -596,7 +596,7 @@ Encode a `Uint8Array` to a base58 string using XRP alphabet
 
 Uses the XRP variant base58 alphabet
 
-### @exodus/bytes/base58check.js
+### @exodus/bytes/base58check.js <sub>![](https://img.shields.io/bundlejs/size/@exodus/bytes/base58check.js?style=flat-square)</sub>
 
 Implements [base58check](https://en.bitcoin.it/wiki/Base58Check_encoding) encoding.
 
@@ -636,7 +636,7 @@ Uses double SHA-256 for checksum calculation
 
 Create a base58check encoder/decoder with custom hash functions
 
-### @exodus/bytes/wif.js
+### @exodus/bytes/wif.js <sub>![](https://img.shields.io/bundlejs/size/@exodus/bytes/wif.js?style=flat-square)</sub>
 
 Wallet Import Format (WIF) encoding and decoding.
 
@@ -675,7 +675,7 @@ Encode WIF data to a WIF string
 
 Encode WIF data to a WIF string (synchronous)
 
-### @exodus/bytes/array.js
+### @exodus/bytes/array.js <sub>![](https://img.shields.io/bundlejs/size/@exodus/bytes/array.js?style=flat-square)</sub>
 
 TypedArray utils and conversions.
 
@@ -881,7 +881,7 @@ do not provide sufficiently complete / non-buggy `TextDecoder` APIs.
 > but they are fixing them and the expected update window is short.\
 > If you want to circumvent browser bugs, use full `@exodus/bytes/encoding.js` import.
 
-### @exodus/bytes/whatwg.js
+### @exodus/bytes/whatwg.js <sub>![](https://img.shields.io/bundlejs/size/@exodus/bytes/whatwg.js?style=flat-square)</sub>
 
 WHATWG helpers
 
