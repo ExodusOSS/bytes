@@ -17,9 +17,9 @@ export function getEncoding(encoding) {
   assertEncoding(encoding)
   if (encoding === xUserDefined) return Array.from({ length: 128 }, (_, i) => 0xf7_80 + i)
   if (encoding === iso8i) encoding = 'iso-8859-8'
-  let prev = 127
-  const enc = encodings[encoding].flat().flat().flat() // max depth is 3, rechecked by tests
-  return enc.map((x) => (x === r ? x : (prev += x))) // eslint-disable-line no-return-assign
+  const enc = encodings[encoding]
+  const deltas = enc.flatMap((x) => (Array.isArray(x) ? new Array(x[0]).fill(x[1] ?? 0) : x))
+  return deltas.map((x, i) => (x === r ? x : x + 128 + i))
 }
 
 const mappers = new Map()

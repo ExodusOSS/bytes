@@ -35,28 +35,54 @@ for (const file of readdirSync(import.meta.dirname)) {
   }
 
   while (chars[chars.length - 1] === 128 + chars.length - 1) chars.pop() // minify
-  let last = 127
-  const deltas = chars.map((x) => {
-    if (x === 0xff_fd) return x
-    x -= last
-    last += x
-    return x
-  })
-  encodings[encoding] = `[${deltas.join(',')}]`
+  encodings[encoding] = chars
 }
 
-const table = JSON.stringify(encodings, undefined, 2)
+// Some encodings from Unicode
+/*
+{
+  const r = 0xff_fd
+  const z = (x) => new Array(x).fill(0)
+  encodings['iso-8859-1'] = []
+  encodings['iso-8859-9'] = [z(80),78,z(12),83,128,z(17),47,z(12),52,97].flat().map((x, i) => x === r ? r : x + i + 128)
+  encodings['iso-8859-11'] = [z(33),3424,3424,3424,3424,3424,3424,3424,3424,3424,3424,3424,3424,3424,3424,3424,3424,3424,3424,3424,3424,3424,3424,3424,3424,3424,3424,3424,3424,3424,3424,3424,3424,3424,3424,3424,3424,3424,3424,3424,3424,3424,3424,3424,3424,3424,3424,3424,3424,3424,3424,3424,3424,3424,3424,3424,3424,3424,3424,r,r,r,r,3424,3424,3424,3424,3424,3424,3424,3424,3424,3424,3424,3424,3424,3424,3424,3424,3424,3424,3424,3424,3424,3424,3424,3424,3424,3424,3424,3424,3424,r,r,r,r].flat().map((x, i) => x === r ? r : x + i + 128)
+}
+*/
+
+for (const [encoding, chars] of Object.entries(encodings)) {
+  const deltas = chars.map((x, i) => {
+    if (x === 0xff_fd) return x
+    return x - 128 - i
+  })
+  for (let i = 0; i < deltas.length; i++) {
+    let j = i
+    while (j < deltas.length && deltas[j] === deltas[i]) j++
+    if (j - i > 2) {
+      deltas.splice(i, j - i, deltas[i] === 0 ? [j - i] : [j - i, deltas[i]])
+    }
+  }
+
+  encodings[encoding] = JSON.stringify(deltas)
+}
+
+const sorter = ([a], [b]) => {
+  while (a[0] === b[0]) {
+    a = a.slice(1)
+    b = b.slice(1)
+  }
+
+  if (a && b && `${Number(a)}` === a && `${Number(b)}` === b) return Number(a) < Number(b) ? -1 : 1
+  return a < b ? -1 : 1
+}
+
+const table = JSON.stringify(
+  Object.fromEntries(Object.entries(encodings).sort(sorter)),
+  undefined,
+  2
+)
   .replaceAll(']"', ']')
   .replaceAll('"[', '[')
   .replaceAll('"', "'")
   .replaceAll(/(\D)65533/g, '$1r')
-  .replaceAll(
-    /([^\dr])(1(?:,1){4,})([^\dr])/g,
-    (_, a, b, c) => `${a}...e(${(b.length + 1) / 2})${c}`
-  )
-  .replaceAll(
-    /([^\dr])(r(?:,r){4,})([^\dr])/g,
-    (_, a, b, c) => `${a}...h(${(b.length + 1) / 2})${c}`
-  )
 
 console.log(table)

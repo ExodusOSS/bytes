@@ -120,7 +120,7 @@ Applications (including React Native apps) are advised to load either `@exodus/b
 
 If you don't need support for legacy multi-byte encodings.
 
-Reduces the bundle size 10x, while still keeping `utf-8`, `utf-16le`, `utf-16be` and all single-byte encodings specified by the spec.
+Reduces the bundle size 11x, while still keeping `utf-8`, `utf-16le`, `utf-16be` and all single-byte encodings specified by the spec.
 The only difference is support for legacy multi-byte encodings.
 
 See [the list of encodings](https://encoding.spec.whatwg.org/#names-and-labels).
