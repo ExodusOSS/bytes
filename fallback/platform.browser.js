@@ -1,5 +1,7 @@
 import { decodePartAddition as decodePart } from './platform.native.js'
 
+export { isLE, encodeCharcodesPure as encodeCharcodes } from './platform.native.js'
+
 export const nativeBuffer = null
 export const isHermes = false
 export const isDeno = false
@@ -7,8 +9,6 @@ export const nativeEncoder = /* @__PURE__ */ (() => new TextEncoder())()
 export const nativeDecoder = /* @__PURE__ */ (() => new TextDecoder('utf-8', { ignoreBOM: true }))()
 export const nativeDecoderLatin1 = /* @__PURE__ */ (() =>
   new TextDecoder('latin1', { ignoreBOM: true }))()
-
-export { isLE } from './platform.native.js'
 
 export function decode2string(arr, start, end, m) {
   if (end - start > 30_000) {

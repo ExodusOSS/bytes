@@ -3,6 +3,7 @@ import {
   nativeDecoder,
   nativeDecoderLatin1,
   nativeBuffer,
+  encodeCharcodes,
   isHermes,
   isDeno,
   isLE,
@@ -106,25 +107,6 @@ export const decodeAscii = nativeBuffer
         )
 
 /* eslint-disable @exodus/mutable/no-param-reassign-prop-only */
-
-export const encodeCharcodes = isHermes
-  ? (str, arr) => {
-      const length = str.length
-      if (length > 64) {
-        const at = str.charCodeAt.bind(str) // faster on strings from ~64 chars on Hermes, but can be 10x slower on e.g. JSC
-        for (let i = 0; i < length; i++) arr[i] = at(i)
-      } else {
-        for (let i = 0; i < length; i++) arr[i] = str.charCodeAt(i)
-      }
-
-      return arr
-    }
-  : (str, arr) => {
-      const length = str.length
-      // Can be optimized with unrolling, but this is not used on non-Hermes atm
-      for (let i = 0; i < length; i++) arr[i] = str.charCodeAt(i)
-      return arr
-    }
 
 export function encodeAsciiPrefix(x, s) {
   let i = 0
