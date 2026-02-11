@@ -237,6 +237,9 @@
     "./fallback/platform.js": "./fallback/platform.native.js",
     "./fallback/utf8.auto.js": "./fallback/utf8.auto.native.js"
   },
+  "sideEffects": [
+    "./encoding.js"
+  ],
   "peerDependencies": {
     "@noble/hashes": "^1.8.0 || ^2.0.0"
   },
