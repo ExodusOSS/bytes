@@ -1,6 +1,6 @@
 export * from './platform.js'
 
-const { Buffer } = globalThis
+const Buffer = /* @__PURE__ */ (() => globalThis.Buffer)()
 
 export function assert(condition, msg) {
   if (!condition) throw new Error(msg)
