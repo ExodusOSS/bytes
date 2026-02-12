@@ -28,6 +28,7 @@ const nonUtf8 = [
 // invalid string -> bytes
 const orphans = [
   { charcodes: [0x61, 0x62, 0xd8_00, 0x77, 0x78], hex: '6162efbfbd7778' },
+  { charcodes: [0xd8_00], hex: 'efbfbd' },
   { charcodes: [0xd8_00, 0xd8_00], hex: 'efbfbdefbfbd' }, // https://npmjs.com/package/buffer is wrong
   { charcodes: [0x61, 0x62, 0xdf_ff, 0x77, 0x78], hex: '6162efbfbd7778' },
   { charcodes: [0xdf_ff, 0xd8_00], hex: 'efbfbdefbfbd' },
