@@ -7,8 +7,6 @@ import * as js from './fallback/base32.js'
 
 // 8 chars per 5 bytes
 
-const { E_PADDING } = js
-
 export const toBase32 = (arr, { padding = false } = {}) => js.toBase32(arr, false, padding)
 export const toBase32hex = (arr, { padding = false } = {}) => js.toBase32(arr, true, padding)
 
@@ -30,7 +28,7 @@ function fromBase32common(str, isBase32Hex, padding, format, rest) {
   if (rest !== null) assertEmptyRest(rest)
 
   if (padding === true) {
-    if (str.length % 8 !== 0) throw new SyntaxError(E_PADDING)
+    if (str.length % 8 !== 0) throw new SyntaxError(js.E_PADDING)
   } else if (padding === false) {
     if (str.endsWith('=')) throw new SyntaxError('Did not expect padding in base32 input')
   } else if (padding !== 'both') {
