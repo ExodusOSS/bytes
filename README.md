@@ -120,7 +120,7 @@ Applications (including React Native apps) are advised to load either `@exodus/b
 
 If you don't need support for legacy multi-byte encodings.
 
-Reduces the bundle size 10x, while still keeping `utf-8`, `utf-16le`, `utf-16be` and all single-byte encodings specified by the spec.
+Reduces the bundle size ~12x, while still keeping `utf-8`, `utf-16le`, `utf-16be` and all single-byte encodings specified by the spec.
 The only difference is support for legacy multi-byte encodings.
 
 See [the list of encodings](https://encoding.spec.whatwg.org/#names-and-labels).
@@ -805,7 +805,7 @@ new TextDecoder(getBOMEncoding(input) ?? fallbackEncoding).decode(input)
 
 The exact same exports as `@exodus/bytes/encoding.js` are also exported as
 `@exodus/bytes/encoding-lite.js`, with the difference that the lite version does not load
-multi-byte `TextDecoder` encodings by default to reduce bundle size 10x.
+multi-byte `TextDecoder` encodings by default to reduce bundle size ~12x.
 
 ```js
 import { TextDecoder, TextEncoder } from '@exodus/bytes/encoding-lite.js'
