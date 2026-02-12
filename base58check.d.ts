@@ -81,8 +81,8 @@ export interface Base58CheckSync extends Base58CheckAsync {
  * @param hashAlgoSync - Optional sync hash function
  * @returns Base58Check encoder/decoder instance
  */
-export function makeBase58check(hashAlgo: HashFunction, hashAlgoSync?: HashFunctionSync): Base58CheckSync;
-export function makeBase58check(hashAlgo: HashFunction): Base58CheckAsync;
+export function makeBase58check(hashAlgo: HashFunction | HashFunctionSync, hashAlgoSync: HashFunctionSync): Base58CheckSync;
+export function makeBase58check(hashAlgo: HashFunction | HashFunctionSync, hashAlgoSync?: undefined): Base58CheckAsync;
 
 /**
  * Encode bytes to base58check string asynchronously
