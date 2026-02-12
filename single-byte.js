@@ -129,7 +129,7 @@ export function createSinglebyteEncoder(encoding, { mode = 'fatal' } = {}) {
   }
 }
 
-export const latin1toString = createSinglebyteDecoder('iso-8859-1')
-export const latin1fromString = createSinglebyteEncoder('iso-8859-1')
-export const windows1252toString = createSinglebyteDecoder('windows-1252')
-export const windows1252fromString = createSinglebyteEncoder('windows-1252')
+export const latin1toString = /* @__PURE__ */ createSinglebyteDecoder('iso-8859-1')
+export const latin1fromString = /* @__PURE__ */ createSinglebyteEncoder('iso-8859-1')
+export const windows1252toString = /* @__PURE__ */ createSinglebyteDecoder('windows-1252')
+export const windows1252fromString = /* @__PURE__ */ createSinglebyteEncoder('windows-1252')

@@ -3,7 +3,7 @@ import { assertU8, E_STRING, E_STRICT_UNICODE } from './_utils.js'
 import { nativeDecoder, isLE, encodeCharcodes } from './platform.js'
 
 export const E_STRICT = 'Input is not well-formed utf16'
-const isWellFormedStr = String.prototype.isWellFormed
+const isWellFormedStr = /* @__PURE__ */ (() => String.prototype.isWellFormed)()
 const toWellFormedStr = /* @__PURE__ */ (() => String.prototype.toWellFormed)()
 
 const replacementCodepoint = 0xff_fd

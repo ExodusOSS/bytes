@@ -8,12 +8,11 @@ import { makeBase58check } from './fallback/base58check.js'
 
 const hash256sync = (x) => sha256(sha256(x))
 const hash256 = hash256sync // See note at the top
-const {
-  encode: toBase58check,
-  decode: fromBase58check,
-  encodeSync: toBase58checkSync,
-  decodeSync: fromBase58checkSync,
-} = makeBase58check(hash256, hash256sync)
+
+const b58c = /* @__PURE__ */ makeBase58check(hash256, hash256sync)
+export const toBase58check = /* @__PURE__ */ (() => b58c.encode)()
+export const fromBase58check = /* @__PURE__ */ (() => b58c.decode)()
+export const toBase58checkSync = /* @__PURE__ */ (() => b58c.encodeSync)()
+export const fromBase58checkSync = /* @__PURE__ */ (() => b58c.decodeSync)()
 
 export { makeBase58check } from './fallback/base58check.js'
-export { toBase58check, fromBase58check, toBase58checkSync, fromBase58checkSync }
