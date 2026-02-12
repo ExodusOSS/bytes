@@ -1,6 +1,6 @@
 import { assertTypedArray } from './assert.js'
 
-const { Buffer } = globalThis // Buffer is optional
+const Buffer = globalThis.Buffer // Buffer is optional
 
 export function typedView(arr, format) {
   assertTypedArray(arr)
