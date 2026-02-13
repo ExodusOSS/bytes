@@ -211,7 +211,8 @@ export class TextEncoder {
   encode(str = '') {
     if (typeof str !== 'string') str = `${str}`
     const res = utf8fromStringLoose(str)
-    return res.byteOffset === 0 ? res : res.slice(0) // Ensure 0-offset, to match new Uint8Array (per spec), which is non-pooled
+    // match new Uint8Array (per spec), which is non-pooled
+    return res.byteOffset === 0 && res.length === res.buffer.byteLength ? res : res.slice(0)
   }
 
   encodeInto(str, target) {
