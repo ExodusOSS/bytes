@@ -63,7 +63,7 @@ Less than half the bundle size of [text-encoding](https://npmjs.com/text-encodin
 Also [much faster](#fast) than all of those.
 
 > [!TIP]
-> See also the [lite version](#lite-version) to get this down to 10 KiB gzipped.
+> See also the [lite version](#lite-version) to get this down to 8 KiB gzipped.
 
 Spec compliant, passing WPT and covered with extra tests.\
 Moreover, tests for this library uncovered [bugs in all major implementations](https://docs.google.com/spreadsheets/d/1pdEefRG6r9fZy61WHGz0TKSt8cO4ISWqlpBN5KntIvQ/edit).\
