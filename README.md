@@ -519,6 +519,14 @@ Decode a base32hex string to bytes
 
 Operates in strict mode for last chunk, does not allow whitespace
 
+#### `fromBase32crockford(string, options)`
+
+Decode a Crockford base32 string to bytes
+
+Operates in strict mode for last chunk, does not allow whitespace
+
+Crockford base32 decoding follows extra mapping per spec: `LIli -> 1, Oo -> 0`
+
 #### `toBase32(arr, { padding = false })`
 
 Encode a `Uint8Array` to a base32 string (RFC 4648)
@@ -526,6 +534,10 @@ Encode a `Uint8Array` to a base32 string (RFC 4648)
 #### `toBase32hex(arr, { padding = false })`
 
 Encode a `Uint8Array` to a base32hex string (RFC 4648)
+
+#### `toBase32crockford(arr, options)`
+
+Encode a `Uint8Array` to a Crockford base32 string
 
 ### @exodus/bytes/bech32.js <sub>![](https://img.shields.io/bundlejs/size/@exodus/bytes/bech32.js?style=flat-square)</sub>
 

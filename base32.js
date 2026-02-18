@@ -7,23 +7,30 @@ import * as js from './fallback/base32.js'
 
 // 8 chars per 5 bytes
 
-export const toBase32 = (arr, { padding = false } = {}) => js.toBase32(arr, false, padding)
-export const toBase32hex = (arr, { padding = false } = {}) => js.toBase32(arr, true, padding)
+export const toBase32 = (arr, { padding = false } = {}) => js.toBase32(arr, 0, padding)
+export const toBase32hex = (arr, { padding = false } = {}) => js.toBase32(arr, 1, padding)
+export const toBase32crockford = (arr, { padding = false } = {}) => js.toBase32(arr, 2, padding)
 
 // By default, valid padding is accepted but not required
 export function fromBase32(str, options) {
-  if (!options) return fromBase32common(str, false, 'both', 'uint8', null)
+  if (!options) return fromBase32common(str, 0, 'both', 'uint8', null)
   const { format = 'uint8', padding = 'both', ...rest } = options
-  return fromBase32common(str, false, padding, format, rest)
+  return fromBase32common(str, 0, padding, format, rest)
 }
 
 export function fromBase32hex(str, options) {
-  if (!options) return fromBase32common(str, true, 'both', 'uint8', null)
+  if (!options) return fromBase32common(str, 1, 'both', 'uint8', null)
   const { format = 'uint8', padding = 'both', ...rest } = options
-  return fromBase32common(str, true, padding, format, rest)
+  return fromBase32common(str, 1, padding, format, rest)
 }
 
-function fromBase32common(str, isBase32Hex, padding, format, rest) {
+export function fromBase32crockford(str, options) {
+  if (!options) return fromBase32common(str, 2, 'both', 'uint8', null)
+  const { format = 'uint8', padding = 'both', ...rest } = options
+  return fromBase32common(str, 2, padding, format, rest)
+}
+
+function fromBase32common(str, mode, padding, format, rest) {
   if (typeof str !== 'string') throw new TypeError(E_STRING)
   if (rest !== null) assertEmptyRest(rest)
 
@@ -35,5 +42,5 @@ function fromBase32common(str, isBase32Hex, padding, format, rest) {
     throw new TypeError('Invalid padding option')
   }
 
-  return typedView(js.fromBase32(str, isBase32Hex), format)
+  return typedView(js.fromBase32(str, mode), format)
 }

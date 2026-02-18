@@ -59,6 +59,15 @@ export function toBase32(arr: Uint8Array, options?: ToBase32Options): string;
 export function toBase32hex(arr: Uint8Array, options?: ToBase32Options): string;
 
 /**
+ * Encode a `Uint8Array` to a Crockford base32 string
+ *
+ * @param arr - The input bytes
+ * @param options - Encoding options (padding defaults to false)
+ * @returns The Crockford base32 encoded string
+ */
+export function toBase32crockford(arr: Uint8Array, options?: ToBase32Options): string;
+
+/**
  * Decode a base32 string to bytes
  *
  * Operates in strict mode for last chunk, does not allow whitespace
@@ -81,3 +90,17 @@ export function fromBase32(string: string, options: FromBase32Options & { format
  */
 export function fromBase32hex(string: string, options?: FromBase32Options): Uint8ArrayBuffer;
 export function fromBase32hex(string: string, options: FromBase32Options & { format: 'buffer' }): Buffer;
+
+/**
+ * Decode a Crockford base32 string to bytes
+ *
+ * Operates in strict mode for last chunk, does not allow whitespace
+ *
+ * Crockford base32 decoding follows extra mapping per spec: `LIli -> 1, Oo -> 0`
+ *
+ * @param string - The Crockford base32 encoded string
+ * @param options - Decoding options
+ * @returns The decoded bytes
+ */
+export function fromBase32crockford(string: string, options?: FromBase32Options): Uint8ArrayBuffer;
+export function fromBase32crockford(string: string, options: FromBase32Options & { format: 'buffer' }): Buffer;

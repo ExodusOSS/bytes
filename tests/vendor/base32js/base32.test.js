@@ -2,7 +2,14 @@
 
 import { describe, test as it } from 'node:test'
 import assert from 'node:assert/strict'
-import { toBase32, toBase32hex, fromBase32, fromBase32hex } from '@exodus/bytes/base32.js'
+import {
+  toBase32,
+  toBase32hex,
+  toBase32crockford,
+  fromBase32,
+  fromBase32hex,
+  fromBase32crockford,
+} from '@exodus/bytes/base32.js'
 import fixtures from './fixtures.cjs'
 
 describe('Decoder', function () {
@@ -14,6 +21,13 @@ describe('Decoder', function () {
         const strFixed = str.replaceAll('0', 'O') // we don't use charmap, it's not in spec
         assert.deepEqual(fromBase32(strFixed), test)
         assert.deepEqual(fromBase32(strFixed, { padding: false }), test)
+      })
+    }
+
+    for (const str of subject.crock32) {
+      it('should decode crock32 ' + str, function () {
+        assert.deepEqual(fromBase32crockford(str), test)
+        assert.deepEqual(fromBase32crockford(str, { padding: false }), test)
       })
     }
 
@@ -34,6 +48,12 @@ describe('Encoder', function () {
       const test = subject.rfc4648[0]
       assert.equal(toBase32(buf), test)
       assert.equal(toBase32(buf, { padding: false }), test)
+    })
+
+    it('should encode crock32 ' + buf, function () {
+      const test = subject.crock32[0]
+      assert.equal(toBase32crockford(buf), test)
+      assert.equal(toBase32crockford(buf, { padding: false }), test)
     })
 
     it('should encode base32hex ' + buf, function () {
