@@ -1,7 +1,7 @@
 /**
  * The exact same exports as `@exodus/bytes/encoding.js` are also exported as
  * `@exodus/bytes/encoding-lite.js`, with the difference that the lite version does not load
- * multi-byte `TextDecoder` encodings by default to reduce bundle size 10x.
+ * multi-byte `TextDecoder` encodings by default to reduce bundle size ~12x.
  *
  * ```js
  * import { TextDecoder, TextEncoder } from '@exodus/bytes/encoding-lite.js'
