@@ -7,29 +7,6 @@ import * as js from './fallback/base32.js'
 
 // 8 chars per 5 bytes
 
-export const toBase32 = (arr, { padding = false } = {}) => js.toBase32(arr, 0, padding)
-export const toBase32hex = (arr, { padding = false } = {}) => js.toBase32(arr, 1, padding)
-export const toBase32crockford = (arr, { padding = false } = {}) => js.toBase32(arr, 2, padding)
-
-// By default, valid padding is accepted but not required
-export function fromBase32(str, options) {
-  if (!options) return fromBase32common(str, 0, 'both', 'uint8', null)
-  const { format = 'uint8', padding = 'both', ...rest } = options
-  return fromBase32common(str, 0, padding, format, rest)
-}
-
-export function fromBase32hex(str, options) {
-  if (!options) return fromBase32common(str, 1, 'both', 'uint8', null)
-  const { format = 'uint8', padding = 'both', ...rest } = options
-  return fromBase32common(str, 1, padding, format, rest)
-}
-
-export function fromBase32crockford(str, options) {
-  if (!options) return fromBase32common(str, 2, 'both', 'uint8', null)
-  const { format = 'uint8', padding = 'both', ...rest } = options
-  return fromBase32common(str, 2, padding, format, rest)
-}
-
 function fromBase32common(str, mode, padding, format, rest) {
   if (typeof str !== 'string') throw new TypeError(E_STRING)
   if (rest !== null) assertEmptyRest(rest)
@@ -44,3 +21,18 @@ function fromBase32common(str, mode, padding, format, rest) {
 
   return typedView(js.fromBase32(str, mode), format)
 }
+
+// By default, valid padding is accepted but not required
+const fromBase32wrap = (mode) => (str, options) => {
+  if (!options) return fromBase32common(str, mode, 'both', 'uint8', null)
+  const { format = 'uint8', padding = 'both', ...rest } = options
+  return fromBase32common(str, mode, padding, format, rest)
+}
+
+export const fromBase32 = fromBase32wrap(0)
+export const fromBase32hex = fromBase32wrap(1)
+export const fromBase32crockford = fromBase32wrap(2)
+
+export const toBase32 = (arr, { padding = false } = {}) => js.toBase32(arr, 0, padding)
+export const toBase32hex = (arr, { padding = false } = {}) => js.toBase32(arr, 1, padding)
+export const toBase32crockford = (arr, { padding = false } = {}) => js.toBase32(arr, 2, padding)
