@@ -1,1 +1,1 @@
-export * from './encoding.js'
+export * from './encoding-browser.native.js'

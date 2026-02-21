@@ -108,6 +108,9 @@ export function createSinglebyteEncoder(
  * > This is different from `new TextDecoder('iso-8859-1')` and `new TextDecoder('latin1')`, as those
  * > alias to `new TextDecoder('windows-1252')`.
  *
+ * Prefer using `isomorphicDecode()` from `@exodus/bytes/encoding.js` or `@exodus/bytes/encoding-lite.js`,
+ * which is identical to this but allows more input types.
+ *
  * @param arr - The bytes to decode
  * @returns The decoded string
  */
@@ -122,6 +125,8 @@ export function latin1toString(arr: Uint8Array): string;
  * ```js
  * const latin1fromString = createSinglebyteEncoder('iso-8859-1', { mode: 'fatal' })
  * ```
+ *
+ * Prefer using `isomorphicEncode()` from `@exodus/bytes/encoding.js` or `@exodus/bytes/encoding-lite.js`.
  *
  * @param string - The string to encode
  * @returns The encoded bytes

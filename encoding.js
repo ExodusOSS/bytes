@@ -13,4 +13,6 @@ export {
   getBOMEncoding,
   labelToName,
   legacyHookDecode,
+  isomorphicDecode,
+  isomorphicEncode,
 } from './fallback/encoding.js'

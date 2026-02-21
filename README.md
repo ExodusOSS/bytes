@@ -344,6 +344,9 @@ const latin1toString = createSinglebyteDecoder('iso-8859-1')
 > This is different from `new TextDecoder('iso-8859-1')` and `new TextDecoder('latin1')`, as those
 > alias to `new TextDecoder('windows-1252')`.
 
+Prefer using `isomorphicDecode()` from `@exodus/bytes/encoding.js` or `@exodus/bytes/encoding-lite.js`,
+which is identical to this but allows more input types.
+
 #### `latin1fromString(string)`
 
 Encode a string to `iso-8859-1` bytes.
@@ -354,6 +357,8 @@ Same as:
 ```js
 const latin1fromString = createSinglebyteEncoder('iso-8859-1', { mode: 'fatal' })
 ```
+
+Prefer using `isomorphicEncode()` from `@exodus/bytes/encoding.js` or `@exodus/bytes/encoding-lite.js`.
 
 #### `windows1252toString(arr)`
 
@@ -714,6 +719,7 @@ some [hooks](https://encoding.spec.whatwg.org/#specification-hooks).
 ```js
 import { TextDecoder, TextEncoder } from '@exodus/bytes/encoding.js'
 import { TextDecoderStream, TextEncoderStream } from '@exodus/bytes/encoding.js' // Requires Streams
+import { isomorphicDecode, isomorphicEncode } from '@exodus/bytes/encoding.js'
 
 // Hooks for standards
 import { getBOMEncoding, legacyHookDecode, labelToName, normalizeEncoding } from '@exodus/bytes/encoding.js'
@@ -748,6 +754,26 @@ A [Streams](https://streams.spec.whatwg.org/) wrapper for `TextEncoder`.
 
 Requires [Streams](https://streams.spec.whatwg.org/) to be either supported by the platform or
 [polyfilled](https://npmjs.com/package/web-streams-polyfill).
+
+#### `isomorphicDecode(input)`
+
+Implements [isomorphic decode](https://infra.spec.whatwg.org/#isomorphic-decode).
+
+Given a `TypedArray` or an `ArrayBuffer` instance `input`, creates a string of the same length
+as input byteLength, using bytes from input as codepoints.
+
+E.g. for `Uint8Array` input, this is similar to `String.fromCodePoint(...input)`.
+
+Wider `TypedArray` inputs, e.g. `Uint16Array`, are interpreted as underlying _bytes_.
+
+#### `isomorphicEncode(str)`
+
+Implements [isomorphic encode](https://infra.spec.whatwg.org/#isomorphic-encode).
+
+Given a string, creates an `Uint8Array` of the same length with the string codepoints as byte values.
+
+Accepts only [isomorphic string](https://infra.spec.whatwg.org/#isomorphic-string) input
+and asserts that, throwing on any strings containing codepoints higher than `U+00FF`.
 
 #### `labelToName(label)`
 
@@ -822,6 +848,7 @@ multi-byte `TextDecoder` encodings by default to reduce bundle size ~12x.
 ```js
 import { TextDecoder, TextEncoder } from '@exodus/bytes/encoding-lite.js'
 import { TextDecoderStream, TextEncoderStream } from '@exodus/bytes/encoding-lite.js' // Requires Streams
+import { isomorphicDecode, isomorphicEncode } from '@exodus/bytes/encoding-lite.js'
 
 // Hooks for standards
 import { getBOMEncoding, legacyHookDecode, labelToName, normalizeEncoding } from '@exodus/bytes/encoding-lite.js'
@@ -876,6 +903,8 @@ true
 
 Same as `@exodus/bytes/encoding.js`, but in browsers instead of polyfilling just uses whatever the
 browser provides, drastically reducing the bundle size (to less than 2 KiB gzipped).
+
+Does not provide `isomorphicDecode` and `isomorphicEncode` exports.
 
 ```js
 import { TextDecoder, TextEncoder } from '@exodus/bytes/encoding-browser.js'
