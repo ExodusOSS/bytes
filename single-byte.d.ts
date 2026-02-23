@@ -111,6 +111,7 @@ export function createSinglebyteEncoder(
  * Prefer using `isomorphicDecode()` from `@exodus/bytes/encoding.js` or `@exodus/bytes/encoding-lite.js`,
  * which is identical to this but allows more input types.
  *
+ * @deprecated Use `import { isomorphicDecode } from '@exodus/bytes/encoding-lite.js'`
  * @param arr - The bytes to decode
  * @returns The decoded string
  */
@@ -128,6 +129,7 @@ export function latin1toString(arr: Uint8Array): string;
  *
  * Prefer using `isomorphicEncode()` from `@exodus/bytes/encoding.js` or `@exodus/bytes/encoding-lite.js`.
  *
+ * @deprecated Use `import { isomorphicEncode } from '@exodus/bytes/encoding-lite.js'`
  * @param string - The string to encode
  * @returns The encoded bytes
  */
