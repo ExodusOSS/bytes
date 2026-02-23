@@ -39,7 +39,7 @@ export function createSinglebyteDecoder(encoding, loose = false) {
   return (arr) => {
     assertU8(arr)
     if (arr.byteLength === 0) return ''
-    if (isLatin1 || isAscii(arr)) return toBuf(arr).latin1Slice() // .latin1Slice is faster than .asciiSlice
+    if (isLatin1 || isAscii(arr)) return toBuf(arr).latin1Slice(0, arr.byteLength) // .latin1Slice is faster than .asciiSlice
 
     // Node.js TextDecoder is broken, so we can't use it. It's also slow anyway
 
@@ -87,19 +87,21 @@ function encode(s, m) {
   return new Uint8Array(x)
 }
 
+export function latin1fromString(s) {
+  if (typeof s !== 'string') throw new TypeError(E_STRING)
+  if (NON_LATIN.test(s)) throw new TypeError(E_STRICT)
+  const b = Buffer.from(s, 'latin1')
+  return new Uint8Array(b.buffer, b.byteOffset, b.byteLength)
+}
+
 export function createSinglebyteEncoder(encoding, { mode = 'fatal' } = {}) {
   // TODO: replacement, truncate (replacement will need varying length)
   if (mode !== 'fatal') throw new Error('Unsupported mode')
+  if (encoding === 'iso-8859-1') return latin1fromString
   const m = encodeMap(encoding) // asserts
-  const isLatin1 = encoding === 'iso-8859-1'
 
   return (s) => {
     if (typeof s !== 'string') throw new TypeError(E_STRING)
-    if (isLatin1) {
-      if (NON_LATIN.test(s)) throw new TypeError(E_STRICT)
-      const b = Buffer.from(s, 'latin1')
-      return new Uint8Array(b.buffer, b.byteOffset, b.byteLength)
-    }
 
     // Instead of an ASCII regex check, encode optimistically - this is faster
     // Check for 8-bit string with a regex though, this is instant on 8-bit strings so doesn't hurt the ASCII fast path
@@ -115,6 +117,5 @@ export function createSinglebyteEncoder(encoding, { mode = 'fatal' } = {}) {
 }
 
 export const latin1toString = /* @__PURE__ */ createSinglebyteDecoder('iso-8859-1')
-export const latin1fromString = /* @__PURE__ */ createSinglebyteEncoder('iso-8859-1')
 export const windows1252toString = /* @__PURE__ */ createSinglebyteDecoder('windows-1252')
 export const windows1252fromString = /* @__PURE__ */ createSinglebyteEncoder('windows-1252')
