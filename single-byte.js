@@ -90,30 +90,32 @@ function encode(s, m) {
 // fromBase64+btoa path is faster on everything where fromBase64 is fast
 const useLatin1btoa = Uint8Array.fromBase64 && btoa
 
+export function latin1fromString(s) {
+  if (typeof s !== 'string') throw new TypeError(E_STRING)
+  // max limit is to not produce base64 strings that are too long
+  if (useLatin1btoa && s.length >= 1024 && s.length < 1e8) {
+    try {
+      return Uint8Array.fromBase64(btoa(s)) // fails on non-latin1
+    } catch {
+      throw new TypeError(E_STRICT)
+    }
+  }
+
+  if (NON_LATIN.test(s)) throw new TypeError(E_STRICT)
+  return encodeLatin1(s)
+}
+
 export function createSinglebyteEncoder(encoding, { mode = 'fatal' } = {}) {
   // TODO: replacement, truncate (replacement will need varying length)
   if (mode !== 'fatal') throw new Error('Unsupported mode')
+  if (encoding === 'iso-8859-1') return latin1fromString
   const m = encodeMap(encoding) // asserts
-  const isLatin1 = encoding === 'iso-8859-1'
 
   // No single-byte encoder produces surrogate pairs, so any surrogate is invalid
   // This needs special treatment only to decide how many replacement chars to output, one or two
   // Not much use in running isWellFormed, most likely cause of error is unmapped chars, not surrogate pairs
   return (s) => {
     if (typeof s !== 'string') throw new TypeError(E_STRING)
-    if (isLatin1) {
-      // max limit is to not produce base64 strings that are too long
-      if (useLatin1btoa && s.length >= 1024 && s.length < 1e8) {
-        try {
-          return Uint8Array.fromBase64(btoa(s)) // fails on non-latin1
-        } catch {
-          throw new TypeError(E_STRICT)
-        }
-      }
-
-      if (NON_LATIN.test(s)) throw new TypeError(E_STRICT)
-      return encodeLatin1(s)
-    }
 
     // Instead of an ASCII regex check, encode optimistically - this is faster
     // Check for 8-bit string with a regex though, this is instant on 8-bit strings so doesn't hurt the ASCII fast path
@@ -130,6 +132,5 @@ export function createSinglebyteEncoder(encoding, { mode = 'fatal' } = {}) {
 }
 
 export const latin1toString = /* @__PURE__ */ createSinglebyteDecoder('iso-8859-1')
-export const latin1fromString = /* @__PURE__ */ createSinglebyteEncoder('iso-8859-1')
 export const windows1252toString = /* @__PURE__ */ createSinglebyteDecoder('windows-1252')
 export const windows1252fromString = /* @__PURE__ */ createSinglebyteEncoder('windows-1252')
