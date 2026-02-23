@@ -2,6 +2,8 @@
  * Same as `@exodus/bytes/encoding.js`, but in browsers instead of polyfilling just uses whatever the
  * browser provides, drastically reducing the bundle size (to less than 2 KiB gzipped).
  *
+ * Does not provide `isomorphicDecode` and `isomorphicEncode` exports.
+ *
  * ```js
  * import { TextDecoder, TextEncoder } from '@exodus/bytes/encoding-browser.js'
  * import { TextDecoderStream, TextEncoderStream } from '@exodus/bytes/encoding-browser.js' // Requires Streams
@@ -21,4 +23,13 @@
  * @module @exodus/bytes/encoding-browser.js
  */
 
-export * from './encoding.js'
+export {
+  TextDecoder,
+  TextEncoder,
+  TextDecoderStream,
+  TextEncoderStream,
+  normalizeEncoding,
+  getBOMEncoding,
+  labelToName,
+  legacyHookDecode,
+} from './encoding.js'

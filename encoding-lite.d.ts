@@ -6,6 +6,7 @@
  * ```js
  * import { TextDecoder, TextEncoder } from '@exodus/bytes/encoding-lite.js'
  * import { TextDecoderStream, TextEncoderStream } from '@exodus/bytes/encoding-lite.js' // Requires Streams
+ * import { isomorphicDecode, isomorphicEncode } from '@exodus/bytes/encoding-lite.js'
  *
  * // Hooks for standards
  * import { getBOMEncoding, legacyHookDecode, labelToName, normalizeEncoding } from '@exodus/bytes/encoding-lite.js'

@@ -3,7 +3,11 @@
 
 import { utf16toString, utf16toStringLoose } from '@exodus/bytes/utf16.js'
 import { utf8fromStringLoose, utf8toString, utf8toStringLoose } from '@exodus/bytes/utf8.js'
-import { createSinglebyteDecoder } from '@exodus/bytes/single-byte.js'
+import {
+  createSinglebyteDecoder,
+  latin1toString,
+  latin1fromString,
+} from '@exodus/bytes/single-byte.js'
 import labels from './encoding.labels.js'
 import { fromSource, getBOMEncoding } from './encoding.api.js'
 import { unfinishedBytes, mergePrefix } from './encoding.util.js'
@@ -356,4 +360,14 @@ export function legacyHookDecode(input, fallbackEncoding = 'utf-8') {
   if (enc === 'replacement') return input.byteLength > 0 ? replacementChar : ''
 
   return createSinglebyteDecoder(enc, true)(u8)
+}
+
+export function isomorphicDecode(input) {
+  return latin1toString(fromSource(input))
+}
+
+export function isomorphicEncode(str) {
+  const res = latin1fromString(str)
+  // match new Uint8Array, which is non-pooled
+  return res.byteOffset === 0 && res.length === res.buffer.byteLength ? res : res.slice(0)
 }

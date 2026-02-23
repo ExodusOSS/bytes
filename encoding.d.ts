@@ -9,6 +9,7 @@
  * ```js
  * import { TextDecoder, TextEncoder } from '@exodus/bytes/encoding.js'
  * import { TextDecoderStream, TextEncoderStream } from '@exodus/bytes/encoding.js' // Requires Streams
+ * import { isomorphicDecode, isomorphicEncode } from '@exodus/bytes/encoding.js'
  *
  * // Hooks for standards
  * import { getBOMEncoding, legacyHookDecode, labelToName, normalizeEncoding } from '@exodus/bytes/encoding.js'
@@ -89,6 +90,34 @@ export function legacyHookDecode(
   input: ArrayBufferLike | ArrayBufferView,
   fallbackEncoding?: string
 ): string;
+
+/**
+ * Implements [isomorphic decode](https://infra.spec.whatwg.org/#isomorphic-decode).
+ *
+ * Given a `TypedArray` or an `ArrayBuffer` instance `input`, creates a string of the same length
+ * as input byteLength, using bytes from input as codepoints.
+ *
+ * E.g. for `Uint8Array` input, this is similar to `String.fromCodePoint(...input)`.
+ *
+ * Wider `TypedArray` inputs, e.g. `Uint16Array`, are interpreted as underlying _bytes_.
+ *
+ * @param input - The bytes to decode
+ * @returns The decoded string
+ */
+export function isomorphicDecode(input: ArrayBufferLike | ArrayBufferView): string;
+
+/**
+ * Implements [isomorphic encode](https://infra.spec.whatwg.org/#isomorphic-encode).
+ *
+ * Given a string, creates an `Uint8Array` of the same length with the string codepoints as byte values.
+ *
+ * Accepts only [isomorphic string](https://infra.spec.whatwg.org/#isomorphic-string) input
+ * and asserts that, throwing on any strings containing codepoints higher than `U+00FF`.
+ *
+ * @param input - The bytes to decode
+ * @returns An Uint8Array containing the input bytes.
+ */
+export function isomorphicEncode(str: string): Uint8Array;
 
 /**
  * Implements [get an encoding from a string `label`](https://encoding.spec.whatwg.org/#concept-encoding-get).
