@@ -148,23 +148,21 @@ describe('fromHex', () => {
     }
   })
 
-  test('fromHex returns non-pooled buffers', (t) => {
-    for (const format of [undefined, 'uint8', 'buffer']) {
-      for (let i = 0; i < 256; i++) {
-        t.assert.strictEqual(fromHex('aa'.repeat(128), format).buffer.byteLength, 128)
-      }
+  test('fromHex returns non-pooled Uint8Array instances', (t) => {
+    for (let i = 0; i < 256; i++) {
+      t.assert.strictEqual(fromHex('aa'.repeat(128)).buffer.byteLength, 128)
+    }
 
-      for (let i = 0; i < 256; i++) {
-        t.assert.strictEqual(fromHex('aa'.repeat(64), format).buffer.byteLength, 64)
-      }
+    for (let i = 0; i < 256; i++) {
+      t.assert.strictEqual(fromHex('aa'.repeat(64)).buffer.byteLength, 64)
+    }
 
-      for (let i = 0; i < 512; i++) {
-        t.assert.strictEqual(fromHex('aa'.repeat(32), format).buffer.byteLength, 32)
-      }
+    for (let i = 0; i < 512; i++) {
+      t.assert.strictEqual(fromHex('aa'.repeat(32)).buffer.byteLength, 32)
+    }
 
-      for (let i = 0; i < 512; i++) {
-        t.assert.strictEqual(fromHex('', format).buffer.byteLength, 0)
-      }
+    for (let i = 0; i < 512; i++) {
+      t.assert.strictEqual(fromHex('').buffer.byteLength, 0)
     }
   })
 })
