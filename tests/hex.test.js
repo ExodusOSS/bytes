@@ -147,4 +147,24 @@ describe('fromHex', () => {
       t.assert.deepStrictEqual(lib.fromHex(hex, 'buffer'), buffer)
     }
   })
+
+  test('fromHex returns non-pooled buffers', (t) => {
+    for (const format of [undefined, 'uint8', 'buffer']) {
+      for (let i = 0; i < 256; i++) {
+        t.assert.strictEqual(fromHex('aa'.repeat(128), format).buffer.byteLength, 128)
+      }
+
+      for (let i = 0; i < 256; i++) {
+        t.assert.strictEqual(fromHex('aa'.repeat(64), format).buffer.byteLength, 64)
+      }
+
+      for (let i = 0; i < 512; i++) {
+        t.assert.strictEqual(fromHex('aa'.repeat(32), format).buffer.byteLength, 32)
+      }
+
+      for (let i = 0; i < 512; i++) {
+        t.assert.strictEqual(fromHex('', format).buffer.byteLength, 0)
+      }
+    }
+  })
 })
