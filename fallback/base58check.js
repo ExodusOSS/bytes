@@ -10,7 +10,7 @@ function encodeWithChecksum(arr, checksum) {
   // arr type in already validated in input
   const res = new Uint8Array(arr.length + 4)
   res.set(arr, 0)
-  res.set(checksum.subarray(0, 4), arr.length)
+  res.set(checksum.slice(0, 4), arr.length)
   return toBase58(res)
 }
 
@@ -18,7 +18,7 @@ function decodeWithChecksum(str) {
   const arr = fromBase58(str) // checks input
   const payloadSize = arr.length - 4
   if (payloadSize < 0) throw new Error(E_CHECKSUM)
-  return [arr.subarray(0, payloadSize), arr.subarray(payloadSize)]
+  return [arr.slice(0, payloadSize), arr.slice(payloadSize)]
 }
 
 function assertChecksum(c, r) {

@@ -1,4 +1,4 @@
-import { fromBase58checkSync, toBase58checkSync } from '@exodus/bytes/base58check.js'
+import { fromBase58checkSync as fromBase58c, toBase58checkSync } from '@exodus/bytes/base58check.js'
 import { randomValues } from '@exodus/crypto/randomBytes'
 import { test } from 'node:test'
 import bs58check from 'bs58check'
@@ -7,6 +7,14 @@ const SharedArrayBuffer = globalThis.SharedArrayBuffer ?? ArrayBuffer
 const toShared = (u8) => {
   const res = new Uint8Array(new SharedArrayBuffer(u8.length))
   res.set(u8)
+  return res
+}
+
+const tracked = []
+
+function fromBase58checkSync(...args) {
+  const res = fromBase58c(...args)
+  tracked.push(res)
   return res
 }
 
@@ -89,5 +97,14 @@ test('sizes roundtrip, random data', (t) => {
   for (let size = 0; size < seed.length; size++) {
     const arr = seed.subarray(seed.length - size)
     t.assert.deepStrictEqual(fromBase58checkSync(toBase58checkSync(arr)), arr, `random x${size}`)
+  }
+})
+
+test('fromBase58check returns non-pooled Uint8Array instances', (t) => {
+  t.assert.ok(tracked.length > 1000)
+
+  for (const u8 of tracked) {
+    if (Buffer.isBuffer(u8)) continue
+    t.assert.strictEqual(u8.byteLength, u8.buffer.byteLength)
   }
 })
