@@ -5,10 +5,13 @@ import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import * as wif from 'wif'
 
+const tracked = []
+
 async function fromWifString(str) {
   const a = await lib.fromWifString(str)
   const b = lib.fromWifStringSync(str)
   assert.deepStrictEqual(a, b)
+  tracked.push(a.privateKey, b.privateKey)
   return a
 }
 
@@ -95,5 +98,13 @@ test('invalid length throws before version check', async (t) => {
     t.assert.throws(() => lib.fromWifStringSync(encoded, wrongVersion), {
       message: 'Invalid WIF length',
     })
+  }
+})
+
+test('fromWifString returns non-pooled Uint8Array instances', (t) => {
+  t.assert.ok(tracked.length > 1000)
+
+  for (const u8 of tracked) {
+    t.assert.strictEqual(u8.byteLength, u8.buffer.byteLength)
   }
 })
