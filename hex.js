@@ -1,5 +1,4 @@
-import { typedView } from './array.js'
-import { assertU8 } from './fallback/_utils.js'
+import { assertU8, fromUint8 } from './fallback/_utils.js'
 import * as js from './fallback/hex.js'
 
 const { toHex: webHex } = Uint8Array.prototype // Modern engines have this
@@ -13,5 +12,5 @@ export function toHex(arr) {
 
 // Unlike Buffer.from(), throws on invalid input
 export const fromHex = Uint8Array.fromHex
-  ? (str, format = 'uint8') => typedView(Uint8Array.fromHex(str), format)
-  : (str, format = 'uint8') => typedView(js.fromHex(str), format)
+  ? (str, format = 'uint8') => fromUint8(Uint8Array.fromHex(str), format)
+  : (str, format = 'uint8') => fromUint8(js.fromHex(str), format)

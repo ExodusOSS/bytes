@@ -1,6 +1,5 @@
 import { assertEmptyRest } from './assert.js'
-import { typedView } from './array.js'
-import { E_STRING } from './fallback/_utils.js'
+import { fromUint8, E_STRING } from './fallback/_utils.js'
 import * as js from './fallback/base32.js'
 
 // See https://datatracker.ietf.org/doc/html/rfc4648
@@ -19,7 +18,7 @@ function fromBase32common(str, mode, padding, format, rest) {
     throw new TypeError('Invalid padding option')
   }
 
-  return typedView(js.fromBase32(str, mode), format)
+  return fromUint8(js.fromBase32(str, mode), format)
 }
 
 // By default, valid padding is accepted but not required

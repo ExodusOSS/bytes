@@ -18,3 +18,16 @@ export const toBuf = (x) =>
 
 export const E_STRING = 'Input is not a string'
 export const E_STRICT_UNICODE = 'Input is not well-formed Unicode'
+
+export function fromUint8(arr, format) {
+  switch (format) {
+    case 'uint8':
+      if (arr.constructor !== Uint8Array) throw new Error('Unexpected')
+      return arr
+    case 'buffer':
+      if (arr.length <= 64) return Buffer.from(arr)
+      return Buffer.from(arr.buffer, arr.byteOffset, arr.byteLength)
+  }
+
+  throw new TypeError('Unexpected format')
+}

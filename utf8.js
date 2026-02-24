@@ -1,5 +1,4 @@
-import { typedView } from './array.js'
-import { assertU8, E_STRING, E_STRICT_UNICODE } from './fallback/_utils.js'
+import { assertU8, fromUint8, E_STRING, E_STRICT_UNICODE } from './fallback/_utils.js'
 import { nativeDecoder, nativeEncoder } from './fallback/platform.js'
 import * as js from './fallback/utf8.auto.js'
 
@@ -60,7 +59,7 @@ function decode(arr, loose = false) {
   return js.decodeFast(arr, loose)
 }
 
-export const utf8fromString = (str, format = 'uint8') => typedView(encode(str, false), format)
-export const utf8fromStringLoose = (str, format = 'uint8') => typedView(encode(str, true), format)
+export const utf8fromString = (str, format = 'uint8') => fromUint8(encode(str, false), format)
+export const utf8fromStringLoose = (str, format = 'uint8') => fromUint8(encode(str, true), format)
 export const utf8toString = (arr) => decode(arr, false)
 export const utf8toStringLoose = (arr) => decode(arr, true)
