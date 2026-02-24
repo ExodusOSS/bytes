@@ -22,6 +22,13 @@ export const fromHex = Uint8Array.fromHex
       if (typeof str !== 'string') throw new TypeError(E_STRING)
       if (str.length % 2 !== 0) throw new SyntaxError(E_HEX)
       if (denoBug && /[^\dA-Fa-f]/.test(str)) throw new SyntaxError(E_HEX)
+
+      if (str.length <= 128) {
+        const u8 = new Uint8Array(Buffer.from(str, 'hex')) // just copy to not access .buffer
+        if (u8.length * 2 !== str.length) throw new SyntaxError(E_HEX)
+        return typedView(u8, format)
+      }
+
       const length = str.length / 2
       const u8 = new Uint8Array(length)
       const count = Buffer.from(u8.buffer, u8.byteOffset, u8.byteLength).hexWrite(str, 0, length)
