@@ -1,4 +1,9 @@
-import { fromBase58, toBase58, fromBase58xrp, toBase58xrp } from '@exodus/bytes/base58.js'
+import {
+  fromBase58 as fromBase58raw,
+  toBase58,
+  fromBase58xrp,
+  toBase58xrp,
+} from '@exodus/bytes/base58.js'
 import { fromHex } from '@exodus/bytes/hex.js'
 import { randomValues } from '@exodus/crypto/randomBytes'
 import { hashSync } from '@exodus/crypto/hash' // eslint-disable-line @exodus/import/no-deprecated
@@ -10,6 +15,14 @@ const SharedArrayBuffer = globalThis.SharedArrayBuffer ?? ArrayBuffer
 const toShared = (u8) => {
   const res = new Uint8Array(new SharedArrayBuffer(u8.length))
   res.set(u8)
+  return res
+}
+
+const tracked = []
+
+function fromBase58(...args) {
+  const res = fromBase58raw(...args)
+  tracked.push(res)
   return res
 }
 
@@ -115,16 +128,24 @@ test('toBase58 matches bs58, maximum char repeated', (t) => {
   }
 })
 
-test('sizes roundtrip, static data', (t) => {
+test('sizes roundtrip, static data + types', (t) => {
   for (let size = 0; size < 260; size++) {
     const zeros = new Uint8Array(size)
-    t.assert.deepStrictEqual(fromBase58(toBase58(zeros)), zeros, `[0] x${size}`)
+    const zerosBase58 = toBase58(zeros)
+    t.assert.deepStrictEqual(fromBase58(zerosBase58), zeros, `[0] x${size}`)
+    t.assert.deepStrictEqual(fromBase58(zerosBase58, 'buffer'), Buffer.from(zeros), `[0] x${size}`)
     const ones = new Uint8Array(size).fill(1)
-    t.assert.deepStrictEqual(fromBase58(toBase58(ones)), ones, `[1] x${size}`)
+    const onesBase58 = toBase58(ones)
+    t.assert.deepStrictEqual(fromBase58(onesBase58), ones, `[1] x${size}`)
+    t.assert.deepStrictEqual(fromBase58(onesBase58, 'buffer'), Buffer.from(ones), `[0] x${size}`)
     const mid = new Uint8Array(size).fill(42)
-    t.assert.deepStrictEqual(fromBase58(toBase58(mid)), mid, `[42] x${size}`)
+    const midBase58 = toBase58(mid)
+    t.assert.deepStrictEqual(fromBase58(midBase58), mid, `[42] x${size}`)
+    t.assert.deepStrictEqual(fromBase58(midBase58, 'buffer'), Buffer.from(mid), `[0] x${size}`)
     const max = new Uint8Array(size).fill(255)
-    t.assert.deepStrictEqual(fromBase58(toBase58(max)), max, `[255] x${size}`)
+    const maxBase58 = toBase58(max)
+    t.assert.deepStrictEqual(fromBase58(maxBase58), max, `[255] x${size}`)
+    t.assert.deepStrictEqual(fromBase58(maxBase58, 'buffer'), Buffer.from(max), `[0] x${size}`)
   }
 })
 
@@ -163,5 +184,14 @@ test('sizes roundtrip, random data', (t) => {
   for (let size = 0; size < seed.length; size++) {
     const arr = seed.subarray(seed.length - size)
     t.assert.deepStrictEqual(fromBase58(toBase58(arr)), arr, `random x${size}`)
+  }
+})
+
+test('fromBase58 returns non-pooled Uint8Array instances', (t) => {
+  t.assert.ok(tracked.length > 1000)
+
+  for (const u8 of tracked) {
+    if (Buffer.isBuffer(u8)) continue
+    t.assert.strictEqual(u8.byteLength, u8.buffer.byteLength)
   }
 })
