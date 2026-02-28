@@ -90,8 +90,9 @@ function encode(s, m) {
 export function latin1fromString(s) {
   if (typeof s !== 'string') throw new TypeError(E_STRING)
   if (NON_LATIN.test(s)) throw new TypeError(E_STRICT)
-  const b = Buffer.from(s, 'latin1')
-  return new Uint8Array(b.buffer, b.byteOffset, b.byteLength)
+  const ab = new ArrayBuffer(s.length)
+  Buffer.from(ab).latin1Write(s)
+  return new Uint8Array(ab)
 }
 
 export function createSinglebyteEncoder(encoding, { mode = 'fatal' } = {}) {

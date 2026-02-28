@@ -367,7 +367,5 @@ export function isomorphicDecode(input) {
 }
 
 export function isomorphicEncode(str) {
-  const res = latin1fromString(str)
-  // match new Uint8Array, which is non-pooled
-  return res.byteOffset === 0 && res.length === res.buffer.byteLength ? res : res.slice(0)
+  return latin1fromString(str)
 }
