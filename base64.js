@@ -1,6 +1,6 @@
 import { assertEmptyRest } from './assert.js'
 import { typedView } from './array.js'
-import { assertU8, E_STRING } from './fallback/_utils.js'
+import { assertU8, fromUint8, E_STRING } from './fallback/_utils.js'
 import { isHermes } from './fallback/platform.js'
 import { decodeLatin1, encodeLatin1 } from './fallback/latin1.js'
 import * as js from './fallback/base64.js'
@@ -96,7 +96,7 @@ function fromBase64common(str, isBase64url, padding, format, rest) {
     throw new TypeError('Invalid padding option')
   }
 
-  return typedView(fromBase64impl(str, isBase64url, padding), format)
+  return fromBase64impl(str, isBase64url, padding, format)
 }
 
 // ASCII whitespace is U+0009 TAB, U+000A LF, U+000C FF, U+000D CR, or U+0020 SPACE
@@ -114,7 +114,7 @@ function noWhitespaceSeen(str, arr) {
 let fromBase64impl
 if (Uint8Array.fromBase64) {
   // NOTICE: this is actually slower than our JS impl in older JavaScriptCore and (slightly) in SpiderMonkey, but faster on V8 and new JavaScriptCore
-  fromBase64impl = (str, isBase64url, padding) => {
+  fromBase64impl = (str, isBase64url, padding, format) => {
     const alphabet = isBase64url ? 'base64url' : 'base64'
 
     let arr
@@ -136,20 +136,20 @@ if (Uint8Array.fromBase64) {
     // We don't allow whitespace in input, but that can be rechecked based on output length
     // All other chars are checked natively
     if (!noWhitespaceSeen(str, arr)) throw new SyntaxError(E_CHAR)
-    return arr
+    return fromUint8(arr, format)
   }
 } else if (haveNativeBuffer) {
-  fromBase64impl = (str, isBase64url, padding) => {
+  fromBase64impl = (str, isBase64url, padding, format) => {
     const arr = Buffer.from(str, 'base64')
     // Rechecking by re-encoding is cheaper than regexes on Node.js
     const got = isBase64url ? maybeUnpad(str, padding === false) : maybePad(str, padding !== true)
     const valid = isBase64url ? arr.base64urlSlice(0, arr.length) : arr.base64Slice(0, arr.length)
     if (got !== valid) throw new SyntaxError(E_PADDING)
-    return arr // fully checked
+    return typedView(arr, format) // fully checked
   }
 } else if (shouldUseAtob) {
   // atob is faster than manual parsing on Hermes
-  fromBase64impl = (str, isBase64url, padding) => {
+  fromBase64impl = (str, isBase64url, padding, format) => {
     let arr
     if (isBase64url) {
       if (/[\t\n\f\r +/]/.test(str)) throw new SyntaxError(E_CHAR) // atob verifies other invalid input
@@ -171,8 +171,9 @@ if (Uint8Array.fromBase64) {
       if (expected !== end) throw new SyntaxError(E_LAST)
     }
 
-    return arr
+    return fromUint8(arr, format)
   }
 } else {
-  fromBase64impl = (str, isBase64url, padding) => js.fromBase64(str, isBase64url) // validated in js
+  fromBase64impl = (str, isBase64url, padding, format) =>
+    fromUint8(js.fromBase64(str, isBase64url), format) // validated in js
 }

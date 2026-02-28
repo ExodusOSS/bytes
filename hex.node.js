@@ -1,5 +1,5 @@
 import { typedView } from './array.js'
-import { assertU8, E_STRING } from './fallback/_utils.js'
+import { assertU8, fromUint8, E_STRING } from './fallback/_utils.js'
 import { E_HEX } from './fallback/hex.js'
 
 if (Buffer.TYPED_ARRAY_SUPPORT) throw new Error('Unexpected Buffer polyfill')
@@ -17,7 +17,7 @@ export function toHex(arr) {
 
 // Unlike Buffer.from(), throws on invalid input
 export const fromHex = Uint8Array.fromHex
-  ? (str, format = 'uint8') => typedView(Uint8Array.fromHex(str), format)
+  ? (str, format = 'uint8') => fromUint8(Uint8Array.fromHex(str), format)
   : (str, format = 'uint8') => {
       if (typeof str !== 'string') throw new TypeError(E_STRING)
       if (str.length % 2 !== 0) throw new SyntaxError(E_HEX)
