@@ -28,7 +28,7 @@ importers:
         version: 1.0.0(prettier@3.6.2)
       '@exodus/test':
         specifier: 1.0.0-rc.115
-        version: 1.0.0-rc.115(@noble/hashes@2.0.1)(electron@39.4.0)(workerd@1.20260214.0)
+        version: 1.0.0-rc.115(@noble/hashes@2.0.1)(electron@39.4.0)(workerd@1.20260301.1)
       '@hexagon/base64':
         specifier: ^2.0.4
         version: 2.0.4
@@ -141,8 +141,8 @@ importers:
         specifier: ^5.0.0
         version: 5.0.0
       workerd:
-        specifier: ^1.20260214.0
-        version: 1.20260214.0
+        specifier: ^1.20260301.1
+        version: 1.20260301.1
 
 packages:
 
@@ -254,32 +254,32 @@ packages:
   '@chalker/queue@1.0.1':
     resolution: {integrity: sha512-j8iu20wUUgTnW3V5r5UKuUab3hT2odAGBlB7G2qxu+BFw9GFO8se2B/Su9SAtLj/CcKZzMFrwHREIG9hDIFo2Q==, tarball: https://registry.npmjs.org/@chalker/queue/-/queue-1.0.1.tgz}
 
-  '@cloudflare/workerd-darwin-64@1.20260214.0':
-    resolution: {integrity: sha512-XOh1yDGqMR5GOKKIIfvWHipCVb+ujSWILqiDWyy+C9MiR7PB9D9nlJsrtPyh3QeUT673FHhOF2AUkTMHBzD2XQ==, tarball: https://registry.npmjs.org/@cloudflare/workerd-darwin-64/-/workerd-darwin-64-1.20260214.0.tgz}
+  '@cloudflare/workerd-darwin-64@1.20260301.1':
+    resolution: {integrity: sha512-+kJvwociLrvy1JV9BAvoSVsMEIYD982CpFmo/yMEvBwxDIjltYsLTE8DLi0mCkGsQ8Ygidv2fD9wavzXeiY7OQ==, tarball: https://registry.npmjs.org/@cloudflare/workerd-darwin-64/-/workerd-darwin-64-1.20260301.1.tgz}
     engines: {node: '>=16'}
     cpu: [x64]
     os: [darwin]
 
-  '@cloudflare/workerd-darwin-arm64@1.20260214.0':
-    resolution: {integrity: sha512-HIA7FyOuZk+p1pBrJl4PW9LrK85kIZ7vTqBezQsK8Q18+lRKAL/XLjPBLLOSIAZmUL0K5EIH6BUQFZ+NvvzTCQ==, tarball: https://registry.npmjs.org/@cloudflare/workerd-darwin-arm64/-/workerd-darwin-arm64-1.20260214.0.tgz}
+  '@cloudflare/workerd-darwin-arm64@1.20260301.1':
+    resolution: {integrity: sha512-PPIetY3e67YBr9O4UhILK8nbm5TqUDl14qx4rwFNrRSBOvlzuczzbd4BqgpAtbGVFxKp1PWpjAnBvGU/OI/tLQ==, tarball: https://registry.npmjs.org/@cloudflare/workerd-darwin-arm64/-/workerd-darwin-arm64-1.20260301.1.tgz}
     engines: {node: '>=16'}
     cpu: [arm64]
     os: [darwin]
 
-  '@cloudflare/workerd-linux-64@1.20260214.0':
-    resolution: {integrity: sha512-vtijwdxRSrOwWD1Pw/2zfqOYpbPrPUZEbrIly6g9gD8KnFV8wXQpJSOECaRfcqF2XlTsz/DsnugJdg9+rxfzsA==, tarball: https://registry.npmjs.org/@cloudflare/workerd-linux-64/-/workerd-linux-64-1.20260214.0.tgz}
+  '@cloudflare/workerd-linux-64@1.20260301.1':
+    resolution: {integrity: sha512-Gu5vaVTZuYl3cHa+u5CDzSVDBvSkfNyuAHi6Mdfut7TTUdcb3V5CIcR/mXRSyMXzEy9YxEWIfdKMxOMBjupvYQ==, tarball: https://registry.npmjs.org/@cloudflare/workerd-linux-64/-/workerd-linux-64-1.20260301.1.tgz}
     engines: {node: '>=16'}
     cpu: [x64]
     os: [linux]
 
-  '@cloudflare/workerd-linux-arm64@1.20260214.0':
-    resolution: {integrity: sha512-uegxV508w+qExLal4JEEkhZiAHrdD623faINNShDHcrPCAKF/kDSTUUeQ+LUrzzg8UjVSYqQAod1S8X+1r5OZg==, tarball: https://registry.npmjs.org/@cloudflare/workerd-linux-arm64/-/workerd-linux-arm64-1.20260214.0.tgz}
+  '@cloudflare/workerd-linux-arm64@1.20260301.1':
+    resolution: {integrity: sha512-igL1pkyCXW6GiGpjdOAvqMi87UW0LMc/+yIQe/CSzuZJm5GzXoAMrwVTkCFnikk6JVGELrM5x0tGYlxa0sk5Iw==, tarball: https://registry.npmjs.org/@cloudflare/workerd-linux-arm64/-/workerd-linux-arm64-1.20260301.1.tgz}
     engines: {node: '>=16'}
     cpu: [arm64]
     os: [linux]
 
-  '@cloudflare/workerd-windows-64@1.20260214.0':
-    resolution: {integrity: sha512-1jF1sh11WML+RBhrK40US4OEiL7vMr83b+QGBgLXsXSk6o5jerv0KcvJ7pyPv9sgR/16zFVyZaSBZy7q5tFvqQ==, tarball: https://registry.npmjs.org/@cloudflare/workerd-windows-64/-/workerd-windows-64-1.20260214.0.tgz}
+  '@cloudflare/workerd-windows-64@1.20260301.1':
+    resolution: {integrity: sha512-Q0wMJ4kcujXILwQKQFc1jaYamVsNvjuECzvRrTI8OxGFMx2yq9aOsswViE4X1gaS2YQQ5u0JGwuGi5WdT1Lt7A==, tarball: https://registry.npmjs.org/@cloudflare/workerd-windows-64/-/workerd-windows-64-1.20260301.1.tgz}
     engines: {node: '>=16'}
     cpu: [x64]
     os: [win32]
@@ -986,8 +986,8 @@ packages:
     resolution: {integrity: sha512-k9xFKplee6KIio3IDbwj+uaCLpqzOwakOgmqzPezM0sFJlFKcg30vk2wOiAJtkTSfx0SSQDSe8q+mWA/fSH5Zg==, tarball: https://registry.npmjs.org/baseline-browser-mapping/-/baseline-browser-mapping-2.9.7.tgz}
     hasBin: true
 
-  basic-ftp@5.0.5:
-    resolution: {integrity: sha512-4Bcg1P8xhUuqcii/S0Z9wiHIrQVPMermM1any+MX5GeGD7faD3/msQUDGLol9wOcz4/jbg/WJnGqoJF6LiBdtg==, tarball: https://registry.npmjs.org/basic-ftp/-/basic-ftp-5.0.5.tgz}
+  basic-ftp@5.2.0:
+    resolution: {integrity: sha512-VoMINM2rqJwJgfdHq6RiUudKt2BV+FY5ZFezP/ypmwayk68+NzzAQy4XXLlqsGD4MCzq3DrmNFD/uUmBJuGoXw==, tarball: https://registry.npmjs.org/basic-ftp/-/basic-ftp-5.2.0.tgz}
     engines: {node: '>=10.0.0'}
 
   bech32@2.0.0:
@@ -2278,11 +2278,11 @@ packages:
     resolution: {integrity: sha512-I9jwMn07Sy/IwOj3zVkVik2JTvgpaykDZEigL6Rx6N9LbMywwUSMtxET+7lVoDLLd3O3IXwJwvuuns8UB/HeAg==, tarball: https://registry.npmjs.org/min-indent/-/min-indent-1.0.1.tgz}
     engines: {node: '>=4'}
 
-  minimatch@3.1.2:
-    resolution: {integrity: sha512-J7p63hRiAjw1NDEww1W7i37+ByIrOWO5XQQAzZ3VOcL0PNybwpfmV/N05zFAzwQ9USyEcX6t3UO+K5aqBQOIHw==, tarball: https://registry.npmjs.org/minimatch/-/minimatch-3.1.2.tgz}
+  minimatch@3.1.5:
+    resolution: {integrity: sha512-VgjWUsnnT6n+NUk6eZq77zeFdpW2LWDzP6zFGrCbHXiYNul5Dzqk2HHQ5uFH2DNW5Xbp8+jVzaeNt94ssEEl4w==, tarball: https://registry.npmjs.org/minimatch/-/minimatch-3.1.5.tgz}
 
-  minimatch@9.0.5:
-    resolution: {integrity: sha512-G6T0ZX48xgozx7587koeX9Ys2NYy6Gmv//P89sEte9V9whIapMNF4idKxnW2QtCcLiTWlb/wfCabAtAFWhhBow==, tarball: https://registry.npmjs.org/minimatch/-/minimatch-9.0.5.tgz}
+  minimatch@9.0.9:
+    resolution: {integrity: sha512-OBwBN9AL4dqmETlpS2zasx+vTeWclWzkblfZk7KTA5j3jeOONz/tRCnZomUyvNg83wL5Zv9Ss6HMJXAgL8R2Yg==, tarball: https://registry.npmjs.org/minimatch/-/minimatch-9.0.9.tgz}
     engines: {node: '>=16 || 14 >=14.17'}
 
   minimist@1.2.8:
@@ -3205,8 +3205,8 @@ packages:
     resolution: {integrity: sha512-BN22B5eaMMI9UMtjrGd5g5eCYPpCPDUy0FJXbYsaT5zYxjFOckS53SQDE3pWkVoWpHXVb3BrYcEN4Twa55B5cA==, tarball: https://registry.npmjs.org/word-wrap/-/word-wrap-1.2.5.tgz}
     engines: {node: '>=0.10.0'}
 
-  workerd@1.20260214.0:
-    resolution: {integrity: sha512-KuicRN0kfqRE1EzvQG3lgI8QEX0QpEBOvNtgvmgXrP6TLQQ/P3H+Ypd8mEN+1CUYMffZpLV01zdSCE5yzPOmFA==, tarball: https://registry.npmjs.org/workerd/-/workerd-1.20260214.0.tgz}
+  workerd@1.20260301.1:
+    resolution: {integrity: sha512-oterQ1IFd3h7PjCfT4znSFOkJCvNQ6YMOyZ40YsnO3nrSpgB4TbJVYWFOnyJAw71/RQuupfVqZZWKvsy8GO3fw==, tarball: https://registry.npmjs.org/workerd/-/workerd-1.20260301.1.tgz}
     engines: {node: '>=16'}
     hasBin: true
 
@@ -3444,19 +3444,19 @@ snapshots:
   '@chalker/queue@1.0.1':
     optional: true
 
-  '@cloudflare/workerd-darwin-64@1.20260214.0':
+  '@cloudflare/workerd-darwin-64@1.20260301.1':
     optional: true
 
-  '@cloudflare/workerd-darwin-arm64@1.20260214.0':
+  '@cloudflare/workerd-darwin-arm64@1.20260301.1':
     optional: true
 
-  '@cloudflare/workerd-linux-64@1.20260214.0':
+  '@cloudflare/workerd-linux-64@1.20260301.1':
     optional: true
 
-  '@cloudflare/workerd-linux-arm64@1.20260214.0':
+  '@cloudflare/workerd-linux-arm64@1.20260301.1':
     optional: true
 
-  '@cloudflare/workerd-windows-64@1.20260214.0':
+  '@cloudflare/workerd-windows-64@1.20260301.1':
     optional: true
 
   '@electron/get@2.0.3':
@@ -3573,7 +3573,7 @@ snapshots:
       ignore: 5.3.2
       import-fresh: 3.3.1
       js-yaml: 4.1.1
-      minimatch: 3.1.2
+      minimatch: 3.1.5
       strip-json-comments: 3.1.1
     transitivePeerDependencies:
       - supports-color
@@ -3664,7 +3664,7 @@ snapshots:
       hasown: 2.0.2
       is-core-module: 2.16.1
       is-glob: 4.0.3
-      minimatch: 3.1.2
+      minimatch: 3.1.5
       object.fromentries: 2.0.8
       object.groupby: 1.0.3
       object.values: 1.2.1
@@ -3714,7 +3714,7 @@ snapshots:
       - supports-color
     optional: true
 
-  '@exodus/test@1.0.0-rc.115(@noble/hashes@2.0.1)(electron@39.4.0)(workerd@1.20260214.0)':
+  '@exodus/test@1.0.0-rc.115(@noble/hashes@2.0.1)(electron@39.4.0)(workerd@1.20260301.1)':
     optionalDependencies:
       '@chalker/queue': 1.0.1
       '@exodus/replay': 1.0.0-rc.11
@@ -3725,7 +3725,7 @@ snapshots:
       playwright-core: 1.58.2
       pretty-format: 30.2.0
       puppeteer-core: 24.37.2
-      workerd: 1.20260214.0
+      workerd: 1.20260301.1
     transitivePeerDependencies:
       - '@noble/hashes'
       - bare-abort-controller
@@ -3750,7 +3750,7 @@ snapshots:
     dependencies:
       '@humanwhocodes/object-schema': 2.0.3
       debug: 4.4.1
-      minimatch: 3.1.2
+      minimatch: 3.1.5
     transitivePeerDependencies:
       - supports-color
 
@@ -4200,7 +4200,7 @@ snapshots:
   baseline-browser-mapping@2.9.7:
     optional: true
 
-  basic-ftp@5.0.5:
+  basic-ftp@5.2.0:
     optional: true
 
   bech32@2.0.0: {}
@@ -4773,7 +4773,7 @@ snapshots:
       eslint-plugin-es: 3.0.1(eslint@8.57.1)
       eslint-utils: 2.1.0
       ignore: 5.3.2
-      minimatch: 3.1.2
+      minimatch: 3.1.5
       resolve: 1.22.10
       semver: 6.3.1
 
@@ -4873,7 +4873,7 @@ snapshots:
       json-stable-stringify-without-jsonify: 1.0.1
       levn: 0.4.1
       lodash.merge: 4.6.2
-      minimatch: 3.1.2
+      minimatch: 3.1.5
       natural-compare: 1.4.0
       optionator: 0.9.4
       strip-ansi: 6.0.1
@@ -5113,7 +5113,7 @@ snapshots:
 
   get-uri@6.0.5:
     dependencies:
-      basic-ftp: 5.0.5
+      basic-ftp: 5.2.0
       data-uri-to-buffer: 6.0.2
       debug: 4.4.3
     transitivePeerDependencies:
@@ -5132,7 +5132,7 @@ snapshots:
     dependencies:
       foreground-child: 3.3.1
       jackspeak: 3.4.3
-      minimatch: 9.0.5
+      minimatch: 9.0.9
       minipass: 7.1.2
       package-json-from-dist: 1.0.1
       path-scurry: 1.11.1
@@ -5142,7 +5142,7 @@ snapshots:
       fs.realpath: 1.0.0
       inflight: 1.0.6
       inherits: 2.0.4
-      minimatch: 3.1.2
+      minimatch: 3.1.5
       once: 1.4.0
       path-is-absolute: 1.0.1
 
@@ -5714,11 +5714,11 @@ snapshots:
 
   min-indent@1.0.1: {}
 
-  minimatch@3.1.2:
+  minimatch@3.1.5:
     dependencies:
       brace-expansion: 1.1.12
 
-  minimatch@9.0.5:
+  minimatch@9.0.9:
     dependencies:
       brace-expansion: 2.0.2
 
@@ -6517,7 +6517,7 @@ snapshots:
     dependencies:
       '@istanbuljs/schema': 0.1.3
       glob: 10.5.0
-      minimatch: 9.0.5
+      minimatch: 9.0.9
 
   text-decoder@1.2.3:
     dependencies:
@@ -6625,7 +6625,7 @@ snapshots:
       '@gerrit0/mini-shiki': 3.21.0
       lunr: 2.3.9
       markdown-it: 14.1.1
-      minimatch: 9.0.5
+      minimatch: 9.0.9
       typescript: 5.9.3
       yaml: 2.8.2
 
@@ -6780,13 +6780,13 @@ snapshots:
 
   word-wrap@1.2.5: {}
 
-  workerd@1.20260214.0:
+  workerd@1.20260301.1:
     optionalDependencies:
-      '@cloudflare/workerd-darwin-64': 1.20260214.0
-      '@cloudflare/workerd-darwin-arm64': 1.20260214.0
-      '@cloudflare/workerd-linux-64': 1.20260214.0
-      '@cloudflare/workerd-linux-arm64': 1.20260214.0
-      '@cloudflare/workerd-windows-64': 1.20260214.0
+      '@cloudflare/workerd-darwin-64': 1.20260301.1
+      '@cloudflare/workerd-darwin-arm64': 1.20260301.1
+      '@cloudflare/workerd-linux-64': 1.20260301.1
+      '@cloudflare/workerd-linux-arm64': 1.20260301.1
+      '@cloudflare/workerd-windows-64': 1.20260301.1
 
   wrap-ansi@7.0.0:
     dependencies:

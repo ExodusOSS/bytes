@@ -291,7 +291,7 @@
     "utf8": "^3.0.0",
     "web-streams-polyfill": "^4.2.0",
     "wif": "^5.0.0",
-    "workerd": "^1.20260214.0"
+    "workerd": "^1.20260301.1"
   },
   "prettier": "@exodus/prettier",
   "packageManager": "pnpm@10.12.1+sha256.889bac470ec93ccc3764488a19d6ba8f9c648ad5e50a9a6e4be3768a5de387a3"
