@@ -957,6 +957,6 @@ export function multibyteEncoder(enc, onError) {
       }
     }
 
-    return i === u8.length ? u8 : u8.subarray(0, i)
+    return i === u8.length ? u8 : u8.slice(0, i)
   }
 }

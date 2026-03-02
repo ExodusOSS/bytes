@@ -228,8 +228,13 @@ describe('roundtrip, tables', () => {
           continue
         }
 
-        t.assert.doesNotThrow(() => t.assert.strictEqual(dec(enc(str)), str), description)
-        t.assert.doesNotThrow(() => t.assert.strictEqual(dec(toShared(enc(str))), str), description)
+        let u8
+        t.assert.doesNotThrow(() => {
+          u8 = enc(str)
+        }, `encode: ${description}`)
+        t.assert.strictEqual(u8.byteLength, u8.buffer.byteLength, `pooling: ${description}`)
+        t.assert.doesNotThrow(() => t.assert.strictEqual(dec(u8), str), description)
+        t.assert.doesNotThrow(() => t.assert.strictEqual(dec(toShared(u8)), str), description)
       }
     })
   }
