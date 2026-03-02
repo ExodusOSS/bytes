@@ -1,6 +1,6 @@
 import { assertU8, E_STRING } from './fallback/_utils.js'
 import { nativeDecoderLatin1, nativeEncoder } from './fallback/platform.js'
-import { encodeAscii, encodeAsciiPrefix, encodeLatin1 } from './fallback/latin1.js'
+import { encodeAsciiPrefix, encodeLatin1 } from './fallback/latin1.js'
 import { assertEncoding, encodingDecoder, encodeMap, E_STRICT } from './fallback/single-byte.js'
 
 const { TextDecoder, btoa } = globalThis
@@ -120,9 +120,8 @@ export function createSinglebyteEncoder(encoding, { mode = 'fatal' } = {}) {
     // Instead of an ASCII regex check, encode optimistically - this is faster
     // Check for 8-bit string with a regex though, this is instant on 8-bit strings so doesn't hurt the ASCII fast path
     if (nativeEncoder && !NON_LATIN.test(s)) {
-      try {
-        return encodeAscii(s, E_STRICT)
-      } catch {}
+      const u8 = nativeEncoder.encode(s)
+      if (u8.length === s.length) return u8
     }
 
     const res = encode(s, m)

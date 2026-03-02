@@ -159,7 +159,9 @@ describe('single-byte encodings index: Unicode', () => {
           t.assert.strictEqual(decoderLoose(Uint8Array.of(byte)), str)
           t.assert.strictEqual(decoder(toShared(Uint8Array.of(byte))), str)
           t.assert.strictEqual(decoderLoose(toShared(Uint8Array.of(byte))), str)
-          t.assert.deepStrictEqual(encoder(str), Uint8Array.of(byte))
+          const u8 = encoder(str)
+          t.assert.deepStrictEqual(u8, Uint8Array.of(byte))
+          t.assert.strictEqual(u8.byteLength, u8.buffer.byteLength)
         }
       }
     })
@@ -214,7 +216,9 @@ describe('single-byte encodings index: WHATWG', () => {
           t.assert.strictEqual(str, decoderLoose(Uint8Array.of(byte)))
           t.assert.strictEqual(decoder(toShared(Uint8Array.of(byte))), str)
           t.assert.strictEqual(decoderLoose(toShared(Uint8Array.of(byte))), str)
-          t.assert.deepStrictEqual(encoder(str), Uint8Array.of(byte))
+          const u8 = encoder(str)
+          t.assert.deepStrictEqual(u8, Uint8Array.of(byte))
+          t.assert.strictEqual(u8.byteLength, u8.buffer.byteLength)
         } else {
           t.assert.throws(() => decoder(Uint8Array.of(byte)))
           t.assert.throws(() => decoder(toShared(Uint8Array.of(byte))))
@@ -263,7 +267,9 @@ describe('single-byte encodings index: WHATWG non-normative indexes.json', () =>
           t.assert.strictEqual(decoderLoose(Uint8Array.of(byte)), str)
           t.assert.strictEqual(decoder(toShared(Uint8Array.of(byte))), str)
           t.assert.strictEqual(decoderLoose(toShared(Uint8Array.of(byte))), str)
-          t.assert.deepStrictEqual(encoder(str), Uint8Array.of(byte))
+          const u8 = encoder(str)
+          t.assert.deepStrictEqual(u8, Uint8Array.of(byte))
+          t.assert.strictEqual(u8.byteLength, u8.buffer.byteLength)
         } else {
           t.assert.throws(() => decoder(Uint8Array.of(byte)))
           t.assert.throws(() => decoder(toShared(Uint8Array.of(byte))))
@@ -294,7 +300,9 @@ describe('x-user-defined', () => {
     const encoder = createSinglebyteEncoder(encoding)
     for (let byte = 0; byte < 256; byte++) {
       const str = String.fromCodePoint(byte >= 0x80 ? 0xf7_80 + byte - 0x80 : byte)
-      t.assert.deepStrictEqual(encoder(str), Uint8Array.of(byte), byte)
+      const u8 = encoder(str)
+      t.assert.deepStrictEqual(u8, Uint8Array.of(byte))
+      t.assert.strictEqual(u8.byteLength, u8.buffer.byteLength)
     }
 
     for (let i = 128; i < 512; i++) {

@@ -107,8 +107,13 @@ export function createSinglebyteEncoder(encoding, { mode = 'fatal' } = {}) {
     // Instead of an ASCII regex check, encode optimistically - this is faster
     // Check for 8-bit string with a regex though, this is instant on 8-bit strings so doesn't hurt the ASCII fast path
     if (!NON_LATIN.test(s)) {
-      const b = Buffer.from(s, 'utf8') // ascii/latin1 coerces, we need to check
-      if (b.length === s.length) return new Uint8Array(b.buffer, b.byteOffset, b.byteLength)
+      const byteLength = Buffer.byteLength(s)
+      // ascii/latin1 coerces, we need to check
+      if (byteLength === s.length) {
+        const ab = new ArrayBuffer(byteLength)
+        Buffer.from(ab).latin1Write(s)
+        return new Uint8Array(ab)
+      }
     }
 
     const res = encode(s, m)
