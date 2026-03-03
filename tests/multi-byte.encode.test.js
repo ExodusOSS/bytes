@@ -27,7 +27,9 @@ describe('multi-byte encodings are supersets of ascii', () => {
         t.assert.strictEqual(str.length, 1, i)
         t.assert.strictEqual(str.codePointAt(0), i, i)
         t.assert.strictEqual(decoder(toShared(Uint8Array.of(i))), str)
-        t.assert.deepStrictEqual(encoder(str), Uint8Array.of(i))
+        const u8 = encoder(str)
+        t.assert.deepStrictEqual(u8, Uint8Array.of(i))
+        t.assert.strictEqual(u8.byteLength, u8.buffer.byteLength)
       }
     })
   }

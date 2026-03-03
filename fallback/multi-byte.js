@@ -1,5 +1,6 @@
 import { E_STRING } from './_utils.js'
-import { asciiPrefix, decodeAscii, decodeLatin1, decodeUCS2, encodeAscii } from './latin1.js'
+import { nativeEncoder } from './platform.js'
+import { asciiPrefix, decodeAscii, decodeLatin1, decodeUCS2 } from './latin1.js'
 import { getTable } from './multi-byte.table.js'
 
 export const E_STRICT = 'Input is not well-formed for this encoding'
@@ -776,10 +777,9 @@ export function multibyteEncoder(enc, onError) {
   if (iso2022jp && !katakana) katakana = getTable('iso-2022-jp-katakana')
   return (str) => {
     if (typeof str !== 'string') throw new TypeError(E_STRING)
-    if (ascii && !NON_LATIN.test(str)) {
-      try {
-        return encodeAscii(str, E_STRICT)
-      } catch {}
+    if (ascii && nativeEncoder && !NON_LATIN.test(str)) {
+      const u8 = nativeEncoder.encode(str)
+      if (u8.length === str.length) return u8
     }
 
     const length = str.length
