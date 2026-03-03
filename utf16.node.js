@@ -21,7 +21,8 @@ function encode(str, loose = false, format = 'uint16') {
     throw new TypeError(E_STRICT_UNICODE)
   }
 
-  const ble = Buffer.from(str, 'utf-16le')
+  const ble = Buffer.allocUnsafeSlow(str.length * 2) // non-pooled
+  ble.ucs2Write(str)
 
   if (format === 'uint8-le') return to8(ble)
   if (format === 'uint8-be') return to8(ble.swap16())

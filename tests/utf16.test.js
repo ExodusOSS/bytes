@@ -392,3 +392,25 @@ test('large strings', { skip: skipLarge }, (t) => {
     t.assert.strictEqual(s, lib.utf16toString(lib.utf16fromString(s)))
   }
 })
+
+test('utf16fromString / utf16fromStringLoose returns non-pooled TypedArray instances', (t) => {
+  for (let i = 0; i < 256; i++) {
+    t.assert.strictEqual(utf16.utf16fromString('a'.repeat(128)).buffer.byteLength, 128 * 2)
+    t.assert.strictEqual(utf16.utf16fromStringLoose('a'.repeat(128)).buffer.byteLength, 128 * 2)
+  }
+
+  for (let i = 0; i < 256; i++) {
+    t.assert.strictEqual(utf16.utf16fromString('a'.repeat(64)).buffer.byteLength, 64 * 2)
+    t.assert.strictEqual(utf16.utf16fromStringLoose('a'.repeat(64)).buffer.byteLength, 64 * 2)
+  }
+
+  for (let i = 0; i < 512; i++) {
+    t.assert.strictEqual(utf16.utf16fromString('a'.repeat(32)).buffer.byteLength, 32 * 2)
+    t.assert.strictEqual(utf16.utf16fromStringLoose('a'.repeat(32)).buffer.byteLength, 32 * 2)
+  }
+
+  for (let i = 0; i < 512; i++) {
+    t.assert.strictEqual(utf16.utf16fromString('').buffer.byteLength, 0)
+    t.assert.strictEqual(utf16.utf16fromStringLoose('').buffer.byteLength, 0)
+  }
+})
