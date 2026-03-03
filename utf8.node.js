@@ -1,5 +1,4 @@
-import { typedView } from './array.js'
-import { assertU8, E_STRING, E_STRICT_UNICODE } from './fallback/_utils.js'
+import { assertU8, fromBuffer, E_STRING, E_STRICT_UNICODE } from './fallback/_utils.js'
 import { E_STRICT } from './fallback/utf8.js'
 import { isAscii } from 'node:buffer'
 
@@ -16,7 +15,7 @@ try {
   // Without ICU, Node.js doesn't support fatal option for utf-8
 }
 
-function encode(str, loose = false) {
+function encode(str, loose, format) {
   if (typeof str !== 'string') throw new TypeError(E_STRING)
   const strLength = str.length
   if (strLength === 0) return new Uint8Array() // faster than Uint8Array.of
@@ -24,18 +23,19 @@ function encode(str, loose = false) {
   if (strLength > 0x4_00 && !isDeno) {
     // Faster for large strings
     const byteLength = Buffer.byteLength(str)
-    res = Buffer.allocUnsafe(byteLength)
-    const ascii = byteLength === strLength
-    const written = ascii ? res.latin1Write(str) : res.utf8Write(str)
+    res = format === 'buffer' ? Buffer.allocUnsafe(byteLength) : Buffer.allocUnsafeSlow(byteLength)
+    const written = byteLength === strLength ? res.latin1Write(str) : res.utf8Write(str)
     if (written !== byteLength) throw new Error('Failed to write all bytes') // safeguard just in case
-    if (ascii || loose) return res // no further checks needed
   } else {
     res = Buffer.from(str)
-    if (res.length === strLength || loose) return res
   }
 
-  if (!isWellFormed.call(str)) throw new TypeError(E_STRICT_UNICODE)
-  return res
+  // Loose and ascii do not need the check
+  if (!loose && res.length !== strLength && !isWellFormed.call(str)) {
+    throw new TypeError(E_STRICT_UNICODE)
+  }
+
+  return fromBuffer(res, format)
 }
 
 function decode(arr, loose = false) {
@@ -61,7 +61,7 @@ function decode(arr, loose = false) {
   return str
 }
 
-export const utf8fromString = (str, format = 'uint8') => typedView(encode(str, false), format)
-export const utf8fromStringLoose = (str, format = 'uint8') => typedView(encode(str, true), format)
+export const utf8fromString = (str, format = 'uint8') => encode(str, false, format)
+export const utf8fromStringLoose = (str, format = 'uint8') => encode(str, true, format)
 export const utf8toString = (arr) => decode(arr, false)
 export const utf8toStringLoose = (arr) => decode(arr, true)

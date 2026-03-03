@@ -19,6 +19,7 @@ export const toBuf = (x) =>
 export const E_STRING = 'Input is not a string'
 export const E_STRICT_UNICODE = 'Input is not well-formed Unicode'
 
+// Input is never pooled
 export function fromUint8(arr, format) {
   switch (format) {
     case 'uint8':
@@ -27,6 +28,24 @@ export function fromUint8(arr, format) {
     case 'buffer':
       if (arr.length <= 64) return Buffer.from(arr)
       return Buffer.from(arr.buffer, arr.byteOffset, arr.byteLength)
+  }
+
+  throw new TypeError('Unexpected format')
+}
+
+// Input can be pooled
+export function fromBuffer(arr, format) {
+  switch (format) {
+    case 'uint8':
+      // byteOffset check is slightly faster and covers most pooling, so it comes first
+      if (arr.length <= 64 || arr.byteOffset !== 0 || arr.byteLength !== arr.buffer.byteLength) {
+        return new Uint8Array(arr)
+      }
+
+      return new Uint8Array(arr.buffer, arr.byteOffset, arr.byteLength)
+    case 'buffer':
+      if (arr.constructor !== Buffer) throw new Error('Unexpected')
+      return arr
   }
 
   throw new TypeError('Unexpected format')
