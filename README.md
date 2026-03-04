@@ -5,6 +5,7 @@
 [![](https://img.shields.io/npm/dm/@exodus/bytes?style=flat-square)](https://www.npmcharts.com/compare/@exodus/bytes?minimal=true)
 [![](https://img.shields.io/npm/l/@exodus/bytes?style=flat-square&color=blue)](https://github.com/ExodusOSS/bytes/blob/HEAD/LICENSE)
 [![](https://img.shields.io/github/check-runs/ExodusOSS/bytes/main?style=flat-square&logo=github)](https://github.com/ExodusOSS/bytes/actions/workflows/test.yml?query=branch%3Amain)
+[![](https://img.shields.io/badge/Documentation-3178c6?style=flat-square&logo=TypeScript&logoColor=fff)](https://exodusoss.github.io/bytes/)
 
 `Uint8Array` conversion to and from `base64`, `base32`, `base58`, `hex`, `utf8`, `utf16`, `bech32` and `wif`
 
