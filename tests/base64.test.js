@@ -25,7 +25,9 @@ const pool = raw.map((uint8) => {
   const hex = buffer.toString('hex')
   const shared = new Uint8Array(new SharedArrayBuffer(uint8.length))
   shared.set(uint8)
-  return { uint8, shared, buffer, hex, base64, base64nopad, base64url, base64urlPadded }
+  const ab = uint8.buffer
+  if (ab.byteLength !== uint8.byteLength) throw new Error('Unexpected pooled Uint8Array')
+  return { uint8, ab, shared, buffer, hex, base64, base64nopad, base64url, base64urlPadded }
 })
 
 describe('toBase64', () => {
@@ -114,7 +116,7 @@ describe('fromBase64', () => {
     ]) {
       t.assert.throws(() => fromBase64(input))
       t.assert.throws(() => fromBase64url(input))
-      for (const format of ['uint8', 'buffer', 'hex']) {
+      for (const format of ['uint8', 'arraybuffer', 'buffer', 'hex']) {
         t.assert.throws(() => fromBase64(input, { format }))
         t.assert.throws(() => fromBase64url(input, { format }))
       }
@@ -159,6 +161,13 @@ describe('fromBase64', () => {
     for (const { base64, base64url, buffer } of pool) {
       t.assert.deepStrictEqual(fromBase64(base64, { format: 'buffer' }), buffer)
       t.assert.deepStrictEqual(fromBase64url(base64url, { format: 'buffer' }), buffer)
+    }
+  })
+
+  test('arraybuffer', (t) => {
+    for (const { base64, base64url, ab } of pool) {
+      t.assert.deepStrictEqual(fromBase64(base64, { format: 'arraybuffer' }), ab)
+      t.assert.deepStrictEqual(fromBase64url(base64url, { format: 'arraybuffer' }), ab)
     }
   })
 

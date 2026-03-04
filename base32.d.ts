@@ -77,8 +77,9 @@ export function toBase32crockford(arr: Uint8Array, options?: ToBase32Options): s
  * @returns The decoded bytes
  */
 export function fromBase32(string: string, options?: FromBase32Options & { format?: 'uint8' }): Uint8ArrayBuffer;
+export function fromBase32(string: string, options: FromBase32Options & { format: 'arraybuffer' }): ArrayBuffer;
 export function fromBase32(string: string, options: FromBase32Options & { format: 'buffer' }): Buffer;
-export function fromBase32(string: string, options?: FromBase32Options): Uint8ArrayBuffer | Buffer;
+export function fromBase32(string: string, options?: FromBase32Options): Uint8ArrayBuffer | ArrayBuffer | Buffer;
 
 /**
  * Decode a base32hex string to bytes
@@ -90,8 +91,9 @@ export function fromBase32(string: string, options?: FromBase32Options): Uint8Ar
  * @returns The decoded bytes
  */
 export function fromBase32hex(string: string, options?: FromBase32Options & { format?: 'uint8' }): Uint8ArrayBuffer;
+export function fromBase32hex(string: string, options: FromBase32Options & { format: 'arraybuffer' }): ArrayBuffer;
 export function fromBase32hex(string: string, options: FromBase32Options & { format: 'buffer' }): Buffer;
-export function fromBase32hex(string: string, options?: FromBase32Options): Uint8ArrayBuffer | Buffer;
+export function fromBase32hex(string: string, options?: FromBase32Options): Uint8ArrayBuffer | ArrayBuffer | Buffer;
 
 /**
  * Decode a Crockford base32 string to bytes
@@ -105,5 +107,6 @@ export function fromBase32hex(string: string, options?: FromBase32Options): Uint
  * @returns The decoded bytes
  */
 export function fromBase32crockford(string: string, options?: FromBase32Options & { format?: 'uint8' }): Uint8ArrayBuffer;
+export function fromBase32crockford(string: string, options: FromBase32Options & { format: 'arraybuffer' }): ArrayBuffer;
 export function fromBase32crockford(string: string, options: FromBase32Options & { format: 'buffer' }): Buffer;
-export function fromBase32crockford(string: string, options?: FromBase32Options): Uint8ArrayBuffer | Buffer;
+export function fromBase32crockford(string: string, options?: FromBase32Options): Uint8ArrayBuffer | ArrayBuffer | Buffer;

@@ -34,8 +34,9 @@ export interface FromBigIntOptions {
  * @returns The converted bytes in big-endian format
  */
 export function fromBigInt(bigint: bigint, options: { length: number; format?: 'uint8' }): Uint8ArrayBuffer;
+export function fromBigInt(bigint: bigint, options: { length: number; format: 'arraybuffer' }): ArrayBuffer;
 export function fromBigInt(bigint: bigint, options: { length: number; format: 'buffer' }): Buffer;
-export function fromBigInt(bigint: bigint, options: FromBigIntOptions): Uint8ArrayBuffer | Buffer;
+export function fromBigInt(bigint: bigint, options: FromBigIntOptions): Uint8ArrayBuffer | ArrayBuffer | Buffer;
 
 /**
  * Convert a Uint8Array or Buffer to a BigInt

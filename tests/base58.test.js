@@ -134,18 +134,22 @@ test('sizes roundtrip, static data + types', (t) => {
     const zerosBase58 = toBase58(zeros)
     t.assert.deepStrictEqual(fromBase58(zerosBase58), zeros, `[0] x${size}`)
     t.assert.deepStrictEqual(fromBase58(zerosBase58, 'buffer'), Buffer.from(zeros))
+    t.assert.deepStrictEqual(fromBase58(zerosBase58, 'arraybuffer'), zeros.buffer)
     const ones = new Uint8Array(size).fill(1)
     const onesBase58 = toBase58(ones)
     t.assert.deepStrictEqual(fromBase58(onesBase58), ones, `[1] x${size}`)
     t.assert.deepStrictEqual(fromBase58(onesBase58, 'buffer'), Buffer.from(ones))
+    t.assert.deepStrictEqual(fromBase58(onesBase58, 'arraybuffer'), ones.buffer)
     const mid = new Uint8Array(size).fill(42)
     const midBase58 = toBase58(mid)
     t.assert.deepStrictEqual(fromBase58(midBase58), mid, `[42] x${size}`)
     t.assert.deepStrictEqual(fromBase58(midBase58, 'buffer'), Buffer.from(mid))
+    t.assert.deepStrictEqual(fromBase58(midBase58, 'arraybuffer'), mid.buffer)
     const max = new Uint8Array(size).fill(255)
     const maxBase58 = toBase58(max)
     t.assert.deepStrictEqual(fromBase58(maxBase58), max, `[255] x${size}`)
     t.assert.deepStrictEqual(fromBase58(maxBase58, 'buffer'), Buffer.from(max))
+    t.assert.deepStrictEqual(fromBase58(maxBase58, 'arraybuffer'), max.buffer)
   }
 })
 
@@ -191,7 +195,7 @@ test('fromBase58 returns non-pooled Uint8Array instances', (t) => {
   t.assert.ok(tracked.length > 1000)
 
   for (const u8 of tracked) {
-    if (Buffer.isBuffer(u8)) continue
+    if (Buffer.isBuffer(u8) || u8 instanceof ArrayBuffer) continue
     t.assert.strictEqual(u8.byteLength, u8.buffer.byteLength)
   }
 })

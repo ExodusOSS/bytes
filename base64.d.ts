@@ -69,8 +69,9 @@ export function toBase64url(arr: Uint8Array, options?: ToBase64Options): string;
  * @returns The decoded bytes
  */
 export function fromBase64(string: string, options?: FromBase64Options & { format?: 'uint8' }): Uint8ArrayBuffer;
+export function fromBase64(string: string, options: FromBase64Options & { format: 'arraybuffer' }): ArrayBuffer;
 export function fromBase64(string: string, options: FromBase64Options & { format: 'buffer' }): Buffer;
-export function fromBase64(string: string, options?: FromBase64Options): Uint8ArrayBuffer | Buffer;
+export function fromBase64(string: string, options?: FromBase64Options): Uint8ArrayBuffer | ArrayBuffer | Buffer;
 
 /**
  * Decode a base64url string to bytes
@@ -82,8 +83,9 @@ export function fromBase64(string: string, options?: FromBase64Options): Uint8Ar
  * @returns The decoded bytes
  */
 export function fromBase64url(string: string, options?: FromBase64Options & { format?: 'uint8' }): Uint8ArrayBuffer;
+export function fromBase64url(string: string, options: FromBase64Options & { format: 'arraybuffer' }): ArrayBuffer;
 export function fromBase64url(string: string, options: FromBase64Options & { format: 'buffer' }): Buffer;
-export function fromBase64url(string: string, options?: FromBase64Options): Uint8ArrayBuffer | Buffer;
+export function fromBase64url(string: string, options?: FromBase64Options): Uint8ArrayBuffer | ArrayBuffer | Buffer;
 
 /**
  * Decode either base64 or base64url string to bytes
@@ -95,5 +97,6 @@ export function fromBase64url(string: string, options?: FromBase64Options): Uint
  * @returns The decoded bytes
  */
 export function fromBase64any(string: string, options?: FromBase64Options & { format?: 'uint8' }): Uint8ArrayBuffer;
+export function fromBase64any(string: string, options: FromBase64Options & { format: 'arraybuffer' }): ArrayBuffer;
 export function fromBase64any(string: string, options: FromBase64Options & { format: 'buffer' }): Buffer;
-export function fromBase64url(string: string, options?: FromBase64Options): Uint8ArrayBuffer | Buffer;
+export function fromBase64url(string: string, options?: FromBase64Options): Uint8ArrayBuffer | ArrayBuffer | Buffer;

@@ -31,5 +31,6 @@ export function toHex(arr: Uint8Array): string;
  * @returns The decoded bytes
  */
 export function fromHex(string: string, format?: 'uint8'): Uint8ArrayBuffer;
+export function fromHex(string: string, format: 'arraybuffer'): ArrayBuffer;
 export function fromHex(string: string, format: 'buffer'): Buffer;
-export function fromHex(string: string, format?: OutputFormat): Uint8ArrayBuffer | Buffer;
+export function fromHex(string: string, format?: OutputFormat): Uint8ArrayBuffer | ArrayBuffer | Buffer;

@@ -35,8 +35,9 @@ import type { OutputFormat, Uint8ArrayBuffer } from './array.js';
  * @returns The encoded bytes
  */
 export function utf8fromString(string: string, format?: 'uint8'): Uint8ArrayBuffer;
+export function utf8fromString(string: string, format: 'arraybuffer'): ArrayBuffer;
 export function utf8fromString(string: string, format: 'buffer'): Buffer;
-export function utf8fromString(string: string, format?: OutputFormat): Uint8ArrayBuffer | Buffer;
+export function utf8fromString(string: string, format?: OutputFormat): Uint8ArrayBuffer | ArrayBuffer | Buffer;
 
 /**
  * Encode a string to UTF-8 bytes (loose mode)
@@ -59,11 +60,12 @@ export function utf8fromString(string: string, format?: OutputFormat): Uint8Arra
  * @returns The encoded bytes
  */
 export function utf8fromStringLoose(string: string, format?: 'uint8'): Uint8ArrayBuffer;
+export function utf8fromStringLoose(string: string, format: 'arraybuffer'): ArrayBuffer;
 export function utf8fromStringLoose(string: string, format: 'buffer'): Buffer;
 export function utf8fromStringLoose(
   string: string,
   format?: OutputFormat
-): Uint8ArrayBuffer | Buffer;
+): Uint8ArrayBuffer | ArrayBuffer | Buffer;
 
 /**
  * Decode UTF-8 bytes to a string (strict mode)
