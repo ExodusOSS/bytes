@@ -1,5 +1,4 @@
-import { typedView } from './array.js'
-import { assertU8, fromUint8, E_STRING } from './fallback/_utils.js'
+import { assertU8, fromBuffer, fromUint8, E_STRING } from './fallback/_utils.js'
 import { E_HEX } from './fallback/hex.js'
 
 if (Buffer.TYPED_ARRAY_SUPPORT) throw new Error('Unexpected Buffer polyfill')
@@ -23,15 +22,16 @@ export const fromHex = Uint8Array.fromHex
       if (str.length % 2 !== 0) throw new SyntaxError(E_HEX)
       if (denoBug && /[^\dA-Fa-f]/.test(str)) throw new SyntaxError(E_HEX)
 
+      // 64 bytes or less, in heap
       if (str.length <= 128) {
-        const u8 = new Uint8Array(Buffer.from(str, 'hex')) // just copy to not access .buffer
-        if (u8.length * 2 !== str.length) throw new SyntaxError(E_HEX)
-        return typedView(u8, format)
+        const buf = Buffer.from(str, 'hex')
+        if (buf.length * 2 !== str.length) throw new SyntaxError(E_HEX)
+        return fromBuffer(buf, format)
       }
 
       const length = str.length / 2
-      const u8 = new Uint8Array(length)
-      const count = Buffer.from(u8.buffer, u8.byteOffset, u8.byteLength).hexWrite(str, 0, length)
+      const buf = format === 'buffer' ? Buffer.allocUnsafe(length) : Buffer.allocUnsafeSlow(length) // avoid pooling
+      const count = buf.hexWrite(str, 0, length)
       if (count !== length) throw new SyntaxError(E_HEX) // will stop on first non-hex character, so we can just validate length
-      return typedView(u8, format)
+      return fromBuffer(buf, format)
     }
