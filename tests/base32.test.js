@@ -23,7 +23,9 @@ const pool = raw.map((uint8) => {
   const hex = buffer.toString('hex')
   const shared = new Uint8Array(new SharedArrayBuffer(uint8.length))
   shared.set(uint8)
-  return { uint8, shared, buffer, hex, base32, base32padded, base32hex, base32hexPadded }
+  const ab = uint8.buffer
+  if (ab.byteLength !== uint8.byteLength) throw new Error('Unexpected pooled Uint8Array')
+  return { uint8, ab, shared, buffer, hex, base32, base32padded, base32hex, base32hexPadded }
 })
 
 describe('toBase32', () => {
@@ -110,7 +112,7 @@ describe('fromBase32', () => {
       t.assert.throws(() => fromBase32hex(input.toUpperCase()))
       t.assert.throws(() => fromBase32(input.toLowerCase()))
       t.assert.throws(() => fromBase32hex(input.toLowerCase()))
-      for (const format of ['uint8', 'buffer', 'hex']) {
+      for (const format of ['uint8', 'buffer', 'arraybuffer', 'hex']) {
         t.assert.throws(() => fromBase32(input, { format }))
         t.assert.throws(() => fromBase32hex(input, { format }))
       }
@@ -145,9 +147,18 @@ describe('fromBase32', () => {
   })
 
   test('buffer', (t) => {
-    for (const { base32, base32hex, buffer } of pool) {
+    for (const { base32, base32padded, base32hex, buffer } of pool) {
       t.assert.deepStrictEqual(fromBase32(base32, { format: 'buffer' }), buffer)
+      t.assert.deepStrictEqual(fromBase32(base32padded, { format: 'buffer' }), buffer)
       t.assert.deepStrictEqual(fromBase32hex(base32hex, { format: 'buffer' }), buffer)
+    }
+  })
+
+  test('arraybuffer', (t) => {
+    for (const { base32, base32padded, base32hex, ab } of pool) {
+      t.assert.deepStrictEqual(fromBase32(base32, { format: 'arraybuffer' }), ab)
+      t.assert.deepStrictEqual(fromBase32(base32padded, { format: 'arraybuffer' }), ab)
+      t.assert.deepStrictEqual(fromBase32hex(base32hex, { format: 'arraybuffer' }), ab)
     }
   })
 })

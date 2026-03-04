@@ -25,6 +25,9 @@ export function fromUint8(arr, format) {
     case 'uint8':
       if (arr.constructor !== Uint8Array) throw new Error('Unexpected')
       return arr
+    case 'arraybuffer':
+      if (arr.byteLength !== arr.buffer.byteLength) throw new Error('Unexpected')
+      return arr.buffer
     case 'buffer':
       if (arr.length <= 64) return Buffer.from(arr)
       return Buffer.from(arr.buffer, arr.byteOffset, arr.byteLength)
@@ -43,6 +46,8 @@ export function fromBuffer(arr, format) {
       }
 
       return new Uint8Array(arr.buffer, arr.byteOffset, arr.byteLength)
+    case 'arraybuffer':
+      return fromBuffer(arr, 'uint8').buffer
     case 'buffer':
       if (arr.constructor !== Buffer) throw new Error('Unexpected')
       return arr

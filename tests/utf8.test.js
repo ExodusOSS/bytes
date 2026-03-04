@@ -155,7 +155,7 @@ describe('utf8fromString', () => {
       test(method.name, (t) => {
         for (const input of [...[null, undefined, [], [1, 2], ['00'], new Uint8Array()]]) {
           t.assert.throws(() => method(input))
-          for (const form of ['uint8', 'buffer', 'hex']) {
+          for (const form of ['uint8', 'arraybuffer', 'buffer', 'hex']) {
             t.assert.throws(() => method(input, form))
           }
         }
@@ -173,6 +173,16 @@ describe('utf8fromString', () => {
       test(method.name || method + '', (t) => {
         for (const { charcodes, hex } of fixtures) {
           t.assert.deepStrictEqual(method(String.fromCharCode(...charcodes)), fromHex(hex))
+        }
+      })
+    }
+
+    for (const format of ['uint8', 'buffer', 'arraybuffer']) {
+      test(`format: ${format}`, (t) => {
+        for (const { charcodes, hex } of fixtures) {
+          const str = String.fromCharCode(...charcodes)
+          t.assert.deepStrictEqual(utf8fromString(str, format), fromHex(hex, format))
+          t.assert.deepStrictEqual(utf8fromStringLoose(str, format), fromHex(hex, format))
         }
       })
     }

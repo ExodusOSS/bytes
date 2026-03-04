@@ -45,12 +45,7 @@ export type Uint32ArrayBuffer = ReturnType<typeof Uint32Array.from>;
 /**
  * Output format for typed array conversions
  */
-export type OutputFormat = 'uint8' | 'buffer';
-
-/**
- * Output format for typed array copy conversions
- */
-export type OutputCopyFormat = 'uint8' | 'arraybuffer' | 'buffer';
+export type OutputFormat = 'uint8' | 'arraybuffer' | 'buffer';
 
 /**
  * Create a view of a TypedArray in the specified format (`'uint8'` or `'buffer'`)
@@ -68,7 +63,7 @@ export type OutputCopyFormat = 'uint8' | 'arraybuffer' | 'buffer';
  */
 export function typedView(arr: ArrayBufferView, format: 'uint8'): Uint8Array;
 export function typedView(arr: ArrayBufferView, format: 'buffer'): Buffer;
-export function typedView(arr: ArrayBufferView, format: OutputFormat): Uint8Array | Buffer;
+export function typedView(arr: ArrayBufferView, format: 'uint8' | 'buffer'): Uint8Array | Buffer;
 
 /**
  * Create a copy of TypedArray underlying bytes in the specified format (`'uint8'`, `'buffer'`, or `'arraybuffer'`)
@@ -91,4 +86,4 @@ export function typedView(arr: ArrayBufferView, format: OutputFormat): Uint8Arra
 export function typedCopyBytes(arr: ArrayBufferView, format: 'uint8'): Uint8Array;
 export function typedCopyBytes(arr: ArrayBufferView, format: 'arraybuffer'): ArrayBuffer;
 export function typedCopyBytes(arr: ArrayBufferView, format: 'buffer'): Buffer;
-export function typedCopyBytes(arr: ArrayBufferView, format: OutputCopyFormat): Uint8Array | ArrayBuffer | Buffer;
+export function typedCopyBytes(arr: ArrayBufferView, format: OutputFormat): Uint8Array | ArrayBuffer | Buffer;

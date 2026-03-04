@@ -15,7 +15,9 @@ const pool = raw.map((uint8) => {
   const buffer = Buffer.from(uint8)
   const shared = new Uint8Array(new SharedArrayBuffer(uint8.length))
   shared.set(uint8)
-  return { uint8, shared, buffer, hex: buffer.toString('hex') }
+  const ab = uint8.buffer
+  if (ab.byteLength !== uint8.byteLength) throw new Error('Unexpected pooled Uint8Array')
+  return { uint8, ab, shared, buffer, hex: buffer.toString('hex') }
 })
 
 const INVALID = [
@@ -105,7 +107,7 @@ describe('fromHex', () => {
       t.assert.throws(() => fromHex(input))
       t.assert.throws(() => lib.fromHex(input))
       t.assert.throws(() => js.fromHex(input))
-      for (const form of ['uint8', 'buffer', 'hex']) {
+      for (const form of ['uint8', 'arraybuffer', 'buffer', 'hex']) {
         t.assert.throws(() => fromHex(input, form))
         t.assert.throws(() => lib.fromHex(input, form))
       }
@@ -145,6 +147,21 @@ describe('fromHex', () => {
     for (const { hex, buffer } of pool) {
       t.assert.deepStrictEqual(fromHex(hex, 'buffer'), buffer)
       t.assert.deepStrictEqual(lib.fromHex(hex, 'buffer'), buffer)
+    }
+  })
+
+  test('arraybuffer, fixtures', (t) => {
+    for (const [hex, uint8] of VALID) {
+      t.assert.deepStrictEqual(uint8.byteLength, uint8.buffer.byteLength, 'coherence')
+      t.assert.deepStrictEqual(fromHex(hex, 'arraybuffer'), uint8.buffer)
+      t.assert.deepStrictEqual(lib.fromHex(hex, 'arraybuffer'), uint8.buffer)
+    }
+  })
+
+  test('arraybuffer, random', (t) => {
+    for (const { hex, ab } of pool) {
+      t.assert.deepStrictEqual(fromHex(hex, 'arraybuffer'), ab)
+      t.assert.deepStrictEqual(lib.fromHex(hex, 'arraybuffer'), ab)
     }
   })
 

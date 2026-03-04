@@ -13,7 +13,9 @@ const pool = raw.map((uint8) => {
   const buffer = Buffer.from(uint8)
   const shared = new Uint8Array(new SharedArrayBuffer(uint8.length))
   shared.set(uint8)
-  return { uint8, shared, buffer, big: BigInt(`0x${buffer.toString('hex') || '0'}`) }
+  const ab = uint8.buffer
+  if (ab.byteLength !== uint8.byteLength) throw new Error('Unexpected pooled Uint8Array')
+  return { uint8, ab, shared, buffer, big: BigInt(`0x${buffer.toString('hex') || '0'}`) }
 })
 
 const VALID = [
@@ -67,15 +69,18 @@ describe('fromBigInt', () => {
   test('length and format', (t) => {
     t.assert.throws(() => fromBigInt(0n))
     t.assert.throws(() => fromBigInt(0n, { format: 'uint8' }))
+    t.assert.throws(() => fromBigInt(0n, { format: 'arraybuffer' }))
     t.assert.throws(() => fromBigInt(0n, { format: 'buffer' }))
 
-    t.assert.deepStrictEqual(fromBigInt(0n, { length: 1 }), Uint8Array.of(0))
-    t.assert.deepStrictEqual(fromBigInt(0n, { length: 1, format: 'uint8' }), Uint8Array.of(0))
-    t.assert.deepStrictEqual(fromBigInt(0n, { length: 1, format: 'buffer' }), Buffer.of(0))
-
-    t.assert.deepStrictEqual(fromBigInt(0n, { length: 2 }), Uint8Array.of(0, 0))
-    t.assert.deepStrictEqual(fromBigInt(0n, { length: 2, format: 'uint8' }), Uint8Array.of(0, 0))
-    t.assert.deepStrictEqual(fromBigInt(0n, { length: 2, format: 'buffer' }), Buffer.of(0, 0))
+    for (const l of [1, 2, 3, 10, 20, 100, 1025]) {
+      t.assert.deepStrictEqual(fromBigInt(0n, { length: l }), new Uint8Array(l))
+      t.assert.deepStrictEqual(fromBigInt(0n, { length: l, format: 'uint8' }), new Uint8Array(l))
+      t.assert.deepStrictEqual(
+        fromBigInt(0n, { length: l, format: 'arraybuffer' }),
+        new ArrayBuffer(l)
+      )
+      t.assert.deepStrictEqual(fromBigInt(0n, { length: l, format: 'buffer' }), Buffer.alloc(l))
+    }
 
     t.assert.throws(() => fromBigInt(0n, { length: 1, format: 'invalid' }))
     t.assert.throws(() => fromBigInt(0n, { length: 2, format: 'invalid' }))
@@ -83,6 +88,7 @@ describe('fromBigInt', () => {
     for (const length of [0, null, undefined, '', '0', '1']) {
       t.assert.throws(() => fromBigInt(0n, { length }))
       t.assert.throws(() => fromBigInt(0n, { length, format: 'uint8' }))
+      t.assert.throws(() => fromBigInt(0n, { length, format: 'arraybuffer' }))
       t.assert.throws(() => fromBigInt(0n, { length, format: 'buffer' }))
     }
   })
@@ -92,7 +98,7 @@ describe('fromBigInt', () => {
       t.assert.throws(() => fromBigInt(input))
       t.assert.throws(() => fromBigInt(input, { length: 1 }))
       t.assert.throws(() => fromBigInt(input, { length: 10 }))
-      for (const format of ['uint8', 'buffer', 'hex']) {
+      for (const format of ['uint8', 'arraybuffer', 'buffer', 'hex']) {
         t.assert.throws(() => fromBigInt(input, { format }))
         t.assert.throws(() => fromBigInt(input, { length: 1, format }))
         t.assert.throws(() => fromBigInt(input, { length: 10, format }))
@@ -106,6 +112,7 @@ describe('fromBigInt', () => {
       if (length === 0) continue
       t.assert.deepStrictEqual(fromBigInt(big, { length }), uint8)
       t.assert.deepStrictEqual(fromBigInt(big, { length, format: 'uint8' }), uint8)
+      t.assert.deepStrictEqual(fromBigInt(big, { length, format: 'arraybuffer' }), uint8.buffer)
       t.assert.deepStrictEqual(fromBigInt(big, { length, format: 'buffer' }), Buffer.from(uint8))
       if (uint8[0] > 0) {
         t.assert.throws(() => fromBigInt(big, { length: length - 1 }))
@@ -116,12 +123,13 @@ describe('fromBigInt', () => {
   })
 
   test('random', (t) => {
-    for (const { big, uint8, buffer } of pool) {
+    for (const { big, uint8, ab, buffer } of pool) {
       const length = uint8.length
       if (length === 0) continue
       t.assert.deepStrictEqual(fromBigInt(big, { length }), uint8)
-      t.assert.deepStrictEqual(fromBigInt(big, { length, format: 'uint8' }, 'uint8'), uint8)
-      t.assert.deepStrictEqual(fromBigInt(big, { length, format: 'buffer' }, 'buffer'), buffer)
+      t.assert.deepStrictEqual(fromBigInt(big, { length, format: 'uint8' }), uint8)
+      t.assert.deepStrictEqual(fromBigInt(big, { length, format: 'arraybuffer' }), ab)
+      t.assert.deepStrictEqual(fromBigInt(big, { length, format: 'buffer' }), buffer)
       if (uint8[0] > 0) {
         t.assert.throws(() => fromBigInt(big, { length: length - 1 }))
       } else if (length > 1) {

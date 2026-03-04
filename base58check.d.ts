@@ -46,8 +46,9 @@ export interface Base58CheckAsync {
    * @returns A Promise that resolves to the decoded bytes
    */
   decode(string: string, format?: 'uint8'): Promise<Uint8ArrayBuffer>;
+  decode(string: string, format: 'arraybuffer'): Promise<ArrayBuffer>;
   decode(string: string, format: 'buffer'): Promise<Buffer>;
-  decode(string: string, format?: OutputFormat): Promise<Uint8ArrayBuffer | Buffer>;
+  decode(string: string, format?: OutputFormat): Promise<Uint8ArrayBuffer | ArrayBuffer | Buffer>;
 }
 
 /**
@@ -70,8 +71,9 @@ export interface Base58CheckSync extends Base58CheckAsync {
    * @returns The decoded bytes
    */
   decodeSync(string: string, format?: 'uint8'): Uint8ArrayBuffer;
+  decodeSync(string: string, format: 'arraybuffer'): ArrayBuffer;
   decodeSync(string: string, format: 'buffer'): Buffer;
-  decodeSync(string: string, format?: OutputFormat): Uint8ArrayBuffer | Buffer;
+  decodeSync(string: string, format?: OutputFormat): Uint8ArrayBuffer | ArrayBuffer | Buffer;
 }
 
 /**
@@ -104,8 +106,9 @@ export function toBase58check(arr: Uint8Array): Promise<string>;
  * @returns A Promise that resolves to the decoded bytes
  */
 export function fromBase58check(string: string, format?: 'uint8'): Promise<Uint8ArrayBuffer>;
+export function fromBase58check(string: string, format: 'arraybuffer'): Promise<ArrayBuffer>;
 export function fromBase58check(string: string, format: 'buffer'): Promise<Buffer>;
-export function fromBase58check(string: string, format?: OutputFormat): Promise<Uint8ArrayBuffer | Buffer>;
+export function fromBase58check(string: string, format?: OutputFormat): Promise<Uint8ArrayBuffer | ArrayBuffer | Buffer>;
 
 /**
  * Encode bytes to base58check string synchronously
@@ -127,5 +130,6 @@ export function toBase58checkSync(arr: Uint8Array): string;
  * @returns The decoded bytes
  */
 export function fromBase58checkSync(string: string, format?: 'uint8'): Uint8ArrayBuffer;
+export function fromBase58checkSync(string: string, format: 'arraybuffer'): ArrayBuffer;
 export function fromBase58checkSync(string: string, format: 'buffer'): Buffer;
-export function fromBase58checkSync(string: string, format?: OutputFormat): Uint8ArrayBuffer | Buffer;
+export function fromBase58checkSync(string: string, format?: OutputFormat): Uint8ArrayBuffer | ArrayBuffer | Buffer;
