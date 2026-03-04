@@ -58,6 +58,7 @@ export function decode(u32) {
 }
 
 // Only defined on valid input
+// Returns non-pooled exact view
 // TODO: add fast path for prefix without high bits
 export function utf16to32(u16) {
   const length = u16.length
@@ -72,12 +73,13 @@ export function utf16to32(u16) {
     }
   }
 
-  return i === length ? u32 : u32.subarray(0, i)
+  return i === length ? u32 : u32.slice(0, i)
 }
 
 // Only defined on valid input
+// Can return a subarray
 // TODO: add fast path for prefix without high bits?
-export function utf32to16(u32) {
+export function utf32to16view(u32) {
   const length = u32.length
   const u16 = new Uint16Array(length * 2)
   let i = 0

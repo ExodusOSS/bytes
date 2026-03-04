@@ -57,7 +57,7 @@ function decode(input, loose = false, format = 'uint32') {
   if (isHermes) return js.decode(u32, loose)
 
   // Significantly faster on Node.js, Chromium, v8, WebKit
-  const u16 = js.utf32to16(u32)
+  const u16 = js.utf32to16view(u32)
   return loose ? utf16.utf16toStringLoose(u16) : utf16.utf16toString(u16)
 }
 
