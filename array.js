@@ -15,3 +15,21 @@ export function typedView(arr, format) {
 
   throw new TypeError('Unexpected format')
 }
+
+export function typedCopyBytes(arr, format) {
+  assertTypedArray(arr)
+  if (!(arr instanceof Uint8Array)) {
+    arr = new Uint8Array(arr.buffer, arr.byteOffset, arr.byteLength)
+  }
+
+  switch (format) {
+    case 'uint8':
+      return Uint8Array.from(arr) // never pooled
+    case 'buffer':
+      return Buffer.from(arr)
+    case 'arraybuffer':
+      return Uint8Array.from(arr).buffer
+  }
+
+  throw new TypeError('Unexpected format')
+}

@@ -1,4 +1,4 @@
-import { typedView } from '@exodus/bytes/array.js'
+import { typedView, typedCopyBytes } from '@exodus/bytes/array.js'
 import { describe, test } from 'node:test'
 
 const raw = [new Uint8Array(), new Uint8Array([0]), new Uint8Array([1]), new Uint8Array([255])]
@@ -37,6 +37,56 @@ describe('typedView', () => {
       const a = typedView(uint8, 'buffer')
       t.assert.deepStrictEqual(a, buffer)
       t.assert.strictEqual(a.buffer, uint8.buffer)
+    }
+  })
+})
+
+describe('typedCopyBytes', () => {
+  test('invalid input', (t) => {
+    for (const input of [null, undefined, [], [1, 2], 'string']) {
+      t.assert.throws(() => typedCopyBytes(input))
+      for (const form of ['uint8', 'buffer']) {
+        t.assert.throws(() => typedCopyBytes(input, form))
+      }
+    }
+  })
+
+  test('uint8', (t) => {
+    for (const { buffer, uint8 } of pool) {
+      for (const arg of [buffer, uint8]) {
+        const a = typedCopyBytes(arg, 'uint8')
+        t.assert.deepStrictEqual(a, uint8)
+        t.assert.notEqual(a, arg)
+        t.assert.strictEqual(a.byteLength, arg.byteLength)
+        // Non-pooled
+        t.assert.notEqual(a.buffer, arg.buffer)
+        t.assert.strictEqual(a.byteLength, a.buffer.byteLength)
+      }
+    }
+  })
+
+  test('arraybuffer', (t) => {
+    for (const { buffer, uint8 } of pool) {
+      for (const arg of [buffer, uint8]) {
+        const a = typedCopyBytes(arg, 'arraybuffer')
+        t.assert.deepStrictEqual(a, Uint8Array.from(arg).buffer)
+        t.assert.notEqual(a, arg)
+        t.assert.strictEqual(a.byteLength, arg.byteLength)
+        t.assert.notEqual(a, arg.buffer)
+      }
+    }
+  })
+
+  test('buffer', (t) => {
+    for (const { uint8, buffer } of pool) {
+      for (const arg of [buffer, uint8]) {
+        const a = typedCopyBytes(arg, 'buffer')
+        t.assert.deepStrictEqual(a, buffer)
+        t.assert.notEqual(a, arg)
+        t.assert.strictEqual(a.byteLength, arg.byteLength)
+        // Might be pooled
+        t.assert.ok(a.buffer !== arg.buffer || a.byteOffset !== arg.byteOffset)
+      }
     }
   })
 })

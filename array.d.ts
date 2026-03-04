@@ -2,7 +2,7 @@
  * TypedArray utils and conversions.
  *
  * ```js
- * import { typedView } from '@exodus/bytes/array.js'
+ * import { typedCopyBytes, typedView } from '@exodus/bytes/array.js'
  * ```
  *
  * @module @exodus/bytes/array.js
@@ -48,10 +48,19 @@ export type Uint32ArrayBuffer = ReturnType<typeof Uint32Array.from>;
 export type OutputFormat = 'uint8' | 'buffer';
 
 /**
+ * Output format for typed array copy conversions
+ */
+export type OutputCopyFormat = 'uint8' | 'arraybuffer' | 'buffer';
+
+/**
  * Create a view of a TypedArray in the specified format (`'uint8'` or `'buffer'`)
  *
  * > [!IMPORTANT]
  * > Does not copy data, returns a view on the same underlying buffer
+ *
+ * > [!WARNING]
+ * > Viewing `Uint16Array` (or other with `BYTES_PER_ELEMENT > 1`) as bytes
+ * > is platform endianness-dependent.
  *
  * @param arr - The input TypedArray
  * @param format - The desired output format (`'uint8'` or `'buffer'`)
@@ -60,3 +69,26 @@ export type OutputFormat = 'uint8' | 'buffer';
 export function typedView(arr: ArrayBufferView, format: 'uint8'): Uint8Array;
 export function typedView(arr: ArrayBufferView, format: 'buffer'): Buffer;
 export function typedView(arr: ArrayBufferView, format: OutputFormat): Uint8Array | Buffer;
+
+/**
+ * Create a copy of TypedArray underlying bytes in the specified format (`'uint8'`, `'buffer'`, or `'arraybuffer'`)
+ *
+ * This does not copy _values_, but copies the underlying bytes.
+ * The result is similar to that of `typedView()`, but this function provides a copy, not a view of the same memory.
+ *
+ * > [!WARNING]
+ * > Copying underlying bytes from `Uint16Array` (or other with `BYTES_PER_ELEMENT > 1`)
+ * > is platform endianness-dependent.
+ *
+ * > [!NOTE]
+ * > Buffer might be pooled.
+ * > Uint8Array return values are not pooled and match their underlying ArrayBuffer.
+ *
+ * @param arr - The input TypedArray
+ * @param format - The desired output format (`'uint8'`, `'buffer'`, or `'arraybuffer'`)
+ * @returns A copy of the underlying buffer
+ */
+export function typedCopyBytes(arr: ArrayBufferView, format: 'uint8'): Uint8Array;
+export function typedCopyBytes(arr: ArrayBufferView, format: 'arraybuffer'): ArrayBuffer;
+export function typedCopyBytes(arr: ArrayBufferView, format: 'buffer'): Buffer;
+export function typedCopyBytes(arr: ArrayBufferView, format: OutputCopyFormat): Uint8Array | ArrayBuffer | Buffer;

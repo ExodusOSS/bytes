@@ -529,8 +529,23 @@ Encode WIF data to a WIF string (synchronous)
 TypedArray utils and conversions.
 
 ```js
-import { typedView } from '@exodus/bytes/array.js'
+import { typedCopyBytes, typedView } from '@exodus/bytes/array.js'
 ```
+
+#### `typedCopyBytes(arr, format = 'uint8')`
+
+Create a copy of TypedArray underlying bytes in the specified format (`'uint8'`, `'buffer'`, or `'arraybuffer'`)
+
+This does not copy _values_, but copies the underlying bytes.
+The result is similar to that of `typedView()`, but this function provides a copy, not a view of the same memory.
+
+> [!WARNING]
+> Copying underlying bytes from `Uint16Array` (or other with `BYTES_PER_ELEMENT > 1`)
+> is platform endianness-dependent.
+
+> [!NOTE]
+> Buffer might be pooled.
+> Uint8Array return values are not pooled and match their underlying ArrayBuffer.
 
 #### `typedView(arr, format = 'uint8')`
 
@@ -538,6 +553,10 @@ Create a view of a TypedArray in the specified format (`'uint8'` or `'buffer'`)
 
 > [!IMPORTANT]
 > Does not copy data, returns a view on the same underlying buffer
+
+> [!WARNING]
+> Viewing `Uint16Array` (or other with `BYTES_PER_ELEMENT > 1`) as bytes
+> is platform endianness-dependent.
 
 ### @exodus/bytes/encoding.js <sub>![](https://img.shields.io/bundlejs/size/@exodus/bytes/encoding.js?style=flat-square)</sub>
 
