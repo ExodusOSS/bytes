@@ -171,3 +171,21 @@ describe('fromBase64', () => {
     }
   })
 })
+
+test('fromBase64 returns non-pooled Uint8Array instances', (t) => {
+  for (let i = 0; i < 256; i++) {
+    t.assert.strictEqual(fromBase64('A'.repeat(128 * 4)).buffer.byteLength, 128 * 3)
+  }
+
+  for (let i = 0; i < 256; i++) {
+    t.assert.strictEqual(fromBase64('A'.repeat(64 * 4)).buffer.byteLength, 64 * 3)
+  }
+
+  for (let i = 0; i < 512; i++) {
+    t.assert.strictEqual(fromBase64('A'.repeat(32 * 4)).buffer.byteLength, 32 * 3)
+  }
+
+  for (let i = 0; i < 512; i++) {
+    t.assert.strictEqual(fromBase64('').buffer.byteLength, 0)
+  }
+})

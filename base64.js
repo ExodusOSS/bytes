@@ -1,6 +1,5 @@
 import { assertEmptyRest } from './assert.js'
-import { typedView } from './array.js'
-import { assertU8, fromUint8, E_STRING } from './fallback/_utils.js'
+import { assertU8, fromUint8, fromBuffer, E_STRING } from './fallback/_utils.js'
 import { isHermes } from './fallback/platform.js'
 import { decodeLatin1, encodeLatin1 } from './fallback/latin1.js'
 import * as js from './fallback/base64.js'
@@ -140,12 +139,14 @@ if (Uint8Array.fromBase64) {
   }
 } else if (haveNativeBuffer) {
   fromBase64impl = (str, isBase64url, padding, format) => {
-    const arr = Buffer.from(str, 'base64')
+    const size = Buffer.byteLength(str, 'base64')
+    const arr = Buffer.allocUnsafeSlow(size) // non-pooled
+    if (arr.base64Write(str) !== size) throw new SyntaxError(E_PADDING)
     // Rechecking by re-encoding is cheaper than regexes on Node.js
     const got = isBase64url ? maybeUnpad(str, padding === false) : maybePad(str, padding !== true)
     const valid = isBase64url ? arr.base64urlSlice(0, arr.length) : arr.base64Slice(0, arr.length)
     if (got !== valid) throw new SyntaxError(E_PADDING)
-    return typedView(arr, format) // fully checked
+    return fromBuffer(arr, format) // fully checked
   }
 } else if (shouldUseAtob) {
   // atob is faster than manual parsing on Hermes
