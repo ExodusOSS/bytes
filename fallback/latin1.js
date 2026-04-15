@@ -140,6 +140,7 @@ export const encodeAscii = useEncodeInto
   : nativeBuffer
     ? (str, ERR) => {
         // TextEncoder is slow on Node.js 24 / 25 (was ok on 22)
+        // Node.js Buffer.from always returns 8-byte aligned allocations, this is safe for e.g. conversion to Uint32Array
         const codes = nativeBuffer.from(str, 'utf8') // ascii/latin1 coerces, we need to check
         if (codes.length !== str.length) throw new SyntaxError(ERR) // non-ascii
         return new Uint8Array(codes.buffer, codes.byteOffset, codes.byteLength)

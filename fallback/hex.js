@@ -73,7 +73,7 @@ export function fromHex(str) {
       }
     }
 
-    const codes = encodeAscii(str, E_HEX)
+    const codes = encodeAscii(str, E_HEX) // aligned
     const codes16 = new Uint16Array(codes.buffer, codes.byteOffset, codes.byteLength / 2)
     let i = 0
     for (const last3 = length - 3; i < last3; i += 4) {
