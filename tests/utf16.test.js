@@ -168,6 +168,22 @@ describe('utf16fromString', () => {
       }
     }
   })
+
+  if (Buffer?.prototype?.ucs2Write) {
+    test('native encode throws if ucs2Write writes fewer bytes than expected', (t) => {
+      const { ucs2Write } = Buffer.prototype
+      Buffer.prototype.ucs2Write = function partialUcs2Write(...args) {
+        ucs2Write.apply(this, args)
+        return this.byteLength - 2
+      }
+
+      try {
+        t.assert.throws(() => utf16.utf16fromString('abc'), /Failed to write all bytes/)
+      } finally {
+        Buffer.prototype.ucs2Write = ucs2Write
+      }
+    })
+  }
 })
 
 describe('random data', () => {

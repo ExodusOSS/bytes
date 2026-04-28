@@ -22,7 +22,8 @@ function encode(str, loose = false, format = 'uint16') {
   }
 
   const ble = Buffer.allocUnsafeSlow(str.length * 2) // non-pooled
-  ble.ucs2Write(str)
+  const written = ble.ucs2Write(str)
+  if (written !== ble.byteLength) throw new Error('Failed to write all bytes') // safeguard just in case
 
   if (format === 'uint8-le') return to8(ble)
   if (format === 'uint8-be') return to8(ble.swap16())
