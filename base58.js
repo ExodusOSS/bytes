@@ -162,7 +162,7 @@ function fromBase58core(str, alphabet, codes, format = 'uint8') {
 
     while (x) {
       let y = Number(x & _0xffffffffn)
-      x >>= 32n
+      x >>= _32n
       res[--at] = y & 0xff
       y >>>= 8
       if (!x && !y) break
