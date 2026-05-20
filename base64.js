@@ -74,6 +74,7 @@ export function fromBase64url(str, options) {
 
 // By default accepts both padded and non-padded variants, base64 or base64url
 export function fromBase64any(str, { format = 'uint8', padding = 'both', ...rest } = {}) {
+  if (typeof str !== 'string') throw new TypeError(E_STRING)
   const isBase64url = !str.includes('+') && !str.includes('/') // likely to fail fast, as most input is non-url, also double scan is faster than regex
   return fromBase64common(str, isBase64url, padding, format, rest)
 }
