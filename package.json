@@ -1,6 +1,6 @@
 {
   "name": "@exodus/bytes",
-  "version": "1.15.0",
+  "version": "1.15.1",
   "description": "Various operations on Uint8Array data",
   "keywords": [
     "encoding",
