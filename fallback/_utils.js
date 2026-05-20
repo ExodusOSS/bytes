@@ -48,7 +48,9 @@ export function fromBuffer(arr, format) {
 
       return new Uint8Array(arr.buffer, arr.byteOffset, arr.byteLength)
     case 'arraybuffer':
-      return fromBuffer(arr, 'uint8').buffer
+      return arr.buffer.byteLength === arr.byteLength
+        ? arr.buffer
+        : arr.buffer.slice(arr.byteOffset, arr.byteOffset + arr.byteLength)
     case 'buffer':
       if (arr.constructor !== Buffer) throw new Error('Unexpected')
       return arr
