@@ -83,6 +83,7 @@ const INVALID_FROM_CONTENT = [
   ...['Z−==', '✖✖✖✖'], // wrong chars
   ...['a-+a', 'aa+_', 'aa_/', '-a/a'], // mixed base64/base64url
   ...['a=aa', 'aa=a', '=aaa', 'aa==a', 'aaa=a', 'aa==aaaa', 'aaa=aaaa'], // symbols after =
+  ...['aa=a', 'aaaa=!!', 'aaaa=X'], // junk after padding
 ]
 
 describe('fromBase64', () => {
@@ -118,7 +119,15 @@ describe('fromBase64', () => {
       t.assert.throws(() => fromBase64url(input))
       for (const format of ['uint8', 'arraybuffer', 'buffer', 'hex']) {
         t.assert.throws(() => fromBase64(input, { format }))
+        t.assert.throws(() => fromBase64(input, { format, padding: true }))
+        t.assert.throws(() => fromBase64(input, { format, padding: false }))
+        t.assert.throws(() => fromBase64(input, { format, padding: 'both' }))
         t.assert.throws(() => fromBase64url(input, { format }))
+        t.assert.throws(() => fromBase64url(input, { format, padding: false }))
+        if (!INVALID_FROM_PADDED.includes(input)) {
+          t.assert.throws(() => fromBase64url(input, { format, padding: true }))
+          t.assert.throws(() => fromBase64url(input, { format, padding: 'both' }))
+        }
       }
     }
   })

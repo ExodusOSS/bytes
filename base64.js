@@ -142,11 +142,15 @@ if (Uint8Array.fromBase64) {
   fromBase64impl = (str, isBase64url, padding, format) => {
     const size = Buffer.byteLength(str, 'base64')
     const arr = Buffer.allocUnsafeSlow(size) // non-pooled
-    if (arr.base64Write(str) !== size) throw new SyntaxError(E_PADDING)
+    if (arr.base64Write(str) !== size) throw new SyntaxError(E_PADDING) // safe against junk after the end
+
     // Rechecking by re-encoding is cheaper than regexes on Node.js
-    const got = isBase64url ? maybeUnpad(str, padding === false) : maybePad(str, padding !== true)
     const valid = isBase64url ? arr.base64urlSlice(0, arr.length) : arr.base64Slice(0, arr.length)
-    if (got !== valid) throw new SyntaxError(E_PADDING)
+    if (str !== valid) {
+      if (padding === !isBase64url) throw new SyntaxError(E_PADDING) // should match native form
+      if (maybePad(str, true) !== maybePad(valid, isBase64url)) throw new SyntaxError(E_PADDING)
+    }
+
     return fromBuffer(arr, format) // fully checked
   }
 } else if (shouldUseAtob) {
