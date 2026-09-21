@@ -47,6 +47,9 @@ const INVALID = [
   ' 00\n00',
   // Wrong chars, unicode
   ...['✖✖', '0✖', '✖0', '✖✖00'],
+  // Non-ascii but correct under ASCII truncation
+  '\u00E1\u00E2', // | 0x80
+  '\u0141\u0142', // | 0x0100
 ]
 
 const VALID = [

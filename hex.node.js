@@ -4,7 +4,6 @@ import { E_HEX } from './fallback/hex.js'
 if (Buffer.TYPED_ARRAY_SUPPORT) throw new Error('Unexpected Buffer polyfill')
 
 const { toHex: webHex } = Uint8Array.prototype // Modern engines have this
-const denoBug = Buffer.from('ag', 'hex').length > 0
 
 export function toHex(arr) {
   assertU8(arr)
@@ -14,13 +13,19 @@ export function toHex(arr) {
   return Buffer.from(arr.buffer, arr.byteOffset, arr.byteLength).hexSlice(0, arr.byteLength)
 }
 
+// this is instant on 8-bit strings
+const NON_LATIN = /[^\x00-\xFF]/ // eslint-disable-line no-control-regex
+
+// Bugged Deno needs full validation, Node.js just needs a check that we don't truncate to 1-byte
+const denoBug = Buffer.from('ag', 'hex').length > 0
+const NON_HEX_CHECK = denoBug ? /[^\dA-Fa-f]/ : NON_LATIN
+
 // Unlike Buffer.from(), throws on invalid input
 export const fromHex = Uint8Array.fromHex
   ? (str, format = 'uint8') => fromUint8(Uint8Array.fromHex(str), format)
   : (str, format = 'uint8') => {
       if (typeof str !== 'string') throw new TypeError(E_STRING)
-      if (str.length % 2 !== 0) throw new SyntaxError(E_HEX)
-      if (denoBug && /[^\dA-Fa-f]/.test(str)) throw new SyntaxError(E_HEX)
+      if (str.length % 2 !== 0 || NON_HEX_CHECK.test(str)) throw new SyntaxError(E_HEX)
 
       // 64 bytes or less, in heap
       if (str.length <= 128) {
