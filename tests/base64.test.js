@@ -84,6 +84,7 @@ const INVALID_FROM_CONTENT = [
   ...['a-+a', 'aa+_', 'aa_/', '-a/a'], // mixed base64/base64url
   ...['a=aa', 'aa=a', '=aaa', 'aa==a', 'aaa=a', 'aa==aaaa', 'aaa=aaaa'], // symbols after =
   ...['aa=a', 'aaaa=!!', 'aaaa=X'], // junk after padding
+  ...['\u00E2\u00E1', '\u00E1\u00E2AA', '\u0142\u0141', '\u0141\u0142AA'], // non-ascii but correct under ASCII truncation: | 0x80, | 0x0100
 ]
 
 describe('fromBase64', () => {

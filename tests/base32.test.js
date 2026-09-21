@@ -81,6 +81,7 @@ const INVALID_FROM_CONTENT = [
   ...['✖✖✖✖✖✖✖✖', '✖✖✖✖✖✖✖=', '✖✖✖✖✖===', '✖✖✖✖✖===', '✖✖======'], // wrong chars
   ...['✖✖✖✖✖✖==', '✖✖✖=====', '✖======='], // wrong chars and padding
   ...['x0', 'xxxx0000'], // mixed base32/base32hex
+  ...['\u00E2\u00E1', '\u00E1\u00E2AA', '\u0142\u0141', '\u0141\u0142AA'], // non-ascii but correct under ASCII truncation: | 0x80, | 0x0100
 ]
 
 describe('fromBase32', () => {
