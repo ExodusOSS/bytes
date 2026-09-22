@@ -114,10 +114,10 @@ export function isomorphicDecode(input: ArrayBufferLike | ArrayBufferView): stri
  * Accepts only [isomorphic string](https://infra.spec.whatwg.org/#isomorphic-string) input
  * and asserts that, throwing on any strings containing codepoints higher than `U+00FF`.
  *
- * @param input - The bytes to decode
- * @returns An Uint8Array containing the input bytes.
+ * @param string - The string to encode
+ * @returns An Uint8Array containing the input codepoints encoded as bytes
  */
-export function isomorphicEncode(str: string): Uint8Array;
+export function isomorphicEncode(string: string): Uint8Array;
 
 /**
  * Implements [get an encoding from a string `label`](https://encoding.spec.whatwg.org/#concept-encoding-get).

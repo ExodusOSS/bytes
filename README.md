@@ -618,7 +618,7 @@ E.g. for `Uint8Array` input, this is similar to `String.fromCodePoint(...input)`
 
 Wider `TypedArray` inputs, e.g. `Uint16Array`, are interpreted as underlying _bytes_.
 
-#### `isomorphicEncode(str)`
+#### `isomorphicEncode(string)`
 
 Implements [isomorphic encode](https://infra.spec.whatwg.org/#isomorphic-encode).
 
