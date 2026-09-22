@@ -486,6 +486,21 @@ Uses double SHA-256 for checksum calculation
 
 Create a base58check encoder/decoder with custom hash functions
 
+### @exodus/bytes/crc.js <sub>![](https://img.shields.io/bundlejs/size/@exodus/bytes/crc.js?style=flat-square)</sub>
+
+Implements crc32 from [IEEE 802.3](https://standards.ieee.org/ieee/802.3/10422/),
+[ISO 3309](https://www.iso.org/standard/8561.html),
+[ISO/IEC 13239:2002](https://www.iso.org/standard/37010.html),
+and others.
+
+```js
+import { crc32 } from '@exodus/bytes/crc.js'
+```
+
+#### `crc32(arr)`
+
+Calculate the CRC-32 of a `Uint8Array`, as an unsigned number.
+
 ### @exodus/bytes/wif.js <sub>![](https://img.shields.io/bundlejs/size/@exodus/bytes/wif.js?style=flat-square)</sub>
 
 Wallet Import Format (WIF) encoding and decoding.

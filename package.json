@@ -69,6 +69,7 @@
     "/fallback/base32.js",
     "/fallback/base58check.js",
     "/fallback/base64.js",
+    "/fallback/crc.js",
     "/fallback/encoding.js",
     "/fallback/encoding.api.js",
     "/fallback/encoding.labels.js",
@@ -106,6 +107,9 @@
     "/bech32.d.ts",
     "/bigint.js",
     "/bigint.d.ts",
+    "/crc.js",
+    "/crc.d.ts",
+    "/crc.node.js",
     "/encoding-browser.js",
     "/encoding-browser.browser.js",
     "/encoding-browser.native.js",
@@ -174,6 +178,11 @@
     "./bigint.js": {
       "types": "./bigint.d.ts",
       "default": "./bigint.js"
+    },
+    "./crc.js": {
+      "types": "./crc.d.ts",
+      "node": "./crc.node.js",
+      "default": "./crc.js"
     },
     "./hex.js": {
       "types": "./hex.d.ts",
@@ -272,6 +281,8 @@
     "bstring": "^0.3.9",
     "buffer": "^6.0.3",
     "c8": "^10.1.3",
+    "crc": "^4.3.2",
+    "crc-32": "^1.2.2",
     "decode-utf8": "^1.0.1",
     "electron": "39.4.0",
     "encode-utf8": "^2.0.0",
